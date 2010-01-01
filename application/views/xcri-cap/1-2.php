@@ -33,6 +33,7 @@
       <dc:identifier xsi:type="courseDataProgramme:ukprn"><?php echo $globalsettings->ukprn_2; ?></dc:identifier>
       <dc:title><?php echo $globalsettings->institution_name_1; ?></dc:title>
       <mlo:url><?php echo $globalsettings->provider_url_6; ?></mlo:url>
+      <?php echo View::make('xcri-cap.partials.courses', array('programmes' => $programmes))->render(); ?>
       <mlo:location>
         <?php if ($globalsettings->town_10): ?>
           <mlo:town><?php echo $globalsettings->town_10; ?></mlo:town>
