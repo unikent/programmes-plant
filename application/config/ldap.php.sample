@@ -1,0 +1,7 @@
+<?php
+
+return array(
+	'base_dn' 	=> '',
+ 	'host' 		=> "",
+	'port' 		=> 636
+);

@@ -1,0 +1,29 @@
+default:
+  filters:
+    tags:       '~@nyi&&~@wip'
+  context:
+    parameters:
+      base_url: 'http://xcri.dev/'
+      announce_completion: false
+  paths:
+    features:               %%BEHAT_WORK_PATH%%/application/tests/features
+    bootstrap:              %%BEHAT_WORK_PATH%%/application/tests/features/bootstrap
+  formatter:
+    name:                   progress
+
+annotations:
+  paths:
+    features:               %%BEHAT_WORK_PATH%%/application/tests/features/annotations
+
+closures:
+  paths:
+    features:               %%BEHAT_WORK_PATH%%/application/tests/features/closures
+
+wip:
+  filters:
+    tags:       '@wip'
+  formatter:
+    name:       'pretty'
+  context:
+    parameters:
+      announce_completion: false

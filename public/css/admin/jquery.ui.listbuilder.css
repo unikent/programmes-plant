@@ -1,0 +1,35 @@
+/* Listbuilder
+----------------------------------*/
+
+.ui-listbuilder{
+	background: none;
+	border: none;
+}
+.ui-listbuilder-items{
+	margin:0;
+	overflow:visible;
+	list-style: none;
+	padding:0 0 0 5px;
+}
+.ui-listbuilder-item{
+	list-style-type:none;
+	position:relative;
+	padding:1px 18px 1px 3px;
+	margin:2px;
+	height:20px;
+}
+.ui-listbuilder-item-input{
+
+}
+.ui-listbuilder-input{
+
+}
+.ui-listbuilder-item > .ui-icon {
+	float:right; 
+	position:absolute; 
+	right:2px; 
+	top:4px; 
+	width:16px; 
+	height:16px;
+}
+
