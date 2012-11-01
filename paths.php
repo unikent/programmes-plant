@@ -34,7 +34,7 @@ $paths['app'] = 'application';
 // --------------------------------------------------------------
 // The path to the Laravel directory.
 // --------------------------------------------------------------
-$paths['sys'] = 'laravel';
+$paths['sys'] = 'laravel/laravel';
 
 // --------------------------------------------------------------
 // The path to the bundles directory.
@@ -49,14 +49,8 @@ $paths['storage'] = 'storage';
 // --------------------------------------------------------------
 // The path to the public directory.
 // --------------------------------------------------------------
-if ($web)
-{
-	$GLOBALS['laravel_paths']['public'] = realpath('').DS;
-}
-else
-{
-	$paths['public'] = 'public';
-}
+$paths['public'] = 'public';
+
 
 // --------------------------------------------------------------
 // Define each constant if it hasn't been defined.
@@ -97,3 +91,7 @@ function set_path($path, $value)
 {
 	$GLOBALS['laravel_paths'][$path] = $value;
 }
+
+$environments = array(
+	'local' => array('http://localhost*', '*.dev'),
+);
