@@ -6,4 +6,8 @@ Part of the XCRI project at the University of Kent.
 
 ## Development
 
-You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate.
+First obtain Laravel as a submodule by running `git submodule init` and `git submodule update`.
+
+Then you need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate.
+
+Finally you need to run all the migrations in order to setup the databases.
