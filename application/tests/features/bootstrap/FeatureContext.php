@@ -16,8 +16,6 @@ require_once 'mink/autoload.php';
 require_once 'PHPUnit/Autoload.php';
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 
-// Set environment
-//putenv('LARAVEL_ENV=local');
 
 // --------------------------------------------------------------
 // Define the directory separator for the environment.
