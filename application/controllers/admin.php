@@ -6,7 +6,7 @@ class Admin_Controller extends Base_Controller {
     public function __construct(){  
 
         // dev environment uses a test user without LDAP
-        if (getenv('LARAVEL_ENV') == 'dev') {
+        if (Request::is_env('local')) {
             $this->data['user'] = new stdClass();
             $user = Config::get('auth.testuser');
             $this->data['user']->id = $user['id'];
