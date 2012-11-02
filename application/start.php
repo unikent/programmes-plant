@@ -132,7 +132,8 @@ if (Config::get('application.profiler'))
     Profiler::attach();
 }
 
-Blade::sharpen();
+// cut out blade, because we don't need it
+//Blade::sharpen();
 
 /*
 |--------------------------------------------------------------------------
