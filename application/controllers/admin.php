@@ -40,7 +40,6 @@ class Admin_Controller extends Base_Controller {
      * @return header redirect
      */
 		public function auth() {
-		echo 'x';exit;
 			if (Auth::guest()) return Redirect::to('login');
     }
 

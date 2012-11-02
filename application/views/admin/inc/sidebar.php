@@ -1,4 +1,4 @@
-       <ul class="nav nav-list">
+<ul class="nav nav-list">
 
 <?php
 	$selectedYear = date('Y');
@@ -12,8 +12,6 @@
        <li class="<?php echo ( URI::segment(3) == '' ? 'active' : false )?>"><a href="<?php echo url($mainpath)?>"><i class="icon-home"></i> Home</a></li>
        
         <li class="<?php echo ( URI::segment(3) == 'globals' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globals')?>"><i class="icon-book"></i> Global Settings</a></li>
-       <li class="<?php echo ( URI::segment(3) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjects')?>"><i class="icon-book"></i> Subjects</a></li>
-       <li class="<?php echo ( URI::segment(3) == 'supersubjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'supersubjects')?>"><i class="icon-book"></i> Super Subjects</a></li>
        <li class="<?php echo ( URI::segment(3) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-book"></i> Programmes</a></li>
           
 
@@ -37,9 +35,8 @@
         
        <li class="<?php echo ( URI::segment(1) == 'roles' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'roles')?>"><i class="icon-user"></i> User managment</a></li>
         
-     <li class="nav-header">Field Configurtion</li>
+     <li class="nav-header">Field Configuration</li>
      <li class="<?php echo ( URI::segment(4) == 'globals' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/globals')?>"><i class="icon-cog"></i> Globals Config </a></li>
-       <li class="<?php echo ( URI::segment(4) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/subjects')?>"><i class="icon-cog"></i> Subjects Config </a></li>
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/programmes')?>"><i class="icon-cog"></i> Programmes Config </a></li>
 
 

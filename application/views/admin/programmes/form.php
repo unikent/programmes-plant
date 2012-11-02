@@ -36,14 +36,14 @@
             <div class="control-group">
               <?php echo Form::label('title',"Programme Title",array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo Form::text('title',  ( Input::old('title') || ($create && !$clone) ? Input::old('title') : $programmes->title ),array('placeholder'=>'Enter Subject Title...'))?>
+                <?php echo Form::text('title',  ( Input::old('title') || ($create && !$clone) ? Input::old('title') : $programmes->title ),array('placeholder'=>'Enter programme title...'))?>
               </div>
             </div>
             <div class="control-group">
-              <?php echo Form::label('slug', __('subjects.slug'),array('class'=>'control-label'))?>
+              <?php echo Form::label('slug', __('programmes.slug'),array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo Form::text('slug',  ( Input::old('slug') || ($create && !$clone) ? Input::old('slug') : $programmes->slug ),array('placeholder'=>'Enter Slug...'))?>
-                <span class="help-block"><?php echo  __('subjects.slug_help') ?></span>
+                <span class="help-block"><?php echo  __('programmes.slug_help') ?></span>
               </div>
             </div>
 
@@ -60,10 +60,10 @@
 
 
             <div class="control-group">
-              <?php echo Form::label('summary', __('subjects.summary'),array('class'=>'control-label'))?>
+              <?php echo Form::label('summary', __('programmes.summary'),array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo Form::textarea('summary',( Input::old('summary') || ($create && !$clone) ? Input::old('summary') : $programmes->summary ),array('placeholder'=>'Enter Subject Content...'))?>
-                <span class="help-block"><?php echo  __('subjects.summary_help') ?></span>
+                <?php echo Form::textarea('summary',( Input::old('summary') || ($create && !$clone) ? Input::old('summary') : $programmes->summary ),array('placeholder'=>'Enter programme content...'))?>
+                <span class="help-block"><?php echo  __('programmes.summary_help') ?></span>
               </div>
             </div>
 
@@ -92,9 +92,9 @@
 <fieldset>
             <legend>Administrative Settings</legend>
 <div class="control-group">
-              <?php echo Form::label('campus', 'Subject', array('class'=>'control-label'))?>
+              <?php //echo Form::label('campus', 'Subject', array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo Form::select('subject_id', $subjects, isset($programmes) ? $programmes->subject_id : '' )?>
+                <?php //echo Form::select('subject_id', $subjects, isset($programmes) ? $programmes->subject_id : '' )?>
               </div>
             </div>
             <div class="control-group">
@@ -116,9 +116,9 @@
               </div>
             </div>
             <div class="control-group">
-              <?php echo Form::label('leaflet_ids[]', 'Leaflets',array('class'=>'control-label'))?>
+              <?php //echo Form::label('leaflet_ids[]', 'Leaflets',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo ExtForm::multiselect('leaflet_ids[]', $leaflets, isset($programmes) ? explode(',',$programmes->leaflet_ids) : '', array('style'=>'height:150px;width:420px;'))?>
+                <?php //echo ExtForm::multiselect('leaflet_ids[]', $leaflets, isset($programmes) ? explode(',',$programmes->leaflet_ids) : '', array('style'=>'height:150px;width:420px;'))?>
               </div>
             </div>
 </fieldset>  
@@ -127,14 +127,14 @@
              <div class="control-group">
               <?php echo Form::label('rel_subjects[]', 'Related Subjects',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo ExtForm::multiselect('rel_subjects[]', $subjects, isset($programmes) ? explode(',',$programmes->related_subject_ids) : '', array('style'=>'height:150px;width:420px;'))?>
+                <?php //echo ExtForm::multiselect('rel_subjects[]', $subjects, isset($programmes) ? explode(',',$programmes->related_subject_ids) : '', array('style'=>'height:150px;width:420px;'))?>
               </div>
             </div>
 
              <div class="control-group">
               <?php echo Form::label('rel_programmes[]', 'Related programmes',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo ExtForm::multiselect('rel_programmes[]', $programme_list, isset($programmes) ? explode(',',$programmes->related_programme_ids) : '', array('style'=>'height:150px;width:420px;'))?>
+                <?php //echo ExtForm::multiselect('rel_programmes[]', $programme_list, isset($programmes) ? explode(',',$programmes->related_programme_ids) : '', array('style'=>'height:150px;width:420px;'))?>
               </div>
             </div>
 
@@ -150,7 +150,7 @@
  <fieldset>
             <legend>Programme Information</legend>
 
-            <?php echo View::make('admin.inc.partials.formFields', array('field_meta' => $field_meta, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
+            <?php //echo View::make('admin.inc.partials.formFields', array('field_meta' => $field_meta, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
 
 
        </fieldset> 
@@ -228,8 +228,8 @@
         </fieldset> 
 
           <div class="form-actions">
-            <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/subjects')?>">Go Back</a>
-            <input type="submit" class="btn btn-primary" value="<?php echo ($create ? __('subjects.create_subject') : __('subjects.save_subject'))?>" />
+            <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Back</a>
+            <input type="submit" class="btn btn-primary" value="<?php echo ($create ? __('programmes.create_programme') : __('programmes.save_programme'))?>" />
           </div>
           <?php if (isset($revisions)) : ?>
             <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programmes))->render(); ?>

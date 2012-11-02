@@ -19,7 +19,7 @@
           <?php echo Messages::get_html()?>
           <div class="btn-group right" >
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              Roll Over All Subjects To...
+              Roll over all programmes to...
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -42,12 +42,12 @@
               </thead><tbody>
               <?php foreach($programmes as $programme) : ?>
                 <tr>
-                  <td><?php echo  $programme->title ?></td>
-                  <td><?php echo  $subjectList[$programme->subject_id] ?></td>
+                  <td><?php echo $programme->title ?></td>
+                  <td><?php //echo  $subjectList[$programme->subject_id] ?></td>
 
 
                   <td><?php echo  Str::limit(strip_tags($programme->summary), 40) ?></td>
-                  <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_subject') ?></a>
+                  <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
 
                     <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a> 
                     
@@ -62,7 +62,7 @@
               <?php endforeach; ?>
               </tbody></table>
           <?php else : ?>
-            <div class="well"><?php echo  __('programmes.no_subjects', array('level' => __('programmes.' . URI::segment(2)), 'year' => URI::segment(1))) ?></div>
+            <div class="well"><?php echo  __('programmes.no_programmes', array('level' => __('programmes.' . URI::segment(2)), 'year' => URI::segment(1))) ?></div>
           <?php endif; ?>
         </div>
 

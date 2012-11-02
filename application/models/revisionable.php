@@ -66,10 +66,6 @@ class Revisionable extends Eloquent {
             ->where('id', '=', $this->revision->id)
             ->update((array) $this->revision);
         }
-
-        // This updates only the dirty bits of the subjects
-        //$query = $this->query()->where(static::$key, '=', $this->get_key());
-       // $result = $query->update($this->get_dirty()) === 1;
       }
 
       // The subject does not exist, so we create it.

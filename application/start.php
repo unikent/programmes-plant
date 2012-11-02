@@ -133,7 +133,7 @@ if (Config::get('application.profiler'))
 }
 
 // cut out blade, because we don't need it
-//Blade::sharpen();
+Blade::sharpen();
 
 /*
 |--------------------------------------------------------------------------

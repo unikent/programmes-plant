@@ -8,17 +8,9 @@ class Dash_Controller extends Admin_Controller
 
     public function get_index()
     {   
-		
-        $this->data['subjects'] = Subject::where('year','=',URI::segment(1))->get();
         $this->data['programmes'] =  Programme::where('year','=',URI::segment(1))->get();
         return View::make('admin.index',$this->data);
     }
-
-    public function get_demo($num)
-    {
-        return View::make('admin.demo'.$num,$this->data);
-    }
-
 
     // Login Stuff
     public function get_login(){

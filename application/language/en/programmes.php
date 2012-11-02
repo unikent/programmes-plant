@@ -2,29 +2,29 @@
 return array(
 	'ug' => 'Undergraduate',
 	'pg' => 'Postgraduate',
-	'ug_introduction' => 'This is the listing for <strong>undergraduate subjects</strong> beginning in <strong>:year</strong>.',
-	'pg_introduction' => 'This is the listing for <strong>postgraduate subjects</strong> beginning in <strong>:year</strong>.',
-	'edit_subject' => 'Edit',
+	'ug_introduction' => 'This is the listing for <strong>undergraduate programmes</strong> beginning in <strong>:year</strong>.',
+	'pg_introduction' => 'This is the listing for <strong>postgraduate programmes</strong> beginning in <strong>:year</strong>.',
+	'edit_programme' => 'Edit',
 	'clone' => 'Clone',
-	'delete_subject' => 'Delete',
+	'delete_programme' => 'Delete',
 	'title' => 'Title',
 	'excerpt' => 'Content Excerpt',
 	'actions' => 'Actions',
 
-	'save_subject' => 'Save Subject',
-	'create_subject' => 'Create Subject',
+	'save_programme' => 'Save programme',
+	'create_programme' => 'Create programme',
 
 	// Fields
 	'year' => 'Year of Programme',
 	'title' => 'Programme Title',
 	'slug' => 'Slug',
 	'slug_help' => 'The desired short URL, for example <code>/business-studies</code>',
-	'summary' => 'Summary of Subject',
-	'summary_help' => 'A brief, but interesting summary of the subject.',
+	'summary' => 'Summary of programme',
+	'summary_help' => 'A brief, but interesting summary of the programme.',
 	'school_id' => 'School ID',
 	'school_adm_id' => 'School Admin ID',
 	'campus_id' => 'Campus ID',
-	'subject_id' => 'Subject ID',
+	'programme_id' => 'programme ID',
 	'honours' => 'Honours type ID',
 
 	'related_school_ids' => 'Related Schools',
@@ -45,10 +45,10 @@ return array(
 	'mod_6_title' => 'Module stage 6 title',
 	'mod_6_content' => 'Module stage 6 content',
 
-	'content' => 'Subject Information',
+	'content' => 'Programme information',
 	'additional_leaflet_urls_help' => 'Please enter a url and press enter to add it to the list of urls.',
 
 	// Messages
-	'no_subjects' => 'There are no subjects created yet for the :level programme in :year.',
+	'no_programmes' => 'There are no programmes created yet for the :level programme in :year.',
 	'no_change_requests' => 'There are currently no current change requests in the queue.',
 );

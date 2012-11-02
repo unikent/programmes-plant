@@ -17,16 +17,6 @@ Route::any('([0-9]{4})/(ug|pg)/globals', 'globals@index');
 Route::any('([0-9]{4})/(ug|pg)/globals/(:any?)/(:num?)', 'globals@(:3)');
 Route::get('([0-9]{4})/(ug|pg)/globals/(:num)/(:any)/(:num)', 'globals@(:4)');
 
-//Do Subjects
-Route::any('([0-9]{4})/(ug|pg)/subjects', 'subjects@index');
-Route::any('([0-9]{4})/(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:3)');
-Route::get('([0-9]{4})/(ug|pg)/subjects/(:num)/(:any)/(:num)', 'subjects@(:4)');
-
-//Do SuperSubjects
-Route::any('([0-9]{4})/(ug|pg)/supersubjects', 'supersubjects@index');
-Route::any('([0-9]{4})/(ug|pg)/supersubjects/(:any?)/(:num?)', 'supersubjects@(:3)');
-Route::get('([0-9]{4})/(ug|pg)/supersubjects/(:num)/(:any)/(:num)', 'supersubjects@(:4)');
-
 //Do Programmes
 Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
 Route::any('([0-9]{4})/(ug|pg)/programmes/(:any?)/(:num?)', 'programmes@(:3)');
@@ -35,9 +25,6 @@ Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4
 //Access Meta systems
 Route::any('([0-9]{4})/(ug|pg)/meta/programmes', 'programmes_meta@index');
 Route::any('([0-9]{4})/(ug|pg)/meta/programmes/(:any?)/(:num?)', 'programmes_meta@(:3)');
-
-Route::any('([0-9]{4})/(ug|pg)/meta/subjects', 'subjects_meta@index');
-Route::any('([0-9]{4})/(ug|pg)/meta/subjects/(:any?)/(:num?)', 'subjects_meta@(:3)');
 
 Route::any('([0-9]{4})/(ug|pg)/meta/globals', 'globals_meta@index');
 Route::any('([0-9]{4})/(ug|pg)/meta/globals/(:any?)/(:num?)', 'globals_meta@(:3)');

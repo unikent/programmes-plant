@@ -100,23 +100,10 @@
 <ul class='mainlist'>
 <?php
   $url = URL::current();
-
-foreach($subjects as $subject){
-
-
-echo "
-<li><a href='{$url}/subjects/edit/{$subject->id}'>{$subject->title}</a><ul>";
-
-
-foreach($programmes as $programme){
-  if($programme->subject_id == $subject->id) echo "<li><a href='{$url}/programmes/edit/{$programme->id}'>{$programme->title}</a></li>";
-}
-echo "</ul></li>";
-
-
-}
-
-
+	foreach($programmes as $programme)
+	{
+	  if($programme->subject_id == $subject->id) echo "<li><a href='{$url}/programmes/edit/{$programme->id}'>{$programme->title}</a></li>";
+	}
 ?>
 </ul>
 
