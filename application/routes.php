@@ -55,7 +55,7 @@ Route::group(array('before' => 'auth'), function(){
 	Route::any('([0-9]{4})/(ug|pg)/leaflets/(:any?)/(:num?)', 'leaflets@(:3)');
 });
 
-//Login/out
+// Login/out
 Route::any('login', 'auth@login');
 Route::any('logout', 'auth@logout');
 
