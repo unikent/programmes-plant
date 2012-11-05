@@ -1,36 +1,63 @@
-<?php use \Session;
+<?php use \Session, \Exception;
 /**
- * The University of Kent Single Sign On
+ * Logs the user in using LDAP.
  * 
- * Logs a user into Laravel using Kent Single Sign On.
- * 
- * Uses SimpleSAML-PHP library that must be installed in the vendor Laravel path.
- * 
- * @author Justice Addison <j.addison@kent.ac.uk> and Alex Andrews <a.andrews@kent.ac.uk>
+ * Uses the Kent LDAP library.
  */
 class LDAP extends \Laravel\Auth\Drivers\Driver {
+	
+	// KentLDAP object
+	public $ldap = false;
 
-	/**
-	 * Get the username of the application.
-	 *
-	 * @param  string $id
-	 * @return mixed|null
-	 */
-	public function user()
+	public function __construct()
 	{
-		if($id != '' && Session::has($id)){
-			return Session::get($id);
+		if (Session::has('user'))
+		{
+			$this->user = Session::get('user');
 		}
+
+		parent::__construct();
 	}
 
 	/**
-	 * Log the user out
+	 * Get the user of the application.
+	 * 
+	 * Returns null if the user is a guest.
+	 *
+	 * @return mixed|null
+	 */
+	public function user()
+	{	
+		if (! $this->user)
+		{
+			return null;
+		}
+		else
+		{
+			return $this->user->id;
+		}
+
+	}
+
+	/**
+	 * Log the user out.
 	 * 
 	 * @return void
 	 */
-	public function logout($url = null)
+	public function logout()
 	{
-		Session::flush();	
+		// Chuck away everything stored in the session.
+		Session::flush();
+
+		// Call a disconnection from Kent LDAP.
+		if ($this->ldap)
+		{
+			$this->ldap->disconnect();
+		}
+		
+		// Chuck everything in memory.
+		unset($this->ldap);
+		unset($this->user);
 	}
 	
 	/**
@@ -40,10 +67,34 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 	 *
 	 * @param  string $id
 	 * @return mixed|null
-	 * @todo Is this correctly implemented?
+	 * @todo Do something with their ID.
 	 */
 	public function retrieve($id)
 	{
+		if (! $this->user)
+		{
+			return false;
+		}
+		else
+		{
+
+			return $this->user;
+		}
+	}
+
+	/**
+	 * Get the full name of the user.
+	 *
+	 * @return string $fullname Full name of the user.
+	 */
+	public function fullname()
+	{
+		if (is_null($this->user()))
+		{
+			throw new Exception('User is not authenticated, could not retrieve full name.');
+		}
+
+		return $this->user->fullname;
 	}
 	
 	/**
