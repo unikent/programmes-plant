@@ -3,7 +3,7 @@ class Meta_Controller extends Admin_Controller
 {
 
     public $restful = true;
-    public $views = 'subjectsmeta';
+    public $views = 'meta';
 
 
     /**
