@@ -4,27 +4,19 @@
  *
  * @author Carl Saggs (based on Rikki Carroll's original LDAP Class)
  * @version 2011.10.05
- *
- * Example Usage:
- *		$ldap = new LDAP("ldaps://ldap.id.kent.ac.uk",636);
- * 		$ldap->setBaseUser('uid=pwd_reset_dev,ou=Special Accounts,o=uni','');
- * 		$ldap->setBaseRDN('o=kent.ac.uk,o=uni');
- *
- *		$ldap->authenticateUser("<username>", "<password>");
- *		$ldap->getDetails("<username>");
-  */
+ */
 
 class KentLDAP {
-	//stores the address of the LDAP server
+	// Stores the address of the LDAP server
 	private $ldap_server_address;
 	private $ldap_connection;
 
-	//Auth
+	// Auth
 	private $ldap_base_user ='';
 	private $ldap_base_pass ='';
-	private $ldap_base_rdn ='o=kent.ac.uk,o=uni';
 
 	private static $instance = null;
+
 	public static function instance(){
 		if(self::$instance == null){
 			self::$instance = new KentLDAP(Config::get('ldap.host'), Config::get('ldap.port'));
@@ -52,6 +44,7 @@ class KentLDAP {
 
 	/**
 	 * Set the base user for LDAP
+	 * 
 	 * @param $user (full dsn)
 	 * @param $password 
 	 */
@@ -62,6 +55,7 @@ class KentLDAP {
 	
 	/**
 	 * Set the base user for RDN
+	 * 
 	 * @param $rdn Location to search for required feilds in
 	 */
 	public function setBaseRDN($rdn){
@@ -70,6 +64,7 @@ class KentLDAP {
 
 	/**
 	 * Returns whether the current LDAP Request object is connected to a server.
+	 * 
 	 * @return True if connected, false otherwise.
 	 */
 	public function isConnected() {
@@ -88,6 +83,7 @@ class KentLDAP {
 
 	/**
 	 * Returns the address of the current LDAP server address.
+	 * 
 	 * @returns The string representing the address of the LDAP server.
 	 */
 	public function getLDAPServerAddress()
@@ -107,6 +103,7 @@ class KentLDAP {
 
 	/**
 	 * Return infomation from a user based on there UID
+	 * 
 	 *	@param $uid
 	 *  @return array
 	 */
@@ -116,6 +113,7 @@ class KentLDAP {
 
 	/**
 	 * Return infomation from a user based on there student number
+	 * 
 	 *	@param $student_number
 	 *  @return array
 	 */
@@ -125,6 +123,7 @@ class KentLDAP {
 
 	/**
 	 * Return infomation from a user based on there Surname
+	 * 
 	 *	@param $sn
 	 *  @return array
 	 */
@@ -170,6 +169,7 @@ class KentLDAP {
 	}
 	/**
 	 * Update a given users Password
+	 * 
 	 *	@param $user UID of user
 	 *	@param $newPassword new password for user
 	 *	@return bool Success status True/false
@@ -180,6 +180,7 @@ class KentLDAP {
 
 	/**
 	 * Update an attribute(or attribites) for a user
+	 * 
 	 *	@param $user UID of user
 	 *	@param Array of new attributes to set on user
 	 *	@return bool Success status True/false
@@ -221,6 +222,7 @@ class KentLDAP {
 
 	/**
 	 * Get a user's DN
+	 * 
 	 * @param UID (user id such as at369 )
 	 * @return Fully qualifed DN of user (or null if they do not exist/cannot be found)
 	 */
@@ -240,6 +242,7 @@ class KentLDAP {
 
 	/**
 	 * Ensure base user is set before carrying out dependant operations
+	 * 
 	 * @throws Exception When base user is not set
 	 *
 	 */
@@ -251,6 +254,7 @@ class KentLDAP {
 
 	/**
 	 * Get a user by username
+	 * 
 	 * @param $username
 	 * @return user as a LDAPUser Object
 	 *
@@ -267,29 +271,35 @@ class KentLDAP {
 
 	/**
 	 * Validate username and Password Against LDAP
+	 * 
 	 * @param string $username
-	 * If authentication was succesful returns true
-	 * If authentication was not succesful returns false
+	 * @return bool If authentication was succesful returns true
 	 */
 	public function authenticateUser($username, $password) {
 		$ds = $this->ldap_connection;
+
 		if ($ds) {
 			//when binding password must not be empty, otherwise the it will validate based on username only
-			if(empty($password)) $password = " ";
+			if (empty($password)) $password = " ";
+
 			//get user string (+ return false if user doesn't exist)
 			$user_dn = $this->getUserDn($username);
+
 			if($user_dn == null) return false;
-			//die ($user_dn);
+
 			//Attempt to Bind 
 			$r = $this->createRequest($ds, $user_dn ,$password);
+
 			if($r) {
 				return true;
 			}
 		}
 		return false;
 	}
+	
 	public function getAuthenticateUser($username, $password) {
 		$ds = $this->ldap_connection;
+		
 		if ($ds) {
 			//when binding password must not be empty, otherwise the it will validate based on username only
 			if(empty($password)) $password = " ";
@@ -306,12 +316,6 @@ class KentLDAP {
 		}
 		return false;
 	}
-
-
-
-
-	//Search Data
-		
 
 	/**
 	 * Connect to LDAP with given credentals. (Bind)
