@@ -107,45 +107,47 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 	{
 		$username = $arguments['username'];
 		$password = $arguments['password'];
-		$ldap = KentLDAP::instance();
-		$usr = $ldap->getAuthenticateUser($username, $password);
 
-		if($usr !== false){
+		$this->ldap = KentLDAP::instance();
+		$user = $this->ldap->getAuthenticateUser($username, $password);
+
+		if ($user !== false)
+		{
 			$userObject = new stdClass();
 			$userObject->id = $username;
 			$userObject->username = $username;
-			$userObject->name = $usr[0]['givenname'][0];
-			$userObject->fullname = $usr[0]['unikentaddisplayname'][0];
-			$userObject->email = $usr[0]['mail'][0];
-			$userObject->title = $usr[0]['title'][0];
+			$userObject->name = $user[0]['givenname'][0];
+			$userObject->fullname = $user[0]['unikentaddisplayname'][0];
+			$userObject->email = $user[0]['mail'][0];
+			$userObject->title = $user[0]['title'][0];
 
 			//get role
-			$role = Role::where('username','=',$username)->first();
+			$role = Role::where('username', '=', $username)->first();
 
 			//If role doesnt exist, createe em
-			if($role == null){
+			if ($role == null)
+			{
 				$role = new Role;
 		        $role->username = $username;
 		        $role->fullname = $userObject->fullname;
 		        $role->isadmin  = false;
 		        $role->isuser   = false;
-		        $role->department = $usr[0]['unikentoddepartment'][0];
+		        $role->department = $user[0]['unikentoddepartment'][0];
 		        $role->save();		
 			}
 			
-			//set to user object
-			$userObject->dept 		= $role->department;
-			$userObject->isadmin 	= $role->isadmin;
-			$userObject->isuser 	= $role->isuser;
-			$userObject->internal_id= $role->id;
+			// set to user object
+			$userObject->dept = $role->department;
+			$userObject->isadmin = $role->isadmin;
+			$userObject->isuser = $role->isuser;
+			$userObject->internal_id = $role->id;
 
-			Session::put($username, $userObject);
-			Session::put('flash', "Logged in as: ". $username);
+			Session::put('user', $userObject);
 
-			return $userObject;
+			return $this->login($username, array_get($arguments, 'remember'));
 		}
 		
-		Session::flash('flash', "Autentication failed");
+		Session::flash('status', "Autentication failed");
 	}
 
 }
