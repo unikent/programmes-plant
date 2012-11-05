@@ -6,7 +6,7 @@ Part of the XCRI project at the University of Kent.
 
 ## Development
 
-First obtain Laravel as a submodule by running `git submodule init` and `git submodule update`.
+First obtain Laravel as a submodule by running `git submodule init`.
 
 Then you need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate.
 
