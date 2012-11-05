@@ -36,7 +36,6 @@ class Create_Programmes {
     		$table->integer('school_id');
     		$table->integer('school_adm_id');
     		$table->integer('campus_id');
-    		$table->integer('subject_id');
 
 			$table->index('id');
 			$table->index('year');
@@ -61,7 +60,6 @@ class Create_Programmes {
     		$table->integer('school_id');
     		$table->integer('school_adm_id');
     		$table->integer('campus_id');
-    		$table->integer('subject_id');
 
 			$table->index('id');
 			$table->index('year');
