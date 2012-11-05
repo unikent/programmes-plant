@@ -3,7 +3,9 @@
 class Create_Faculties {
 
 	/**
-	 * Make changes to the database.
+	 * Create the faculties table.
+	 * 
+	 * This table stores the faculties.
 	 *
 	 * @return void
 	 */

@@ -3,7 +3,9 @@
 class Create_Awards_Table {
 
 	/**
-	 * Make changes to the database.
+	 * Create the awards table.
+	 * 
+	 * This table stores awards types.
 	 *
 	 * @return void
 	 */
