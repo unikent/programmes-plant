@@ -1,36 +1,63 @@
-<?php use \Session;
+<?php use \Session, \Exception;
 /**
- * The University of Kent Single Sign On
+ * Logs the user in using LDAP.
  * 
- * Logs a user into Laravel using Kent Single Sign On.
- * 
- * Uses SimpleSAML-PHP library that must be installed in the vendor Laravel path.
- * 
- * @author Justice Addison <j.addison@kent.ac.uk> and Alex Andrews <a.andrews@kent.ac.uk>
+ * Uses the Kent LDAP library.
  */
 class LDAP extends \Laravel\Auth\Drivers\Driver {
+	
+	// KentLDAP object
+	public $ldap = false;
 
-	/**
-	 * Get the username of the application.
-	 *
-	 * @param  string $id
-	 * @return mixed|null
-	 */
-	public function user()
+	public function __construct()
 	{
-		if($id != '' && Session::has($id)){
-			return Session::get($id);
+		if (Session::has('user'))
+		{
+			$this->user = Session::get('user');
 		}
+
+		parent::__construct();
 	}
 
 	/**
-	 * Log the user out
+	 * Get the user of the application.
+	 * 
+	 * Returns null if the user is a guest.
+	 *
+	 * @return mixed|null
+	 */
+	public function user()
+	{	
+		if (! $this->user)
+		{
+			return null;
+		}
+		else
+		{
+			return $this->user->id;
+		}
+
+	}
+
+	/**
+	 * Log the user out.
 	 * 
 	 * @return void
 	 */
-	public function logout($url = null)
+	public function logout()
 	{
-		Session::flush();	
+		// Chuck away everything stored in the session.
+		Session::flush();
+
+		// Call a disconnection from Kent LDAP.
+		if ($this->ldap)
+		{
+			$this->ldap->disconnect();
+		}
+		
+		// Chuck everything in memory.
+		unset($this->ldap);
+		unset($this->user);
 	}
 	
 	/**
@@ -40,10 +67,34 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 	 *
 	 * @param  string $id
 	 * @return mixed|null
-	 * @todo Is this correctly implemented?
+	 * @todo Do something with their ID.
 	 */
 	public function retrieve($id)
 	{
+		if (! $this->user)
+		{
+			return false;
+		}
+		else
+		{
+
+			return $this->user;
+		}
+	}
+
+	/**
+	 * Get the full name of the user.
+	 *
+	 * @return string $fullname Full name of the user.
+	 */
+	public function fullname()
+	{
+		if (is_null($this->user()))
+		{
+			throw new Exception('User is not authenticated, could not retrieve full name.');
+		}
+
+		return $this->user->fullname;
 	}
 	
 	/**
@@ -56,45 +107,47 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 	{
 		$username = $arguments['username'];
 		$password = $arguments['password'];
-		$ldap = KentLDAP::instance();
-		$usr = $ldap->getAuthenticateUser($username, $password);
 
-		if($usr !== false){
+		$this->ldap = KentLDAP::instance();
+		$user = $this->ldap->getAuthenticateUser($username, $password);
+
+		if ($user !== false)
+		{
 			$userObject = new stdClass();
 			$userObject->id = $username;
 			$userObject->username = $username;
-			$userObject->name = $usr[0]['givenname'][0];
-			$userObject->fullname = $usr[0]['unikentaddisplayname'][0];
-			$userObject->email = $usr[0]['mail'][0];
-			$userObject->title = $usr[0]['title'][0];
+			$userObject->name = $user[0]['givenname'][0];
+			$userObject->fullname = $user[0]['unikentaddisplayname'][0];
+			$userObject->email = $user[0]['mail'][0];
+			$userObject->title = $user[0]['title'][0];
 
-			//get role
-			$role = Role::where('username','=',$username)->first();
+			// Get role
+			$role = Role::where('username', '=', $username)->first();
 
-			//If role doesnt exist, createe em
-			if($role == null){
+			// If role doesnt exist, create one.
+			if ($role == null)
+			{
 				$role = new Role;
 		        $role->username = $username;
 		        $role->fullname = $userObject->fullname;
 		        $role->isadmin  = false;
 		        $role->isuser   = false;
-		        $role->department = $usr[0]['unikentoddepartment'][0];
+		        $role->department = $user[0]['unikentoddepartment'][0];
 		        $role->save();		
 			}
 			
-			//set to user object
-			$userObject->dept 		= $role->department;
-			$userObject->isadmin 	= $role->isadmin;
-			$userObject->isuser 	= $role->isuser;
-			$userObject->internal_id= $role->id;
+			// Set to user object
+			$userObject->dept = $role->department;
+			$userObject->isadmin = $role->isadmin;
+			$userObject->isuser = $role->isuser;
+			$userObject->internal_id = $role->id;
 
-			Session::put($username, $userObject);
-			Session::put('flash', "Logged in as: ". $username);
+			Session::put('user', $userObject);
 
-			return $userObject;
+			return $this->login($username, array_get($arguments, 'remember'));
 		}
 		
-		Session::flash('flash', "Autentication failed");
+		Session::flash('status', "Autentication failed");
 	}
 
 }
