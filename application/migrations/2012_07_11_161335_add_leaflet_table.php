@@ -3,16 +3,15 @@
 class Add_Leaflet_Table {
 
 	/**
-	 * Make changes to the database.
+	 * Add leaflet table to database.
+	 * 
+	 * This centrally stores leaflets, thus making their attachment to programmes easier.
 	 *
 	 * @return void
 	 */
 	public function up()
-	{
-	
-		
-		
-		//Add meta tables
+	{		
+		//Add leaflets table.
 		Schema::table('leaflets', function($table){
 			$table->create();
     		$table->increments('id');
@@ -21,8 +20,6 @@ class Add_Leaflet_Table {
     		$table->integer("campuses_id");
     		$table->string("tracking_code");
 		});
-		
-
 	}
 
 	/**
