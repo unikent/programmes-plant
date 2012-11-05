@@ -3,7 +3,7 @@
 class Create_Roles {
 
 	/**
-	 * Make changes to the database.
+	 * Creates the roles table, that sets the permissions for each user.
 	 *
 	 * @return void
 	 */
