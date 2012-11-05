@@ -72,8 +72,8 @@ class Meta_Controller extends Admin_Controller
                 if($oldtype != Input::get('type')){
                     $type_str = 'varchar(255)';
                     if($subject->field_type=='textarea') $type_str = 'TEXT';
-                    DB::query("alter table {$this->table}s MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::query("alter table {$this->table}s_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");  
+                    DB::statement("alter table {$this->table}s MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
+                    DB::statement("alter table {$this->table}s_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");  
                 }
                
             }else{
