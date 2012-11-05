@@ -12,8 +12,6 @@ class Create_Faculties {
 		Schema::create('faculties', function($table){
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('name', 200);
-		})
 			$table->string('name');
 		});
 	}

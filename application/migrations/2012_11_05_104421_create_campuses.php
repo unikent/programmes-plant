@@ -12,8 +12,6 @@ class Create_Campuses {
 		Schema::create('campuses', function($table){
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('name', 200);
-		})
 			$table->string('name');
 		});
 	}
