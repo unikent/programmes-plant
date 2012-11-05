@@ -113,7 +113,7 @@
       </div>
       <div class="row-fluid">
         <div class="span12">
-          <p>You are logged in as: <?php echo $user->username?></p>
+          <p>You are logged in as: <?php echo Auth::user(); ?></p>
         </div>
       </div>
     </div> <!-- /container -->
