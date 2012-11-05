@@ -121,10 +121,10 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 			$userObject->email = $user[0]['mail'][0];
 			$userObject->title = $user[0]['title'][0];
 
-			//get role
+			// Get role
 			$role = Role::where('username', '=', $username)->first();
 
-			//If role doesnt exist, createe em
+			// If role doesnt exist, create one.
 			if ($role == null)
 			{
 				$role = new Role;
@@ -136,7 +136,7 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 		        $role->save();		
 			}
 			
-			// set to user object
+			// Set to user object
 			$userObject->dept = $role->department;
 			$userObject->isadmin = $role->isadmin;
 			$userObject->isuser = $role->isuser;
