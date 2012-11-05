@@ -14,6 +14,8 @@ class Create_Faculties {
 			$table->timestamps();
 			$table->string('name', 200);
 		})
+			$table->string('name');
+		});
 	}
 
 	/**
