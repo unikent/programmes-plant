@@ -1,8 +1,8 @@
 # Programmes Factory 2.0
 
-A replacement for the Programmes Factory, written in Laravel and using Twitter Bootstrap.
+A replacement for the Programmes Factory, written using [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
-Part of the XCRI project at the University of Kent.
+Part of the [XCRI project at the University of Kent](http://blogs.kent.ac.uk/kent-xcri/).
 
 ## Development
 
