@@ -10,9 +10,7 @@ The following are instructions on running the Programmes Plant on a local machin
 
 1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init`, unless you have done a recursive clone.
 
-2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. 
-
-To move the files in one command, run:
+2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. To move the files in one command, run:
 `mkdir application/config/local && cp application/config/*.sample application/config/local && ls application/config/local/*.sample | while read file; do echo $file  `echo $file | sed s/.sample//`; done`
 
 3. You will need to create a MySQL database if you plan to use MySQL. Create this database and add the credentials to `application/config/local/database.php`.
