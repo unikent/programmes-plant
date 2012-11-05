@@ -1,14 +1,14 @@
 # Programmes Plant
 
-A replacement for the Programmes Factory, written using [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
+Programmes Factory 2.0 is part of the XCRI project at the University of Kent, and is a replacement for the existing Programmes Factory.
 
-Part of the [XCRI project at the University of Kent](http://blogs.kent.ac.uk/kent-xcri/).
+It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
-## Development
+## Development setup
 
 The following are instructions on running the Programmes Plant on a local machine for development.
 
-1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init`, unless you have done a recursive clone.
+1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init`, unless you have done a recursive clone. Note that this app uses the [unikent laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the laravel core. This fork is generally kept up to date with the laravel master branch, so including it as a submodule should give you the latest version of laravel.
 
 2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. To move the files in one command, run:
 `mkdir application/config/local && cp application/config/*.sample application/config/local && ls application/config/local/*.sample | while read file; do echo $file  `echo $file | sed s/.sample//`; done`
