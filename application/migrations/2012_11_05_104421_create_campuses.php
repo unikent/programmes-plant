@@ -3,7 +3,9 @@
 class Create_Campuses {
 
 	/**
-	 * Make changes to the database.
+	 * Create the campuses table.
+	 * 
+	 * This table stores our campuses.
 	 *
 	 * @return void
 	 */
@@ -12,8 +14,8 @@ class Create_Campuses {
 		Schema::create('campuses', function($table){
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('name', 200);
-		})
+			$table->string('name');
+		});
 	}
 
 	/**

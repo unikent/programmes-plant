@@ -3,7 +3,9 @@
 class Create_Faculties {
 
 	/**
-	 * Make changes to the database.
+	 * Create the faculties table.
+	 * 
+	 * This table stores the faculties.
 	 *
 	 * @return void
 	 */
@@ -12,8 +14,8 @@ class Create_Faculties {
 		Schema::create('faculties', function($table){
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('name', 200);
-		})
+			$table->string('name');
+		});
 	}
 
 	/**
