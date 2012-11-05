@@ -23,11 +23,11 @@ class Create_Programmes {
 		Schema::create('programmes', function($table){
     		$table->increments('id');
     		$table->timestamps();
-    		$table->string('year',4);
-			$table->string('created_by',10);
+    		$table->string('year', 4);
+			$table->string('created_by', 10);
 
     		// Main
-    		$table->string('title',255);
+    		$table->string('title', 255);
     		$table->string('slug');
     		$table->string('honours');
     		$table->text('summary');
@@ -48,11 +48,11 @@ class Create_Programmes {
 		Schema::create('programmes_revisions', function($table){
     		$table->increments('id');
     		$table->timestamps();
-    		$table->string('year',4);
-			$table->string('created_by',10);
+    		$table->string('year', 4);
+			$table->string('created_by', 10);
 
     		// Main
-    		$table->string('title',255);
+    		$table->string('title', 255);
     		$table->string('slug');
     		$table->string('honours');
     		$table->text('summary');
