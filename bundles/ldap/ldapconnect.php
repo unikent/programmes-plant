@@ -11,10 +11,6 @@ class LDAPConnect {
 	private $ldap_server_address;
 	private $ldap_connection;
 
-	// Auth
-	private $ldap_base_user ='';
-	private $ldap_base_pass ='';
-
 	private static $instance = null;
 
 	public static function instance(){
