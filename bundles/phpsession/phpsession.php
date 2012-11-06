@@ -1,10 +1,8 @@
 <?php 
 
 class PhpSession extends \Laravel\Session\Drivers\Driver {
-
 	private $sess_name = 'xcri';
-	
-	
+		
 	public function __construct()
 	{
 		if (!isset($_SESSION)) {
