@@ -1,8 +1,10 @@
 <?php use \Config;
 /**
  * LDAP Class provides basic operations for authenticating users and getting details from them.
+ * 
+ * This is an object orientated wrapper for the LDAP PHP internals.
  *
- * @author Carl Saggs (based on Rikki Carroll's original LDAP Class)
+ * @author Carl Saggs (based on Rikki Carroll's original LDAP Class), Alex Andrews.
  * @version 2011.10.05
  */
 
@@ -28,9 +30,10 @@ class LDAPConnect {
 	 * Creates a instance of the LDAP class.
 	 * Requires one parameter - the address of the LDAP server.
 	 *
-	 * @param $address string The address of the LDAP server.
+	 * @param string $address The address of the LDAP server.
+	 * @param int $port The port LDAP is on.
 	 */
-	public function __construct($address, $port=389) {
+	public function __construct($address, $port = 389) {
 		$this->ldap_server_address = $address;
 		$this->ldap_connection = ldap_connect($address, $port);
 	}
@@ -47,17 +50,19 @@ class LDAPConnect {
 	/**
 	 * Returns whether the current LDAP Request object is connected to a server.
 	 * 
-	 * @return True if connected, false otherwise.
+	 * @return bool True if connected, false otherwise.
 	 */
 	public function isConnected() {
 		if ($this->ldap_connection) {
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 
 	/**
 	 * Disconnects any current connection to an LDAP server.
+	 * 
+	 * @return void
 	 */
 	public function disconnect() {
 		@ldap_close($this->ldap_connection);
@@ -66,7 +71,7 @@ class LDAPConnect {
 	/**
 	 * Returns the address of the current LDAP server address.
 	 * 
-	 * @returns The string representing the address of the LDAP server.
+	 * @return The string representing the address of the LDAP server.
 	 */
 	public function getLDAPServerAddress()
 	{
@@ -75,7 +80,8 @@ class LDAPConnect {
 	
 	/**
 	 * Run automatically by PHP when the object is removed from memory.
-	 * Here we basically clean up and close the connection to the ldap server.
+	 * 
+	 * Here we basically clean up and close the connection to the LDAP server.
 	 */
 	public function __destruct() {
 		$this->disconnect();
@@ -83,8 +89,13 @@ class LDAPConnect {
 		unset($this->ldap_connection);
 	}
 
+	/**
+	 * Return the LDAP error from the connection for last run command.
+	 * 
+	 * @return string The LDAP error message.
+	 */
 	public function getError(){
-		if($this->ldap_connection == null) return "no ldap connection";
+		if($this->ldap_connection == null) return "No ldap connection";
 
 		return ldap_error($this->ldap_connection);
 	}
@@ -112,7 +123,7 @@ class LDAPConnect {
 	}
 
 	/**
-	 * Validate username and Password Against LDAP
+	 * Validate username and password against LDAP.
 	 * 
 	 * @param string $username
 	 * @return bool If authentication was succesful returns true
@@ -139,6 +150,13 @@ class LDAPConnect {
 		return false;
 	}
 	
+	/**
+	 * Authenticate user and return their details from LDAP.
+	 * 
+	 * @param string $username The username of the user.
+	 * @param string $password The password of the user.
+	 * @return bool | array False if the user is not authenticated. An array of their LDAP entries if they are.
+	 */
 	public function getAuthenticateUser($username, $password) {
 		$ds = $this->ldap_connection;
 		
@@ -165,9 +183,9 @@ class LDAPConnect {
 	/**
 	 * Connect to LDAP with given credentals. (Bind)
 	 *
-	 * @param $ds LDAP Connection
-	 * @param $usr User(full dn) to bind to ldap with
-	 * @param $pass password to autenticate ldap with
+	 * @param $ds LDAP Connection.
+	 * @param string $usr User (full DN) to bind to ldap with.
+	 * @param string $pass Password to autenticate ldap with.
 	 */
 	private function createRequest($ds, $usr, $pass) {
 		ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -176,7 +194,7 @@ class LDAPConnect {
 			return true;
 		}
 		else{
-			return false;//Return false rather than throwing error
+			return false; //Return false rather than throwing error
 		}
 	}
 }
