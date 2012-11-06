@@ -42,8 +42,7 @@ class Programmes_Controller extends Admin_Controller
             $this->data['clone'] = false;
         }
 
-        $this->data['field_meta'] = $this->getSubjectMeta();
-        $this->data['subjects'] = Subject::getAsList($year);
+        $this->data['field_meta'] = $this->getProgrammeMeta();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
@@ -54,7 +53,7 @@ class Programmes_Controller extends Admin_Controller
     }
     
     /**
-     * Routing for GET /$year/$type/edit/$subject_id
+     * Routing for GET /$year/$type/edit/$programme_id
      * 
      * @param int $year The year
      * @param string $type Undergraduate or postgraduate.
@@ -76,10 +75,7 @@ class Programmes_Controller extends Admin_Controller
             $this->data['revisions'] =  $revisions;
         }
 
-        //$this->data['field_meta'] = $this->getSubjectMeta();
-        //$this->data['subjects'] = Subject::getAsList($year);
         $this->data['programme_list'] = Programme::getAsList($year);
-        //$this->data['leaflets'] = Leaflet::getAsList();
 
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
@@ -93,15 +89,14 @@ class Programmes_Controller extends Admin_Controller
      * 
      * The change request page.
      * 
-     * @param int $year The year of the created subject.
+     * @param int $year The year of the created programme.
      * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
      */
     public function post_create($year, $type)
     {
         $rules = array(
             'title'  => 'required|unique:programmes|max:255',
-            'summary' => 'required',
-            'subject_id' => 'required'
+            'summary' => 'required'
         );
 
         $validation = Validator::make(Input::all(), $rules);
@@ -123,12 +118,10 @@ class Programmes_Controller extends Admin_Controller
             $programme->school_id = Input::get('school_id');
             $programme->school_adm_id = Input::get('school_adm_id');
             $programme->campus_id = Input::get('campus_id');
-            //$programme->subject_id = Input::get('subject_id');
 
             $programme->leaflet_ids = (Input::get('leaflet_ids')!='') ? implode(',',Input::get('leaflet_ids')) : '';
 
             $programme->related_school_ids = (Input::get('rel_schools')!='') ? implode(',',Input::get('rel_schools')) : '';
-            //$programme->related_subject_ids = (Input::get('rel_subjects')!='') ? implode(',',Input::get('rel_subjects')) : '';
             $programme->related_programme_ids = (Input::get('rel_programmes')!='') ? implode(',',Input::get('rel_programmes')) : '';
 
             $programme->mod_1_title = Input::get('mod_1_title');
@@ -141,15 +134,6 @@ class Programmes_Controller extends Admin_Controller
             $programme->mod_4_content = Input::get('mod_4_content');
             $programme->mod_5_title = Input::get('mod_5_title');
             $programme->mod_5_content = Input::get('mod_5_content');
-
-             //Save varible fields
-             /*
-            $f = $this->getSubjectMeta();//SubjectMeta::order_by('id','asc')->get();
-            foreach($f as $c){
-                $col = $c->colname;
-                if(Input::get($col) != null)  $programme->$col = Input::get($col);
-            }
-            */
             
             $programme->save();
             Messages::add('success','Programme added');
@@ -170,7 +154,6 @@ class Programmes_Controller extends Admin_Controller
         $rules = array(
             'title'  => 'required|max:255',
             'summary' => 'required'
-            //'subject_id' => 'required'
         );
 
         $validation = Validator::make(Input::all(), $rules);
@@ -194,12 +177,10 @@ class Programmes_Controller extends Admin_Controller
             $programme->school_id = Input::get('school_id');
             $programme->school_adm_id = Input::get('school_adm_id');
             $programme->campus_id = Input::get('campus_id');
-            //$programme->subject_id = Input::get('subject_id');
 
             $programme->leaflet_ids = (Input::get('leaflet_ids')!='') ? implode(',',Input::get('leaflet_ids')) : '';
 
             $programme->related_school_ids = (Input::get('rel_schools')!='') ? implode(',',Input::get('rel_schools')) : '';
-            //$programme->related_subject_ids = (Input::get('rel_subjects')!='') ? implode(',',Input::get('rel_subjects')) : '';
             $programme->related_programme_ids = (Input::get('rel_programmes')!='') ? implode(',',Input::get('rel_programmes')) : '';
 
             $programme->mod_1_title = Input::get('mod_1_title');
@@ -213,14 +194,6 @@ class Programmes_Controller extends Admin_Controller
             $programme->mod_5_title = Input::get('mod_5_title');
             $programme->mod_5_content = Input::get('mod_5_content');
 
-            //Save varible fields
-            /*
-            $f = $this->getSubjectMeta();//SubjectMeta::order_by('id','asc')->get();
-            foreach($f as $c){
-                $col = $c->colname;
-                if(Input::get($col) != null)  $programme->$col = Input::get($col);
-            }
-            */
             $programme->save();
             Messages::add('success', "Saved $programme->title.");
             return Redirect::to($year.'/'. $type.'/'. $this->views);
@@ -228,14 +201,10 @@ class Programmes_Controller extends Admin_Controller
     }
 
 
-    private function getSubjectMeta(){
+    private function getProgrammeMeta(){
         $model = $this->model.'Meta';
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
-
-
-
-
 
     /**
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
@@ -300,7 +269,6 @@ class Programmes_Controller extends Admin_Controller
         $sub = Programme::getAsList();
         $pro = Programme::getAsList();
 
-        $subject_attributes['related_school_ids'] = $this->splitToText($programme_attributes['related_school_ids'],$schools);
         $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
         $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
         $revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
