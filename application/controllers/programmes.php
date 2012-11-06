@@ -117,7 +117,7 @@ class Programmes_Controller extends Admin_Controller
             $programme->year = Input::get('year');
 
             $programme->summary = Input::get('summary');
-            $programme->created_by = $this->data['user']->id;
+            $programme->created_by = Auth::user();
             $programme->honours = Input::get('award');
 
             $programme->school_id = Input::get('school_id');
