@@ -42,30 +42,6 @@ class LDAPUser {
 	}
 
 	/**
-	 * Set an attribute for this user.
-	 *
-	 * @param string Attribute name.
-	 * @param string Value of Attribute
-	 * @return success true|false
-	 */
-	public function setAttribute($attr, $value) {
-		$uid = $this->info['uid'][0];
-		$data = array($attr => $value);
-		return $this->ldap->updateUser($uid, $data);
-	}
-
-	/**
-	 * delete an attribute for this user.
-	 *
-	 * @param string Attribute name.
-	 * @return success true|false
-	 */
-	public function deleteAttribute($attr) {
-		$uid = $this->info['uid'][0];
-		return $this->ldap->removeUserAttribute($uid, $attr);
-	}
-
-	/**
 	 * Get user's username.
 	 * @return string User's username
 	 */
