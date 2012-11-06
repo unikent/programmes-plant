@@ -6,7 +6,7 @@
  * @version 2011.10.05
  */
 
-class KentLDAP {
+class LDAPConnect {
 	// Stores the address of the LDAP server
 	private $ldap_server_address;
 	private $ldap_connection;
@@ -19,7 +19,7 @@ class KentLDAP {
 
 	public static function instance(){
 		if(self::$instance == null){
-			self::$instance = new KentLDAP(Config::get('ldap.host'), Config::get('ldap.port'));
+			self::$instance = new LDAPConnect(Config::get('ldap.host'), Config::get('ldap.port'));
 			self::$instance->setBaseRDN(Config::get('ldap.base_dn'));
 			return self::$instance;
 		}else{

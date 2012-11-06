@@ -2,7 +2,7 @@
 
 Autoloader::map(array(
 	'LDAP' => __DIR__.DS.'ldap.php',
-	'KentLDAP' => __DIR__.DS.'kentldap.php',
+	'LDAPConnect' => __DIR__.DS.'ldapconnect.php',
 	'LDAPUser' => __DIR__.DS.'ldapuser.php'
 ));
 
