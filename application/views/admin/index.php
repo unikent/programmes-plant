@@ -94,20 +94,12 @@
  
 </div>
 </div>
-
-
-
 <ul class='mainlist'>
-<?php
-  $url = URL::current();
-	foreach($programmes as $programme)
-	{
-	  if($programme->subject_id == $subject->id) echo "<li><a href='{$url}/programmes/edit/{$programme->id}'>{$programme->title}</a></li>";
-	}
-?>
+<?php $url = URL::current(); ?>
+<?php foreach ($programmes as $programme) : ?>
+  <li><a href='<?php echo $url;?>/programmes/edit/<?php echo $programme->id; ?>'><?php echo $programme->title; ?></a></li>
+<?php endforeach; ?>
 </ul>
-
-
         </div>
 
       </div>
