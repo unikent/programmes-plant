@@ -15,6 +15,9 @@ Route::group(array('before' => 'auth'), function(){
 	// User managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
 
+	// Automatic routing of RESTful controller
+	Route::controller('roles');
+
 	// Help
 	Route::get('([0-9]{4})/(ug|pg)/help', 'help@index');
 
