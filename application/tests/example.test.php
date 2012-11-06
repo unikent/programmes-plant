@@ -1,6 +1,13 @@
 <?php
 
 class TestExample extends PHPUnit_Framework_TestCase {
+	/**
+	 * Sets up database.
+	 */
+	public static function setUpBeforeClass()
+	{
+		Tests\Helper::migrate();
+	}
 
 	/**
 	 * Test that a given condition is met.
@@ -9,7 +16,7 @@ class TestExample extends PHPUnit_Framework_TestCase {
 	 */
 	public function testSomethingIsTrue()
 	{
-		$this->assertTrue(true);	
+		$this->assertTrue(true);
 	}
 
 }
