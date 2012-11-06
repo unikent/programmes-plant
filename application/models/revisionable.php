@@ -51,7 +51,7 @@ class Revisionable extends Eloquent {
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
           $revision_attributes['status'] = 'draft';
 
-          $revision_attributes['created_by'] = Auth::user()->username;
+          $revision_attributes['created_by'] = Auth::user();
 
           
 
@@ -205,7 +205,7 @@ class Revisionable extends Eloquent {
 
           $this->$key = $revision->$key;
         }
-        $this->published_by = Auth::user()->username;
+        $this->published_by = Auth::user();
         $this->live = 1;
 
         //Save
