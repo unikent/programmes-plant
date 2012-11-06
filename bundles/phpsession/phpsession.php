@@ -25,18 +25,6 @@ class PhpSession extends \Laravel\Session\Drivers\Driver {
 		if(isset($_SESSION[$this->sess_name.$id])){
 			return unserialize($_SESSION[$this->sess_name.$id]);
 		}
-		/*
-		if (file_exists($path = $this->path.$id))
-		{
-			return unserialize(file_get_contents($path));
-		}
-		
-		
-		if (\Laravel\Cookie::has(Cookie::payload))
-		{
-			return unserialize(Crypter::decrypt(\Laravel\Cookie::get(Cookie::payload)));
-		}
-		*/
 	}
 
 	/**
@@ -50,19 +38,6 @@ class PhpSession extends \Laravel\Session\Drivers\Driver {
 	public function save($session, $config, $exists)
 	{
 		$_SESSION[$this->sess_name.$session['id']] = serialize($session);
-		
-		/*
-		public function save($session, $config, $exists)
-		{
-			file_put_contents($this->path.$session['id'], serialize($session), LOCK_EX);
-		}
-	
-		extract($config, EXTR_SKIP);
-
-		$payload = Crypter::encrypt(serialize($session));
-
-		\Laravel\Cookie::put(Cookie::payload, $payload, $lifetime, $path, $domain);
-		*/
 	}
 
 	/**
@@ -74,8 +49,6 @@ class PhpSession extends \Laravel\Session\Drivers\Driver {
 	public function delete($id)
 	{
 		unset($_SESSION[$this->sess_name.$session['id']]);
-	
-		//\Laravel\Cookie::forget(Cookie::payload);
 	}
 
 }
