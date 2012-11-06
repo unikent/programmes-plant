@@ -5,12 +5,12 @@
  * Provides quick methods to get basic user details.
  */
 class LDAPUser {
-
 	private $info;
 	private $ldap;
 
 	/**
-	 * Contructor
+	 * Constructor
+	 * 
 	 * @param array $info A users info.
 	 */
 	public function __construct($info, $ldap) {
@@ -20,6 +20,7 @@ class LDAPUser {
 
 	/**
 	 * Get a user's full/display name.
+	 * 
 	 * @return string Users full/display name
 	 */
 	public function getDisplayName() {
@@ -42,6 +43,7 @@ class LDAPUser {
 
 	/**
 	 * Get user's username.
+	 * 
 	 * @return string User's username
 	 */
 	public function getUserName() {
@@ -49,7 +51,8 @@ class LDAPUser {
 	}
 
 	/**
-	 * Get user's Email.
+	 * Get user's e-mail.
+	 * 
 	 * @return string User's username
 	 */
 	public function getEmail() {
@@ -57,8 +60,9 @@ class LDAPUser {
 	}
 
 	/**
-	 * Is this user a Student
-	 * @return Boolean
+	 * Is this user a Student?
+	 * 
+	 * @return bool True if they are a student.
 	 */
 	public function isStudent(){
 		return ($this->getAccountType()=='Student');
@@ -66,7 +70,8 @@ class LDAPUser {
 
 	/**
 	 * Is this user an Alumni
-	 * @return Boolean
+	 * 
+	 * @return bool True if they are allumni.
 	 */
 	public function isAlumni(){
 		return ($this->getAccountType()=='Alumni');
@@ -74,15 +79,17 @@ class LDAPUser {
 
 	/**
 	 * Is this user a Staff Member
-	 * @return Boolean
+	 * 
+	 * @return bool True if they are staff.
 	 */
 	public function isStaff(){
 		return ($this->getAccountType()=='Staff');
 	}
 
 	/**
-	 * Get user Type.
-	 * @return string User's Type based on there DN
+	 * Get user type.
+	 * 
+	 * @return string User's Type based on there DN.
 	 */
 	public function getAccountType() {
 		if(strpos($this->info['dn'],'ou=students') != false){
