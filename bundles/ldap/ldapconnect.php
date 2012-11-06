@@ -34,22 +34,11 @@ class LDAPConnect {
 	 *
 	 * @param $address string The address of the LDAP server.
 	 */
-	public function __construct($address,$port=389) {
+	public function __construct($address, $port=389) {
 		$this->ldap_server_address = $address;
 		$this->ldap_connection = ldap_connect($address, $port);
 	}
 
-	/**
-	 * Set the base user for LDAP
-	 * 
-	 * @param $user (full dsn)
-	 * @param $password 
-	 */
-	public function setBaseUser($user,$pass){
-		$this->ldap_base_user = $user;
-		$this->ldap_base_pass = $pass;
-	}
-	
 	/**
 	 * Set the base user for RDN
 	 * 
@@ -98,16 +87,6 @@ class LDAPConnect {
 		unset($this->ldap_connection);
 	}
 
-	/**
-	 * Return infomation from a user based on there UID
-	 * 
-	 *  @param $uid
-	 *  @return array
-	 */
-	public function getDetails($username) {
-		return $this->ldap_query($username);
-	}
-
 	public function getError(){
 		if($this->ldap_connection == null) return "no ldap connection";
 
@@ -121,45 +100,19 @@ class LDAPConnect {
 	 * @return Fully qualifed DN of user (or null if they do not exist/cannot be found)
 	 */
 	private function getUserDn($uid){
-		//Bind Request
-		$this->createRequest($this->ldap_connection, $this->ldap_base_user, $this->ldap_base_pass);
+		if (! $this->ldap_connection){
+			return false;
+		}
 		
-		//look em up
+		// Look them up
 		$sr = ldap_search($this->ldap_connection, $this->ldap_base_rdn, "uid={$uid}");
-		//get specific user
+
+		// Get specific user
 		$first = ldap_first_entry($this->ldap_connection, $sr);
-		if($first===false)return null;
+
+		if($first===false) return null;
+
 		return  ldap_get_dn($this->ldap_connection, $first);
-
-	}
-
-	/**
-	 * Ensure base user is set before carrying out dependant operations
-	 * 
-	 * @throws Exception When base user is not set
-	 *
-	 */
-	private function checkBaseUser(){
-		if($this->ldap_base_user =='' || $this->ldap_base_pass =='' || $this->ldap_base_user == null){
-			throw new Exception("Base user has not been defined. A base user is required in order to perform read operations on users.");
-		}
-	}
-
-	/**
-	 * Get a user by username
-	 * 
-	 * @param $username
-	 * @return user as a LDAPUser Object
-	 *
-	 */
-	function getUserObject($username) {
-
-		$details = $this->getDetails($username);
-		if(!isset($details['error'])){
-			return new LDAPUser($details[0], $this);
-		}else{
-			return null;
-		}
 	}
 
 	/**
@@ -199,6 +152,7 @@ class LDAPConnect {
 
 			// Get user string (or return false if user doesn't exist)
 			$user_dn = $this->getUserDn($username);
+
 			if ($user_dn == null) return false;
 
 			// Attempt to Bind 
