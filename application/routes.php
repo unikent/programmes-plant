@@ -12,19 +12,19 @@ Route::group(array('before' => 'auth'), function(){
 	// Index
 	Route::any('([0-9]{4})/(ug|pg)', 'dash@index');
 
-	// User managment
+	// Roles managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
 
 	// Automatic routing of RESTful controller
 	Route::controller('roles');
 
-	// Help
+	// Help page
 	Route::get('([0-9]{4})/(ug|pg)/help', 'help@index');
 
-	// Do Globals
-	Route::any('([0-9]{4})/(ug|pg)/globals', 'globals@index');
-	Route::any('([0-9]{4})/(ug|pg)/globals/(:any?)/(:num?)', 'globals@(:3)');
-	Route::get('([0-9]{4})/(ug|pg)/globals/(:num)/(:any)/(:num)', 'globals@(:4)');
+	// Do global settings
+	Route::any('([0-9]{4})/(ug|pg)/globalsettings', 'globalsettings@index');
+	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any?)/(:num?)', 'globalsettings@(:3)');
+	Route::get('([0-9]{4})/(ug|pg)/globalsettings/(:num)/(:any)/(:num)', 'globalsettings@(:4)');
 
 	// Do Programmes
 	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');

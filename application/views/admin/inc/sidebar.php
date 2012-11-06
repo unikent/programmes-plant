@@ -11,7 +11,7 @@
        <li class="nav-header">Main</li>
        <li class="<?php echo ( URI::segment(3) == '' ? 'active' : false )?>"><a href="<?php echo url($mainpath)?>"><i class="icon-home"></i> Home</a></li>
        
-        <li class="<?php echo ( URI::segment(3) == 'globals' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globals')?>"><i class="icon-book"></i> Global Settings</a></li>
+        <li class="<?php echo ( URI::segment(3) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-book"></i> Global settings</a></li>
        <li class="<?php echo ( URI::segment(3) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-book"></i> Programmes</a></li>
           
 
@@ -36,7 +36,7 @@
        <li class="<?php echo ( URI::segment(1) == 'roles' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'roles')?>"><i class="icon-user"></i> User managment</a></li>
         
      <li class="nav-header">Field Configuration</li>
-     <li class="<?php echo ( URI::segment(4) == 'globals' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/globals')?>"><i class="icon-cog"></i> Globals Config </a></li>
+     <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/globalsettings')?>"><i class="icon-cog"></i> Global fields setup </a></li>
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'meta/programmes')?>"><i class="icon-cog"></i> Programmes Config </a></li>
 
 

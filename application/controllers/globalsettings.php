@@ -1,13 +1,13 @@
 <?php
-class Globals_Controller extends Admin_Controller
-{
+
+class GlobalSettings_Controller extends Admin_Controller {
 
     public $restful = true;
-    public $views = 'globals';
-    protected $model = 'Globals';
+    public $views = 'globalsettings';
+    protected $model = 'GlobalSetting';
 
     /**
-     * Routing for /$year/$type/subjects
+     * Routing for /$year/$type/globalsettings
      * 
      * @param int $year The year.
      * @param string $type Undergraduate or postgraduate.
