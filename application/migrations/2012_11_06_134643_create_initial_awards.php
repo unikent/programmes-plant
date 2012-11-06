@@ -10,19 +10,13 @@ class Create_Initial_Awards {
 	public function up()
 	{
 		// Add award demo data
-		$tmp = new Award;
-
-		$tmp->name = 'BSc (Hons)';
-		$tmp->save();
-		$tmp = new Award;
-		$tmp->name = 'BA (Hons)';
-		$tmp->save();
-		$tmp = new Award;
-		$tmp->name = 'Msc';
-		$tmp->save();
-		$tmp = new Award;
-		$tmp->name = 'MA';
-		$tmp->save();
+		foreach (array('BSc (Hons)', 'BA (Hons)', 'Msc', 'MA') as $award)
+		{
+			$tmp = new Award;
+			$tmp->name = $award;
+			$tmp->save();
+			unset($tmp);
+		}
 	}
 
 	/**
