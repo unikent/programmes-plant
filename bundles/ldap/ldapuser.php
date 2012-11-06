@@ -1,7 +1,7 @@
 <?php
-
 /**
  * Class returned from LDAP::getUserObject().
+ * 
  * Provides quick methods to get basic user details.
  */
 class LDAPUser {
@@ -25,7 +25,6 @@ class LDAPUser {
 	public function getDisplayName() {
 		return $this->info['displayname'][0];
 	}
-
 
 	/**
 	 * Get an Attribute from a user.
