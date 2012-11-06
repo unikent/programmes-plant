@@ -39,7 +39,7 @@ class Revisionable extends Eloquent {
           $revision_attributes = $this->attributes;
           $revision_attributes['id'] = $last + 1;
 
-          $revision_attributes[$this->revison_type.'_id'] = $this->id;
+          $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
           // We don't have published by in revisions
           unset($revision_attributes['published_by']);
@@ -89,7 +89,7 @@ class Revisionable extends Eloquent {
         $revision_attributes = $this->attributes;
         $revision_attributes['id'] = $last + 1;
 
-        $revision_attributes[$this->revison_type.'_id'] = $this->id;
+        $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
         // We don't have published by in revisions
           unset($revision_attributes['published_by']);
@@ -124,7 +124,7 @@ class Revisionable extends Eloquent {
       }
 
       $results = DB::table($this->revision_table)
-        ->where($this->revison_type.'_id', '=', $this->get_key())
+        ->where($this->revision_type.'_id', '=', $this->get_key())
         ->order_by('created_at', 'desc')
         ->get();
 
@@ -214,10 +214,10 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revison_type.'Revision';
+        $model = $this->revision_type.'Revision';
 
         //Unlive previous revsion
-        $model::where($this->revison_type.'_id','=',$this->id)->where('status','!=','draft')->update(array('status'=>'draft'));
+        $model::where($this->revision_type.'_id','=',$this->id)->where('status','!=','draft')->update(array('status'=>'draft'));
 
         //Make new Revsion Live!
         $r = $model::find($revision->id);
@@ -233,12 +233,12 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revison_type.'Revision';
+        $model = $this->revision_type.'Revision';
         //Make current live draft "selected"
-        $model::where($this->revison_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'selected'));
+        $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'selected'));
 
         //Unlive previous revsion
-        //$model::where($this->revison_type.'_id','=',$this->id)->where('status','!=','selected')->update(array('status'=>'draft'));
+        //$model::where($this->revision_type.'_id','=',$this->id)->where('status','!=','selected')->update(array('status'=>'draft'));
 
      }
      public function activate(){
@@ -249,12 +249,12 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revison_type.'Revision';
+        $model = $this->revision_type.'Revision';
         //Make current live draft "selected"
-        $model::where($this->revison_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
+        $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
 
         //Unlive previous revsion
-        //$model::where($this->revison_type.'_id','=',$this->id)->where('status','!=','selected')->update(array('status'=>'draft'));
+        //$model::where($this->revision_type.'_id','=',$this->id)->where('status','!=','selected')->update(array('status'=>'draft'));
 
      }
   
