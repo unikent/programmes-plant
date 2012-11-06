@@ -14,6 +14,8 @@ Route::group(array('before' => 'auth'), function(){
 
 	// User managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
+
+	// Help
 	Route::get('([0-9]{4})/(ug|pg)/help', 'help@index');
 
 	// Do Globals
@@ -32,7 +34,6 @@ Route::group(array('before' => 'auth'), function(){
 
 	Route::any('([0-9]{4})/(ug|pg)/meta/globals', 'globals_meta@index');
 	Route::any('([0-9]{4})/(ug|pg)/meta/globals/(:any?)/(:num?)', 'globals_meta@(:3)');
-
 
 	// Customised routing for campuses
 	Route::any('([0-9]{4})/(ug|pg)/campuses', 'campuses@index');
