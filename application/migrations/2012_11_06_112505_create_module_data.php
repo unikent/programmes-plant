@@ -46,13 +46,13 @@ class Create_Module_Data {
 
 			Schema::table('programmes', function($table){
 				$field = $GLOBALS['field'];
-				$table->drop_colume($field . "_title");
+				$table->drop_column($field . "_title");
 				$table->drop_column($field . "_content");
 			});
 
 			Schema::table('programmes_revisions', function($table){
 				$field = $GLOBALS['field'];
-				$table->drop_colume($field . "_title");
+				$table->drop_column($field . "_title");
 				$table->drop_column($field . "_content");
 			});
 
