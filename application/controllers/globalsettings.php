@@ -57,13 +57,13 @@ class GlobalSettings_Controller extends Admin_Controller {
     	if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $model = $this->model;
-    	$global = $model::find($itm_id);
+    	$globalsetting = $model::find($itm_id);
 
-    	if(!$global) return Redirect::to($year.'/'.$type.'/'.$this->views);
+    	if(!$globalsetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-    	$this->data[$this->views] = $global ;
+    	$this->data[$this->views] = $globalsetting ;
         
-        if ($revisions = $global->get_revisions()) {
+        if ($revisions = $globalsetting->get_revisions()) {
             $this->data['revisions'] =  $revisions;
         }
 
@@ -154,7 +154,7 @@ class GlobalSettings_Controller extends Admin_Controller {
 
 
     private function getSubjectMeta(){
-        $model = 'GlobalSettingField';
+        $model = 'GlobalSettingsField';
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
 

@@ -1,26 +1,26 @@
 <?php
 
-class Create_Globalsettings {
+class Create_GlobalSettings {
 
 	/**
-	 * Create the globalsettings tables.
+	 * Create the global_settings tables.
 	 * 
 	 * This table stores global settings such as institution name
 	 * 
 	 * There are three tables:
 	 * 
-	 * 1. the globalsettings table that stores the current revision of the global variable.
+	 * 1. the global_settings table that stores the current revision of the global variable.
 	 * 
-	 * 2. the globalsettings_fields table. This stores additional fields that can be added to the globalsettings table. It is polled from time to time to produce new columns in the globalsettings table.
+	 * 2. the global_settings_fields table. This stores additional fields that can be added to the global_settings table. It is polled from time to time to produce new columns in the global_settings table.
 	 * 
-	 * 3. the globalsettings_revisions table. This stores revisions if the globalsettings table. It can also store revisions of all additional fields added.
+	 * 3. the global_settings_revisions table. This stores revisions if the global_settings table. It can also store revisions of all additional fields added.
 	 *
 	 * @return void
 	 */
 	public function up()
 	{
-		// Create the globalsettings table
-		Schema::table('globalsettings', function($table){
+		// Create the global_settings table
+		Schema::table('global_settings', function($table){
 			$table->create();
 			$table->increments('id');
 			$table->string('year',4);
@@ -30,11 +30,11 @@ class Create_Globalsettings {
 			$table->timestamps();
 		});
 
-		// Create the globalsettings_revisions table
-		Schema::table('globalsettings_revisions', function($table){
+		// Create the global_settings_revisions table
+		Schema::table('global_settings_revisions', function($table){
 			$table->create();
 			$table->increments('id');
-			$table->integer("global_id");
+			$table->integer("global_setting_id");
 			$table->string('year', 4);
 			$table->string('institution', 255);
 			$table->string('created_by', 10);
@@ -43,8 +43,8 @@ class Create_Globalsettings {
 
 		});
 
-		// Create the globalsettings_fields table
-		Schema::table('globalsettings_fields', function($table){
+		// Create the global_settings_fields table
+		Schema::table('global_settings_fields', function($table){
 			$table->create();
     		$table->increments('id');
     		$table->string('field_name');
@@ -61,10 +61,10 @@ class Create_Globalsettings {
 		});
 
 		// Add some fields in
-		$this->add_field('GlobalSetting', 'globalsettings', 'KIS instition id', 'text', '', '');
-		$this->add_field('GlobalSetting', 'globalsettings', 'Apply content', 'textarea', '', '');
-		$this->add_field('GlobalSetting', 'globalsettings', 'Fees content', 'textarea', '', '');
-		$this->add_field('GlobalSetting', 'globalsettings', 'Additional entry requirement information', 'textarea', '', '');
+		$this->add_field('GlobalSettingsField', 'global_settings', 'KIS instition id', 'text', '', '');
+		$this->add_field('GlobalSettingsField', 'global_settings', 'Apply content', 'textarea', '', '');
+		$this->add_field('GlobalSettingsField', 'global_settings', 'Fees content', 'textarea', '', '');
+		$this->add_field('GlobalSettingsField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
 	}
 
 	/**
@@ -74,30 +74,29 @@ class Create_Globalsettings {
 	 */
 	public function down()
 	{
-		Schema::drop('globalsettings');
-		Schema::drop('globalsettings_fields');
-		Schema::drop('globalsettings_revisions');
+		Schema::drop('global_settings');
+		Schema::drop('global_settings_fields');
+		Schema::drop('global_settings_revisions');
 	}
 
 	/**
 	 * Adds a field to a fields table.
 	 * 
-	 * @param string $modelname the class of object we are creating. eg. 'GlobalSetting' or 'Programme'
+	 * @param string $modelname the class of object we are creating. eg. 'GlobalSettingsField' or 'Programme_Field'
 	 * @param string $tablename the table name we're creating a field for 
 	 * @param string $title the title of the field.
 	 * @param string $type the type of field.
 	 * @param string $hints the hints for the field.
 	 * @param string $options the options, particularly used when the field type is select.
 	 */
-	private function add_field($modelname, $tablename, $title, $type, $hints, $options)
+	public function add_field($modelname, $tablename, $title, $type, $hints, $options)
 	{
         // define the column name
     	$colname = Str::slug($title, '_');
     	
     	// set up the field object and save it to the _fields table
-    	// eg for a GlobalSetting object we set up the GlobalSetting_Field object and save it to the globalsetting_field table
-    	$model = $modelname.'Field';
-    	$field_object = new $model;
+    	// eg for a Global_Setting object we set up the GlobalSettingsField object and save it to the global_settings_fields table
+    	$field_object = new $modelname;
         $field_object->field_name = $title;
         $field_object->field_type = $type;
         $field_object->field_description = $hints;
@@ -110,7 +109,7 @@ class Create_Globalsettings {
     	$field_object->colname = $colname;
     	$field_object->save();
 		
-		// modify the schema for the main table eg globalsettings
+		// modify the schema for the main table eg global_settings
 		// by default columns are varchars unless they've been specified as textareas
 		Schema::table($tablename, function($table) use ($colname, $type) {
 		
@@ -125,7 +124,7 @@ class Create_Globalsettings {
 				
 		});
 		
-		// modify the schema for the revisions table eg globalsettings_revisions
+		// modify the schema for the revisions table eg global_settings_revisions
 		// by default columns are varchars unless they've been specified as textareas
 		Schema::table($tablename.'_revisions', function($table) use ($colname, $type) {
 		

@@ -14,7 +14,7 @@
         </div> <!-- /Sidebar -->
 
         <div class="span9">
-          <h1><?php echo  URI::segment(1) ?> <?php echo  __('globals.' . URI::segment(2)) ?> Globals</h1>
+          <h1><?php echo  URI::segment(1) ?> <?php echo  __('globalsettings.' . URI::segment(2)) ?> Global settings</h1>
           <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('subjects.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
           <?php echo Messages::get_html()?>
           <div class="btn-group right" >
