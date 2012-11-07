@@ -1,1 +1,0 @@
-Before sending a pull request its best to ensure the following standards are met.
