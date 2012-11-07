@@ -1,12 +1,13 @@
 <?php
-
+/**
+ * A very simple and generic LDAP Auth method for Laravel.
+ */
 Autoloader::map(array(
-	'LDAP' => __DIR__.DS.'ldap.php',
-	'KentLDAP' => __DIR__.DS.'kentldap.php',
-	'LDAPUser' => __DIR__.DS.'ldapuser.php'
+    'LDAP' => __DIR__.DS.'ldap.php',
+    'LDAPConnect' => __DIR__.DS.'ldapconnect.php',
+    'LDAPUser' => __DIR__.DS.'ldapuser.php'
 ));
 
-Auth::extend('ldap', function()
-{
+Auth::extend('ldap', function() {
     return new LDAP;
 });
