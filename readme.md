@@ -25,7 +25,7 @@ The following are instructions on running the Programmes Plant on a local machin
 
 8. Point a browser at the public folder.
 
-9 We're done here!
+9. We're done here!
 
 ## Testing
 
