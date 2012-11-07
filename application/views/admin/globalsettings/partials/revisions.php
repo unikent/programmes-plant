@@ -18,8 +18,8 @@
                 <td><?php echo ($revision->created_at); /*echo Date::forge($revision->created_at)->format('%A, %e %B %Y at %l:%M %p');*/ ?></td>
                 <td><?php echo $revision->created_by ?></td>
                 <td>
-                  <a class="promote_toggler btn btn-warning" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/globals.' . $subject->id . '@promote', array($revision->id)) ?>">Promote Revision</a>
-                  <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/globals.' . $subject->id . '@difference', array($revision->id)) ?>">Difference</a>
+                  <a class="promote_toggler btn btn-warning" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/globalsettings.' . $subject->id . '@promote', array($revision->id)) ?>">Promote Revision</a>
+                  <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/globalsettings.' . $subject->id . '@difference', array($revision->id)) ?>">Difference</a>
                 </td>
               </tr>
             <?php endforeach; ?>
