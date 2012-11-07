@@ -103,7 +103,7 @@ class GlobalSettings_Controller extends Admin_Controller {
     {
 
        
-            $subject = new Globals;
+            $subject = new GlobalSetting;
             $subject->year = Input::get('year');
             $subject->institution = Input::get('institution');
         
@@ -132,7 +132,7 @@ class GlobalSettings_Controller extends Admin_Controller {
     public function post_edit($year, $type)
     {
         
-            $subject = Globals::find(Input::get('global_id'));
+            $subject = GlobalSetting::find(Input::get('global_id'));
 
             $subject->year = Input::get('year');
             $subject->institution = Input::get('institution');
@@ -154,7 +154,7 @@ class GlobalSettings_Controller extends Admin_Controller {
 
 
     private function getSubjectMeta(){
-        $model = 'GlobalMeta';
+        $model = 'GlobalSettingField';
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
 
@@ -225,7 +225,7 @@ class GlobalSettings_Controller extends Admin_Controller {
         if(!$subject_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         // Get revision specified
-        $subject = Globals::find($subject_id);
+        $subject = GlobalSetting::find($subject_id);
 
         if (!$subject) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -253,7 +253,7 @@ class GlobalSettings_Controller extends Admin_Controller {
         $this->data['diff'] = $diff;
         $this->data['new'] = $revision_for_diff;
         $this->data['old'] = $subject_attributes;
-        $this->data['attributes'] = Globals::getAttributesList();
+        $this->data['attributes'] = GlobalSetting::getAttributesList();
 
         $this->data['revision'] = $revision;
         $this->data['subject'] = $subject;
