@@ -1,0 +1,11 @@
+{
+    "require": {
+        "phpunit/phpunit": "*"
+    },
+
+    "minimum-stability": "dev",
+    
+    "config": {
+        "bin-dir": "bin/"
+    }
+}

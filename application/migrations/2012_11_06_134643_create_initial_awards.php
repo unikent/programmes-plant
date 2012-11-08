@@ -15,7 +15,6 @@ class Create_Initial_Awards {
 			$tmp = new Award;
 			$tmp->name = $award;
 			$tmp->save();
-			unset($tmp);
 		}
 	}
 
