@@ -143,7 +143,7 @@
  <fieldset>
             <legend>Programme Information</legend>
 
-            <?php //echo View::make('admin.inc.partials.formFields', array('field_meta' => $field_meta, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
+            <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
 
        </fieldset>
         <fieldset>
