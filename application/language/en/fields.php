@@ -27,10 +27,27 @@ return array(
     'table_header_view' => 'View',
     
     'btn' => array(
-        'new' => 'New field',
+        'new' => 'Add field',
         'edit' => 'Edit',
         'deactivate' => 'Deactivate',
         'reactivate' => 'Reactivate',
+    ),
+    
+    // used in the edit/add form
+    'form' => array(
+        'globalsettings' => 'global settings',
+        'programmes' => 'programmes',
+        'add_title' => 'Add new :field_name field',
+        'edit_title' => 'Edit :field_name field',
+        'label_title' => 'Title',
+        'label_type' => 'Type',
+        'label_description' => 'Description',
+        'label_start' => 'Initial value',
+        'label_placeholdertext' => 'Placeholder text',
+        'btn' => array(
+            'cancel' => 'Cancel',
+            'save' => 'Save',
+        ),
     ),
     
 );

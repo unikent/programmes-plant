@@ -1,5 +1,5 @@
 <?php echo View::make('admin.inc.meta')->render(); ?>
-    <title>Courses Dashboard</title>
+    <title>Programme Plant - <?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></title>
   </head>
   <body>
     <?php echo View::make('admin.inc.header')->render()?>
