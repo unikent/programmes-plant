@@ -33,15 +33,15 @@
                   <td><?php echo $subject->field_name ?></td>
                   <td><?php echo $subject->field_type ?></td>
                   <td>
-    
-                    <a class="btn btn-primary" href="<?php echo url('fields/'.$field_type.'/edit/'.$subject->id);?>"><?php echo __('fields.btn.edit'); ?></a> 
-    
+
+                    <a class="btn btn-primary" href="<?php echo url('fields/'.$field_type.'/edit/'.$subject->id);?>"><?php echo __('fields.btn.edit'); ?></a>
+
                     <?php if($subject->active == 1 ): ?>
                       <a class="btn btn-danger" href='<?php echo url('fields/'.$field_type.'/deactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.deactivate'); ?></a>
                     <?php else: ?>
                       <a class="btn btn-success" href='<?php echo url('fields/'.$field_type.'/reactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.reactivate'); ?></a>
                     <?php endif; ?>
-    
+
                   </td>
                 </tr>
               <?php endforeach; ?>
