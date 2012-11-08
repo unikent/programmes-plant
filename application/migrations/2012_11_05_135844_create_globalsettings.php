@@ -61,10 +61,10 @@ class Create_GlobalSettings {
 		});
 
 		// Add some fields in
-		$this->add_field('GlobalSettingsField', 'global_settings', 'KIS institution id', 'text', '', '');
-		$this->add_field('GlobalSettingsField', 'global_settings', 'Apply content', 'textarea', '', '');
-		$this->add_field('GlobalSettingsField', 'global_settings', 'Fees content', 'textarea', '', '');
-		$this->add_field('GlobalSettingsField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'KIS institution id', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Apply content', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Fees content', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Create_GlobalSettings {
 	/**
 	 * Adds a field to a fields table.
 	 * 
-	 * @param string $modelname the class of object we are creating. eg. 'GlobalSettingsField' or 'Programme_Field'
+	 * @param string $modelname the class of object we are creating. eg. 'GlobalSettingField' or 'Programme_Field'
 	 * @param string $tablename the table name we're creating a field for 
 	 * @param string $title the title of the field.
 	 * @param string $type the type of field.
@@ -95,7 +95,7 @@ class Create_GlobalSettings {
     	$colname = Str::slug($title, '_');
     	
     	// set up the field object and save it to the _fields table
-    	// eg for a Global_Setting object we set up the GlobalSettingsField object and save it to the global_settings_fields table
+    	// eg for a Global_Setting object we set up the GlobalSettingField object and save it to the global_settings_fields table
     	$field_object = new $modelname;
         $field_object->field_name = $title;
         $field_object->field_type = $type;

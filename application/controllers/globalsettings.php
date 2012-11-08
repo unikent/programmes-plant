@@ -132,7 +132,7 @@ class GlobalSettings_Controller extends Admin_Controller
 
     private function get_fields()
     {
-        $model = 'GlobalSettingsField';
+        $model = 'GlobalSettingField';
 
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
@@ -145,21 +145,21 @@ class GlobalSettings_Controller extends Admin_Controller
      * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
      * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
      */
-    public function get_promote($year, $type, $programme_id = false, $revision_id = false)
+    public function get_promote($year, $type, $revision_id = false)
     {
         // Check to see we have what is required.
-        if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        //if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         // Get revision specified
-        $programme = Programme::find($programme_id);
+        $globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
-        if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        if (!$globalsetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $revision = $programme->find_revision($revision_id);
+        $revision = $globalsetting->find_revision($revision_id);
 
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $programme->useRevision($revision);
+        $globalsetting->useRevision($revision);
 
         /*
         // Copy revision into the live table
@@ -181,7 +181,7 @@ class GlobalSettings_Controller extends Admin_Controller
         // Save.
         $subject->save();
     */
-        Messages::add('success', "Promoted revision of $revision->title created at $revision->updated_at to live version.");
+        Messages::add('success', "Promoted revision created at $revision->updated_at to live version.");
 
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
     }
@@ -194,43 +194,42 @@ class GlobalSettings_Controller extends Admin_Controller
      * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
      * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
      */
-    public function get_difference($year, $type, $subject_id = false, $revision_id = false)
+    public function get_difference($year, $type, $revision_id = false)
     {
-        if(!$subject_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         // Get revision specified
-        $subject = GlobalSetting::find($subject_id);
+        $globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
-        if (!$subject) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        if (!$globalsetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $revision = $subject->find_revision($revision_id);
-
+        $revision = $globalsetting->find_revision($revision_id);
+        
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $subject_attributes = $subject->attributes;
+        $revision_attributes = $globalsetting->attributes;
         $revision_for_diff = (array) $revision;
 
         // Ignore these fields which will always change
         foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
             unset($revision_for_diff[$ignore]);
-            unset($subject_attributes[$ignore]);
+            unset($revision_attributes[$ignore]);
         }
 
-        $differences = array_diff_assoc($subject_attributes, $revision_for_diff);
+        $differences = array_diff_assoc($revision_attributes, $revision_for_diff);
 
         $diff = array();
 
         foreach ($differences as $field => $value) {
-            $diff[$field] = SimpleDiff::htmlDiff($subject_attributes[$field], $revision_for_diff[$field]);
+            $diff[$field] = SimpleDiff::htmlDiff($revision_attributes[$field], $revision_for_diff[$field]);
         }
 
         $this->data['diff'] = $diff;
         $this->data['new'] = $revision_for_diff;
-        $this->data['old'] = $subject_attributes;
+        $this->data['old'] = $revision_attributes;
         $this->data['attributes'] = GlobalSetting::getAttributesList();
 
         $this->data['revision'] = $revision;
-        $this->data['subject'] = $subject;
+        $this->data['globalsetting'] = $globalsetting;
 
         return View::make('admin.'.$this->views.'.difference',$this->data);
     }
