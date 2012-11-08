@@ -1,26 +1,26 @@
 <?php
-class Meta_Controller extends Admin_Controller
+class Fields_Controller extends Admin_Controller
 {
 
     public $restful = true;
-    public $views = 'meta';
+    public $views = 'fields';
 
 
     /**
-     * Display Edit meta index page.
+     * Display the fields index page.
      * 
      */
     public function get_index()
     {
-        $model = $this->table.'Meta';
+        $model = $this->model;
         $fields = $model::order_by('id','asc')->get();
        
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'meta_type' => $this->table));
+        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
     }
 
     public function get_add()
     {
-        return View::make('admin.'.$this->views.'.form',array('meta_type'=>$this->table));
+        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
     }
 
     public function get_edit($year,$type,$id)
@@ -28,11 +28,11 @@ class Meta_Controller extends Admin_Controller
 
         $data['id'] = $id;
 
-        $model = $this->table.'Meta';
+        $model = $this->model;
         $data['values'] =  $model::find($id);
-        $data['meta_type'] = $this->table;
+        $data['field_type'] = $this->view;
 
-        return View::make('admin.'.$this->views.'.form',$data);
+        return View::make('admin.fields.form',$data);
     }
 
 
@@ -46,7 +46,7 @@ class Meta_Controller extends Admin_Controller
 
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
-            return Redirect::to($this->table.'s_meta/add')->with_input();
+            return Redirect::to($this->view.'fields/add')->with_input();
         }
         else {
 
@@ -54,7 +54,7 @@ class Meta_Controller extends Admin_Controller
 
 
             if(Input::get('id')){
-                $model = $this->table.'Meta';
+                $model = $this->model;
                 $subject = $model::find(Input::get('id'));
                 $subject->field_name = Input::get('title');
                 $subject->field_description = Input::get('description');
@@ -72,8 +72,8 @@ class Meta_Controller extends Admin_Controller
                 if($oldtype != Input::get('type')){
                     $type_str = 'varchar(255)';
                     if($subject->field_type=='textarea') $type_str = 'TEXT';
-                    DB::statement("alter table {$this->table}s MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::statement("alter table {$this->table}s_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");  
+                    DB::statement("alter table {$this->table} MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
+                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");  
                 }
                
             }else{
@@ -81,7 +81,7 @@ class Meta_Controller extends Admin_Controller
                 $init_val = Input::get('initval');
 
                 //Add Row
-                $model = $this->table.'Meta';
+                $model = $this->model;
                 $subject = new $model;
                 $subject->field_name = Input::get('title');
                 $subject->field_type = Input::get('type');
@@ -112,18 +112,19 @@ class Meta_Controller extends Admin_Controller
 
 
             Messages::add('success','Row added to schema');
-            return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
+            //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
+            return Redirect::to('/2013/ug/fields/'.$this->view);
         }
     }
 
     private function redirect($action){
-        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/meta/'.$this->table.'s/'.$action);
+        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
     }
 
 
     private function updateSchema($colname, $init_val, $type){
         //Adjust Tables
-        Schema::table($this->table.'s', function($table) use ($colname, $init_val, $type){
+        Schema::table($this->table, function($table) use ($colname, $init_val, $type){
             if($type=='textarea'){
                 $table->text($colname);
             }else{
@@ -131,7 +132,7 @@ class Meta_Controller extends Admin_Controller
             }
                     
         });
-        Schema::table($this->table.'s_revisions', function($table) use ($colname, $init_val, $type){
+        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type){
             if($type=='textarea'){
                 $table->text($colname);
             }else{

@@ -60,7 +60,7 @@ Laravel\Autoloader::$aliases = $aliases;
 */
 
 Autoloader::map(array(
-	'Meta_Controller' => path('app').'controllers/meta.php',
+	'Fields_Controller' => path('app').'controllers/fields.php',
 	'Admin_Controller' => path('app').'controllers/admin.php',
 	'Base_Controller' => path('app').'controllers/base.php',
 	'WideImage' => path('app').'libraries/wideimage/WideImage.php',

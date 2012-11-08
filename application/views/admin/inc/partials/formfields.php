@@ -5,7 +5,7 @@
 
 
  */
-  foreach($field_meta as $field) : 
+  foreach($fields as $field) : 
         //Get Column Name
         $col = $field->colname;
         //get field type

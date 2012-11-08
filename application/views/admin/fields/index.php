@@ -1,15 +1,12 @@
 <?php echo View::make('admin.inc.meta')->render();
 
-$Short_url = URI::segment(1).'/'.URI::segment(2) .'/meta/'.$meta_type.'s';
+$short_url = URI::segment(1).'/'.URI::segment(2) .'/fields/'.'globalsettings';
 
 ?>
     <title>Courses Dashboard</title>
   </head>
   <body>
     <?php echo View::make('admin.inc.header')->render()?>
-    <?php
-     $meta_type .='s';
-    ?>
     <div class="container">
 
       <div class="row-fluid">
@@ -21,11 +18,11 @@ $Short_url = URI::segment(1).'/'.URI::segment(2) .'/meta/'.$meta_type.'s';
         </div> <!-- /Sidebar -->
 
         <div class="span9">
-          <h1><?php echo ucfirst($meta_type) ?> Field Configuration</h1>
-          <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('subjects.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
-          Please take care when editing these options as they can have a signifcant impact on the functionalty of the Programmes Factory.
+          <h1><?php echo $field_type ?> field configuration</h1>
+          <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
+          Please take care when editing these options as they can have a signifcant impact on the functionalty of the programmes plant.
           <div style="margin-top:20px; margin-bottom:20px">
-            <a href="<?php echo url($Short_url.'/add')?>" class="btn btn-primary">New Field</a>
+            <a href="<?php echo url($short_url.'/add')?>" class="btn btn-primary">New Field</a>
           </div>
           <?php if(true) : ?>
               <table class="table table-striped table-bordered table-condensed" width="100%">
@@ -44,12 +41,12 @@ $Short_url = URI::segment(1).'/'.URI::segment(2) .'/meta/'.$meta_type.'s';
                    <td>N/A</td>
                   <td>
 
-                    <a class="btn btn-primary" href="<?php echo url($Short_url.'/edit/'.$subject->id);?>">Change</a> 
+                    <a class="btn btn-primary" href="<?php echo url($short_url.'/edit/'.$subject->id);?>">Change</a> 
 
                     <?php if($subject->active == 1 ): ?>
-                      <a class="btn btn-danger" href='<?php echo url($Short_url.'/deactivate');?>?id=<?php echo $subject->id;?>'>Deactivate</a>
+                      <a class="btn btn-danger" href='<?php echo url($short_url.'/deactivate');?>?id=<?php echo $subject->id;?>'>Deactivate</a>
                     <?php else: ?>
-                      <a class="btn btn-success" href='<?php echo url($Short_url.'/reactivate');?>?id=<?php echo $subject->id;?>'>Reactivate</a>
+                      <a class="btn btn-success" href='<?php echo url($short_url.'/reactivate');?>?id=<?php echo $subject->id;?>'>Reactivate</a>
                     <?php endif; ?>
 
                   </td>

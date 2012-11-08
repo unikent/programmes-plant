@@ -14,16 +14,13 @@
         </div> <!-- /Sidebar -->
 
         <div class="span9 crud">
-          <h1><?php echo ( $create ? 'Global Settings' : 'Global Settings' )?> <?php echo URI::segment(1)?></h1>
+          <h1>Global settings - <?php echo URI::segment(1)?></h1>
          
           <?php echo Messages::get_html()?>
           <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
-          <?php if(!$create): ?> 
-            <?php echo  Form::hidden('global_id', $globalsettings->id); ?>
-          <?php endif; ?>
            
           <fieldset>
-            <legend>Basic Information</legend>
+            <legend>Basic information</legend>
             
             <div class="control-group">
               <?php echo Form::label('year', "Year",array('class'=>'control-label'))?>
@@ -44,14 +41,13 @@
   
 </fieldset>
  <fieldset>
-            <legend>Global Settings</legend>
+            <legend>Global settings</legend>
 
-            <?php echo View::make('admin.inc.partials.formFields', array('field_meta' => $field_meta, 'subject' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
+            <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
 
 
        </fieldset>     
           <div class="form-actions">
-            <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/subjects')?>">Go Back</a>
             <input type="submit" class="btn btn-primary" value="Save" />
           </div>
           <?php if (isset($revisions)) : ?>

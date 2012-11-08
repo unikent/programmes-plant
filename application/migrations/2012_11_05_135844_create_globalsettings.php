@@ -61,7 +61,7 @@ class Create_GlobalSettings {
 		});
 
 		// Add some fields in
-		$this->add_field('GlobalSettingsField', 'global_settings', 'KIS instition id', 'text', '', '');
+		$this->add_field('GlobalSettingsField', 'global_settings', 'KIS institution id', 'text', '', '');
 		$this->add_field('GlobalSettingsField', 'global_settings', 'Apply content', 'textarea', '', '');
 		$this->add_field('GlobalSettingsField', 'global_settings', 'Fees content', 'textarea', '', '');
 		$this->add_field('GlobalSettingsField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');

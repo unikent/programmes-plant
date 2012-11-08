@@ -11,9 +11,9 @@ class Create_Programmes {
 	 * 
 	 * First the programmes table stores the current revision of the programmes.
 	 * 
-	 * Second the programmes_meta stores addition field and items. This is occasionally polled in order to produce new columns for the programmes table. This can therefore be an arbitary data store.
+	 * Second the programme_fields stores addition field and items. This is occasionally polled in order to produce new columns for the programmes table. This can therefore be an arbitary data store.
 	 * 
-	 * Third the programmes_revisions table. This stores revisions of the programmes table to allow rolling back and forward. It also stores all meta fields, even when they are removed from activity on the front end. 
+	 * Third the programme_revisions table. This stores revisions of the programmes table to allow rolling back and forward. It also stores all fields, even when they are removed from activity on the front end. 
 	 *
 	 * @return void
 	 */
@@ -44,7 +44,7 @@ class Create_Programmes {
 
 
 		// Add programmes revisions
-		Schema::create('programmes_revisions', function($table){
+		Schema::create('programme_revisions', function($table){
     		$table->increments('id');
     		$table->timestamps();
     		$table->string('year', 4);
@@ -66,8 +66,8 @@ class Create_Programmes {
 
 		});
 
-		// Add programmes_meta
-		Schema::create('programmes_meta', function($table){
+		// Add programme_fields
+		Schema::create('programme_fields', function($table){
 			$table->increments('id');
 
 			$table->string('field_name');
@@ -92,8 +92,8 @@ class Create_Programmes {
 	public function down()
 	{
 		Schema::drop('programmes');
-		Schema::drop('programmes_revisions');
-		Schema::drop('programmes_meta');
+		Schema::drop('programme_revisions');
+		Schema::drop('programme_fields');
 	}
 
 }

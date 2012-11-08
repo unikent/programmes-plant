@@ -14,7 +14,7 @@ class Add_Programme_Subject_Leaflets{
 			$table->string('leaflet_url', 255);
 			$table->text('additional_leaflet_urls');
 		});
-		Schema::table('programmes_revisions', function($table){
+		Schema::table('programme_revisions', function($table){
 			$table->string('leaflet_url', 255);
 			$table->text('additional_leaflet_urls');
 		});
@@ -32,7 +32,7 @@ class Add_Programme_Subject_Leaflets{
 		Schema::table('programmes', function($table){	
 			$table->drop_column(array('leaflet_url', 'additional_leaflet_urls'));
 		});
-		Schema::table('programmes_revisions', function($table){
+		Schema::table('programme_revisions', function($table){
 			$table->drop_column(array('leaflet_url', 'additional_leaflet_urls'));
 		});
 
