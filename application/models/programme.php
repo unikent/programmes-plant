@@ -1,5 +1,6 @@
 <?php
-class Programme extends Revisionable {
+class programme extends Revisionable
+{
      public static $timestamps = true;
 
      public $revision = false;
