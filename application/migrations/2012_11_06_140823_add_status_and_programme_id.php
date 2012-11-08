@@ -9,7 +9,7 @@ class Add_Status_And_Programme_Id {
 	 */
 	public function up()
 	{
-		Schema::table('programme_revisions', function($table){
+		Schema::table('programmes_revisions', function($table){
 			$table->string("status");
 			$table->integer("programme_id");
 		});
@@ -22,7 +22,7 @@ class Add_Status_And_Programme_Id {
 	 */
 	public function down()
 	{
-		Schema::table('programme_revisions', function($table){
+		Schema::table('programmes_revisions', function($table){
 			$table->drop_column("status");
 			$table->drop_column("programme_id");
 		});

@@ -5,5 +5,5 @@ class Programme extends Revisionable {
      public $revision = false;
 
      protected $revision_type = 'programme';
-     protected $revision_table = 'programme_revisions';
+     protected $revision_table = 'programmes_revisions';
 }

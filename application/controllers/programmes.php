@@ -316,7 +316,7 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_changes()
     {
-       $this->data['revisions'] = DB::table('programme_revisions')
+       $this->data['revisions'] = DB::table('programmes_revisions')
             ->where('status', '=', 'pending')
             ->get();
         return View::make('admin.changes.index', $this->data);

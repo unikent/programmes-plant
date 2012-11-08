@@ -1,6 +1,6 @@
 <?php echo View::make('admin.inc.meta')->render();
 
-$short_url = URI::segment(1).'/'.URI::segment(2) .'/fields/'.'globalsettings';
+$short_url = URI::segment(1).'/'.URI::segment(2) .'/fields/'.$field_type;
 
 ?>
     <title>Courses Dashboard</title>
