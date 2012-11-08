@@ -36,8 +36,8 @@
        <li class="<?php echo ( URI::segment(1) == 'roles' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'roles')?>"><i class="icon-user"></i> User managment</a></li>
         
      <li class="nav-header">Field Configuration</li>
-     <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'fields/globalsettings')?>"><i class="icon-cog"></i> Global fields setup </a></li>
-       <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'fields/programmes')?>"><i class="icon-cog"></i> Programmes Config </a></li>
+     <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url('fields/globalsettings')?>"><i class="icon-cog"></i> Global settings fields </a></li>
+       <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url('fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 
 
        <li class="divider"></li>

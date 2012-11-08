@@ -23,7 +23,7 @@ class Fields_Controller extends Admin_Controller
         return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
     }
 
-    public function get_edit($year,$type,$id)
+    public function get_edit($id)
     {
 
         $data['id'] = $id;
