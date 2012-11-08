@@ -33,13 +33,13 @@ Route::group(array('before' => 'auth'), function(){
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
 
 	// Access fields systems
-	Route::any('([0-9]{4})/(ug|pg)/fields/programmes', 'programmesfields@index');
-	Route::any('([0-9]{4})/(ug|pg)/fields/programmes/(:any?)', 'programmesfields@(:3)');
-	Route::any('([0-9]{4})/(ug|pg)/fields/programmes/(:any?)/(:num?)', 'programmesfields@(:3)');
+	Route::any('fields/programmes', 'programmesfields@index');
+	Route::any('fields/programmes/(:any?)', 'programmesfields@(:1)');
+	Route::any('fields/programmes/(:any?)/(:num?)', 'programmesfields@(:1)');
 
-	Route::any('([0-9]{4})/(ug|pg)/fields/globalsettings', 'globalsettingsfields@index');
-	Route::any('([0-9]{4})/(ug|pg)/fields/globalsettings/(:any?)', 'globalsettingsfields@(:3)');
-	Route::any('([0-9]{4})/(ug|pg)/fields/globalsettings/(:any?)/(:num?)', 'globalsettingsfields@(:3)');
+	Route::any('fields/globalsettings', 'globalsettingsfields@index');
+	Route::any('fields/globalsettings/(:any?)', 'globalsettingsfields@(:1)');
+	Route::any('fields/globalsettings/(:any?)/(:num?)', 'globalsettingsfields@(:1)');
 
 	// Customised routing for campuses
 	Route::any('([0-9]{4})/(ug|pg)/campuses', 'campuses@index');

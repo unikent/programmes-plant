@@ -113,7 +113,7 @@ class Fields_Controller extends Admin_Controller
 
             Messages::add('success','Row added to schema');
             //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
-            return Redirect::to('/2013/ug/fields/'.$this->view);
+            return Redirect::to('fields/'.$this->view);
         }
     }
 
@@ -144,17 +144,19 @@ class Fields_Controller extends Admin_Controller
 
     public function get_deactivate()
     {
-        $row = SubjectMeta::find(Input::get('id'));
+    		$model = $this->model;
+        $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
-        return $this->redirect('index');
+        return Redirect::to('fields/'.$this->view);
     }
 
      public function get_reactivate()
     {
-        $row = SubjectMeta::find(Input::get('id'));
+    	$model = $this->model;
+        $row = $model::find(Input::get('id'));
         $row->active = 1;
         $row->save();
-        return $this->redirect('index');
+        return Redirect::to('fields/'.$this->view);
     }
 }
