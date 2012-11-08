@@ -1,9 +1,9 @@
 <?php
 
-class GlobalSettingsFields_Controller extends Fields_Controller
+class GlobalSettingFields_Controller extends Fields_Controller
 {
     public $table = 'global_settings';
     public $view = 'globalsettings';
-    protected $model = 'GlobalSettingsField';
+    protected $model = 'GlobalSettingField';
 
 }

@@ -1,5 +1,5 @@
 <?php
-class programmerevision extends Eloquent
+class ProgrammeRevision extends Eloquent
 {
     public static $table = 'programmes_revisions';
 
