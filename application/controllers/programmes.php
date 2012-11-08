@@ -76,7 +76,7 @@ class Programmes_Controller extends Admin_Controller
         }
 
         $this->data['programme_list'] = Programme::getAsList($year);
-
+        $this->data['fields'] = $this->getProgrammeFields();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();

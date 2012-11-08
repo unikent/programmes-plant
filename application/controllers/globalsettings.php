@@ -33,8 +33,7 @@ class GlobalSettings_Controller extends Admin_Controller
     {
 
         $this->data['fields'] = $this->get_fields();
-
-        //print_r( $this->data['subjects']);
+        
         $this->data['create'] = true;
 
         return View::make('admin.'.$this->views.'.form',$this->data);
@@ -49,9 +48,6 @@ class GlobalSettings_Controller extends Admin_Controller
      */
     public function get_edit($year, $type)
     {
-
-        // Do our checks to make sure things are in place
-        //if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $model = $this->model;
         $globalsetting = $model::where('year', '=', $year)->first();
@@ -147,8 +143,6 @@ class GlobalSettings_Controller extends Admin_Controller
      */
     public function get_promote($year, $type, $revision_id = false)
     {
-        // Check to see we have what is required.
-        //if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         // Get revision specified
         $globalsetting = GlobalSetting::where('year', '=', $year)->first();
@@ -160,27 +154,7 @@ class GlobalSettings_Controller extends Admin_Controller
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $globalsetting->useRevision($revision);
-
-        /*
-        // Copy revision into the live table
-        $subject->title = $revision->title;
-        $subject->slug = $revision->slug;
-        $subject->factbox = $revision->factbox;
-        $subject->summary = $revision->summary;
-        $subject->year = $revision->year;
-        $subject->created_by = $revision->created_by;
-        $subject->created_at = $revision->created_at;
-        $subject->updated_at = $revision->updated_at;
-
-        // Add details of who promoted this copy to live.
-        $subject->published_by = $this->data['user']->id;
-
-        // Flag this revision as the current revision.
-        $revision->status = 'live';
-
-        // Save.
-        $subject->save();
-    */
+        
         Messages::add('success', "Promoted revision created at $revision->updated_at to live version.");
 
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
