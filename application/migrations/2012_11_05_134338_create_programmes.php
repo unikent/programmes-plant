@@ -11,9 +11,9 @@ class Create_Programmes {
 	 * 
 	 * First the programmes table stores the current revision of the programmes.
 	 * 
-	 * Second the programme_fields stores addition field and items. This is occasionally polled in order to produce new columns for the programmes table. This can therefore be an arbitary data store.
+	 * Second the programmes_fields stores addition field and items. This is occasionally polled in order to produce new columns for the programmes table. This can therefore be an arbitary data store.
 	 * 
-	 * Third the programme_revisions table. This stores revisions of the programmes table to allow rolling back and forward. It also stores all fields, even when they are removed from activity on the front end. 
+	 * Third the programmes_revisions table. This stores revisions of the programmes table to allow rolling back and forward. It also stores all fields, even when they are removed from activity on the front end. 
 	 *
 	 * @return void
 	 */
@@ -44,7 +44,7 @@ class Create_Programmes {
 
 
 		// Add programmes revisions
-		Schema::create('programme_revisions', function($table){
+		Schema::create('programmes_revisions', function($table){
     		$table->increments('id');
     		$table->timestamps();
     		$table->string('year', 4);
@@ -66,8 +66,8 @@ class Create_Programmes {
 
 		});
 
-		// Add programme_fields
-		Schema::create('programme_fields', function($table){
+		// Add programmes_fields
+		Schema::create('programmes_fields', function($table){
 			$table->increments('id');
 
 			$table->string('field_name');
@@ -75,7 +75,8 @@ class Create_Programmes {
 			$table->string('field_meta');
 			$table->string('field_description');
 			$table->string('field_initval');
-
+			$table->text('placeholder');
+			$table->integer('prefill');
 			$table->integer('active');
 			$table->integer('view');
 			$table->string('colname');
@@ -92,8 +93,8 @@ class Create_Programmes {
 	public function down()
 	{
 		Schema::drop('programmes');
-		Schema::drop('programme_revisions');
-		Schema::drop('programme_fields');
+		Schema::drop('programmes_revisions');
+		Schema::drop('programmes_fields');
 	}
 
 }

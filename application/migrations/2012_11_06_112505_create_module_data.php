@@ -21,7 +21,7 @@ class Create_Module_Data {
 				$table->text($field . "_content");
 			});
 
-			Schema::table('programme_revisions', function($table){
+			Schema::table('programmes_revisions', function($table){
 				$field = $GLOBALS['field'];
 				$table->string($field . "_title");
 				$table->text($field . "_content");
@@ -50,7 +50,7 @@ class Create_Module_Data {
 				$table->drop_column($field . "_content");
 			});
 
-			Schema::table('programme_revisions', function($table){
+			Schema::table('programmes_revisions', function($table){
 				$field = $GLOBALS['field'];
 				$table->drop_column($field . "_title");
 				$table->drop_column($field . "_content");

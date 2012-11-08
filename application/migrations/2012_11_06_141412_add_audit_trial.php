@@ -13,7 +13,7 @@ class Add_Audit_Trial {
 			$table->string('published_by');
 		});
 
-		Schema::table('programme_revisions', function($table){
+		Schema::table('programmes_revisions', function($table){
 			$table->integer("published_by");
  		});
 	}
@@ -29,7 +29,7 @@ class Add_Audit_Trial {
 			$table->drop_column('published_by');
 		});
 
-		Schema::table('programme_revisions', function($table){
+		Schema::table('programmes_revisions', function($table){
 			$table->drop_column("published_by");
  		});
 	}
