@@ -179,8 +179,8 @@ class Revisionable extends Eloquent {
 
 
       $model = get_called_class();
-      $model = ($model=='Globals') ? 'global' : $model;
-      $model .='Meta';
+      //$model = ( $model == 'GlobalSetting' ) ? 'global' : $model;
+      $model .= 'Field';
 
 
 

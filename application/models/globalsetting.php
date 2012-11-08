@@ -1,6 +1,6 @@
 <?php
 
-class GlobalSetting extends Revisionable {
+class GlobalSetting extends Eloquent {
     
     public static $table = 'global_settings';
     public static $timestamps = true;

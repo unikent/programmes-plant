@@ -15,7 +15,7 @@ class Create_Related {
 			$table->string('related_programme_ids',255);
 		});
 
-		Schema::table('programmes_revisions', function($table){
+		Schema::table('programme_revisions', function($table){
 			$table->string('related_school_ids',255);
 			$table->string('related_subject_ids',255);
 			$table->string('related_programme_ids',255);
@@ -37,7 +37,7 @@ class Create_Related {
 			));
 		});
 
-		Schema::table('programmes_revisions', function($table){
+		Schema::table('programme_revisions', function($table){
 			$table->drop_column(array(
 				'related_school_ids',
 				'related_subject_ids',

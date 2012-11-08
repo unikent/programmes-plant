@@ -42,7 +42,7 @@ class Programmes_Controller extends Admin_Controller
             $this->data['clone'] = false;
         }
 
-        $this->data['field_meta'] = $this->getProgrammeMeta();
+        $this->data['field_meta'] = $this->getProgrammeFields();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
@@ -201,8 +201,8 @@ class Programmes_Controller extends Admin_Controller
     }
 
 
-    private function getProgrammeMeta(){
-        $model = $this->model.'Meta';
+    private function getProgrammeFields(){
+        $model = $this->model.'Field';
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
 
@@ -316,7 +316,7 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_changes()
     {
-       $this->data['revisions'] = DB::table('programmes_revisions')
+       $this->data['revisions'] = DB::table('programme_revisions')
             ->where('status', '=', 'pending')
             ->get();
         return View::make('admin.changes.index', $this->data);

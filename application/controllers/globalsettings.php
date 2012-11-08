@@ -20,7 +20,7 @@ class GlobalSettings_Controller extends Admin_Controller {
         if($data == null){
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create');  
         }else{
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$data->id);
+            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
         }
 
     }
@@ -32,7 +32,7 @@ class GlobalSettings_Controller extends Admin_Controller {
     public function get_create($year, $type)
     {
 
-        $this->data['field_meta'] = $this->getSubjectMeta();//SubjectMeta::order_by('id','asc')->get();
+        $this->data['fields'] = $this->get_fields();
 
 
         //print_r( $this->data['subjects']);
@@ -49,15 +49,16 @@ class GlobalSettings_Controller extends Admin_Controller {
      * @param string $type The type of the subject undergraduate/postgraduate
      * @param int $subject_id The ID of the subject to edit.
      */
-    public function get_edit($year, $type, $itm_id = false)
+    public function get_edit($year, $type)
     {   
 
 
     	// Do our checks to make sure things are in place
-    	if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+    	//if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $model = $this->model;
-    	$globalsetting = $model::find($itm_id);
+    	$globalsetting = $model::where('year', '=', $year)->first();
+    	
 
     	if(!$globalsetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -67,28 +68,9 @@ class GlobalSettings_Controller extends Admin_Controller {
             $this->data['revisions'] =  $revisions;
         }
 
-        $this->data['field_meta'] = $this->getSubjectMeta(); //SubjectMeta::order_by('id','asc')->get();
+        $this->data['fields'] = $this->get_fields();
 
     	return View::make('admin.'.$this->views.'.form',$this->data);
-    }
-
-    /**
-     * Returns a nicely rendered view of the subject on get.
-     * 
-     * @param int $subject_id The integer for the subject ID.
-     * @return View The view view.
-     */
-    public function get_view ($year, $type, $subject_id = false)
-    {
-        if(!$subject_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-        $subject = Subject::find($subject_id);
-
-        if(!$subject) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-        $this->data['subject'] = $subject;
-
-        return View::make('admin.'. $this->views.'.view', $this->data);
     }
 
     /**
@@ -108,7 +90,7 @@ class GlobalSettings_Controller extends Admin_Controller {
             $subject->institution = Input::get('institution');
         
              //Save varible fields
-            $f = $this->getSubjectMeta();//SubjectMeta::order_by('id','asc')->get();
+            $f = $this->get_fields();
             foreach($f as $c){
                 $col = $c->colname;
                 if(Input::get($col) != null)  $subject->$col = Input::get($col);
@@ -132,19 +114,18 @@ class GlobalSettings_Controller extends Admin_Controller {
     public function post_edit($year, $type)
     {
         
-            $subject = GlobalSetting::find(Input::get('global_id'));
+            $subject = GlobalSetting::where('year', '=', $year)->first();
 
             $subject->year = Input::get('year');
             $subject->institution = Input::get('institution');
 
             //Save varible fields
-            $f = $this->getSubjectMeta();//SubjectMeta::order_by('id','asc')->get();
+            $f = $this->get_fields();
             foreach($f as $c){
                 $col = $c->colname;
                 if(Input::get($col) != null)  $subject->$col = Input::get($col);
             }
-
-
+            
             $subject->save();
 
             Messages::add('success', "Saved $subject->institution.");
@@ -153,7 +134,7 @@ class GlobalSettings_Controller extends Admin_Controller {
     }
 
 
-    private function getSubjectMeta(){
+    private function get_fields(){
         $model = 'GlobalSettingsField';
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
