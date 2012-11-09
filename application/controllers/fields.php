@@ -5,16 +5,15 @@ class Fields_Controller extends Admin_Controller
     public $restful = true;
     public $views = 'fields';
 
-
     /**
      * Display the fields index page.
-     * 
+     *
      */
     public function get_index()
     {
         $model = $this->model;
         $fields = $model::order_by('id','asc')->get();
-       
+
         return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
     }
 
@@ -35,7 +34,6 @@ class Fields_Controller extends Admin_Controller
         return View::make('admin.fields.form',$data);
     }
 
-
     public function post_add()
     {
         $rules = array(
@@ -46,20 +44,19 @@ class Fields_Controller extends Admin_Controller
 
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
+
             return Redirect::to($this->view.'fields/add')->with_input();
-        }
-        else {
+        } else {
 
             $datatype = Input::get('type');
 
-
-            if(Input::get('id')){
+            if (Input::get('id')) {
                 $model = $this->model;
                 $subject = $model::find(Input::get('id'));
                 $subject->field_name = Input::get('title');
                 $subject->field_description = Input::get('description');
                 $subject->field_meta = Input::get('options');
-                
+
                 $oldtype = $subject->field_type;
                 $subject->field_type = Input::get('type');
                 $subject->field_initval =  Input::get('initval');
@@ -69,14 +66,14 @@ class Fields_Controller extends Admin_Controller
                 $subject->save();
 
                 //If type changes, apply data type swapper.
-                if($oldtype != Input::get('type')){
+                if ($oldtype != Input::get('type')) {
                     $type_str = 'varchar(255)';
                     if($subject->field_type=='textarea') $type_str = 'TEXT';
                     DB::statement("alter table {$this->table} MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");  
+                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
                 }
-               
-            }else{
+
+            } else {
                 $colname = Str::slug(Input::get('title'), '_');
                 $init_val = Input::get('initval');
 
@@ -92,24 +89,21 @@ class Fields_Controller extends Admin_Controller
                 $subject->prefill = (Input::get('prefill')==1) ? 1 : 0;
 
                 $subject->field_initval =  $init_val;
-                
 
                 $subject->active = 1;
                 $subject->view = 1;
 
                 $subject->save();
-				
-				//Now we have an id, set it as part of the colname
-				//to avoid risk of duplication
-				$colname .= '_'.$subject->id;
-				$subject->colname = $colname;
-				$subject->save();
+
+                //Now we have an id, set it as part of the colname
+                //to avoid risk of duplication
+                $colname .= '_'.$subject->id;
+                $subject->colname = $colname;
+                $subject->save();
 
                 $this->updateSchema($colname, $init_val, $datatype);
-               
 
             }
-
 
             Messages::add('success','Row added to schema');
             //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
@@ -117,46 +111,48 @@ class Fields_Controller extends Admin_Controller
         }
     }
 
-    private function redirect($action){
+    private function redirect($action)
+    {
         return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
     }
 
-
-    private function updateSchema($colname, $init_val, $type){
+    private function updateSchema($colname, $init_val, $type)
+    {
         //Adjust Tables
-        Schema::table($this->table, function($table) use ($colname, $init_val, $type){
-            if($type=='textarea'){
+        Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
+            if ($type=='textarea') {
                 $table->text($colname);
-            }else{
+            } else {
                 $table->string($colname,255)->default($init_val);
             }
-                    
+
         });
-        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type){
-            if($type=='textarea'){
+        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type) {
+            if ($type=='textarea') {
                 $table->text($colname);
-            }else{
+            } else {
                 $table->string($colname,255)->default($init_val);
             }
         });
     }
 
-
     public function get_deactivate()
     {
-    		$model = $this->model;
+            $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
+
         return Redirect::to('fields/'.$this->view);
     }
 
      public function get_reactivate()
     {
-    	$model = $this->model;
+        $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 1;
         $row->save();
+
         return Redirect::to('fields/'.$this->view);
     }
 }

@@ -18,13 +18,13 @@
           <?php if (! $create) : ?><h2><?php echo  $programmes->title ?> </h2><?php endif; ?>
           <?php echo Messages::get_html()?>
           <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
-          <?php if(!$create): ?> 
+          <?php if(!$create): ?>
             <?php echo  Form::hidden('programme_id', $programmes->id); ?>
           <?php endif; ?>
-           
+
           <fieldset>
             <legend>Basic Information</legend>
-            
+
             <div class="control-group">
               <?php echo Form::label('year', "Programme Year",array('class'=>'control-label'))?>
               <div class="controls">
@@ -32,7 +32,7 @@
                 <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $programmes->year ), array('class'=>'uneditable-input'))?>
               </div>
             </div>
-            
+
             <div class="control-group">
               <?php echo Form::label('title',"Programme Title",array('class'=>'control-label'))?>
               <div class="controls">
@@ -47,17 +47,12 @@
               </div>
             </div>
 
-            
-
             <div class="control-group">
               <?php echo Form::label('award', 'Honours Type',array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo Form::select('award', $awards, isset($programmes) ? $programmes->honours : '')?>
               </div>
             </div>
-
-
-
 
             <div class="control-group">
               <?php echo Form::label('summary', __('programmes.summary'),array('class'=>'control-label'))?>
@@ -66,7 +61,6 @@
                 <span class="help-block"><?php echo  __('programmes.summary_help') ?></span>
               </div>
             </div>
-
 
 <?php /*
 
@@ -77,13 +71,12 @@
               </div>
             </div>
 
-
              <select id="countriess" class="multiselect" multiple="multiple" name="countries[]" style='height:200px;width:500px;'>
         <option value="AFG">A</option>
         <option value="ALB">B</option>
         <option value="DZA">C</option>
         <option value="AND">D</option>
-        
+
       </select>
 
 */ ?>
@@ -121,7 +114,7 @@
                 <?php //echo ExtForm::multiselect('leaflet_ids[]', $leaflets, isset($programmes) ? explode(',',$programmes->leaflet_ids) : '', array('style'=>'height:150px;width:420px;'))?>
               </div>
             </div>
-</fieldset>  
+</fieldset>
 <fieldset>
             <legend>Relation Settings</legend>
              <div class="control-group">
@@ -145,15 +138,14 @@
               </div>
             </div>
 
-</fieldset>  
+</fieldset>
 <hr />
  <fieldset>
             <legend>Programme Information</legend>
 
-            <?php //echo View::make('admin.inc.partials.formFields', array('field_meta' => $field_meta, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
+            <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
 
-
-       </fieldset> 
+       </fieldset>
         <fieldset>
             <legend>Module stage content</legend>
 
@@ -222,10 +214,7 @@
               </div>
             </div>
 
-
-
-
-        </fieldset> 
+        </fieldset>
 
           <div class="form-actions">
             <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Back</a>
@@ -261,7 +250,7 @@
         });
 
         $('.ui-listbuilder-input').keydown(function(event){
-          if(event.keyCode == 13) {
+          if (event.keyCode == 13) {
             event.preventDefault();
             $(this).blur();
           }
