@@ -1,6 +1,6 @@
 <?php
 
-class Create_Programmesettings {
+class Create_ProgrammeSettings {
 
 	/**
 	 * Make changes to the database.
@@ -13,8 +13,8 @@ class Create_Programmesettings {
 		Schema::table('programme_settings', function($table){
 			$table->create();
 			$table->increments('id');
-			$table->string('year',4);
-			$table->string('created_by',10);
+			$table->string('year', 4);
+			$table->string('created_by', 10);
 			$table->string('published_by', 10);
 			$table->timestamps();
 		});
@@ -23,12 +23,11 @@ class Create_Programmesettings {
 		Schema::table('programme_settings_revisions', function($table){
 			$table->create();
 			$table->increments('id');
-			$table->integer("programme_setting_id");
+			$table->integer('programme_setting_id');
 			$table->string('year', 4);
 			$table->string('created_by', 10);
 			$table->string('status', 15);
 			$table->timestamps();
-
 		});
 
 		// Create the programme_settings_fields table
@@ -40,8 +39,8 @@ class Create_Programmesettings {
     		$table->string('field_meta');
     		$table->string('field_description');
     		$table->string('field_initval');
-    		$table->integer("prefill")->default('0');
-			$table->text("placeholder");
+    		$table->integer('prefill')->default('0');
+			$table->text('placeholder');
     		$table->integer('active');
     		$table->integer('view');
     		$table->string('colname');
@@ -49,10 +48,19 @@ class Create_Programmesettings {
 		});
 
 		// Add some fields in
-		$this->add_field('ProgrammeSettingField', 'programme_settings', 'KIS institution id', 'text', '', '');
-		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Apply content', 'textarea', '', '');
-		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Fees content', 'textarea', '', '');
-		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Additional entry requirement information', 'textarea', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 1', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 2', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 3', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Town', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Email', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Fax', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Phone', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Postcode', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Location URL', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Image source', 'text', 'University logo', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Image title', 'text', 'eg \'University of Kent logo\'', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Image alt', 'text', 'eg \'University of Kent logo\'', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Regulations', 'text', 'a link to the University\'s regulations', '');
 	}
 
 	/**
