@@ -12,6 +12,7 @@
        <li class="<?php echo ( URI::segment(3) == '' ? 'active' : false )?>"><a href="<?php echo url($mainpath)?>"><i class="icon-home"></i> Home</a></li>
        
         <li class="<?php echo ( URI::segment(3) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-book"></i> Global settings</a></li>
+        <li class="<?php echo ( URI::segment(3) == 'programmesettings' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmesettings')?>"><i class="icon-book"></i> Programme settings</a></li>
        <li class="<?php echo ( URI::segment(3) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-book"></i> Programmes</a></li>
           
 
@@ -37,6 +38,7 @@
         
      <li class="nav-header">Field Configuration</li>
      <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url('fields/globalsettings')?>"><i class="icon-cog"></i> Global settings fields </a></li>
+     <li class="<?php echo ( URI::segment(4) == 'programmesettings' ? 'active' : false )?>"><a href="<?php echo url('fields/programmesettings')?>"><i class="icon-cog"></i> Programme settings fields </a></li>
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url('fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 
 
