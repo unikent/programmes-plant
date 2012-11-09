@@ -1,10 +1,23 @@
 <?php
 class Award extends Eloquent {
 
-	public static function getAsList(){
-       $data = Award::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
+	/**
+	 * Gives us the awards as a list, for use in a <option> tag.
+	 * 
+	 * @return array $options An array where the record ID maps onto the record name.
+	 */
+	public static function getAsList()
+	{
+		$awards = Award::all();
 
-       return $options;
+		$options = array();
+
+		foreach ($awards as $award) 
+		{
+			$options[$award->id] = $award->name;
+		}
+
+		return $options;
      }
+
 }
