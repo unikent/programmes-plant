@@ -13,7 +13,7 @@ class Create_Publish_Unpublish_Bits {
 			$table->integer('live');
 		});
 
-		Schema::table('globals', function($table){	
+		Schema::table('global_settings', function($table){	
 			$table->integer('live');
 		});
 	}
@@ -29,7 +29,7 @@ class Create_Publish_Unpublish_Bits {
 			$table->drop_column('live');
 		});
 
-		Schema::table('globals', function($table){	
+		Schema::table('global_settings', function($table){	
 			$table->drop_column('live');
 		});
 	}
