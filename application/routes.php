@@ -25,8 +25,6 @@ Route::group(array('before' => 'auth'), function(){
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings', 'globalsettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)', 'globalsettings@(:3)');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)/(:num)', 'globalsettings@(:3)');
-	//Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any?)/(:num?)', 'globalsettings@(:3)');
-	//Route::get('([0-9]{4})/(ug|pg)/globalsettings/(:num)/(:any)/(:num)', 'globalsettings@(:4)');
 
 	// Do Programmes
 	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
