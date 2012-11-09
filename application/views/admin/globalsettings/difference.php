@@ -19,13 +19,13 @@
           <table class="table table-striped table-bordered">
             <thead>
               <th></th>
-              <th>Current Version saved on <?php echo $subject->created_at; ?></th>
+              <th>Current Version saved on <?php echo $globalsetting->created_at; ?></th>
               <th>Revision created on <?php echo $revision->created_at ; ?></th>
             </thead>
             <tbody>
               <?php foreach ($old as $field => $value) : ?>
               <tr>
-                <td><?php echo (!array_key_exists($field, $attributes)) ? __("globals.$field") : $attributes[$field] ?></td>
+                <td><?php echo (!array_key_exists($field, $attributes)) ? __("globalsettings.$field") : $attributes[$field] ?></td>
                 <td><?php echo  $value ?></td>
                 <td>
                   <?php if (isset($diff[$field])) : ?>
@@ -38,8 +38,8 @@
               <?php endforeach; ?>
           </table>
           <div class="form-actions">
-            <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/subjects.' . $subject->id . '@promote', array($revision->id))?>">Accept Changes And Promote To Live</a>
-            <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/subjects')?>">Ignore For Now</a>
+            <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/globalsettings@promote', array($revision->id))?>">Accept Changes And Promote To Live</a>
+            <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/globalsettings')?>">Ignore For Now</a>
           </div>
         </div><!-- span9 -->
       </div>
@@ -50,11 +50,11 @@
               <h3>Are You Sure?</h3>
             </div>
             <div class="modal-body">
-              <p>This will promote this revision to the live version of the subject for this year.</p>
+              <p>This will promote this revision to the live version for this year.</p>
               <p>Are you sure you want to do this?</p>
             </div>
             <div class="modal-footer">
-              <?php echo Form::open('subjects/promote', 'POST')?>
+              <?php echo Form::open('globalsettings/promote', 'POST')?>
                 <a data-toggle="modal" href="#promote_revision" class="btn">Not Right Now</a>
                 <a class="btn btn-danger" id="promote_now">Promote Revision</a>
             <?php echo Form::close()?>
