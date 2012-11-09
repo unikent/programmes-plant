@@ -48,6 +48,24 @@ class Create_ProgrammeSettings {
 		});
 
 		// Add some fields in
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Start', 'text', 'eg 29 September 2014', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Foundation year', 'textarea', 'This text will appear under the foundation year text on the Modules tab.', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Module disclaimer', 'textarea', 'This text will appear under each stage on the Modules tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Year in industry', 'textarea', 'This text will appear under the Year in industry text on the Modules tab.', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Year abroad', 'textarea', 'This text will appear under the Year Abroad text on the Modules tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Careers/employability text', 'textarea', 'This text will appear under the text on the Careers tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Entry requirements', 'textarea', 'This text will appear under the Entry requirements tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Tuition fees', 'textarea', 'This text will appear under the Fees and Funding tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Funding', 'textarea', 'This text will appear under the Fees and Funding tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'How to apply', 'textarea', 'This text will appear under the Apply tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Enquiries', 'textarea', 'This text will appear under the Further informtion tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'KIS explanatory text', 'textarea', 'This text will appear under the Further informtion tab', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'General disclaimer', 'textarea', 'This text will appear at the footer of each page', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Institution name', 'textarea', 'University of Kent', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'UKPRN', 'text', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Contributor', 'textarea', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Catalog description', 'textarea', '', '');
+		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Provider URL', 'text', 'http://www.kent.ac.uk', '');
 		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 1', 'text', '', '');
 		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 2', 'text', '', '');
 		$this->add_field('ProgrammeSettingField', 'programme_settings', 'Address line 3', 'text', '', '');
