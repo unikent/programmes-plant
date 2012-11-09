@@ -8,8 +8,8 @@ class Programmes_Controller extends Admin_Controller
 
     /**
      * Routing for /$year/$type/programmes
-     * 
-     * @param int $year The year.
+     *
+     * @param int    $year The year.
      * @param string $type Undergraduate or postgraduate.
      */
     public function get_index($year, $type)
@@ -17,17 +17,17 @@ class Programmes_Controller extends Admin_Controller
         $model = $this->model;
         $this->data[$this->views] = $model::where('year', '=', $year)->get();
         $this->data['programmeList'] = Programme::getAsList();
+
         return View::make('admin.'.$this->views.'.index',$this->data);
     }
-
 
     /**
      * Present a form to allow ther creation of a new programme.
      * If an item_id is passed, present the form prefilled with the item's values
-     * 
-     * @param int $year The year
-     * @param string $type Undergraduate or postgraduate.
-     * @param int $item_id The ID of the programme to clone from.
+     *
+     * @param int    $year    The year
+     * @param string $type    Undergraduate or postgraduate.
+     * @param int    $item_id The ID of the programme to clone from.
      */
     public function get_create($year, $type, $item_id = false)
     {
@@ -37,59 +37,59 @@ class Programmes_Controller extends Admin_Controller
             $course = $model::find($item_id);
             $this->data['clone'] = true;
             $this->data[$this->views] = $course ;
-        }
-        else {
+        } else {
             $this->data['clone'] = false;
         }
 
-        $this->data['field_meta'] = $this->getProgrammeFields();
+        $this->data['fields'] = $this->getProgrammeFields();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
         $this->data['programme_list'] = Programme::getAsList($year);
         $this->data['leaflets'] = Leaflet::getAsList();
         $this->data['create'] = true;
+
         return View::make('admin.'.$this->views.'.form',$this->data);
     }
-    
+
     /**
      * Routing for GET /$year/$type/edit/$programme_id
-     * 
-     * @param int $year The year
-     * @param string $type Undergraduate or postgraduate.
-     * @param int $item_id The ID of the programme to edit.
+     *
+     * @param int    $year    The year
+     * @param string $type    Undergraduate or postgraduate.
+     * @param int    $item_id The ID of the programme to edit.
      */
     public function get_edit($year, $type, $itm_id = false)
     {
-    	// Do our checks to make sure things are in place
-    	if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        // Do our checks to make sure things are in place
+        if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
       // Ensure we have a corresponding course in the database
       $model = $this->model;
-    	$course =  $model::find($itm_id);
+        $course =  $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-    	$this->data[$this->views] = $course ;
+        $this->data[$this->views] = $course ;
 
         if ($revisions = $course->get_revisions()) {
             $this->data['revisions'] =  $revisions;
         }
 
         $this->data['programme_list'] = Programme::getAsList($year);
-
+        $this->data['fields'] = $this->getProgrammeFields();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
 
-    	return View::make('admin.'.$this->views.'.form',$this->data);
+        return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
     /**
      * Routing for POST /$year/$type/create
-     * 
+     *
      * The change request page.
-     * 
-     * @param int $year The year of the created programme.
+     *
+     * @param int    $year The year of the created programme.
      * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
      */
     public function post_create($year, $type)
@@ -103,9 +103,9 @@ class Programmes_Controller extends Admin_Controller
 
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create')->with_input();
-        }
-        else {
+        } else {
             $programme = new Programme;
             $programme->title = Input::get('title');
             $programme->slug = Str::slug(Input::get('slug'), '-');
@@ -134,19 +134,20 @@ class Programmes_Controller extends Admin_Controller
             $programme->mod_4_content = Input::get('mod_4_content');
             $programme->mod_5_title = Input::get('mod_5_title');
             $programme->mod_5_content = Input::get('mod_5_content');
-            
+
             $programme->save();
             Messages::add('success','Programme added');
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }
     }
 
     /**
      * Routing for POST /$year/$type/edit
-     * 
+     *
      * Make a change.
-     * 
-     * @param int $year The year of the created programme
+     *
+     * @param int    $year The year of the created programme
      * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
      */
     public function post_edit($year, $type)
@@ -158,13 +159,11 @@ class Programmes_Controller extends Admin_Controller
 
         $validation = Validator::make(Input::all(), $rules);
 
-        if ($validation->fails())
-        {
+        if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/')->with_input();
-        }
-        else
-        {
+        } else {
             $programme = Programme::find(Input::get('programme_id'));
 
             $programme->title = Input::get('title');
@@ -196,26 +195,28 @@ class Programmes_Controller extends Admin_Controller
 
             $programme->save();
             Messages::add('success', "Saved $programme->title.");
+
             return Redirect::to($year.'/'. $type.'/'. $this->views);
         }
     }
 
-
-    private function getProgrammeFields(){
+    private function getProgrammeFields()
+    {
         $model = $this->model.'Field';
+
         return  $model::where('active','=','1')->order_by('id','asc')->get();
     }
 
     /**
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
-     * 
-     * @param int $year The year of the programme (not used, but to keep routing happy).
-     * @param string $type The type, either undegrad/postgrade (not used, but to keep routing happy)
-     * @param int $programme_id The programme ID we are promoting a given revision to be live.
-     * @param int $revision_id The revision ID we are promote to the being the live output for the programme.
+     *
+     * @param int    $year         The year of the programme (not used, but to keep routing happy).
+     * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+     * @param int    $programme_id The programme ID we are promoting a given revision to be live.
+     * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
      */
-    public function get_promote($year, $type, $programme_id = false, $revision_id = false) 
-    {   
+    public function get_promote($year, $type, $programme_id = false, $revision_id = false)
+    {
         // Check to see we have what is required.
         if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -228,20 +229,20 @@ class Programmes_Controller extends Admin_Controller
 
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-
         $programme->useRevision($revision);
 
         Messages::add('success', "Promoted revision of $revision->title created at $revision->updated_at to live version.");
+
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
     }
 
     /**
      * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
      *
-     * @param int $year The year of the programme (not used, but to keep routing happy).
-     * @param string $type The type, either undegrad/postgrade (not used, but to keep routing happy)
-     * @param int $programme_id The programme ID we are promoting a given revision to be live.
-     * @param int $revision_id The revision ID we are promote to the being the live output for the programme.
+     * @param int    $year         The year of the programme (not used, but to keep routing happy).
+     * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+     * @param int    $programme_id The programme ID we are promoting a given revision to be live.
+     * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
      */
     public function get_difference($year, $type, $programme_id = false, $revision_id = false)
     {
@@ -260,7 +261,7 @@ class Programmes_Controller extends Admin_Controller
         $revision_for_diff = (array) $revision;
 
         // Ignore these fields which will always change
-        foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore){
+        foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
             unset($revision_for_diff[$ignore]);
             unset($programme_attributes[$ignore]);
         }
@@ -278,8 +279,8 @@ class Programmes_Controller extends Admin_Controller
         $differences = array_diff_assoc($programme_attributes, $revision_for_diff);
 
         $diff = array();
-        
-        foreach ($differences as $field => $value){
+
+        foreach ($differences as $field => $value) {
             $diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
         }
 
@@ -289,29 +290,29 @@ class Programmes_Controller extends Admin_Controller
 
         $this->data['attributes'] = Programme::getAttributesList();
 
-
-
         $this->data['revision'] = $revision;
         $this->data['programme'] = $programme;
 
         return View::make('admin.'.$this->views.'.difference',$this->data);
     }
 
-    private function splitToText($list,$options){
+    private function splitToText($list,$options)
+    {
         if($list == '' || $list == null) return '';
 
         $list = explode(',',$list);
         $l_str = '';
-        foreach($list as $val){
+        foreach ($list as $val) {
             $l_str .= $options[$val].', ';
 
         }
+
         return $l_str;
     }
-    
+
     /**
      * Routing for GET /changes
-     * 
+     *
      * The change request page.
      */
     public function get_changes()
@@ -319,6 +320,7 @@ class Programmes_Controller extends Admin_Controller
        $this->data['revisions'] = DB::table('programmes_revisions')
             ->where('status', '=', 'pending')
             ->get();
+
         return View::make('admin.changes.index', $this->data);
     }
 
@@ -328,15 +330,16 @@ class Programmes_Controller extends Admin_Controller
             'id'  => 'required|exists:programmes',
         );
         $validation = Validator::make(Input::all(), $rules);
-        if ($validation->fails())
-        {
+        if ($validation->fails()) {
             Messages::add('error','You tried to deactivate a post that doesn\'t exist.');
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-        }else{
+        } else {
 
             $programme = Programme::find(Input::get('id'));
             $programme->deactivate();
             Messages::add('success','Programme deactivated');
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }
     }
@@ -346,14 +349,15 @@ class Programmes_Controller extends Admin_Controller
             'id'  => 'required|exists:programmes',
         );
         $validation = Validator::make(Input::all(), $rules);
-        if ($validation->fails())
-        {
+        if ($validation->fails()) {
             Messages::add('error','You tried to activate a post that doesn\'t exist.');
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-        }else{
+        } else {
             $programme = Programme::find(Input::get('id'));
             $programme->activate();
             Messages::add('success','Programme Activated');
+
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }
     }

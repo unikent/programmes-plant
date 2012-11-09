@@ -15,13 +15,13 @@
 
         <div class="span9 crud">
           <h1>Global settings - <?php echo URI::segment(1)?></h1>
-         
+
           <?php echo Messages::get_html()?>
           <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
-           
+
           <fieldset>
             <legend>Basic information</legend>
-            
+
             <div class="control-group">
               <?php echo Form::label('year', "Year",array('class'=>'control-label'))?>
               <div class="controls">
@@ -29,24 +29,21 @@
                 <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $globalsettings->year ), array('class'=>'uneditable-input'))?>
               </div>
             </div>
-            
+
             <div class="control-group">
               <?php echo Form::label('Institution',"Institution",array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo Form::text('institution',  ( Input::old('institution') || $create ? Input::old('institution') : $globalsettings->institution ),array('placeholder'=>'Enter Subject Title...'))?>
               </div>
             </div>
-            
 
-  
 </fieldset>
  <fieldset>
             <legend>Global settings</legend>
 
             <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
 
-
-       </fieldset>     
+       </fieldset>
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" value="Save" />
           </div>

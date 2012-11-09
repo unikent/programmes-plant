@@ -179,7 +179,7 @@ class Revisionable extends Eloquent {
 
 
       $model = get_called_class();
-      //$model = ( $model == 'GlobalSetting' ) ? 'global' : $model;
+      
       $model .= 'Field';
 
 
@@ -214,7 +214,7 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revision_type.'Revision';
+        $model = $this->revision_model;
 
         //Unlive previous revsion
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','!=','draft')->update(array('status'=>'draft'));
@@ -233,7 +233,7 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revision_type.'Revision';
+        $model = $this->revision_model;
         //Make current live draft "selected"
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'selected'));
 
@@ -249,7 +249,7 @@ class Revisionable extends Eloquent {
           $result = $query->update($this->get_dirty()) === 1;
         }
 
-        $model = $this->revision_type.'Revision';
+        $model = $this->revision_model;
         //Make current live draft "selected"
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
 
