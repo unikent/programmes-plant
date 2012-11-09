@@ -34,8 +34,7 @@
 */
 
 return array(
-    'swiftmailer' => array('auto'=>true),
     'date' => array('auto'=>true),
     'phpsession' => array('auto' => true),
-    'ldap' => array('auto' => true),
+    'ldap' => array('auto' => true)
 );
