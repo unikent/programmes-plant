@@ -78,7 +78,6 @@ class ProgrammeSettings_Controller extends Admin_Controller
 
             $subject = new ProgrammeSetting;
             $subject->year = Input::get('year');
-            $subject->institution = Input::get('institution');
 
              //Save varible fields
             $f = $this->get_fields();
@@ -109,7 +108,6 @@ class ProgrammeSettings_Controller extends Admin_Controller
             $subject = ProgrammeSetting::where('year', '=', $year)->first();
 
             $subject->year = Input::get('year');
-            $subject->institution = Input::get('institution');
 
             //Save varible fields
             $f = $this->get_fields();
@@ -119,8 +117,6 @@ class ProgrammeSettings_Controller extends Admin_Controller
             }
 
             $subject->save();
-
-            Messages::add('success', "Saved $subject->institution.");
 
             return Redirect::to($year.'/'. $type.'/'. $this->views);
 
