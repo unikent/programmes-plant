@@ -2,7 +2,7 @@
 /**
  * Logs the user in using LDAP.
  * 
- * Uses the Kent LDAP library.
+ * Uses the our own LDAP library.
  */
 class LDAP extends \Laravel\Auth\Drivers\Driver {
 	
@@ -108,7 +108,7 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 		$username = $arguments['username'];
 		$password = $arguments['password'];
 
-		$this->ldap = KentLDAP::instance();
+		$this->ldap = LDAPConnect::instance();
 		$user = $this->ldap->getAuthenticateUser($username, $password);
 
 		if ($user !== false)
