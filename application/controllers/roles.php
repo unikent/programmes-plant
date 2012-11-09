@@ -23,8 +23,7 @@ class Roles_Controller extends Admin_Controller
 
     /**
      * Our user subject create function
-     *
-     **/
+     */
     public function get_create(){
         $this->data['create'] = true;
 
