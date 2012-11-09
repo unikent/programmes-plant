@@ -17,30 +17,25 @@
           <h1>Awards</h1>
           <p>Use the table below to edit the awards available in this system.</p>
           <?php echo Messages::get_html()?>
-          <?php
-            if($awards){
-              echo '<table class="table table-striped table-bordered table-condensed">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead><tbody>
-              ';
-              foreach($awards as $award){
-
-                echo '<tr>
-                  <td>'.$award->name.'</td>
-                  <td><a class="btn btn-primary" href="'.action(URI::segment(1).'/'.URI::segment(2).'/awards@edit', array($award->id)).'">Edit</a> <a class="delete_toggler btn btn-danger" rel="'.$award->id.'">Delete</a></td>
-                </tr>';
-              }
-              echo '</tbody></table>';
-            }else{
-              echo '<div class="well"><p>There are no awards in the system yet. Feel free to add one below.</p></div>';
-            }
-          ?>
-
-
+          <?php if($awards) : ?>
+          <table class="table table-striped table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach($awards as $award) : ?>
+          <tr>
+            <td>php <?php echo $award->name ?></td>
+              <td><a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@edit', array($award->id)); ?>">Edit</a> <a class="delete_toggler btn btn-danger" rel="<?php echo $award->id; ?>">Delete</a></td>
+          </tr>
+          <?php endforeach; ?>
+          </tbody></table>
+          <?php else : ?>
+          <div class="well"><p>There are no awards in the system yet. Feel free to add one below.</p></div>
+          <?php endif; ?>
            <div class="form-actions">
           <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@create')?>" class="btn btn-primary right">New Award</a>
         </div>
