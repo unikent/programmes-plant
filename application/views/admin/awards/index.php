@@ -22,11 +22,12 @@
   </tbody>
 </table>
 <?php else : ?>
-<div class="well"><p>There are no awards in the system yet. Feel free to add one below.</p></div>
-<?php endif; ?>
- <div class="form-actions">
-<a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@create')?>" class="btn btn-primary right">New Award</a>
+<div class="well">
+  <p>There are no awards in the system yet. Feel free to add one below.</p>
 </div>
+<?php endif; ?>
+<div class="form-actions">
+  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@create')?>" class="btn btn-primary right">New Award</a>
 </div>
 
 <div class="modal hide fade" id="delete_award">
