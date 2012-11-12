@@ -13,7 +13,7 @@ class Awards_Controller extends Admin_Controller
     {
     	$this->data[$this->views] = Award::order_by('id','asc')->get();
 
-        $this->layout->nest('content', 'admin.awards.index', $this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
 
     public function get_edit($year, $type, $object_id = false){
