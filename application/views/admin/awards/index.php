@@ -1,9 +1,6 @@
 <h1>Awards</h1>
-
 <p>Use the table below to edit the awards available in this system.</p>
-
 <?php echo Messages::get_html()?>
-
 <?php if($awards) : ?>
 <table class="table table-striped table-bordered table-condensed">
   <thead>
