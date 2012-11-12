@@ -9,6 +9,8 @@ class Admin_Controller extends Base_Controller {
         // Default variable set for CRUD usage.
     	$this->data['create'] = false;
 
+		$this->data['type'] = $this->views;
+
     	// Construct parent.
     	parent::__construct();
     }
