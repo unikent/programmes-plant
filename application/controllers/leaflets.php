@@ -1,16 +1,10 @@
 <?php
-class Leaflets_Controller extends Admin_Controller
+class Leaflets_Controller extends Simple_Admin_Controller
 {
 
     public $restful = true;
     public $views = 'leaflets';
     protected $model = 'Leaflet';
-
-    public function get_index()
-    {
-    	$this->data[$this->views] = Leaflet::order_by('id','asc')->get();
-        return View::make('admin.'.$this->views.'.index',$this->data);
-    }
 
     public function get_edit($year, $type, $object_id = false){
     	// Do our checks to make sure things are in place
