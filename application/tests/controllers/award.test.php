@@ -65,7 +65,7 @@ class TestAwards_Controller extends ControllerTestCase
 		// Flatten awards
 		$returned_array = Array();
 
-		foreach ($data['awards'] as $award)
+		foreach ($data['items'] as $award)
 		{
 			$returned_array[] = $award->name;
 		}
@@ -97,7 +97,7 @@ class TestAwards_Controller extends ControllerTestCase
 		{
 			$data = $this->get_data('awards@edit', array('2013', 'ug', $count));
 
-			$this->assertEquals($input[$count], $data['award']->name);
+			$this->assertEquals($input[$count], $data['item']->name);
 
 			$count++;
 		}
