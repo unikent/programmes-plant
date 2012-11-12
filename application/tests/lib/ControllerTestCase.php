@@ -63,7 +63,6 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @param	string	$destination
 	 * @param	array	$parameters
-	 * @param	string	$method
 	 * @return	\Laravel\Response
 	 */
 	public function get($destination, $parameters = array())
