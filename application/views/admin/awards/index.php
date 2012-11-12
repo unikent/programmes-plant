@@ -13,7 +13,10 @@
   <?php foreach($awards as $award) : ?>
     <tr>
       <td><?php echo $award->name ?></td>
-        <td><a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@edit', array($award->id)); ?>">Edit</a> <a class="delete_toggler btn btn-danger" rel="<?php echo $award->id; ?>">Delete</a></td>
+        <td>
+          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/awards@edit', array($award->id)); ?>">Edit</a> 
+          <a class="delete_toggler btn btn-danger" rel="<?php echo $award->id; ?>">Delete</a>
+        </td>
     </tr>
   <?php endforeach; ?>
   </tbody>
