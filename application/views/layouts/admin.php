@@ -21,6 +21,5 @@
         </div><!-- /span9 crud -->
       </div><!-- /row-fluid -->
     </div><!-- /container -->
-    <?php echo View::make('admin.inc.scripts')->render()?>
   </body>
 </html>
