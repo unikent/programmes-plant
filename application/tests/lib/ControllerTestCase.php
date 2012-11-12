@@ -85,4 +85,26 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 		return $this->call($destination, $parameters, 'POST');
 	}
 
+	/**
+	 * Convinience function for returning just the data array from a GET request.
+	 * 
+	 * @param	string	$destination
+	 * @param	array	$parameters
+	 * @param	string	$method
+	 */
+	public function get_data($destination, $parameters = array())
+	{
+		return $this->extract_data($this->call($destination, $parameters, 'GET'));
+	}
+
+	/**
+	 * Helper function to extract data from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return array $data The data array.
+	 */
+	public function extract_data($response)
+	{
+		return $response->content->data['content']->data;
+	}
 }
