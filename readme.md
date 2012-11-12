@@ -4,7 +4,7 @@ Programmes Factory 2.0 is part of the XCRI project at the University of Kent, an
 
 It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
-## Development setup
+## Development Setup
 
 The following are instructions on running the Programmes Plant on a local machine for development.
 
@@ -26,3 +26,7 @@ The following are instructions on running the Programmes Plant on a local machin
 8. Point a browser at the public folder.
 
 9. We're done here!
+
+## Testing
+
+Unit tests are written in PHPUnit. To run the tests run `php artisan tests`. The tests use an in memory SQLite database to make them significantly faster.
