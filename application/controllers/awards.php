@@ -16,24 +16,34 @@ class Awards_Controller extends Admin_Controller
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
 
-    public function get_edit($year, $type, $object_id = false){
+    /**
+     * Show the view for editing the award.
+     * 
+     * @param string $year The year of the award.
+     * @param string $type Type of the award.
+     * @param int $object_id The ID of the award we are editing.
+     */
+    public function get_edit($year, $type, $object_id = false)
+    {
     	// Do our checks to make sure things are in place
     	if(!$object_id) return Redirect::to($this->views);
+
     	$object = Award::find($object_id);
     	if(!$object) return Redirect::to($this->views);
+
     	$this->data['award'] = $object;
-      
-    	return View::make('admin.'.$this->views.'.form',$this->data);
+
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
-     * Our user subject create function
-     *
-     **/
-    public function get_create(){
+     * Show the view for creating a new award.
+     */
+    public function get_create()
+    {
         $this->data['create'] = true;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     public function post_delete(){
@@ -96,7 +106,5 @@ class Awards_Controller extends Admin_Controller
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
     }
-
-
 
 }
