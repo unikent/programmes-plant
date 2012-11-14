@@ -26,8 +26,7 @@ class GlobalSettings_Controller extends Admin_Controller
     }
 
     /**
-     * Our subject create function
-     *
+     * Our global setting create function
      */
     public function get_create($year, $type)
     {
