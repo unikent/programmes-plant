@@ -59,7 +59,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 
         if ($validation->fails())
         {
-            Messages::add('error','You tried to delete a' . Str::singular($this->views) . 'that doesn\'t exist.');
+            Message::add('error', __($this->l . 'error.delete'));
+
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
         else
@@ -67,7 +68,7 @@ class Simple_Admin_Controller extends Admin_Controller {
             $remove = $this->model->find(Input::get('id'));
             $remove->delete();
 
-            Messages::add('success', Str::title(Str::singular($this->views)) . ' Removed');
+            Messages::add('success', __($this->l . 'success.delete'));
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
     }
@@ -83,6 +84,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         if ($validation->fails())
         {
             Messages::add('error',$validation->errors->all());
+
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
         }
         else
@@ -92,7 +94,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 
             $new->save();
  
-            Messages::add('success','New ' . Str::title($this->views) . ' Added');
+            Messages::add('success', __($this->l . 'success.create'));
+
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
     }
@@ -119,7 +122,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
             $update->save();
 
-            Messages::add('success', $this->views . ' updated');
+            Messages::add('success', __($this->l . 'success.edit'));
 
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
