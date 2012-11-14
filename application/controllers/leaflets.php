@@ -22,24 +22,6 @@ class Leaflets_Controller extends Simple_Admin_Controller
         return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
-    public function post_delete(){
-        $rules = array(
-            'id'  => 'required|exists:leaflets',
-        );
-        $validation = Validator::make(Input::all(), $rules);
-        if ($validation->fails())
-        {
-            Messages::add('error','You tried to delete a user that doesn\'t exist.');
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
-        }else{
-            $leaflet = Leaflet::find(Input::get('id'));
-            $leaflet->delete();
-            Messages::add('success','Leaflet Removed');
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
-        }
-    }
-
-    public function post_create(){
         $rules = array(
             'name'  => 'required|unique:leaflets|max:255',
             'campus'  => 'required|exists:campuses,id',
