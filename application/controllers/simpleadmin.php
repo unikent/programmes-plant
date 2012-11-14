@@ -107,7 +107,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         }
         else
         {
-            $update = $model->find(Input::get('id'));
+            $update = $this->model->find(Input::get('id'));
    
             $update->name = Input::get('name');
 
