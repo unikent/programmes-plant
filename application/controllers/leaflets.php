@@ -41,7 +41,9 @@ class Leaflets_Controller extends Simple_Admin_Controller
         {
             Messages::add('error',$validation->errors->all());
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
-        }else{
+        }
+        else
+        {
             $leaflet = new Leaflet;
             $leaflet->name = Input::get('name');
             $leaflet->campuses_id = Input::get('campus');
@@ -70,7 +72,9 @@ class Leaflets_Controller extends Simple_Admin_Controller
         {
             Messages::add('error',$validation->errors->all());
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
-        }else{
+        }
+        else
+        {
             $leaflet = Leaflet::find(Input::get('id'));
    
             $leaflet->name = Input::get('name');
