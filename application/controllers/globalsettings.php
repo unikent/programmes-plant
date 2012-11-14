@@ -142,7 +142,6 @@ class GlobalSettings_Controller extends Admin_Controller
      */
     public function get_promote($year, $type, $revision_id = false)
     {
-
         // Get revision specified
         $globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
