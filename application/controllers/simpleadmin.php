@@ -48,7 +48,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         }
         else
         {
-            $this->layout->nest('content', 'admin.forms.single-field', $this->data);
+            $this->layout->nest('content', 'admin.generic-forms.single-field', $this->data);
         }
     }
 
@@ -62,7 +62,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         }
         else
         {
-            $this->layout->nest('content', 'admin.forms.single-field', $this->data);
+            $this->layout->nest('content', 'admin.generic-forms.single-field', $this->data);
         }
     }
 
