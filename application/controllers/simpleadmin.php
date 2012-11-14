@@ -5,11 +5,17 @@
  */
 class Simple_Admin_Controller extends Admin_Controller {
 
+    // Stores the shortcut variable for the language file
+    var $l = '';
+
     public function __construct()
     {  
     	if ($this->model) {
     		$this->model = new $this->model;
     	}
+
+        // Quick use variable for access to language files
+        $this->l = $this->views . '.';
 
     	// Construct parent.
     	parent::__construct();
