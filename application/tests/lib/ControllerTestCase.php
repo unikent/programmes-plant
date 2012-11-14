@@ -33,10 +33,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 */
 	public function call($destination, $parameters = array(), $method = 'GET')
 	{
-		Request::foundation()->server->add(array(
-			'REQUEST_METHOD' => $method,
-		));
-
+		Request::foundation()->setMethod($method);
 		return Controller::call($destination, $parameters);
 	}
 
