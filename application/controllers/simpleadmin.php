@@ -53,7 +53,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
         if ($validation->fails())
         {
-            Messages::add('error','You tried to delete a user that doesn\'t exist.');
+            Messages::add('error','You tried to delete a' . Str::singular($this->views) . 'that doesn\'t exist.');
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
         else
