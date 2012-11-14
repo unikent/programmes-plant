@@ -17,11 +17,11 @@ class Revisionable extends Eloquent
       */
      public function save()
      {
-      if ( ! $this->dirty()) return true;
+      if ( ! $this->dirty() ) return true;
 
       // Time stamp the entry
       $this->timestamp();
-
+      
       // If the subject exists we want to create a new version of it in our revision table.
       // If they have set it to "live" then we want to handle this, but pushing this revision into
       // the live table.
@@ -31,18 +31,15 @@ class Revisionable extends Eloquent
         // @todo Abstract this.
         if (! $this->revision) {
           $query = DB::table($this->revision_table);
-
-          // Establish the next ID in the revisions table.
-          $last = $query->lists('id');
-          $last = end($last);
+          
           $revision_attributes = $this->attributes;
-          $revision_attributes['id'] = $last + 1;
-
+          
           $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
           // We don't have published by in revisions
           unset($revision_attributes['published_by']);
           unset($revision_attributes['live']);
+          unset($revision_attributes['id']);
 
           // Timestamp revision - the time stamp of the newly created revision should be
           // the same as the update of the main table.
