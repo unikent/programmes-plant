@@ -1,12 +1,12 @@
-<h1><?php echo Str::title(Str::plural($type)); ?></h1>
-<p>Use the table below to edit the <?php echo Str::plural($type) ?> available in this system.</p>
+<h1><?php echo Str::title($type); ?></h1>
+<p><?php echo __($type . '.introduction'); ?></p>
 <?php echo Messages::get_html()?>
 <?php if ($items) : ?>
 <table class="table table-striped table-bordered table-condensed">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Actions</th>
+      <th><?php echo Str::title(Str::singular($type)); ?></th>
+      <th><?php echo __($type . '.actions_column') ?></th>
     </tr>
   </thead>
   <tbody>
@@ -14,8 +14,8 @@
     <tr>
       <td><?php echo $item->name ?></td>
         <td>
-          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>">Edit</a> 
-          <a class="delete_toggler btn btn-danger" rel="<?php echo $item->id; ?>">Delete</a>
+          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a> 
+          <a class="delete_toggler btn btn-danger" rel="<?php echo $item->id; ?>"><?php echo __($type . '.delete') ?></a>
         </td>
     </tr>
   <?php endforeach; ?>
@@ -23,26 +23,26 @@
 </table>
 <?php else : ?>
 <div class="well">
-  <p>There are no <?php echo Str::plural($type) ?> in the system yet. Feel free to add one below.</p>
+  <p><?php echo __($type . '.no_items') ?></p>
 </div>
 <?php endif; ?>
 <div class="form-actions">
-  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary right">New <?php echo Str::title(Str::singular($type)); ?></a>
+  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary right"><?php echo __($type . '.create') ?></a>
 </div>
 
 <div class="modal hide fade" id="delete_<?php echo Str::singular($type); ?>">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __($type . '.modal_header') ?></h3>
   </div>
   <div class="modal-body">
-    <p>Are you sure you want to delete this <?php echo Str::singular($type); ?>?</p>
+    <p><?php echo __($type . '.modal_body') ?></p>
   </div>
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/'. $type . '/delete', 'POST')?>
-    <a data-toggle="modal" href="#delete_<?php echo Str::singular($type); ?>" class="btn">Keep</a>
+    <a data-toggle="modal" href="#delete_<?php echo Str::singular($type); ?>" class="btn"><?php echo __($type . '.modal_keep') ?></a>
     <input type="hidden" name="id" id="postvalue" value="" />
-    <input type="submit" class="btn btn-danger" value="Delete" />
+    <input type="submit" class="btn btn-danger" value="<?php echo __($type . '.modal_delete'); ?>" />
     <?php echo Form::close()?>
   </div>
 </div>
