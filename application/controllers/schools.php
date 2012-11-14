@@ -5,27 +5,7 @@ class Schools_Controller extends Simple_Admin_Controller
     public $restful = true;
     public $views = 'schools';
     protected $model = 'School';
-
-    public function get_edit($year, $type, $object_id = false)
-    {
-    	// Do our checks to make sure things are in place
-    	if(!$object_id) return Redirect::to($this->views);
-
-    	$object = School::find($object_id);
-
-    	if(!$object) return Redirect::to($this->views);
-
-    	$this->data['school'] = $object;
-      
-    	return View::make('admin.'.$this->views.'.form',$this->data);
-    }
-
-    public function get_create()
-    {
-        $this->data['create'] = true;
-
-        return View::make('admin.'.$this->views.'.form',$this->data);
-    }
+    public $custom_form = true;
 
     public function post_create()
     {

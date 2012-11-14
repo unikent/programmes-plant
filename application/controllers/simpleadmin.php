@@ -8,6 +8,9 @@ class Simple_Admin_Controller extends Admin_Controller {
     // Stores the shortcut variable for the language file
     var $l = '';
 
+    // Whether to use a custom form here
+    var $custom_form = false;
+
     public function __construct()
     {  
     	if ($this->model) {
@@ -38,15 +41,29 @@ class Simple_Admin_Controller extends Admin_Controller {
     	if(!$object) return Redirect::to($this->views);
 
     	$this->data['item'] = $object;
-      
-    	$this->layout->nest('content', 'admin.forms.single-field', $this->data);
+        
+        if ($this->custom_form)
+        {
+            $this->layout->nest('content', 'admin.'.$this->views.'.form',$this->data);
+        }
+        else
+        {
+            $this->layout->nest('content', 'admin.forms.single-field', $this->data);
+        }
     }
 
     public function get_create()
     {
         $this->data['create'] = true;
 
-        $this->layout->nest('content', 'admin.forms.single-field', $this->data);
+        if ($this->custom_form)
+        {
+            $this->layout->nest('content', 'admin.'.$this->views.'.form',$this->data);
+        }
+        else
+        {
+            $this->layout->nest('content', 'admin.forms.single-field', $this->data);
+        }
     }
 
     public function post_delete()
