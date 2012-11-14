@@ -6,22 +6,29 @@ class Leaflets_Controller extends Simple_Admin_Controller
     public $views = 'leaflets';
     protected $model = 'Leaflet';
 
-    public function get_edit($year, $type, $object_id = false){
+    public function get_edit($year, $type, $object_id = false)
+    {
     	// Do our checks to make sure things are in place
     	if(!$object_id) return Redirect::to($this->views);
+
     	$object = Leaflet::find($object_id);
+
     	if(!$object) return Redirect::to($this->views);
+
     	$this->data['leaflet'] = $object;
       
     	return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
-    public function get_create(){
+    public function get_create()
+    {
         $this->data['create'] = true;
 
         return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
+    public function post_create()
+    {
         $rules = array(
             'name'  => 'required|unique:leaflets|max:255',
             'campus'  => 'required|exists:campuses,id',
@@ -47,7 +54,8 @@ class Leaflets_Controller extends Simple_Admin_Controller
         }
     }
 
-    public function post_edit(){
+    public function post_edit()
+    {
         
         $rules = array(
             'id'  => 'required|exists:leaflets',
@@ -75,7 +83,5 @@ class Leaflets_Controller extends Simple_Admin_Controller
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
         }
     }
-
-
 
 }
