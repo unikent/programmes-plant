@@ -20,10 +20,6 @@ class Schools_Controller extends Simple_Admin_Controller
     	return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
-    /**
-     * Our user subject create function
-     *
-     **/
     public function get_create()
     {
         $this->data['create'] = true;
