@@ -19,6 +19,7 @@
     <link href="<?php echo asset('css/admin/bootstrap-responsive.css')?>" rel="stylesheet">
     <!-- Call our own stylesheets -->
     <link href="<?php echo asset('css/admin/style.css')?>" rel="stylesheet">
+    <link href="<?php echo asset('css/admin/wysiwyg.css')?>" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
