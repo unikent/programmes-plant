@@ -18,9 +18,6 @@ Route::group(array('before' => 'auth'), function(){
 	// Automatic routing of RESTful controller
 	Route::controller('roles');
 
-	// Help page
-	Route::get('([0-9]{4})/(ug|pg)/help', 'help@index');
-
 	// Do global settings
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings', 'globalsettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)', 'globalsettings@(:3)');

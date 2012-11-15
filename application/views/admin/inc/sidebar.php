@@ -40,8 +40,4 @@
      <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url('fields/globalsettings')?>"><i class="icon-cog"></i> Global settings fields </a></li>
      <li class="<?php echo ( URI::segment(4) == 'programmesettings' ? 'active' : false )?>"><a href="<?php echo url('fields/programmesettings')?>"><i class="icon-cog"></i> Programme settings fields </a></li>
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url('fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
-
-
-       <li class="divider"></li>
-       <li class="<?php echo ( URI::segment(1) == 'help' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'help')?>"><i class="icon-flag"></i> Help &amp; Support</a></li>
 </ul>
