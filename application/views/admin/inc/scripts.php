@@ -16,28 +16,16 @@
 <link rel="stylesheet" type="text/css" href="<?php echo asset('lib/css/prettify.css')?>"></link>
 <link rel="stylesheet" type="text/css" href="<?php echo asset('src/bootstrap-wysihtml5.css')?>"></link>
 <script src="<?php echo asset('lib/js/wysihtml5-0.3.0.js')?>"></script>
-<script src="<?php echo asset('lib/js/prettify.js')?>"></script>
 <script src="<?php echo asset('src/bootstrap-wysihtml5.js')?>"></script>
-
+<script src="<?php echo asset('js/bootstrap-wysihtml5-kent.js')?>"></script>
 
 
 <script type="text/javascript">
-    $(document).ready(function (){
-        // wysiwyg
-        $('textarea').each(function(){$(this).wysihtml5({
-        	"font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
-        	"emphasis": true, //Italics, bold, etc. Default true
-        	"lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-        	"html": true, //Button which allows you to edit the generated HTML. Default false
-        	"link": false, //Button to insert a link. Default true
-        	"image": false, //Button to insert an image. Default true
-        	})
-        });
-        $(prettyPrint);
-        
-        // multiselect
+    
+    // multiselect
+    if($('.multiselect')){
     	$(".multiselect").multiselect({dividerLocation: 0.5});
-    });
+    }
 
 	if($('#content')){
 		$('#content').wysihtml5();
