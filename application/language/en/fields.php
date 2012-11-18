@@ -9,6 +9,9 @@ return array(
     // name given to global settings in the title
     'globalsettings' => 'Global settings',
 
+    // name given to programme settings in the title
+    'programmesettings' => 'Programme settings',
+
     // name given to programmes in the title
     'programmes' => 'Programmes',
 
@@ -18,6 +21,7 @@ return array(
     // introduction text
     'introduction' => array(
         'globalsettings' => 'This is the listing of fields which apply to global settings.',
+        'programmesettings' => 'This is the listing of fields which apply to programme settings.',
         'programmes' =>  'This is the listing of fields which apply to programmes.',
     ),
 
@@ -36,6 +40,7 @@ return array(
     // used in the edit/add form
     'form' => array(
         'globalsettings' => 'global settings',
+        'programmesettings' => 'programme settings',
         'programmes' => 'programmes',
         'add_title' => 'Add new :field_name field',
         'edit_title' => 'Edit :field_name field',
