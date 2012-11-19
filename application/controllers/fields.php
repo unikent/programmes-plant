@@ -12,7 +12,7 @@ class Fields_Controller extends Admin_Controller
     public function get_index()
     {
         $model = $this->model;
-        $fields = $model::order_by('id','asc')->get();
+        $fields = $model::order_by('order','asc')->get();
 
         return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
     }
@@ -154,5 +154,16 @@ class Fields_Controller extends Admin_Controller
         $row->save();
 
         return Redirect::to('fields/'.$this->view);
+    }
+    
+    /**
+     * Routing for POST /reorder
+     *
+     * This allows fields to be reordered via an AJAX request from the UI
+     */
+    public function post_reorder()
+    {
+        $model = $this->model;
+        return $model::reorder(Input::get('order'));
     }
 }
