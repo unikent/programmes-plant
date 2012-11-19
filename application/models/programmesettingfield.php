@@ -1,7 +1,6 @@
 <?php
 
-class ProgrammeSettingField extends Eloquent
+class ProgrammeSettingField extends Field
 {
     public static $table = 'programme_settings_fields';
-
 }
