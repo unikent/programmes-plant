@@ -18,12 +18,12 @@ class Field extends Eloquent {
         foreach ($order_array as $counter => $id)
         {
             // strip out the non-relevant part of the html id to get the actual id
-            $id = str_replace('field-ordering-id-', '', $id);
+            $id = str_replace('field-id-', '', $id);
             
             // pull out the appropriate entry and update it with the array index (+1)
             $item = self::find($id);
             $item->order = $counter + 1;
-            $item->save(); 
+            $item->save();
         }
     }
     
