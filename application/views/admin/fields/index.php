@@ -28,10 +28,10 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody class="sortable-tbody">
+              <tbody <?php echo $field_type == 'programmes' ? 'class="sortable-tbody"' : ''; ?>>
                 <?php foreach($fields as $subject) : ?>
-                <tr id="field-ordering-id-<?php echo $subject->id ?>">
-                  <td><i class="icon-move"></i> <?php echo $subject->field_name ?></td>
+                <tr id="field-id-<?php echo $subject->id ?>">
+                  <td><?php echo $field_type == 'programmes' ? '<i class="icon-move"></i> ' : ''; ?><?php echo $subject->field_name ?></td>
                   <td><?php echo $subject->field_type ?></td>
                   <td>
 
