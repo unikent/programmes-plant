@@ -35,6 +35,7 @@ Route::group(array('before' => 'auth'), function(){
 
 	// Access fields systems
 	Route::any('fields/programmes', 'programmefields@index');
+	Route::post('fields/programmes/reorder', 'programmefields@reorder');
 	Route::any('fields/programmes/(:any?)', 'programmefields@(:1)');
 	Route::any('fields/programmes/(:any?)/(:num?)', 'programmefields@(:1)');
 
