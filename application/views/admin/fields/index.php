@@ -19,6 +19,7 @@
           <div style="margin-top:20px; margin-bottom:20px">
               <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
           </div>
+
           <table class="table table-striped table-bordered table-condensed" width="100%">
               <thead>
                 <tr>
@@ -27,10 +28,10 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-              <?php foreach($fields as $subject) : ?>
-                <tr>
-                  <td><?php echo $subject->field_name ?></td>
+              <tbody class="sortable-tbody">
+                <?php foreach($fields as $subject) : ?>
+                <tr id="field-ordering-id-<?php echo $subject->id ?>">
+                  <td><i class="icon-move"></i> <?php echo $subject->field_name ?></td>
                   <td><?php echo $subject->field_type ?></td>
                   <td>
 
@@ -52,6 +53,6 @@
       </div>
 
     </div> <!-- /container -->
-
+<?php echo View::make('admin.inc.scripts')->render()?>
   </body>
 </html>
