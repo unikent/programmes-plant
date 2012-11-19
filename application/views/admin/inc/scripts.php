@@ -21,7 +21,22 @@
 	*/
 	$(document).ready(function (){
 		$(".multiselect").multiselect({dividerLocation: 0.5});
+		
+		// sortable items in field listings
+		$( ".sortable-tbody" ).sortable({
+			update: function(event, ui) {
+				// convert the sortable object into a comma-separated list of ids
+				var order = $(this).sortable('toArray').toString();
+				// post to our reorder route
+                $.post("/fields/programmes/reorder", {
+                    'order': order
+                });
+			}
+		});
+        
 	});
+	
+        
 
 		if($('#content')){
 		$('#content').wysihtml5({
