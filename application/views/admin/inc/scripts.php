@@ -12,13 +12,21 @@
 <link type="text/css" href="<?php echo asset('css/admin/ui.multiselect.css')?>" rel="stylesheet" />
 <link type="text/css" href="<?php echo asset('css/admin/jquery.ui.listbuilder.css')?>" rel="stylesheet" />
 
+<!-- wysiwyg editor -->
+<link rel="stylesheet" type="text/css" href="<?php echo asset('lib/css/prettify.css')?>"></link>
+<link rel="stylesheet" type="text/css" href="<?php echo asset('src/bootstrap-wysihtml5.css')?>"></link>
+<script src="<?php echo asset('lib/js/wysihtml5-0.3.0.js')?>"></script>
+<script src="<?php echo asset('src/bootstrap-wysihtml5.js')?>"></script>
+<script src="<?php echo asset('js/bootstrap-wysihtml5-kent.js')?>"></script>
+
 
 <script type="text/javascript">
-	/*
-	if($('#content')){
-		$('#content').wysihtml5();
-	}
-	*/
+    
+    // multiselect
+    if($('.multiselect')){
+    	$(".multiselect").multiselect({dividerLocation: 0.5});
+    }
+    
 	$(document).ready(function (){
 		$(".multiselect").multiselect({dividerLocation: 0.5});
 		
@@ -38,20 +46,20 @@
 	
         
 
-		if($('#content')){
-		$('#content').wysihtml5({
-	"font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
-	"emphasis": true, //Italics, bold, etc. Default true
-	"lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-	"html": false, //Button which allows you to edit the generated HTML. Default false
-	"link": false, //Button to insert a link. Default true
-	"image": false, //Button to insert an image. Default true
-	});
-}
+    if($('#content')){
+        $('#content').wysihtml5({
+        	"font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
+        	"emphasis": true, //Italics, bold, etc. Default true
+        	"lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+        	"html": false, //Button which allows you to edit the generated HTML. Default false
+        	"link": false, //Button to insert a link. Default true
+        	"image": false, //Button to insert an image. Default true
+    	});
+    }
 
-	if($('.editable_text')){
-		$('.editable_text').each(function(index,elem) {
-			$(elem).wysihtml5();
-		});
-	}
+    if($('.editable_text')){
+    	$('.editable_text').each(function(index,elem) {
+    		$(elem).wysihtml5();
+    	});
+    }
 </script>
