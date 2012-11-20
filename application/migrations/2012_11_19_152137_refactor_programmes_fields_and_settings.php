@@ -46,7 +46,7 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		//2.
 		Schema::table('programmes_fields', function($table){
-			$table->drop_column('live');
+			$table->drop_column('isglobal');
 		});
 	}
 
@@ -71,8 +71,8 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_fields[] = array('Start', 'text', 'By default, the first day of term (eg 29 September 2014) will appear on the page unless you type an alternative start date into this field.', '');//Function: Overrides the standard start date defined by the global settings. 
 		$programme_fields[] = array('Accredited by', 'text', 'Indicate any professional accreditation.', '');//-----------IN DEFAULTS------------
 		$programme_fields[] = array('Programme type', 'checkbox', 'Please check the relevant boxes or leave blank if the programme is none of these.', '');//Options: year in industry, year abroad, foundation year.
-		$programme_fields[] = array('Total Kent credits awarded on completion', 'numeric', 'eg 360', '');
-		$programme_fields[] = array('Total ECTS credits awarded on completion', 'numeric', 'eg 180', '');
+		$programme_fields[] = array('Total Kent credits awarded on completion', 'text', 'eg 360', '');
+		$programme_fields[] = array('Total ECTS credits awarded on completion', 'text', 'eg 180', '');
 
 		//Section: Overview
 		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters.  The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '');//140 character limit
