@@ -106,6 +106,7 @@ class ProgrammeSections_Controller extends Admin_Controller
     {
         $model = $this->model;
         $model::reorder(Input::get('order'));
+        die();
     }
 
 }
