@@ -88,7 +88,7 @@
   </tbody>
 </table>
         <?php else : ?>
-        <?php echo  __('subjects.no_change_requests') ?>
+        No changes right now.
         <?php endif; ?>
         </div>
 
