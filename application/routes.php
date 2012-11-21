@@ -10,7 +10,7 @@ Route::group(array('before' => 'auth'), function(){
 	});
 
 	// Index
-	Route::any('([0-9]{4})/(ug|pg)', 'dash@index');
+	Route::any('([0-9]{4})/(ug|pg)', 'programmes@index');
 
 	// Roles managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
