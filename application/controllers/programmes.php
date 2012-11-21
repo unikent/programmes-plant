@@ -204,7 +204,7 @@ class Programmes_Controller extends Admin_Controller
     {
         $model = $this->model.'Field';
 
-        return  $model::where('active','=','1')->order_by('order','asc')->get();
+        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
     }
 
     /**
