@@ -21,7 +21,12 @@ class Fields_Controller extends Admin_Controller
         }
         
         // sections
-        $sections = ProgrammeSection::order_by('order','asc')->get();
+        $sections = "";
+        // only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
+        if ($this->view == 'programmes')
+        {
+            $sections = ProgrammeSection::order_by('order','asc')->get();
+        }
 
         return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
     }
