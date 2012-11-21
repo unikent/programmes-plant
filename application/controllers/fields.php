@@ -19,8 +19,11 @@ class Fields_Controller extends Admin_Controller
         }else{
             $fields = $model::order_by('order','asc')->get();
         }
+        
+        // sections
+        $sections = ProgrammeSection::order_by('order','asc')->get();
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
     }
 
     public function get_add()
