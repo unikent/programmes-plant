@@ -20,6 +20,24 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 		Session::load();
 	}
 
+	public function tearDown()
+	{
+		$this->clean_request();
+	}
+
+	/**
+	 * Ensures we don't have problems with dirty requests.
+	 */
+	private function clean_request(){
+        $request = \Laravel\Request::foundation()->request;
+
+        $req_keys = $request->keys();
+       
+        foreach($req_keys as $key){
+            $request->remove($key);
+        }
+    }
+
 	/**
 	 * Call a controller method.
 	 *
@@ -42,7 +60,6 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @param	string	$destination
 	 * @param	array	$parameters
-	 * @param	string	$method
 	 * @return	\Laravel\Response
 	 */
 	public function get($destination, $parameters = array())
@@ -65,4 +82,26 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 		return $this->call($destination, $parameters, 'POST');
 	}
 
+	/**
+	 * Convinience function for returning just the data array from a GET request.
+	 * 
+	 * @param	string	$destination
+	 * @param	array	$parameters
+	 * @param	string	$method
+	 */
+	public function get_data($destination, $parameters = array())
+	{
+		return $this->extract_data($this->call($destination, $parameters, 'GET'));
+	}
+
+	/**
+	 * Helper function to extract data from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return array $data The data array.
+	 */
+	public function extract_data($response)
+	{
+		return $response->content->data['content']->data;
+	}
 }
