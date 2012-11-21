@@ -13,7 +13,7 @@ The following are instructions on running the Programmes Plant on a local machin
 2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. To move the files in one command, run:
 `mkdir application/config/local && cp application/config/*.sample application/config/local && ls application/config/local/*.sample | while read file; do mv $file  `echo $file | sed s/.sample//`; done`
 
-3. You will need to create a MySQL database if you plan to use MySQL. Create this database and add the credentials to `application/config/local/database.php`.
+3. You will need to create a MySQL database if you plan to use MySQL. Create this database and add the credentials to `application/config/local/database.php`. If you want to get this running using SQLite, then run `mkdir storage/database` then change line 45 of `application/config/local/database.php` to be `sqlite` not `mysql`. Should just be good to go.
 
 4. The application requires an authentication driver to be used. The details of this can be setup in `application/config/local/auth.php`. We use our own LDAP driver. If you decide to use our bundled LDAP driver, the server settings can go in `application/config/local/ldap.php`.
 
