@@ -9,8 +9,10 @@ class Field extends Eloquent {
     *
     * @param string $order_string a comma-separated list of fields, in the order in which the user wants them
     */
-    public static function reorder($order_string)
+    public static function reorder($order_string, $section)
     {
+
+        //print_r($order_string);print_r($section);die();
         // break up the string to get the list of ids
         $order_array = explode(",", $order_string);
         
@@ -23,6 +25,7 @@ class Field extends Eloquent {
             // pull out the appropriate entry and update it with the array index (+1)
             $item = self::find($id);
             $item->order = $counter + 1;
+            $item->section = str_replace('section-id-', '', $section);
             $item->save();
         }
     }

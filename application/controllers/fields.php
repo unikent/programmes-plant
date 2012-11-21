@@ -28,7 +28,10 @@ class Fields_Controller extends Admin_Controller
             $sections = ProgrammeSection::order_by('order','asc')->get();
         }
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+      
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+
+
     }
 
     public function get_add()
@@ -45,7 +48,7 @@ class Fields_Controller extends Admin_Controller
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
 
-        return View::make('admin.fields.form',$data);
+        $this->layout->nest('content','admin.fields.form',$data);
     }
 
     public function post_add()
@@ -182,7 +185,10 @@ class Fields_Controller extends Admin_Controller
      */
     public function post_reorder()
     {
+
         $model = $this->model;
-        $model::reorder(Input::get('order'));
+        $model::reorder(Input::get('order'), Input::get('section'));
+
+        die();
     }
 }
