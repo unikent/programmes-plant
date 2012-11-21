@@ -21,11 +21,9 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 5. Run `php artisan migrate:install --env=local` to setup the migtations table. Then run `php artisan migrate --env=local` to run all the migrations to setup your database.
 
-6. Copy the public/.htaccess.sample file to public/.htaccess.
+6. Point a browser at the public folder.
 
-7. Point a browser at the public folder.
-
-8. We're done here!
+7. We're done here!
 
 ## Testing
 
