@@ -5,23 +5,23 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Award',
-	'delete' => 'Remove Award',
-	'create' => 'Create Award',
+	'edit' => 'Edit Leaflet',
+	'delete' => 'Remove Leaflet',
+	'create' => 'Create Leaflet',
 	'back' => 'Go Back',
-	'save' => 'Save Award',
+	'save' => 'Save Leaflet',
 
 	/**
 	 * Index page.
 	 */
 	'introduction' => 'Use this form ',
-	'no_items' => 'No awards yet',
+	'no_items' => 'No leaflets yet',
 
 	// Modal On Deletion Attempt
 	'modal_header' => 'Are You Sure?',
 	'modal_body' => 'This will remove this award, are you sure you want to do this?',
-	'modal_keep' => 'No - Keep This Award',
-	'modal_delete' => 'Remove This Award',
+	'modal_keep' => 'No - Keep This Leaflet',
+	'modal_delete' => 'Remove This Leaflet',
 
 	/**
 	 * Forms
@@ -36,12 +36,12 @@ return array(
 	 * Messages
 	 */
 	'error' => array(
-		'delete' => 'Award not found',
+		'delete' => 'Leaflet not found',
 	),
 
 	'success' => array(
-		'delete' => 'Award successfully removed.',
-		'create' => 'Award successfully created',
-		'edit' => 'Award saved',
+		'delete' => 'Leaflet successfully removed.',
+		'create' => 'Leaflet successfully created',
+		'edit' => 'Leaflet saved',
 	)
 );
