@@ -28,6 +28,7 @@ class Leaflets_Controller extends Simple_Admin_Controller
             $leaflet->name = Input::get('name');
             $leaflet->campuses_id = Input::get('campus');
             $leaflet->tracking_code = Input::get('tracking_code');
+            $leaflet->main = Input::get('main-additional');
 
             $leaflet->save();
  
@@ -60,6 +61,7 @@ class Leaflets_Controller extends Simple_Admin_Controller
             $leaflet->name = Input::get('name');
             $leaflet->campuses_id = Input::get('campus');
             $leaflet->tracking_code = Input::get('tracking_code');
+            $leaflet->main = Input::get('main-additional');
 
             $leaflet->save();
 
