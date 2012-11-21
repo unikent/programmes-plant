@@ -17,7 +17,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		// For the moment lets try and do this without sessions.
-		//Session::load();
+		Session::load();
 	}
 
 	public function tearDown()
@@ -51,10 +51,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 */
 	public function call($destination, $parameters = array(), $method = 'GET')
 	{
-		Request::foundation()->server->add(array(
-			'REQUEST_METHOD' => $method,
-		));
-
+		Request::foundation()->setMethod($method);
 		return Controller::call($destination, $parameters);
 	}
 

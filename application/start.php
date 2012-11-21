@@ -171,7 +171,7 @@ Session::extend('phpsession', function()
 	return new PhpSession;
 });
 
-if ( ! Request::cli() and Config::get('session.driver') !== '')
+if (Config::get('session.driver') !== '')
 {
 	Session::load();
 }
