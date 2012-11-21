@@ -9,16 +9,21 @@
   cursor:pointer;
 }
 .field_item i {padding-right:5px;}
-.field_item .title {width:40%;   display:inline-block;}
-.field_item .type {width:30%;   display:inline-block;}
+.field_item .title {width:60%;   display:inline-block;}
+.field_item .type {width:15%;   display:inline-block;}
 .field_item .actions {width:20%;   display:inline-block;}
 
-legend { cursor:pointer;}
+legend { cursor:pointer;margin-top:10px;}
 
 .sortable_fields {
   min-height:30px;
   margin:0px;
 
+}
+
+.sortable_fields.dropzone-large {
+
+  height:120px;
 }
 </style>
 <script>
@@ -78,28 +83,6 @@ $(document).ready(function (){
   }
 
 
-    
-
-
-
-      /*
-      change: function(event, ui){
-
-        var order = $(this).sortable('toArray').toString();
-        console.log(order);
-        console.log("update: change order");
-      },
-      receive: function(event, ui){
-        var order = $(this).sortable('toArray').toString();
-
-        console.log("update: new item");
-        console.log(order);
-
-        
-        */
-
-      
-    
 
     $( "div.sortable_sections" ).sortable({
       update: function(event, ui) {
@@ -123,6 +106,7 @@ $(document).ready(function (){
 
   <div style="margin-top:20px; margin-bottom:20px">
       <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
+        <a href="<?php echo action('/sections@create')?>" class="btn btn-primary">New section</a>
   </div>
 
 
@@ -131,7 +115,7 @@ $(document).ready(function (){
     <?php foreach($sections as $section): ?>
 
       <div class='section_content' id="section-id-<?php echo $section->id; ?>">
-        <legend><?php echo $section->name ?><div style='float:right;'><td><a class="btn btn-link" href="'.action('/sections@edit', array($section->id)).'">Edit</a></div></legend>
+        <legend><?php echo $section->name ?><div style='float:right;'><td><a class="btn btn-link" href="<?php echo action('/sections@edit', array($section->id)); ?>">Edit</a></div></legend>
 
          <ul class='sortable_fields'>
                <?php foreach($fields as $field) : ?>
@@ -140,34 +124,7 @@ $(document).ready(function (){
 
 
 
-                   <li class='field_item' id="field-id-<?php echo $field->id?>">
-
-                  <i class="icon-move"></i>
-
-                  <span class='title'>
-                    <?php echo $field->field_name?>
-                  </span>
-                  <span class='type'>
-
-                  </span>
-                  <span class='actions'>
-                    <a class="btn btn-primary" href="<?php echo url('fields/'.$field_type.'/edit/'.$field->id);?>"><?php echo __('fields.btn.edit'); ?></a>
-
-                    <?php if($field->active == 1 ): ?>
-                      <a class="btn btn-danger" href='<?php echo url('fields/'.$field_type.'/deactivate');?>?id=<?php echo $field->id;?>'><?php echo __('fields.btn.deactivate'); ?></a>
-                    <?php else: ?>
-                      <a class="btn btn-success" href='<?php echo url('fields/'.$field_type.'/reactivate');?>?id=<?php echo $field->id;?>'><?php echo __('fields.btn.reactivate'); ?></a>
-                    <?php endif; ?>
-                  </span>
-
-
-
-
-                  
-                  
-
-
-                </li>
+                   <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type))->render()?>
 
 
 
@@ -181,38 +138,12 @@ $(document).ready(function (){
  </div>
 
  <div id="section-id-0">
-   <legend>No Section</legend>
-    <ul class='sortable_fields'>
+   <legend style='color:red'>Inactive</legend>
+    <ul class='sortable_fields dropzone-large'>
             <?php foreach($fields as $field) : ?>
                <?php if($field->section == 0):?>
-                <li class='field_item' id="field-id-<?php echo $field->id?>">
 
-                  <i class="icon-move"></i>
-
-                  <span class='title'>
-                    <?php echo $field->field_name?>
-                  </span>
-                  <span class='type'>
-
-                  </span>
-                  <span class='actions'>
-                    <a class="btn btn-primary" href="<?php echo url('fields/'.$field_type.'/edit/'.$field->id);?>"><?php echo __('fields.btn.edit'); ?></a>
-
-                    <?php if($field->active == 1 ): ?>
-                      <a class="btn btn-danger" href='<?php echo url('fields/'.$field_type.'/deactivate');?>?id=<?php echo $field->id;?>'><?php echo __('fields.btn.deactivate'); ?></a>
-                    <?php else: ?>
-                      <a class="btn btn-success" href='<?php echo url('fields/'.$field_type.'/reactivate');?>?id=<?php echo $field->id;?>'><?php echo __('fields.btn.reactivate'); ?></a>
-                    <?php endif; ?>
-                  </span>
-
-
-
-
-                  
-                  
-
-
-                </li>
+                <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type))->render()?>
                <?php endif;?>
              <?php endforeach; ?>
       </ul> 
