@@ -19,15 +19,13 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 4. The application requires an authentication driver to be used. The details of this can be setup in `application/config/local/auth.php`. We use our own LDAP driver. If you decide to use our bundled LDAP driver, the server settings can go in `application/config/local/ldap.php`.
 
-5. Programmes Plant uses PHP Session based session driver as a drop in replacement for the Laravel default. This needs to be setup in `application/config/local/session.php` specifying a cookie type.
+5. Run `php artisan migrate:install --env=local` to setup the migtations table. Then run `php artisan migrate --env=local` to run all the migrations to setup your database.
 
-6. Run `php artisan migrate:install --env=local` to setup the migtations table. Then run `php artisan migrate --env=local` to run all the migrations to setup your database.
+6. Copy the public/.htaccess.sample file to public/.htaccess.
 
-7. Copy the public/.htaccess.sample file to public/.htaccess.
+7. Point a browser at the public folder.
 
-8. Point a browser at the public folder.
-
-9. We're done here!
+8. We're done here!
 
 ## Testing
 
