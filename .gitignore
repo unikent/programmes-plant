@@ -1,7 +1,7 @@
 .DS_Store
-storage/*
 bin/
 vendor/Symfony/yaml
 vendor/autoload.php
 vendor/composer
 vendor/phpunit/
+composer.phar
