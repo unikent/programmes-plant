@@ -26,8 +26,7 @@ class GlobalSettings_Controller extends Admin_Controller
     }
 
     /**
-     * Our subject create function
-     *
+     * Our global setting create function
      */
     public function get_create($year, $type)
     {
@@ -143,7 +142,6 @@ class GlobalSettings_Controller extends Admin_Controller
      */
     public function get_promote($year, $type, $revision_id = false)
     {
-
         // Get revision specified
         $globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
@@ -170,7 +168,6 @@ class GlobalSettings_Controller extends Admin_Controller
      */
     public function get_difference($year, $type, $revision_id = false)
     {
-
         // Get revision specified
         $globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
