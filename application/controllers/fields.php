@@ -118,7 +118,7 @@ class Fields_Controller extends Admin_Controller
 
     private function updateSchema($colname, $init_val, $type)
     {
-        //Adjust Tables
+        // Adjust Tables
         Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
             if ($type=='textarea') {
                 $table->text($colname);
@@ -138,7 +138,7 @@ class Fields_Controller extends Admin_Controller
 
     public function get_deactivate()
     {
-            $model = $this->model;
+        $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
@@ -146,7 +146,7 @@ class Fields_Controller extends Admin_Controller
         return Redirect::to('fields/'.$this->view);
     }
 
-     public function get_reactivate()
+    public function get_reactivate()
     {
         $model = $this->model;
         $row = $model::find(Input::get('id'));
