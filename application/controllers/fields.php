@@ -12,9 +12,23 @@ class Fields_Controller extends Admin_Controller
     public function get_index()
     {
         $model = $this->model;
-        $fields = $model::order_by('id','asc')->get();
+        
+        if($this->where_clause){
+            $fields = $model::where($this->where_clause[0], $this->where_clause[1], $this->where_clause[2])->order_by('order','asc')->get();
+            //echo '<pre>';print_r($fields);echo '</pre>';
+        }else{
+            $fields = $model::order_by('order','asc')->get();
+        }
+        
+        // sections
+        $sections = "";
+        // only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
+        if ($this->view == 'programmes')
+        {
+            $sections = ProgrammeSection::order_by('order','asc')->get();
+        }
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
     }
 
     public function get_add()
@@ -62,6 +76,11 @@ class Fields_Controller extends Admin_Controller
                 $subject->field_initval =  Input::get('initval');
                 $subject->placeholder =  Input::get('placeholder');
                 $subject->prefill =  (Input::get('prefill')==1) ? 1 : 0;
+
+                if($this->where_clause){
+                    $where_field = $this->where_clause[0];
+                    $subject->$where_field = $this->where_clause[2];
+                }
 
                 $subject->save();
 
@@ -154,5 +173,16 @@ class Fields_Controller extends Admin_Controller
         $row->save();
 
         return Redirect::to('fields/'.$this->view);
+    }
+    
+    /**
+     * Routing for POST /reorder
+     *
+     * This allows fields to be reordered via an AJAX request from the UI
+     */
+    public function post_reorder()
+    {
+        $model = $this->model;
+        $model::reorder(Input::get('order'));
     }
 }

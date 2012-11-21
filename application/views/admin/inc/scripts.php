@@ -26,9 +26,47 @@
     if($('.multiselect')){
     	$(".multiselect").multiselect({dividerLocation: 0.5});
     }
+    
+	$(document).ready(function (){
+		$(".multiselect").multiselect({dividerLocation: 0.5});
+		
+		// sortable items in field listings
+		$( ".sortable-tbody" ).sortable({
+			update: function(event, ui) {
+				// convert the sortable object into a comma-separated list of ids
+				var order = $(this).sortable('toArray').toString();
+				// post to our reorder route
+                $.post("/fields/programmes/reorder", {
+                    'order': order
+                });
+			}
+		});
+		
+		// sortable items in field listings
+		$( ".sortable-sections-tbody" ).sortable({
+			update: function(event, ui) {
+				// convert the sortable object into a comma-separated list of ids
+				var order = $(this).sortable('toArray').toString();
+				// post to our reorder route
+                $.post("/sections/reorder", {
+                    'order': order
+                });
+			}
+		});
+        
+	});
+	
+        
 
-	if($('#content')){
-		$('#content').wysihtml5();
+    if($('#content')){
+        $('#content').wysihtml5({
+        	"font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
+        	"emphasis": true, //Italics, bold, etc. Default true
+        	"lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+        	"html": false, //Button which allows you to edit the generated HTML. Default false
+        	"link": false, //Button to insert a link. Default true
+        	"image": false, //Button to insert an image. Default true
+    	});
     }
 
     if($('.editable_text')){
