@@ -14,24 +14,23 @@ class Fields_Controller extends Admin_Controller
         $model = $this->model;
         $fields = $model::order_by('id','asc')->get();
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
     }
 
     public function get_add()
     {
-        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view));
     }
 
     public function get_edit($id)
     {
-
         $data['id'] = $id;
 
         $model = $this->model;
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
 
-        return View::make('admin.fields.form',$data);
+        $this->layout->nest('content', 'admin.fields.form', $data);
     }
 
     public function post_add()
