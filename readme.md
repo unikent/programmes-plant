@@ -8,7 +8,7 @@ It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](htt
 
 The following are instructions on running the Programmes Plant on a local machine for development.
 
-1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init`, unless you have done a recursive clone. Note that this app uses the [unikent laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the laravel core. This fork is generally kept up to date with the laravel master branch, so including it as a submodule should give you the latest version of laravel.
+1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init` then `git submodule update`, unless you have done a recursive clone. Note that this app uses the [unikent Laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the Laravel core. This fork is generally kept up to date with the Laravel master branch, so including it as a submodule should give you the latest version of Laravel.
 
 2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. To move the files in one command, run:
 ```shell
