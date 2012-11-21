@@ -52,54 +52,54 @@ class Fields_Controller extends Admin_Controller
 
             if (Input::get('id')) {
                 $model = $this->model;
-                $subject = $model::find(Input::get('id'));
-                $subject->field_name = Input::get('title');
-                $subject->field_description = Input::get('description');
-                $subject->field_meta = Input::get('options');
+                $field = $model::find(Input::get('id'));
+                $field->field_name = Input::get('title');
+                $field->field_description = Input::get('description');
+                $field->field_meta = Input::get('options');
 
-                $oldtype = $subject->field_type;
-                $subject->field_type = Input::get('type');
-                $subject->field_initval =  Input::get('initval');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill =  (Input::get('prefill')==1) ? 1 : 0;
+                $oldtype = $field->field_type;
+                $field->field_type = Input::get('type');
+                $field->field_initval =  Input::get('initval');
+                $field->placeholder =  Input::get('placeholder');
+                $field->prefill =  (Input::get('prefill')==1) ? 1 : 0;
 
-                $subject->save();
+                $field->save();
 
-                //If type changes, apply data type swapper.
+                // If type changes, apply data type swapper.
                 if ($oldtype != Input::get('type')) {
                     $type_str = 'varchar(255)';
-                    if($subject->field_type=='textarea') $type_str = 'TEXT';
-                    DB::statement("alter table {$this->table} MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
+                    if($field->field_type=='textarea') $type_str = 'TEXT';
+                    DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+                    DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
                 }
 
             } else {
                 $colname = Str::slug(Input::get('title'), '_');
                 $init_val = Input::get('initval');
 
-                //Add Row
+                // Add Row
                 $model = $this->model;
-                $subject = new $model;
-                $subject->field_name = Input::get('title');
-                $subject->field_type = Input::get('type');
-                $subject->field_description = Input::get('description');
+                $field = new $model;
+                $field->field_name = Input::get('title');
+                $field->field_type = Input::get('type');
+                $field->field_description = Input::get('description');
 
-                $subject->field_meta = Input::get('options');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill = (Input::get('prefill')==1) ? 1 : 0;
+                $field->field_meta = Input::get('options');
+                $field->placeholder =  Input::get('placeholder');
+                $field->prefill = (Input::get('prefill')==1) ? 1 : 0;
 
-                $subject->field_initval =  $init_val;
+                $field->field_initval =  $init_val;
 
-                $subject->active = 1;
-                $subject->view = 1;
+                $field->active = 1;
+                $field->view = 1;
 
-                $subject->save();
+                $field->save();
 
                 //Now we have an id, set it as part of the colname
                 //to avoid risk of duplication
-                $colname .= '_'.$subject->id;
-                $subject->colname = $colname;
-                $subject->save();
+                $colname .= '_'.$field->id;
+                $field->colname = $colname;
+                $field->save();
 
                 $this->updateSchema($colname, $init_val, $datatype);
 
