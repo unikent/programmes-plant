@@ -29,7 +29,14 @@
            $formpart = Form::hidden($col, 'false');//Provides default value
            $formpart .= Form::$type($col, 'true', ($cur_val=='true') ? true : false);
 
-          //else text or texarea's
+           //elseif build table_select
+         }else if($type=='table_select'){
+            $model = $field->field_meta;
+            $formpart = Form::select($col, $model::getAsList(), $cur_val);
+            //elseif build table_multiselect
+         }else if($type=='table_multiselect'){
+            $model = $field->field_meta;
+            $formpart = Form::select($col, $model::getAsList(), $cur_val, array('multiple' => 'multiple'));
           }else{
             //If no curval exists and prefill is on, enter the inital value text in to the box
             if($cur_val == '' && $field->prefill == 1) $cur_val = $field->field_initval;
