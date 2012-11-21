@@ -105,7 +105,7 @@ class Fields_Controller extends Admin_Controller
             }
 
             Messages::add('success','Row added to schema');
-            //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
+            
             return Redirect::to('fields/'.$this->view);
         }
     }
