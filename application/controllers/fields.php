@@ -109,11 +109,6 @@ class Fields_Controller extends Admin_Controller
         }
     }
 
-    private function redirect($action)
-    {
-        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
-    }
-
     private function update_schema($colname, $init_val, $type)
     {
         // Adjust Tables
