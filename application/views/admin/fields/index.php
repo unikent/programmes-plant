@@ -13,19 +13,46 @@
           </div>
         </div> <!-- /Sidebar -->
 
-
-           
             
         <div class="span9">
-        
-         
-            
-            
+
+
+      
           <h1><?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></h1>
           <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.'.$field_type); ?></p>
           <div style="margin-top:20px; margin-bottom:20px">
               <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
           </div>
+
+          <?php if ($sections): ?>
+            <?php foreach($sections as $section): ?>
+
+
+                <legend><?php echo $section->name ?><div style='float:right;'><td><a class="btn btn-link" href="'.action('/sections@edit', array($section->id)).'">Edit</a></div></legend>
+
+                <table class="table table-striped table-bordered table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th><th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="sortable-sections-tbody">
+                       <?php foreach($fields as $field) : ?>
+
+                         <?php if($field->section == $section->id):?>
+                          <tr>
+                            <td><?php echo $field->field_name?></td>
+                            <td></td>
+                          </tr>
+                         <?php endif;?>
+                        
+                       <?php endforeach; ?>
+
+                  </tbody>
+                </table>
+             <?php endforeach ?>
+           <?php endif ?>
+
           
           <?php if ($sections): ?>
               <h2><?php echo  __('fields.table_sections_header_name') ?></h2>
