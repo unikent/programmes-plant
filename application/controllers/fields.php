@@ -7,7 +7,6 @@ class Fields_Controller extends Admin_Controller
 
     /**
      * Display the fields index page.
-     *
      */
     public function get_index()
     {
@@ -100,12 +99,12 @@ class Fields_Controller extends Admin_Controller
                 $field->colname = $colname;
                 $field->save();
 
-                $this->updateSchema($colname, $init_val, $datatype);
+                $this->update_schema($colname, $init_val, $datatype);
 
             }
 
             Messages::add('success','Row added to schema');
-            
+
             return Redirect::to('fields/'.$this->view);
         }
     }
@@ -115,7 +114,7 @@ class Fields_Controller extends Admin_Controller
         return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
     }
 
-    private function updateSchema($colname, $init_val, $type)
+    private function update_schema($colname, $init_val, $type)
     {
         // Adjust Tables
         Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
