@@ -28,6 +28,10 @@ legend { cursor:pointer;margin-top:10px;}
 </style>
 <script>
 $(document).ready(function (){
+
+  $('.toggleCollapse').click(function(a){
+    $(this).parent().parent().parent().find('ul').toggle();
+  });
    
   // For some reason jquery ui sortable does not provide a method to detect
   // when a field is reorderd ONLY within the current sortable.
@@ -115,7 +119,7 @@ $(document).ready(function (){
     <?php foreach($sections as $section): ?>
 
       <div class='section_content' id="section-id-<?php echo $section->id; ?>">
-        <legend><?php echo $section->name ?><div style='float:right;'><td><a class="btn btn-link" href="<?php echo action('/sections@edit', array($section->id)); ?>">Edit</a></div></legend>
+        <legend><?php echo $section->name ?><div style='float:right;'><td> <a class="btn btn-link toggleCollapse" >Show/Hide</a><a class="btn btn-link" href="<?php echo action('/sections@edit', array($section->id)); ?>">Edit</a></div></legend>
 
          <ul class='sortable_fields'>
                <?php foreach($fields as $field) : ?>
