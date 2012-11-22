@@ -21,6 +21,7 @@
         <li class="<?php echo ( URI::segment(3) == 'faculties' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'faculties')?>"><i class="icon-list-alt"></i> Faculties</a></li>
         <li class="<?php echo ( URI::segment(3) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'leaflets')?>"><i class="icon-list-alt"></i> Leaflets</a></li>
         <li class="<?php echo ( URI::segment(3) == 'schools' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'schools')?>"><i class="icon-list-alt"></i> Schools</a></li>
+        <li class="<?php echo ( URI::segment(3) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjects')?>"><i class="icon-list-alt"></i> Subjects</a></li>
 
      <li class="nav-header">Field Configuration</li>
      <li class="<?php echo ( URI::segment(4) == 'globalsettings' ? 'active' : false )?>"><a href="<?php echo url('fields/globalsettings')?>"><i class="icon-cog"></i> Global settings fields </a></li>
