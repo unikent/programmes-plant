@@ -84,7 +84,6 @@
    <div class="control-group">
     <?php echo Form::label('rel_subjects[]', 'Related Subjects',array('class'=>'control-label'))?>
     <div class="controls">
-      <?php //echo ExtForm::multiselect('rel_subjects[]', $subjects, isset($programmes) ? explode(',',$programmes->related_subject_ids) : '', array('style'=>'height:150px;width:420px;'))?>
     </div>
   </div>
 
@@ -107,7 +106,7 @@
 <fieldset>
   <legend>Programme Information</legend>
 
-  <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
+  <?php echo View::make('admin.inc.partials.formfields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
 
   </fieldset>
   <fieldset>
