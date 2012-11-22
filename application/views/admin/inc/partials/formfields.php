@@ -30,19 +30,28 @@
            $formpart .= Form::$type($col, 'true', ($cur_val=='true') ? true : false);
 
           //else text or texarea's
-          }else{
+          }
+          else if ($type == 'help'){
+            $help = true;
+          }
+          else{
             //If no curval exists and prefill is on, enter the inital value text in to the box
             if($cur_val == '' && $field->prefill == 1) $cur_val = $field->field_initval;
             $formpart = Form::$type($col, $cur_val, array('placeholder'=>$field->placeholder));
          }
 
-    ?>
-  <div class="control-group">
+    ?>  
+    <?php if (! isset($help)) : ?>
+    <div class="control-group">
               <?php echo Form::label($col, $field->field_name,array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo $formpart?>
                 <span class="help-block"><?php echo  $field->field_description; ?></span>
               </div>
             </div>
-
+    <?php else: ?>
+    <p>
+      <?php echo $field->field_description; ?>
+    </p>
+    <?php endif; ?>
 <?php endforeach; ?>
