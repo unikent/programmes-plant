@@ -1,6 +1,6 @@
 <?php
 
-class GlobalSettingField extends Field
+class GlobalSettingField extends Eloquent
 {
     public static $table = 'global_settings_fields';
 
