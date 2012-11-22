@@ -39,7 +39,7 @@ class Fields_Controller extends Admin_Controller
 
     public function get_add()
     {
-        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type' => $this->view));
     }
 
     public function get_edit($id)
