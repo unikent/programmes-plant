@@ -10,7 +10,7 @@ Route::group(array('before' => 'auth'), function(){
 	});
 
 	// Index
-	Route::any('([0-9]{4})/(ug|pg)', 'dash@index');
+	Route::any('([0-9]{4})/(ug|pg)', 'programmes@index');
 
 	// Roles managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
@@ -71,6 +71,10 @@ Route::group(array('before' => 'auth'), function(){
 	// Customised routing for leaflets
 	Route::any('([0-9]{4})/(ug|pg)/leaflets', 'leaflets@index');
 	Route::any('([0-9]{4})/(ug|pg)/leaflets/(:any?)/(:num?)', 'leaflets@(:3)');
+
+	// Customised routing for subjects
+	Route::any('([0-9]{4})/(ug|pg)/subjects', 'subjects@index');
+	Route::any('([0-9]{4})/(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:3)');
 });
 
 // Login/out
