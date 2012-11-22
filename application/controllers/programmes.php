@@ -49,7 +49,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data['leaflets'] = Leaflet::getAsList();
         $this->data['create'] = true;
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+        return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
     /**
@@ -81,7 +81,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+        return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
     /**
