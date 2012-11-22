@@ -41,12 +41,13 @@ class Fields_Controller extends Admin_Controller
             Messages::add('error', $model::$validation->errors->all());
             return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
         }
-        
+
         // Add Row
         $field = new $model;
 
         $field->get_input();
 
+        // By default this is both active and visable.
         $field->active = 1;
         $field->view = 1;
         
