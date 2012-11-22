@@ -16,7 +16,7 @@
   <div class="control-group">
     <?php echo Form::label('type', __('fields.form.label_type'), array('class'=>'control-label'))?>
     <div class="controls">
-      <?php echo  Form::select('type', array('text'=>'text','textarea'=>'textarea','select'=>'select', 'checkbox'=>'checkbox'), (isset($values)) ? $values->field_type : '', array('onchange'=>'tryShow(this);') )?>
+      <?php echo  Form::select('type', array('text'=>'text','textarea'=>'textarea','select'=>'select', 'checkbox'=>'checkbox', 'help' => 'help'), (isset($values)) ? $values->field_type : '', array('onchange'=>'tryShow(this);') )?>
     </div>
   </div>
 

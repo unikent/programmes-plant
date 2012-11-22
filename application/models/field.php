@@ -10,7 +10,10 @@ class Field extends Eloquent
 	/**
 	 * The rules for validation in standard Laravel validation arrays.
 	 */
-	public static $rules = array('title'  => 'required|max:255');
+	public static $rules = array(
+		'title'  => 'required|max:255',
+		'type' => 'in:text,textarea,select,checkbox,help'
+	);
 
 	/**
 	 * Validates input for Field.
