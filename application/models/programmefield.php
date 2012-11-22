@@ -1,5 +1,5 @@
 <?php
-class ProgrammeField extends Eloquent
+class ProgrammeField extends Field
 {
     public static $table = 'programmes_fields';
 

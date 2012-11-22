@@ -7,119 +7,105 @@ class Fields_Controller extends Admin_Controller
 
     /**
      * Display the fields index page.
-     *
      */
     public function get_index()
     {
         $model = $this->model;
         $fields = $model::order_by('id','asc')->get();
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
     }
 
     public function get_add()
     {
-        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view));
     }
 
     public function get_edit($id)
     {
-
         $data['id'] = $id;
 
         $model = $this->model;
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
 
-        return View::make('admin.fields.form',$data);
+        $this->layout->nest('content', 'admin.fields.form', $data);
     }
 
     public function post_add()
     {
-        $rules = array(
-            'title'  => 'required|max:255'
-        );
+        $model = $this->model;
 
-        $validation = Validator::make(Input::all(), $rules);
-
-        if ($validation->fails()) {
-            Messages::add('error',$validation->errors->all());
-
-            return Redirect::to($this->view.'fields/add')->with_input();
-        } else {
-
-            $datatype = Input::get('type');
-
-            if (Input::get('id')) {
-                $model = $this->model;
-                $subject = $model::find(Input::get('id'));
-                $subject->field_name = Input::get('title');
-                $subject->field_description = Input::get('description');
-                $subject->field_meta = Input::get('options');
-
-                $oldtype = $subject->field_type;
-                $subject->field_type = Input::get('type');
-                $subject->field_initval =  Input::get('initval');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill =  (Input::get('prefill')==1) ? 1 : 0;
-
-                $subject->save();
-
-                //If type changes, apply data type swapper.
-                if ($oldtype != Input::get('type')) {
-                    $type_str = 'varchar(255)';
-                    if($subject->field_type=='textarea') $type_str = 'TEXT';
-                    DB::statement("alter table {$this->table} MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                }
-
-            } else {
-                $colname = Str::slug(Input::get('title'), '_');
-                $init_val = Input::get('initval');
-
-                //Add Row
-                $model = $this->model;
-                $subject = new $model;
-                $subject->field_name = Input::get('title');
-                $subject->field_type = Input::get('type');
-                $subject->field_description = Input::get('description');
-
-                $subject->field_meta = Input::get('options');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill = (Input::get('prefill')==1) ? 1 : 0;
-
-                $subject->field_initval =  $init_val;
-
-                $subject->active = 1;
-                $subject->view = 1;
-
-                $subject->save();
-
-                //Now we have an id, set it as part of the colname
-                //to avoid risk of duplication
-                $colname .= '_'.$subject->id;
-                $subject->colname = $colname;
-                $subject->save();
-
-                $this->updateSchema($colname, $init_val, $datatype);
-
-            }
-
-            Messages::add('success','Row added to schema');
-            //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
-            return Redirect::to('fields/'.$this->view);
+        if (! $model::is_valid())
+        {
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
         }
+
+        // Add Row
+        $field = new $model;
+
+        $field->get_input();
+
+        // By default this is both active and visable.
+        $field->active = 1;
+        $field->view = 1;
+        
+        $field->save();
+
+        // Now we have an ID, set it as the corresponding column name.
+        // to avoid risk of duplication
+        $colname = Str::slug(Input::get('title'), '_');
+        $colname .= '_' . $field->id;
+        $field->colname = $colname;
+        $field->save();
+
+        $this->update_schema($field->colname, $field->field_initval, $field->type);
+
+        Messages::add('success','Row added to schema');
+
+        return Redirect::to('fields/'.$this->view);
     }
 
-    private function redirect($action)
+    public function post_edit()
     {
-        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
+        $model = $this->model;
+
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
+        {
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
+        }
+
+        $field = $model::find(Input::get('id'));
+
+        // Grab the old type it used to be before getting input.
+        $oldtype = $field->field_type;
+
+        $field->get_input();
+        $field->save();
+
+        // If type changes, apply data type swapper.
+        if ($oldtype != Input::get('type')) 
+        {
+            $type_str = 'varchar(255)';
+            if($field->field_type=='textarea') $type_str = 'TEXT';
+
+            DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+            DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+        }
+
+        Messages::add('success','Edited field.');
+
+        return Redirect::to('fields/'.$this->view);
     }
 
-    private function updateSchema($colname, $init_val, $type)
+    // This needs to be moved to the model.
+    private function update_schema($colname, $init_val, $type)
     {
-        //Adjust Tables
-        Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
+        // Adjust Tables
+        Schema::table($this->table, function($table) use ($colname, $init_val, $type)
+        {
             if ($type=='textarea') {
                 $table->text($colname);
             } else {
@@ -127,10 +113,15 @@ class Fields_Controller extends Admin_Controller
             }
 
         });
-        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type) {
-            if ($type=='textarea') {
+
+        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type)
+        {
+            if ($type=='textarea')
+            {
                 $table->text($colname);
-            } else {
+            } 
+            else 
+            {
                 $table->string($colname,255)->default($init_val);
             }
         });
@@ -138,7 +129,7 @@ class Fields_Controller extends Admin_Controller
 
     public function get_deactivate()
     {
-            $model = $this->model;
+        $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
@@ -146,7 +137,7 @@ class Fields_Controller extends Admin_Controller
         return Redirect::to('fields/'.$this->view);
     }
 
-     public function get_reactivate()
+    public function get_reactivate()
     {
         $model = $this->model;
         $row = $model::find(Input::get('id'));
