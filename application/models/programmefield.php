@@ -5,30 +5,23 @@ class ProgrammeField extends Field
     
     public static function programme_fields_by_section()
     {
-        //$sections = ProgrammeSection::all()->programmefields;
-        
-        //print_r($sections);exit;
+        $sections = ProgrammeSection::order_by('order','asc')->get();
 
-        $options = array();
+        $sections_array = array();
 
-        foreach ($sections as $section) 
+        foreach ($sections as $section)
         {
-            if ($section->section > 0)
+            foreach ($section->programmefields as $programmefield)
             {
-                $options[$section->section][$section->order] = $section;
+                if ($section->id > 0)
+                {
+                    $sections_array[$section->name][] = $programmefield;
+                }
             }
         }
-
-        return $options;
-        //return self::where('active','=','1')->order_by('order','asc')->get();
+        return $sections_array;
     }
     
-/*
-    $model = $this->model.'Field';
-
-        return  $model::where('active','=','1')->order_by('order','asc')->get();
-        
-*/
     public static $types = array(
         'NORMAL' => 0,
         'DEFAULT' => 1,
