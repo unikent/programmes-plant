@@ -42,6 +42,7 @@ class Programmes_Controller extends Admin_Controller
         }
 
         $this->data['fields'] = $this->getProgrammeFields();
+        //$this->data['fields'] = ProgrammeField::programme_fields_by_section();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
