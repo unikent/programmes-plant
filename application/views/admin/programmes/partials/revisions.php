@@ -13,7 +13,7 @@
             <tbody>
             <?php foreach ($revisions as $revision) : ?>
               <tr>
-                <td><?php echo $revision->title ?></td>
+                <td><?php echo $revision->$title_field ?></td>
                  <td><?php echo $revision->status ?></td>
                 <td><?php echo ($revision->created_at); /*echo Date::forge($revision->created_at)->format('%A, %e %B %Y at %l:%M %p');*/ ?></td>
                 <td><?php echo $revision->created_by ?></td>
