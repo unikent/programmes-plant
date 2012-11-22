@@ -1,4 +1,5 @@
 <h1><?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></h1>
+<?php echo Messages::get_html()?>
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.'.$field_type); ?></p>
 <div style="margin-top:20px; margin-bottom:20px">
     <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>

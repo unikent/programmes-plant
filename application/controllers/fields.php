@@ -34,81 +34,71 @@ class Fields_Controller extends Admin_Controller
 
     public function post_add()
     {
-        $rules = array(
-            'title'  => 'required|max:255'
-        );
+        $model = $this->model;
 
-        $validation = Validator::make(Input::all(), $rules);
-
-        if ($validation->fails()) {
-            Messages::add('error',$validation->errors->all());
-
-            return Redirect::to($this->view.'fields/add')->with_input();
-        } else {
-
-            $datatype = Input::get('type');
-
-            if (Input::get('id')) {
-                $model = $this->model;
-                $field = $model::find(Input::get('id'));
-                $field->field_name = Input::get('title');
-                $field->field_description = Input::get('description');
-                $field->field_meta = Input::get('options');
-
-                $oldtype = $field->field_type;
-                $field->field_type = Input::get('type');
-                $field->field_initval =  Input::get('initval');
-                $field->placeholder =  Input::get('placeholder');
-                $field->prefill =  (Input::get('prefill')==1) ? 1 : 0;
-
-                $field->save();
-
-                // If type changes, apply data type swapper.
-                if ($oldtype != Input::get('type')) {
-                    $type_str = 'varchar(255)';
-                    if($field->field_type=='textarea') $type_str = 'TEXT';
-                    DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-                    DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-                }
-
-            } else {
-                $colname = Str::slug(Input::get('title'), '_');
-                $init_val = Input::get('initval');
-
-                // Add Row
-                $model = $this->model;
-                $field = new $model;
-                $field->field_name = Input::get('title');
-                $field->field_type = Input::get('type');
-                $field->field_description = Input::get('description');
-
-                $field->field_meta = Input::get('options');
-                $field->placeholder =  Input::get('placeholder');
-                $field->prefill = (Input::get('prefill')==1) ? 1 : 0;
-
-                $field->field_initval =  $init_val;
-
-                $field->active = 1;
-                $field->view = 1;
-
-                $field->save();
-
-                //Now we have an id, set it as part of the colname
-                //to avoid risk of duplication
-                $colname .= '_'.$field->id;
-                $field->colname = $colname;
-                $field->save();
-
-                $this->update_schema($colname, $init_val, $datatype);
-
-            }
-
-            Messages::add('success','Row added to schema');
-
-            return Redirect::to('fields/'.$this->view);
+        if (! $model::is_valid())
+        {
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
         }
+        
+        // Add Row
+        $field = new $model;
+
+        $field->get_input();
+
+        $field->active = 1;
+        $field->view = 1;
+        
+        $field->save();
+
+        // Now we have an ID, set it as the corresponding column name.
+        // to avoid risk of duplication
+        $colname = Str::slug(Input::get('title'), '_');
+        $colname .= '_' . $field->id;
+        $field->colname = $colname;
+        $field->save();
+
+        $this->update_schema($field->colname, $field->field_initval, $field->type);
+
+        Messages::add('success','Row added to schema');
+
+        return Redirect::to('fields/'.$this->view);
     }
 
+    public function post_edit()
+    {
+        $model = $this->model;
+
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required')))
+        {
+            Messages::add('error', $model->validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
+        }
+
+        $field = $model::find(Input::get('id'));
+
+        // Grab the old type it used to be before getting input.
+        $oldtype = $field->field_type;
+
+        $field->get_input();
+        $field->save();
+
+        // If type changes, apply data type swapper.
+        if ($oldtype != Input::get('type')) 
+        {
+            $type_str = 'varchar(255)';
+            if($field->field_type=='textarea') $type_str = 'TEXT';
+            DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+            DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+        }
+
+        Messages::add('success','Edited field.');
+
+        return Redirect::to('fields/'.$this->view);
+    }
+
+    // This needs to be moved to the model.
     private function update_schema($colname, $init_val, $type)
     {
         // Adjust Tables

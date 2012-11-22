@@ -1,7 +1,7 @@
 <h1><?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?></h1>
 <?php echo Messages::get_html()?>
 
-<?php echo Form::open_for_files('/fields/'.$field_type.'/add', 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files('/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
   <legend>&nbsp;</legend>
