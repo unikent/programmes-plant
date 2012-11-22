@@ -18,7 +18,9 @@ class Field extends Eloquent
 	/**
 	 * Validates input for Field.
 	 * 
-	 * @return bool True if input is valid.
+	 * @param array $input The input in Laravel input format.
+	 * @param array $rules An array of Laravel validations which will overwrite the defaults for the class.
+	 * @return $validaton The Laravel validation object.
 	 */
 	public static function is_valid($input = null, $rules = null)
 	{
