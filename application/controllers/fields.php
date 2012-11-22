@@ -71,7 +71,7 @@ class Fields_Controller extends Admin_Controller
     {
         $model = $this->model;
 
-        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required')))
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox')))
         {
             Messages::add('error', $model->validation->errors->all());
             return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
@@ -90,6 +90,7 @@ class Fields_Controller extends Admin_Controller
         {
             $type_str = 'varchar(255)';
             if($field->field_type=='textarea') $type_str = 'TEXT';
+            
             DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
             DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
         }
@@ -103,7 +104,8 @@ class Fields_Controller extends Admin_Controller
     private function update_schema($colname, $init_val, $type)
     {
         // Adjust Tables
-        Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
+        Schema::table($this->table, function($table) use ($colname, $init_val, $type)
+        {
             if ($type=='textarea') {
                 $table->text($colname);
             } else {
@@ -111,10 +113,15 @@ class Fields_Controller extends Admin_Controller
             }
 
         });
-        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type) {
-            if ($type=='textarea') {
+
+        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type)
+        {
+            if ($type=='textarea')
+            {
                 $table->text($colname);
-            } else {
+            } 
+            else 
+            {
                 $table->string($colname,255)->default($init_val);
             }
         });
