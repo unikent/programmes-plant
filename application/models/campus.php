@@ -1,10 +1,23 @@
 <?php
 class Campus extends Eloquent {
 
-	public static function getAsList(){
-       $data = Campus::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
+    /**
+	 * Gives us the campuses as a list, for use in a <option> tag.
+	 * 
+	 * @return array $options An array where the record ID maps onto the record name.
+	 */
+	public static function getAsList()
+	{
+		$campuses = self::all();
 
-       return $options;
-     }
+		$options = array();
+
+		foreach ($campuses as $campus) 
+		{
+			$options[$campus->id] = $campus->name;
+		}
+
+		return $options;
+    }
+
 }
