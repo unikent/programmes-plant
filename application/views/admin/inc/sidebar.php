@@ -29,3 +29,4 @@
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url('fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 </ul>
 
+</div>
