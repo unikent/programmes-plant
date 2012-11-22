@@ -4,7 +4,7 @@ class Base_Controller extends Controller {
 
 	// Setup our $data ($this->data) variable for use throughout our controllers
 	public $data = array();
-	
+
 	/**
 	 * Catch-all method for requests that can't be matched.
 	 *
