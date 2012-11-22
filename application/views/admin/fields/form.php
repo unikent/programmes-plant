@@ -41,7 +41,7 @@
               <?php echo Form::label('options', "Options",array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo  Form::text('options', (isset($values)) ? $values->field_meta : '' )?><br/>
-                List options as a comma seperated list.
+                <?php echo __('fields.form.label_options'); ?>
               </div>
             </div>
 

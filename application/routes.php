@@ -62,6 +62,11 @@ Route::group(array('before' => 'auth'), function(){
 	// Customised routing for awards
 	Route::any('([0-9]{4})/(ug|pg)/awards', 'awards@index');
 	Route::any('([0-9]{4})/(ug|pg)/awards/(:any?)/(:num?)', 'awards@(:3)');
+	
+	// Customised routing for sections
+	Route::any('sections', 'programmesections@index');
+	Route::post('sections/reorder', 'programmesections@reorder');
+	Route::any('sections/(:any?)/(:num?)', 'programmesections@(:1)');
 
 	// Customised routing for leaflets
 	Route::any('([0-9]{4})/(ug|pg)/leaflets', 'leaflets@index');

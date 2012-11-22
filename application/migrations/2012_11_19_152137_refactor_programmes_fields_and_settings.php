@@ -45,7 +45,9 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		//2.
 		Schema::table('programmes_fields', function($table){
+
 			$table->drop_column('programme_field_type');
+
 		});
 	}
 
