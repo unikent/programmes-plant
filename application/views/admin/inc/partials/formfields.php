@@ -5,7 +5,14 @@
 
 
  */
-  foreach($fields as $field) : 
+ 
+ foreach($sections as $section_name => $section) : 
+ 
+ ?>
+ <h2><?php echo $section_name ?></h2>
+ <?php
+ 
+  foreach($section as $field) : 
         //Get Column Name
         $col = $field->colname;
         //get field type
@@ -14,9 +21,12 @@
         
 
         //If this is a create form dont get the current value, but instead use blank
-         if(!$create){
-            $cur_val = $subject->$col;
-         }else{
+         if (!$create)
+         {
+            $cur_val = $programme->$col;
+         }
+         else
+         {
            $cur_val = '';
          }
          //Build select box
@@ -52,4 +62,5 @@
               </div>
             </div>
 
+<?php endforeach; ?>
 <?php endforeach; ?>

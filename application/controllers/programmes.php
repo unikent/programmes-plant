@@ -40,9 +40,9 @@ class Programmes_Controller extends Admin_Controller
         } else {
             $this->data['clone'] = false;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
-        //$this->data['fields'] = ProgrammeField::programme_fields_by_section();
+        
+        //$this->data['fields'] = $this->getProgrammeFields();
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
@@ -70,13 +70,14 @@ class Programmes_Controller extends Admin_Controller
       $course = $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $this->data[$this->views] = $course ;
+        $this->data['programme'] = $course ;
 
         if ($revisions = $course->get_revisions()) {
             $this->data['revisions'] =  $revisions;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
+        
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
+        
         $this->data['title_field'] = Programme::get_title_field();
 
         return View::make('admin.'.$this->views.'.form',$this->data);
