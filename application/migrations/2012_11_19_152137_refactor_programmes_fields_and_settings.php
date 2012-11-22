@@ -55,6 +55,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		
 		//Section: Programme title and key facts
 		$programme_fields[] = array('Programme title', 'text', 'eg Accounting and Finance and Economics', '');
+		$programme_fields[] = array('Slug', 'text', 'eg accounting_and_finance_and_economics. This will override the default system generated slug if filled in.', '');
 		$programme_fields[] = array('Award', 'table_select', '', 'Award');
 		$programme_fields[] = array('Awarding institute or body', 'select', 'University of Kent', 'University of Kent,Medway School of Pharmacy,University of Kent,Canterbury Christ Church University');
 		$programme_fields[] = array('Honours type', 'select', '', 'Single honours, Joint honours, European honours');
