@@ -21,7 +21,7 @@ class ProgrammeSection extends Eloquent {
 		return $options;
      }
 
-     public static function reorder($order_string)
+    public static function reorder($order_string)
     {
 
         //print_r($order_string);print_r($section);die();
@@ -39,5 +39,10 @@ class ProgrammeSection extends Eloquent {
             $item->order = $counter + 1;
             $item->save();
         }
+    }
+    
+    public function programmefields()
+    {
+        return $this->has_many('ProgrammeField', 'section');
     }
 }
