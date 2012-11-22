@@ -12,13 +12,15 @@ class Fields_Controller extends Admin_Controller
     public function get_index()
     {
         $model = $this->model;
+        $fields = $model::select('*');
         
         if($this->where_clause){
-            $fields = $model::where($this->where_clause[0], $this->where_clause[1], $this->where_clause[2])->order_by('order','asc')->get();
-            //echo '<pre>';print_r($fields);echo '</pre>';
-        }else{
-            $fields = $model::order_by('order','asc')->get();
+            foreach ($this->where_clause as $clause) {
+                $fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
+            }
         }
+
+        $fields = $fields->order_by('order','asc')->get();
         
         // sections
         $sections = "";

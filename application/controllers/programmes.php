@@ -67,7 +67,7 @@ class Programmes_Controller extends Admin_Controller
 
       // Ensure we have a corresponding course in the database
       $model = $this->model;
-        $course =  $model::find($itm_id);
+      $course = $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $this->data[$this->views] = $course ;
@@ -76,11 +76,8 @@ class Programmes_Controller extends Admin_Controller
             $this->data['revisions'] =  $revisions;
         }
 
-        $this->data['programme_list'] = Programme::getAsList($year);
         $this->data['fields'] = $this->getProgrammeFields();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
+        $this->data['title_field'] = Programme::get_title_field();
 
         return View::make('admin.'.$this->views.'.form',$this->data);
     }
@@ -96,8 +93,6 @@ class Programmes_Controller extends Admin_Controller
     public function post_create($year, $type)
     {
         $rules = array(
-            'title'  => 'required|unique:programmes|max:255',
-            'summary' => 'required'
         );
 
         $validation = Validator::make(Input::all(), $rules);
@@ -108,33 +103,9 @@ class Programmes_Controller extends Admin_Controller
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create')->with_input();
         } else {
             $programme = new Programme;
-            $programme->title = Input::get('title');
-            $programme->slug = Str::slug(Input::get('slug'), '-');
             $programme->year = Input::get('year');
 
-            $programme->summary = Input::get('summary');
             $programme->created_by = Auth::user();
-            $programme->honours = Input::get('award');
-
-            $programme->school_id = Input::get('school_id');
-            $programme->school_adm_id = Input::get('school_adm_id');
-            $programme->campus_id = Input::get('campus_id');
-
-            $programme->leaflet_ids = (Input::get('leaflet_ids')!='') ? implode(',',Input::get('leaflet_ids')) : '';
-
-            $programme->related_school_ids = (Input::get('rel_schools')!='') ? implode(',',Input::get('rel_schools')) : '';
-            $programme->related_programme_ids = (Input::get('rel_programmes')!='') ? implode(',',Input::get('rel_programmes')) : '';
-
-            $programme->mod_1_title = Input::get('mod_1_title');
-            $programme->mod_1_content = Input::get('mod_1_content');
-            $programme->mod_2_title = Input::get('mod_2_title');
-            $programme->mod_2_content = Input::get('mod_2_content');
-            $programme->mod_3_title = Input::get('mod_3_title');
-            $programme->mod_3_content = Input::get('mod_3_content');
-            $programme->mod_4_title = Input::get('mod_4_title');
-            $programme->mod_4_content = Input::get('mod_4_content');
-            $programme->mod_5_title = Input::get('mod_5_title');
-            $programme->mod_5_content = Input::get('mod_5_content');
 
             $programme->save();
             Messages::add('success','Programme added');
@@ -154,8 +125,6 @@ class Programmes_Controller extends Admin_Controller
     public function post_edit($year, $type)
     {
         $rules = array(
-            'title'  => 'required|max:255',
-            'summary' => 'required'
         );
 
         $validation = Validator::make(Input::all(), $rules);
@@ -167,35 +136,12 @@ class Programmes_Controller extends Admin_Controller
         } else {
             $programme = Programme::find(Input::get('programme_id'));
 
-            $programme->title = Input::get('title');
-            $programme->slug = Str::slug(Input::get('slug'), '-');
             $programme->year = Input::get('year');
 
-            $programme->summary = Input::get('summary');
-            $programme->honours = Input::get('award');
-
-            $programme->school_id = Input::get('school_id');
-            $programme->school_adm_id = Input::get('school_adm_id');
-            $programme->campus_id = Input::get('campus_id');
-
-            $programme->leaflet_ids = (Input::get('leaflet_ids')!='') ? implode(',',Input::get('leaflet_ids')) : '';
-
-            $programme->related_school_ids = (Input::get('rel_schools')!='') ? implode(',',Input::get('rel_schools')) : '';
-            $programme->related_programme_ids = (Input::get('rel_programmes')!='') ? implode(',',Input::get('rel_programmes')) : '';
-
-            $programme->mod_1_title = Input::get('mod_1_title');
-            $programme->mod_1_content = Input::get('mod_1_content');
-            $programme->mod_2_title = Input::get('mod_2_title');
-            $programme->mod_2_content = Input::get('mod_2_content');
-            $programme->mod_3_title = Input::get('mod_3_title');
-            $programme->mod_3_content = Input::get('mod_3_content');
-            $programme->mod_4_title = Input::get('mod_4_title');
-            $programme->mod_4_content = Input::get('mod_4_content');
-            $programme->mod_5_title = Input::get('mod_5_title');
-            $programme->mod_5_content = Input::get('mod_5_content');
-
             $programme->save();
-            Messages::add('success', "Saved $programme->title.");
+
+            $title_field = Programme::get_title_field();
+            Messages::add('success', "Saved ".$programme->$title_field);
 
             return Redirect::to($year.'/'. $type.'/'. $this->views);
         }
@@ -205,7 +151,7 @@ class Programmes_Controller extends Admin_Controller
     {
         $model = $this->model.'Field';
 
-        return  $model::where('active','=','1')->order_by('order','asc')->get();
+        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
     }
 
     /**
