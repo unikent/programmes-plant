@@ -71,9 +71,9 @@ class Fields_Controller extends Admin_Controller
     {
         $model = $this->model;
 
-        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox')))
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
         {
-            Messages::add('error', $model->validation->errors->all());
+            Messages::add('error', $model::$validation->errors->all());
             return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
         }
 
@@ -90,7 +90,7 @@ class Fields_Controller extends Admin_Controller
         {
             $type_str = 'varchar(255)';
             if($field->field_type=='textarea') $type_str = 'TEXT';
-            
+
             DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
             DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
         }
