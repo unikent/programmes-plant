@@ -180,6 +180,8 @@ class Fields_Controller extends Admin_Controller
     public function post_reorder()
     {
         $model = $this->model;
-        $model::reorder(Input::get('order'));
+
+        $model::reorder(Input::get('order'), Input::get('section'));
+        die();
     }
 }
