@@ -1,11 +1,15 @@
- <?php 
-
+<?php 
  /*
  Text Fields
-
-
  */
-  foreach($fields as $field) : 
+ 
+ foreach($sections as $section_name => $section) : 
+ 
+ ?>
+ <h2><?php echo $section_name ?></h2>
+ <?php
+ 
+  foreach($section as $field) : 
         //Get Column Name
         $col = $field->colname;
         //get field type
@@ -14,9 +18,12 @@
         
 
         //If this is a create form dont get the current value, but instead use blank
-         if(!$create){
-            $cur_val = $subject->$col;
-         }else{
+         if (!$create)
+         {
+            $cur_val = $programme->$col;
+         }
+         else
+         {
            $cur_val = '';
          }
          //Build select box
@@ -29,7 +36,18 @@
            $formpart = Form::hidden($col, 'false');//Provides default value
            $formpart .= Form::$type($col, 'true', ($cur_val=='true') ? true : false);
 
-          //else text or texarea's
+           //elseif build table_select
+         }else if($type=='table_select'){
+            $model = $field->field_meta;
+            $formpart = Form::select($col, $model::getAsList(), $cur_val);
+            //elseif build table_multiselect
+         }else if($type=='table_multiselect'){
+            $model = $field->field_meta;
+            $formpart = Form::select($col, $model::getAsList(), $cur_val, array('multiple' => 'multiple'));
+          }
+          else if ($type == 'help'){
+                      $help = true;
+          }
           }else{
             //If no curval exists and prefill is on, enter the inital value text in to the box
             if($cur_val == '' && $field->prefill == 1) $cur_val = $field->field_initval;
@@ -44,5 +62,9 @@
                 <span class="help-block"><?php echo  $field->field_description; ?></span>
               </div>
             </div>
-
+<?php else: ?>
+    <p>
+      <?php echo $field->field_description; ?>
+    </p>
+<?php endif; ?>
 <?php endforeach; ?>
