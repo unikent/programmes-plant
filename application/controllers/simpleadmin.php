@@ -30,7 +30,7 @@ class Simple_Admin_Controller extends Admin_Controller {
     {
         $model = $this->model;
 
-        $this->data['items'] = $model::order_by('id', 'asc')->all()->get();
+        $this->data['items'] = $model::all();
 
         $this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
     }
