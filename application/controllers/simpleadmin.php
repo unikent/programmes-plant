@@ -46,7 +46,7 @@ class Simple_Admin_Controller extends Admin_Controller {
             return Redirect::to($this->views);
         }
 
-        $this->model = $model;
+        $model = $this->model;
 
     	$object = $model::find($object_id);
 
