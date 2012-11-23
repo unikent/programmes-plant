@@ -1,7 +1,10 @@
 <?php
 /**
- * Provides a simple interface to single line admin functions of which we have a number.
+ * Simple_Admin_Controller
  * 
+ * Provides a simple interface to single line admin functions.
+ * 
+ * We have a number of these: awards, schools and so on.
  */
 class Simple_Admin_Controller extends Admin_Controller {
 
@@ -32,6 +35,9 @@ class Simple_Admin_Controller extends Admin_Controller {
         $this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
     }
     
+    /**
+     * Display an edit form for an item.
+     */
     public function get_edit($year, $type, $object_id = false)
     {
     	if (! $object_id)
@@ -62,6 +68,9 @@ class Simple_Admin_Controller extends Admin_Controller {
         }
     }
 
+    /**
+     * Show a creation form for an item.
+     */
     public function get_create()
     {
         $this->data['create'] = true;
@@ -104,7 +113,7 @@ class Simple_Admin_Controller extends Admin_Controller {
     }
 
     /**
-     * Create a new item.
+     * Create a new item via POST.
      */
     public function post_create()
     {
@@ -131,6 +140,9 @@ class Simple_Admin_Controller extends Admin_Controller {
         return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
     }
 
+    /**
+     * Edit an item via POST.
+     */
     public function post_edit()
     {
         $model = $this->model;
