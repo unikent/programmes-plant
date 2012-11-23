@@ -16,7 +16,7 @@ class Programmes_Controller extends Admin_Controller
     {
         $model = $this->model;
         $this->data[$this->views] = $model::where('year', '=', $year)->get();
-        $this->data['programmeList'] = Programme::getAsList();
+        $this->data['programmeList'] = Programme::all_as_list();
 
         return View::make('admin.'.$this->views.'.index',$this->data);
     }
@@ -42,11 +42,11 @@ class Programmes_Controller extends Admin_Controller
         }
 
         $this->data['fields'] = $this->getProgrammeFields();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
-        $this->data['programme_list'] = Programme::getAsList($year);
-        $this->data['leaflets'] = Leaflet::getAsList();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['leaflets'] = Leaflet::all_as_list();
         $this->data['create'] = true;
 
         return View::make('admin.'.$this->views.'.form',$this->data);
@@ -75,11 +75,11 @@ class Programmes_Controller extends Admin_Controller
             $this->data['revisions'] =  $revisions;
         }
 
-        $this->data['programme_list'] = Programme::getAsList($year);
+        $this->data['programme_list'] = Programme::all_as_list($year);
         $this->data['fields'] = $this->getProgrammeFields();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
 
         return View::make('admin.'.$this->views.'.form',$this->data);
     }
@@ -266,9 +266,9 @@ class Programmes_Controller extends Admin_Controller
             unset($programme_attributes[$ignore]);
         }
 
-        $schools = School::getAsList();
-        $sub = Programme::getAsList();
-        $pro = Programme::getAsList();
+        $schools = School::all_as_list();
+        $sub = Programme::all_as_list();
+        $pro = Programme::all_as_list();
 
         $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
         $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
