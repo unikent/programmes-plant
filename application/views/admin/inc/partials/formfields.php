@@ -6,58 +6,59 @@ Text Fields
 foreach($sections as $section_name => $section){
 
     echo "<h2>{$section_name}</h2>";
+
    foreach($section as $field) {
+
       //Get Column Name
-      $col = $field->colname;
-      //get field type
+      $column_name = $field->colname;
       $type = $field->field_type;
 
-
-      $formpart = '';//blank
-      
-      //If this is a create form dont get the current value, but instead use blank
-      $cur_val = (!$create) ? $programme->$col : ''
-
-      
+      //Get value of field.
+      $current_value = (!$create) ? $programme->$column_name : '';
 
       //Build select box
       if($type=='select'){
-        $optlist = explode(',',$field->field_meta);
-        $formpart = Form::$type($col, array_combine($optlist,$optlist), $cur_val);
+
+        $options_list = explode(',',$field->field_meta);
+        $form_element = Form::$type($column_name, array_combine( $options_list, $options_list), $current_value);
+
       }else if($type=='checkbox'){  
 
-        $formpart = Form::hidden($col, 'false');//Provides default value
-        $formpart .= Form::$type($col, 'true', ($cur_val=='true') ? true : false);
+        $form_element = Form::hidden($column_name, 'false');//Provides default value
+        $form_element .= Form::$type($column_name, 'true', ($cur_val=='true') ? true : false);
+
       }else if($type=='table_select'){
+
         $model = $field->field_meta;
-        $formpart = Form::select($col, $model::getAsList(), $cur_val);
+        $form_element = Form::select($column_name, $model::getAsList(), $current_value);
+
       }else if($type=='table_multiselect'){
+
         $model = $field->field_meta;
-        $formpart = Form::select($col, $model::getAsList(), $cur_val, array('multiple' => 'multiple'));
+        $form_element = Form::select($column_name, $model::getAsList(), $current_value, array('multiple' => 'multiple'));
+
       }
       else if ($type == 'help'){
-        $help = true;
+
+        //do nothing
+
       }else{
-        //If no curval exists and prefill is on, enter the inital value text in to the box
-        if($cur_val == '' && $field->prefill == 1) $cur_val = $field->field_initval;
-        $formpart = Form::$type($col, $cur_val, array('placeholder'=>$field->placeholder));  
+
+         if($current_value == '' && $field->prefill == 1) $current_value = $field->field_initval;
+        $form_element = Form::$type($column_name, $current_value, array('placeholder'=>$field->placeholder));  
+
       }
 
 
-  if(!isset($help)){
-     ?>
-
-         <div class="control-group">
-         <?php echo Form::label($col, $field->field_name,array('class'=>'control-label'))?>
-        <div class="controls">
-        <?php echo $formpart?>
-        <span class="help-block"><?php echo  $field->field_description; ?></span>
-        </div>
-        </div>
-
-    <?php
+    if($type !== 'help'){
+      echo "<div class='control-group'>";
+        echo Form::label($column_name, $field->field_name, array('class'=>'control-label'));
+        echo "<div class='controls'>";
+          echo $form_element;
+          echo "<span class='help-block'>{$field->field_description}</span>";
+        echo "</div>";
+      echo "</div>";
     }else{
-
       echo '<p>'.$field->field_description.'</p>';
     }
   }
