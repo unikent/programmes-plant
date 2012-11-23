@@ -2,7 +2,7 @@
     <title>Courses Dashboard</title>
   </head>
   <body>
-    <?php echo View::make('admin.inc.header')->render()?>
+    <?php  echo View::make('admin.inc.header')->render()?>
     <div class="container">
 
       <div class="row-fluid">
