@@ -1,19 +1,4 @@
-<?php echo View::make('admin.inc.meta')->render(); ?>
-    <title>Courses Dashboard</title>
-  </head>
-  <body>
-    <?php echo View::make('admin.inc.header')->render()?>
-    <div class="container">
 
-      <div class="row-fluid">
-
-        <div class="span3"> <!-- Sidebar -->
-          <div class="well">
-            <?php echo View::make('admin.inc.sidebar')->render()?>
-          </div>
-        </div> <!-- /Sidebar -->
-
-        <div class="span9 crud">
           <h1><?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?></h1>
 
           <?php echo Messages::get_html()?>
@@ -41,7 +26,7 @@
               <?php echo Form::label('options', "Options",array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo  Form::text('options', (isset($values)) ? $values->field_meta : '' )?><br/>
-                List options as a comma seperated list.
+                <?php echo __('fields.form.label_options'); ?>
               </div>
             </div>
 
@@ -80,13 +65,4 @@
             <input type="submit" class="btn btn-primary" value="<?php echo __('fields.form.btn.save') ?>" />
           </div>
 
-        </div>  <!-- /span9 -->
-
-      </div> <!-- /row-fluid -->
-
-    </div> <!-- /container -->
-
-    <?php echo View::make('admin.inc.scripts')->render()?>
-
-  </body>
-</html>
+       

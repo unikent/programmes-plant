@@ -29,6 +29,8 @@ return array(
     'table_header_name' => 'Name',
     'table_header_type' => 'Type',
     'table_header_view' => 'View',
+    'table_sections_header_name' => 'Sections',
+    'table_fields_header_name' => 'Fields',
 
     'btn' => array(
         'new' => 'Add field',
@@ -45,6 +47,7 @@ return array(
         'add_title' => 'Add new :field_name field',
         'edit_title' => 'Edit :field_name field',
         'label_title' => 'Title',
+        'label_options' => 'List options as a comma separated list',
         'label_type' => 'Type',
         'label_description' => 'Description',
         'label_start' => 'Initial value',

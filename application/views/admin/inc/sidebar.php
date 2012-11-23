@@ -1,12 +1,13 @@
-<ul class="nav nav-list">
+<div class="well well-small">
+  <ul class="nav nav-list">
 
-<?php
-	$selectedYear = date('Y');
-	$selectedType = 'ug';
-    if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
-    if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
-	$mainpath = $selectedYear.'/'.$selectedType.'/';
-?>
+  <?php
+  	$selectedYear = date('Y');
+  	$selectedType = 'ug';
+      if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
+      if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
+  	$mainpath = $selectedYear.'/'.$selectedType.'/';
+  ?>
 
        <li class="nav-header">Main</li>
        <li class="<?php echo ( URI::segment(3) == '' ? 'active' : false )?>"><a href="<?php echo url($mainpath)?>"><i class="icon-home"></i> Home</a></li>
@@ -27,3 +28,5 @@
      <li class="<?php echo ( URI::segment(4) == 'programmesettings' ? 'active' : false )?>"><a href="<?php echo url('fields/programmesettings')?>"><i class="icon-cog"></i> Programme settings fields </a></li>
        <li class="<?php echo ( URI::segment(4) == 'programmes' ? 'active' : false )?>"><a href="<?php echo url('fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 </ul>
+
+</div>

@@ -1,24 +1,12 @@
-<?php echo View::make('admin.inc.meta')->render(); ?>
-    <title>Programme Plant - <?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></title>
-  </head>
-  <body>
-    <?php echo View::make('admin.inc.header')->render()?>
-    <div class="container">
+           
+ <h1><?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></h1>
+ <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.'.$field_type); ?></p>
 
-      <div class="row-fluid">
+<div style="margin-top:20px; margin-bottom:20px">
+      <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
+  </div>
 
-        <div class="span3"> <!-- Sidebar -->
-          <div class="well">
-            <?php echo View::make('admin.inc.sidebar')->render()?>
-          </div>
-        </div> <!-- /Sidebar -->
 
-        <div class="span9">
-          <h1><?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></h1>
-          <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.'.$field_type); ?></p>
-          <div style="margin-top:20px; margin-bottom:20px">
-              <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
-          </div>
           <table class="table table-striped table-bordered table-condensed" width="100%">
               <thead>
                 <tr>
@@ -27,10 +15,10 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-              <?php foreach($fields as $subject) : ?>
-                <tr>
-                  <td><?php echo $subject->field_name ?></td>
+              <tbody <?php echo $field_type == 'programmes' ? 'class="sortable-tbody"' : ''; ?>>
+                <?php foreach($fields as $subject) : ?>
+                <tr id="field-id-<?php echo $subject->id ?>">
+                  <td><?php echo $field_type == 'programmes' ? '<i class="icon-move"></i> ' : ''; ?><?php echo $subject->field_name ?></td>
                   <td><?php echo $subject->field_type ?></td>
                   <td>
 
@@ -48,10 +36,3 @@
               </tbody>
           </table>
         </div>
-
-      </div>
-
-    </div> <!-- /container -->
-
-  </body>
-</html>

@@ -12,14 +12,34 @@ class Fields_Controller extends Admin_Controller
     public function get_index()
     {
         $model = $this->model;
-        $fields = $model::order_by('id','asc')->get();
+        $fields = $model::select('*');
+        
+        if($this->where_clause){
+            foreach ($this->where_clause as $clause) {
+                $fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
+            }
+        }
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        $fields = $fields->order_by('order','asc')->get();
+        
+        // sections
+        $sections = "";
+        $view = "index";
+        // only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
+        if ($this->view == 'programmes')
+        {
+            $sections = ProgrammeSection::order_by('order','asc')->get();
+            $view = "sortable_index";
+        }
+      
+        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+
+
     }
 
     public function get_add()
     {
-        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type' => $this->view));
     }
 
     public function get_edit($id)
@@ -31,7 +51,7 @@ class Fields_Controller extends Admin_Controller
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
 
-        return View::make('admin.fields.form',$data);
+        $this->layout->nest('content','admin.fields.form',$data);
     }
 
     public function post_add()
@@ -62,6 +82,11 @@ class Fields_Controller extends Admin_Controller
                 $subject->field_initval =  Input::get('initval');
                 $subject->placeholder =  Input::get('placeholder');
                 $subject->prefill =  (Input::get('prefill')==1) ? 1 : 0;
+
+                if($this->where_clause){
+                    $where_field = $this->where_clause[0];
+                    $subject->$where_field = $this->where_clause[2];
+                }
 
                 $subject->save();
 
@@ -154,5 +179,19 @@ class Fields_Controller extends Admin_Controller
         $row->save();
 
         return Redirect::to('fields/'.$this->view);
+    }
+    
+    /**
+     * Routing for POST /reorder
+     *
+     * This allows fields to be reordered via an AJAX request from the UI
+     */
+    public function post_reorder()
+    {
+
+        $model = $this->model;
+        $model::reorder(Input::get('order'), Input::get('section'));
+
+        die();
     }
 }
