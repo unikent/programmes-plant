@@ -11,17 +11,15 @@ foreach($sections as $section_name => $section){
       $col = $field->colname;
       //get field type
       $type = $field->field_type;
-      $formpart = '';//blank
 
+
+      $formpart = '';//blank
+      
       //If this is a create form dont get the current value, but instead use blank
-      if (!$create)
-      {
-        $cur_val = $programme->$col;
-      }
-      else
-      {
-        $cur_val = '';
-      }
+      $cur_val = (!$create) ? $programme->$col : ''
+
+      
+
       //Build select box
       if($type=='select'){
         $optlist = explode(',',$field->field_meta);
