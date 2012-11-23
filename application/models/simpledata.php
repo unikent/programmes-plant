@@ -10,10 +10,7 @@ class SimpleData extends Eloquent
 	/**
 	 * The rules for validation in standard Laravel validation arrays.
 	 */
-	public static $rules = array(
-		'title'  => 'required|max:255',
-		'type' => 'in:text,textarea,select,checkbox,help'
-	);
+	public static $rules = array();
 
 	/**
 	 * Validates input for Field.
@@ -38,7 +35,7 @@ class SimpleData extends Eloquent
 
         return static::$validation->passes();
 	}
-	
+
     /**
 	 * Gives us all the items in this model as a flat id => name array, for use in a <option> tag.
 	 * 
