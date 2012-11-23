@@ -9,8 +9,9 @@ class ProgrammeSections_Controller extends Admin_Controller
 
     public function get_index()
     {
-    	$this->data[$this->views] = ProgrammeSection::order_by('order','asc')->get();
-        return View::make('admin.'.$this->views.'.index',$this->data);
+    	//$this->data[$this->views] = ProgrammeSection::order_by('order','asc')->get();
+       // return View::make('admin.'.$this->views.'.index',$this->data);
+       return Redirect::to('/fields/programmes');
     }
 
     public function get_edit($object_id = false){
@@ -41,12 +42,12 @@ class ProgrammeSections_Controller extends Admin_Controller
         if ($validation->fails())
         {
             Messages::add('error','You tried to delete a user that doesn\'t exist.');
-            return Redirect::to('/'.$this->views.'');
+            return Redirect::to('/fields/programmes');
         }else{
             $section = ProgrammeSection::find(Input::get('id'));
             $section->delete();
             Messages::add('success','Section Removed');
-            return Redirect::to('/'.$this->views.'');
+            return Redirect::to('/fields/programmes');
         }
     }
 
@@ -66,7 +67,7 @@ class ProgrammeSections_Controller extends Admin_Controller
             $section->save();
  
             Messages::add('success','New Section Added');
-            return Redirect::to('/'.$this->views.'');
+            return Redirect::to('/fields/programmes');
         }
     }
 
@@ -93,7 +94,7 @@ class ProgrammeSections_Controller extends Admin_Controller
             $section->save();
 
             Messages::add('success','Section updated');
-            return Redirect::to('/'.$this->views.'');
+            return Redirect::to('/fields/programmes');
         }
     }
     
@@ -106,6 +107,7 @@ class ProgrammeSections_Controller extends Admin_Controller
     {
         $model = $this->model;
         $model::reorder(Input::get('order'));
+        die();
     }
 
 }
