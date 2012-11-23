@@ -40,8 +40,9 @@ class Programmes_Controller extends Admin_Controller
         } else {
             $this->data['clone'] = false;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
+        
+        //$this->data['fields'] = $this->getProgrammeFields();
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
@@ -49,7 +50,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data['leaflets'] = Leaflet::getAsList();
         $this->data['create'] = true;
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+        return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
     /**
@@ -66,19 +67,20 @@ class Programmes_Controller extends Admin_Controller
 
       // Ensure we have a corresponding course in the database
       $model = $this->model;
-        $course =  $model::find($itm_id);
+      $course = $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $this->data[$this->views] = $course ;
+        $this->data['programme'] = $course ;
 
         if ($revisions = $course->get_revisions()) {
             $this->data['revisions'] =  $revisions;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
+        
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
+        
         $this->data['title_field'] = Programme::get_title_field();
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+        return View::make('admin.'.$this->views.'.form',$this->data);
     }
 
     /**

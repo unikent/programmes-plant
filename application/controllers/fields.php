@@ -21,15 +21,18 @@ class Fields_Controller extends Admin_Controller
 
         $fields = $fields->order_by('order','asc')->get();
         
-        // sections
+        // Sections
         $sections = "";
-        // only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
+        $view = "index";
+
+        // Only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
         if ($this->view == 'programmes')
         {
             $sections = ProgrammeSection::order_by('order','asc')->get();
+            $view = "sortable_index";
         }
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
     }
 
     public function get_add()

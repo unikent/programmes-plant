@@ -3,26 +3,6 @@
 <div style="margin-top:20px; margin-bottom:20px">
     <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
 </div>
-          
-<?php if ($sections): ?>
-    <h2><?php echo  __('fields.table_sections_header_name') ?></h2>
-    <table class="table table-striped table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody class="sortable-sections-tbody">
-    <?php foreach($sections as $section): ?>
-      <tr id="field-id-<?php echo $section->id?>">
-        <td><i class="icon-move"></i> <?php echo $section->name ?></td>
-        <td><a class="btn btn-primary" href="<?php echo action('/sections@edit', array($section->id)) ?>">Edit</a> <a class="delete_toggler btn btn-danger" rel="<?php echo $section->id ?>">Delete</a></td>
-      </tr>
-    <?php endforeach ?>
-    </tbody></table>
-<?php endif ?> 
-<h2><?php echo  __('fields.table_fields_header_name') ?></h2>
 <table class="table table-striped table-bordered table-condensed" width="100%">
   <thead>
     <tr>
@@ -51,5 +31,3 @@
   <?php endforeach; ?>
   </tbody>
 </table>
-<?php echo View::make('admin.inc.scripts')->render()?>
-

@@ -56,16 +56,16 @@ class Field extends Eloquent
         $this->prefill =  (Input::get('prefill')==1) ? 1 : 0;
 	}
 
-	/**
+    /**
     * Update the order value for a given class of fields
     *
-    * This is called from an ajax action in the controller, in turn from reordering fields in the ui
+    * this is called from an ajax action in the controller, in turn from reordering fields in the ui
     *
     * @param string $order_string a comma-separated list of fields, in the order in which the user wants them
+    * @param int $section The section the field is in.
     */
-    public static function reorder($order_string)
+    public static function reorder($order_string, $section)
     {
-        // break up the string to get the list of ids
         $order_array = explode(",", $order_string);
         
         // loop through the array of ids and update each one in the db
@@ -77,6 +77,9 @@ class Field extends Eloquent
             // pull out the appropriate entry and update it with the array index (+1)
             $item = self::find($id);
             $item->order = $counter + 1;
+
+            $item->section = str_replace('section-id-', '', $section);
+
             $item->save();
         }
     }

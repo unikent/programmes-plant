@@ -2,7 +2,14 @@
  /*
  Text Fields
  */
-  foreach($fields as $field) : 
+ 
+ foreach($sections as $section_name => $section) : 
+ 
+ ?>
+ <h2><?php echo $section_name ?></h2>
+ <?php
+ 
+  foreach($section as $field) : 
         //Get Column Name
         $col = $field->colname;
         //get field type
@@ -11,9 +18,12 @@
         
 
         //If this is a create form dont get the current value, but instead use blank
-         if(!$create){
-            $cur_val = $subject->$col;
-         }else{
+         if (!$create)
+         {
+            $cur_val = $programme->$col;
+         }
+         else
+         {
            $cur_val = '';
          }
          //Build select box
@@ -38,14 +48,13 @@
           else if ($type == 'help'){
                       $help = true;
           }
-          else{
+          }else{
             //If no curval exists and prefill is on, enter the inital value text in to the box
             if($cur_val == '' && $field->prefill == 1) $cur_val = $field->field_initval;
             $formpart = Form::$type($col, $cur_val, array('placeholder'=>$field->placeholder));
          }
 
     ?>
-  <?php if (! isset($help)) : ?> 
   <div class="control-group">
               <?php echo Form::label($col, $field->field_name,array('class'=>'control-label'))?>
               <div class="controls">

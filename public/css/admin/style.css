@@ -20,3 +20,25 @@ ins {
 	background-color:SpringGreen;
 	text-decoration: none;
 }
+
+/* Styles for sortable sections/fields */
+  .sortableUI .field_item {
+    padding:5px;
+    list-style: none;
+    cursor:pointer;
+  }
+  .sortableUI .field_item i {padding-right:5px;}
+  .sortableUI .field_item .title {width:60%;   display:inline-block;}
+  .sortableUI .field_item .type {width:15%;   display:inline-block;}
+  .sortableUI .field_item .actions {width:20%;   display:inline-block;}
+
+  .sortableUI legend { cursor:pointer;margin-top:10px;}
+
+  .sortableUI .sortable_fields {
+    min-height:30px;
+    margin:0px;
+
+  }
+  .sortableUI .sortable_fields.dropzone-large {
+    height:120px;
+  }

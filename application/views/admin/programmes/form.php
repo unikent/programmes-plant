@@ -5,15 +5,13 @@
 <?php if(!$create): ?>
   <?php echo  Form::hidden('programme_id', $programmes->id); ?>
 <?php endif; ?>
-
   <div class="control-group">
     <?php echo Form::label('year', "Programme Year",array('class'=>'control-label'))?>
     <div class="controls">
-      <span class="input-xlarge uneditable-input"><?php echo  ( $create ? URI::segment(1) : $programmes->year )?></span>
-      <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $programmes->year ), array('class'=>'uneditable-input'))?>
+                <span class="input-xlarge uneditable-input"><?php echo  ( $create ? URI::segment(1) : $programme->year )?></span>
+                <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $programme->year ), array('class'=>'uneditable-input'))?>
     </div>
   </div>
-
   <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
 
 
@@ -40,4 +38,6 @@
 
   });
 
-</script>
+    </script>
+  </body>
+</html>
