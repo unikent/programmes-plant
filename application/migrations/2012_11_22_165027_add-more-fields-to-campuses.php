@@ -17,7 +17,7 @@ class Add_More_Fields_To_Campuses {
 			$table->string('address_3');
 			$table->string('town');
 			$table->string('email');
-			$table->string('telephone');
+			$table->string('phone');
 			$table->string('fax');
 			$table->string('postcode');
 			$table->string('url');
@@ -39,7 +39,7 @@ class Add_More_Fields_To_Campuses {
 			$table->drop_column('address_3');
 			$table->drop_column('town');
 			$table->drop_column('email');
-			$table->drop_column('telephone');
+			$table->drop_column('phone');
 			$table->drop_column('fax');
 			$table->drop_column('postcode');
 			$table->drop_column('url');
