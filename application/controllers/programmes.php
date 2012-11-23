@@ -18,7 +18,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data[$this->views] = $model::where('year', '=', $year)->get();
         $this->data['programmeList'] = Programme::getAsList();
 
-        return View::make('admin.'.$this->views.'.index',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
 
     /**
@@ -50,7 +50,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data['leaflets'] = Leaflet::getAsList();
         $this->data['create'] = true;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -80,7 +80,7 @@ class Programmes_Controller extends Admin_Controller
         
         $this->data['title_field'] = Programme::get_title_field();
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
