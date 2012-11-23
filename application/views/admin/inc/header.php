@@ -15,7 +15,7 @@
               if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
               if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
 
-			  $url = str_replace( URL::Base().'/'.$selectedYear.'/'.$selectedType,'',URL::Current());
+			        $url = str_replace( URL::Base().'/'.$selectedYear.'/'.$selectedType,'', URL::Current());
 			  //strip /
 			  if(strlen($url)>1)$url = substr($url,1);
 		
