@@ -181,7 +181,10 @@ class Fields_Controller extends Admin_Controller
     {
         $model = $this->model;
 
-        $model::reorder(Input::get('order'), Input::get('section'));
-        die();
+        if($model::reorder(Input::get('order'), Input::get('section'))){
+            return 'true';
+        }else{
+            return 'false';
+        }
     }
 }
