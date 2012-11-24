@@ -82,6 +82,8 @@ class Field extends Eloquent
 
             $item->save();
         }
+
+        return true;
     }
 
 }
