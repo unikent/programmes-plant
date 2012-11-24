@@ -5,7 +5,8 @@ Text Fields
 
 foreach($sections as $section_name => $section){
 
-    echo "<h2>{$section_name}</h2>";
+    echo "<legend>{$section_name}</legend>";
+
 
    foreach($section as $field) {
 
