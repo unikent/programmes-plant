@@ -49,7 +49,7 @@ class TestSimpleData extends ModelTestCase
 
 	public function testis_validReturnsFalseWhenValidationFails()
 	{
-		Thing::$rules = array('id' => 'required', );
+		Thing::$rules = array('id' => 'required');
 
 		Request::foundation()->request->add(array('id' => null));
 
