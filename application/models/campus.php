@@ -1,10 +1,5 @@
 <?php
-class Campus extends Eloquent {
+class Campus extends SimpleData
+{
 
-	public static function getAsList(){
-       $data = Campus::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
-
-       return $options;
-     }
 }
