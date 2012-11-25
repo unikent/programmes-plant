@@ -24,14 +24,13 @@ class Fields_Controller extends Admin_Controller
 
     public function get_edit($id)
     {
-
         $data['id'] = $id;
 
         $model = $this->model;
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
 
-        return View::make('admin.fields.form',$data);
+        return View::make('admin.fields.form', $data);
     }
 
     public function post_add()
