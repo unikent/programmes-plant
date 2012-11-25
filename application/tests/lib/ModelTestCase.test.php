@@ -4,7 +4,7 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
 {
 	public function tearDown()
 	{
-		$this->clean_request();
+		self::clean_request();
 	}
 
 	/**
