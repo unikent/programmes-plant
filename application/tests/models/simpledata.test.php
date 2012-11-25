@@ -1,5 +1,7 @@
 <?php
 
+class Thing extends SimpleData {}
+
 class TestSimpleData extends PHPUnit_Framework_TestCase
 {
 	public function testall_as_listReturnsArray() {}
