@@ -17,6 +17,7 @@ class Programmes_Controller extends Admin_Controller
         $model = $this->model;
         $this->data[$this->views] = $model::where('year', '=', $year)->get();
         $this->data['programmeList'] = Programme::getAsList();
+        $this->data['title_field'] = Programme::get_title_field();
 
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
@@ -184,8 +185,9 @@ class Programmes_Controller extends Admin_Controller
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $programme->useRevision($revision);
-
-        Messages::add('success', "Promoted revision of $revision->title created at $revision->updated_at to live version.");
+        
+        $title_field = Programme::get_title_field();
+        Messages::add('success', "Promoted revision of {$programme->$title_field} created at $revision->updated_at to live version.");
 
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
     }
