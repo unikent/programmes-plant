@@ -60,10 +60,7 @@ class SimpleData extends Eloquent
     		throw new NoValidationException('No validation');
     	}
 
-    	foreach(Input::all() as $key => $value)
-    	{
-    		$this->$key = $value;
-    	}
+    	$this->fill(Input::all());
     }
 
 }
