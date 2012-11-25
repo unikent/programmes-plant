@@ -92,6 +92,23 @@ class TestLeaflet extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	/**
+     * @expectedException Laravel\Database\Exception
+     */
+	public function testThrowExceptionWhenWeTryAndAddSomethingWackyInLeafletToDatabase()
+	{
+		$input = array(
+			'name' => 'Some Leaflet',
+			'campuses_id' => 1,
+			'tracking_code' => 'http://example.com/tracking',
+			'nonsense' => 'Rubbish'
+		);
+
+		$leaflet = new Leaflet;
+		foreach($input as $key => $value) { $leaflet->$key = $value; }
+		$leaflet->save();
+	}
+
 	public function testValidatesOnSuccessfulInput()
 	{
 		$input = array(

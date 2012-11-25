@@ -79,6 +79,22 @@ class TestSchool extends PHPUnit_Framework_TestCase
 		$this->assertTrue(School::is_valid());
 	}
 
+	/**
+     * @expectedException Laravel\Database\Exception
+     */
+	public function testThrowExceptionWhenWeTryAndAddSomethingWackyInSchoolToDatabase()
+	{
+		$input = array(
+			'name' => 'School',
+			'faculties_id' => 1,
+			'nonsense' => 'Rubbish'
+		);
+
+		$leaflet = new Leaflet;
+		foreach($input as $key => $value) { $leaflet->$key = $value; }
+		$leaflet->save();
+	}
+
 	public function testFailsToValidateWhenNameIsNotPresent() 
 	{
 		Request::foundation()->request->add(array('name' => null, 'faculty' => 1));
