@@ -6,8 +6,6 @@ class TestSimpleData extends PHPUnit_Framework_TestCase
 
 	public function testall_as_listReturnsData() {}
 
-	public function testis_validRulesAreInheritedFromParentClass() {}
-
 	public function testis_validRulesAreAddedSuccessfully() {}
 
 	public function testis_validReturnsTrueWhenValidationSucceeds() {}
