@@ -63,9 +63,7 @@ class TestSimpleData extends ModelTestCase
 
 		$thing = new Thing;
 
-		// This should likely be mocked.
 		$thing->is_valid();
-
 		$thing->populate_from_input();
 
 		$this->assertEquals($input, $thing->attributes);
