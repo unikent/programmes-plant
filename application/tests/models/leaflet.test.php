@@ -27,6 +27,8 @@ class TestLeaflet extends ModelTestCase
 		{
 			$leaflet->delete();
 		}
+
+		parent::tearDown();
 	}
 
 	public function testInputPopulatesLeafletObjectSuccessfully()

@@ -23,6 +23,8 @@ class TestAward extends ModelTestCase
 		{
 			$award->delete();
 		}
+
+		parent::tearDown();
 	}
 
 	public function testall_as_list()

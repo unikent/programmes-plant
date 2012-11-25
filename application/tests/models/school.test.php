@@ -25,6 +25,8 @@ class TestSchool extends ModelTestCase
 		{
 			$school->delete();
 		}
+
+		parent::tearDown();
 	}
 
 	public function testInputPopulatesSchoolObjectSuccessfully()
