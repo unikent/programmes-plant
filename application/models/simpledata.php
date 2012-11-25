@@ -53,4 +53,19 @@ class SimpleData extends Eloquent
 		return $options;
     }
 
+    public function populate_from_input()
+    {
+    	if (is_null(static::$validation))
+    	{
+    		throw new NoValidationException('No validation');
+    	}
+
+    	foreach(Input::all() as $key => $value)
+    	{
+    		$this->$key = $value;
+    	}
+    }
+
 }
+
+class NoValidationException extends Exception {}
