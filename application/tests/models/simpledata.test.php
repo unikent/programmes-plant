@@ -4,7 +4,18 @@ class Thing extends SimpleData {}
 
 class TestSimpleData extends ModelTestCase
 {
-	
+	public function tearDown()
+	{
+		Thing::$rules = array();
+
+		if (! is_null(Thing::$validation))
+		{
+			Thing::$validation = null;
+		}
+
+		parent::tearDown();
+	}
+
 	public function testall_as_listReturnsArray() {}
 
 	public function testall_as_listReturnsData() {}
