@@ -65,4 +65,4 @@ class SimpleData extends Eloquent
 
 }
 
-class NoValidationException extends Exception {}
+class NoValidationException extends \Exception {}
