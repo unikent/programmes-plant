@@ -58,12 +58,29 @@ class TestSimpleData extends ModelTestCase
 
 	public function testpopulate_from_inputSetsModelFromInput() 
 	{
-		Request::foundation()->request->add(array('email' => 'alex@example.com', 'address' => 'http://example.com'));
+		$input = array('email' => 'alex@example.com', 'address' => 'http://example.com');
+		Request::foundation()->request->add($input);
+
+		$thing = new Thing;
+
+		// This should likely be mocked.
+		$thing->is_valid();
+
+		$thing->populate_from_input();
+
+		$this->assertEquals($input, $thing->attributes);
+	}
+
+	/**
+     * @expectedException NoValidationException
+     */
+	public function testpopulate_from_inputThrowsExceptionThereIsNoValidation() 
+	{
+		$input = array('email' => 'alex@example.com', 'address' => 'http://example.com');
+		Request::foundation()->request->add($input);
 
 		$thing = new Thing;
 		$thing->populate_from_input();
 	}
-
-	public function testpopulate_from_inputWarnsWhenThereIsNoValidation() {}
 
 }
