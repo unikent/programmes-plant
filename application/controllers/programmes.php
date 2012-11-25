@@ -107,6 +107,8 @@ class Programmes_Controller extends Admin_Controller
             $programme->year = Input::get('year');
 
             $programme->created_by = Auth::user();
+            
+            ProgrammeField::assign_fields($programme);
 
             $programme->save();
             Messages::add('success','Programme added');
@@ -139,17 +141,7 @@ class Programmes_Controller extends Admin_Controller
 
             $programme->year = Input::get('year');
             
-            // get the programme fields and loop through them, assigning the user input value to the appropriate column name
-            $programme_fields = ProgrammeField::programme_fields();
-            foreach ($programme_fields as $programme_field)
-            {
-                $colname = $programme_field->colname;
-                // make sure the field is being used (if it's in section 0 then it isn't)
-                if ($programme_field->section > 0)
-                {
-                    $programme->$colname = Input::get($colname);
-                }
-            }
+            ProgrammeField::assign_fields($programme);
             
             $programme->save();
 
