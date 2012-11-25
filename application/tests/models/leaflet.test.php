@@ -2,7 +2,7 @@
 // @todo Do we want a test double for Input::all()?
 // @todo Do we want to test double Campus? As we otherwise may not be testing in isolaton.
 // A good way of doing this is to seperate our database handling bits of the model from others.
-class TestLeaflet extends PHPUnit_Framework_TestCase 
+class TestLeaflet extends ModelTestCase 
 {
 
 	/**

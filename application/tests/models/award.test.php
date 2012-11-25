@@ -1,6 +1,7 @@
 <?php
 
-class TestAward extends PHPUnit_Framework_TestCase {
+class TestAward extends ModelTestCase 
+{
 
 	/**
 	 * Set up the database.

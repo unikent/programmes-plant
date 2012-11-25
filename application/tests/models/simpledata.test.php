@@ -2,8 +2,9 @@
 
 class Thing extends SimpleData {}
 
-class TestSimpleData extends PHPUnit_Framework_TestCase
+class TestSimpleData extends ModelTestCase
 {
+	
 	public function testall_as_listReturnsArray() {}
 
 	public function testall_as_listReturnsData() {}
@@ -44,7 +45,13 @@ class TestSimpleData extends PHPUnit_Framework_TestCase
 		$this->assertFalse(Thing::is_valid());
 	}
 
-	public function testpopulate_from_inputSetsModelFromInput() {}
+	public function testpopulate_from_inputSetsModelFromInput() 
+	{
+		Request::foundation()->request->add(array('email' => 'alex@example.com', 'address' => 'http://example.com'));
+
+		$thing = new Thing;
+		$thing->populate_from_input();
+	}
 
 	public function testpopulate_from_inputWarnsWhenThereIsNoValidation() {}
 
