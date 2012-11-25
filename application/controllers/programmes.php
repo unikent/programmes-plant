@@ -37,7 +37,7 @@ class Programmes_Controller extends Admin_Controller
             $model = $this->model;
             $course = $model::find($item_id);
             $this->data['clone'] = true;
-            $this->data[$this->views] = $course ;
+            $this->data['programme'] = $course;
         } else {
             $this->data['clone'] = false;
         }
