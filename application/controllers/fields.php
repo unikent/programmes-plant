@@ -138,7 +138,7 @@ class Fields_Controller extends Admin_Controller
 
     public function get_deactivate()
     {
-            $model = $this->model;
+        $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
