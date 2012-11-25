@@ -29,7 +29,7 @@ class TestLeaflet extends PHPUnit_Framework_TestCase
 		}
 	}
 
-	public function testInputIsReadSuccessfullyIntoLeafletObject()
+	public function testInputPopulatesLeafletObjectSuccessfully()
 	{
 		$input = array(
 			'name' => 'Some Leaflet',
@@ -92,7 +92,20 @@ class TestLeaflet extends PHPUnit_Framework_TestCase
 		}
 	}
 
-	public function testFailsToValidateWhenNoNameIsPresent () 
+	public function testValidatesOnSuccessfulInput()
+	{
+		$input = array(
+			'name' => 'Some Leaflet',
+			'campus' => 1,
+			'tracking_code' => 'http://example.com/tracking'
+		);
+
+		Request::foundation()->request->add($input);
+
+		$this->assertTrue(Leaflet::is_valid());
+	}
+
+	public function testFailsToValidateWhenNoNameIsPresent() 
 	{
 		$input = array(
 			'name' => null,
