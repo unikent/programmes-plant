@@ -8,8 +8,24 @@ class TestSimpleData extends PHPUnit_Framework_TestCase
 
 	public function testall_as_listReturnsData() {}
 
-	public function testis_validRulesAreAddedSuccessfully() {}
+	public function testis_validRulesAreAddedSuccessfully() 
+	{
+		Thing::$rules = array('id' => 'required');
 
+		Thing::is_valid(array('name' => 'required'));
+
+		$this->assertCount(2, Thing::$rules);
+	}
+
+	public function testis_validRulesAreOverwrittenSuccessfully()
+	{
+		Thing::$rules = array('id' => 'required');
+
+		Thing::is_valid(array('id' => 'max:255'));
+
+		$this->assertEquals('max:255', Thing::$rules['id']);
+	}
+	
 	public function testis_validReturnsTrueWhenValidationSucceeds() {}
 
 	public function testis_validReturnsFalseWhenValidationFails() {}
