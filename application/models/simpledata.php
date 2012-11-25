@@ -19,19 +19,16 @@ class SimpleData extends Eloquent
 	 * @param array $rules An array of Laravel validations which will overwrite the defaults for the class.
 	 * @return $validaton The Laravel validation object.
 	 */
-	public static function is_valid($input = null, $rules = null)
+	public static function is_valid($rules = null)
 	{
-		if (is_null($rules))
+		if (! is_null($rules))
 		{
-			$rules = static::$rules;
+			static::$rules = array_merge(static::$rules, $rules);
 		}
 
-		if (is_null($input))
-		{
-			$input = Input::all();
-		}
+		$input = Input::all();
 
-        static::$validation = Validator::make($input, $rules);
+        static::$validation = Validator::make($input, static::$rules);
 
         return static::$validation->passes();
 	}

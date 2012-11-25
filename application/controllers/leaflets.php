@@ -31,13 +31,10 @@ class Leaflets_Controller extends Simple_Admin_Controller
         $model = $this->model;
         
         $rules = array(
-            'id'  => 'required|exists:leaflets',
-            'name'  => 'required|max:255|unique:leaflets,name,'.Input::get('id'),
-            'campus'  => 'required|exists:campuses,id',
-            'tracking_code'  => 'required|url'
+            'id'  => 'required|exists:leaflets'
         );
         
-        if (! $model::is_valid(null, $rules))
+        if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
             return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views . '/edit/' . Input::get('id'));

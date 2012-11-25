@@ -96,7 +96,7 @@ class Simple_Admin_Controller extends Admin_Controller {
             'id'  => 'required|exists:' . $this->views,
         );
 
-        if (! $model::is_valid(null, $rules))
+        if (! $model::is_valid($rules))
         {
             Message::add('error', __($this->l . 'error.delete'));
 
@@ -123,7 +123,7 @@ class Simple_Admin_Controller extends Admin_Controller {
             'name'  => 'required|unique:' . $this->views . '|max:255',
         );
 
-        if (! $model::is_valid(null, $rules))
+        if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
 
@@ -152,7 +152,7 @@ class Simple_Admin_Controller extends Admin_Controller {
             'name'  => 'required|max:255|unique:'. $this->views . ',name,'.Input::get('id'),
         );
 
-        if (! $model::is_valid(null, $rules))
+        if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
