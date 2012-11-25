@@ -41,7 +41,6 @@ class Programmes_Controller extends Admin_Controller
             $this->data['clone'] = false;
         }
         
-        //$this->data['fields'] = $this->getProgrammeFields();
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
@@ -138,7 +137,19 @@ class Programmes_Controller extends Admin_Controller
             $programme = Programme::find(Input::get('programme_id'));
 
             $programme->year = Input::get('year');
-
+            
+            // get the programme fields and loop through them, assigning the user input value to the appropriate column name
+            $programme_fields = ProgrammeField::programme_fields();
+            foreach ($programme_fields as $programme_field)
+            {
+                $colname = $programme_field->colname;
+                // make sure the field is being used (if it's in section 0 then it isn't)
+                if ($programme_field->section > 0)
+                {
+                    $programme->$colname = Input::get($colname);
+                }
+            }
+            
             $programme->save();
 
             $title_field = Programme::get_title_field();
@@ -148,12 +159,7 @@ class Programmes_Controller extends Admin_Controller
         }
     }
 
-    private function getProgrammeFields()
-    {
-        $model = $this->model.'Field';
 
-        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
-    }
 
     /**
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
