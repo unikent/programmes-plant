@@ -24,11 +24,6 @@ class TestAward extends PHPUnit_Framework_TestCase {
 		}
 	}
 
-	/**
-	 * Tests all_as_list
-	 * 
-	 * @covers Award::all_as_list
-	 */
 	public function testall_as_list()
 	{
 		// Add in some elements to list.
