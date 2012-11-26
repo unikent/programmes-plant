@@ -22,13 +22,6 @@
     </div>
 
     <div class="control-group">
-      <?php echo Form::label('title', 'Title', array('class'=>'control-label'))?>
-      <div class="controls">
-        <?php echo Form::text('title',  ( Input::old('title') || $create ? Input::old('title') : $item->title ),array('placeholder'=>'Campus title'))?>
-      </div>
-    </div>
-
-    <div class="control-group">
       <?php echo Form::label('address_1', 'Address Line 1', array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::text('address_1',  ( Input::old('address_1') || $create ? Input::old('address_1') : $item->address_1 ),array('placeholder'=>'Campus Address Line 2'))?>
@@ -101,7 +94,7 @@
   </fieldset>
   <div class="form-actions">
     <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Go Back</a>
-    <input type="submit" class="btn btn-primary" value="<?php echo ($create ? 'Create Create' : 'Save Campus')?>" />
+    <input type="submit" class="btn btn-primary" value="<?php echo ($create ? 'Create Campus' : 'Save Campus')?>" />
   </div>
 
 <?php echo Form::close()?>
