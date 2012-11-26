@@ -60,7 +60,12 @@ class SimpleData extends Eloquent
     		throw new NoValidationException('No validation');
     	}
 
-    	$this->fill(Input::all());
+    	$input = Input::all();
+
+    	// Remove _wysihtml5_mode entirely.
+    	unset($input['_wysihtml5_mode']);
+
+    	$this->fill($input);
     }
 
 }
