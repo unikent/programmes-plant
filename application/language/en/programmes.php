@@ -13,6 +13,8 @@ return array(
 
 	'save_programme' => 'Save programme',
 	'create_programme' => 'Create programme',
+	
+	'create_programme_title' => 'New programme',
 
 	// Fields
 	'year' => 'Year of Programme',
@@ -31,19 +33,6 @@ return array(
 	'related_subject_ids' => 'Related subjects',
 	'related_programme_ids' => 'Related Programmes',
 	'leaflet_ids' => 'Leaflets',
-
-	'mod_1_title' => 'Module stage 1 title',
-	'mod_1_content' => 'Module stage 1 content',
-	'mod_2_title' => 'Module stage 2 title',
-	'mod_2_content' => 'Module stage 2 content',
-	'mod_3_title' => 'Module stage 3 title',
-	'mod_3_content' => 'Module stage 3 content',
-	'mod_4_title' => 'Module stage 4 title',
-	'mod_4_content' => 'Module stage 4 content',
-	'mod_5_title' => 'Module stage 5 title',
-	'mod_5_content' => 'Module stage 5 content',
-	'mod_6_title' => 'Module stage 6 title',
-	'mod_6_content' => 'Module stage 6 content',
 
 	'content' => 'Programme information',
 	'additional_leaflet_urls_help' => 'Please enter a url and press enter to add it to the list of urls.',
