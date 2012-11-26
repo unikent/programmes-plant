@@ -108,6 +108,15 @@ class TestCampus extends ModelTestCase
 		$this->assertFalse(Campus::is_valid());
 	}
 
+	public function testNameIsLessThan255Characters()
+	{
+		$this->input['name'] = str_pad('', 260, 'a');
+
+		Request::foundation()->request->add($this->input);
+
+		$this->assertFalse(Campus::is_valid());
+	}
+
 	public function testAddDescription() 
 	{
 		$campus = new Campus;
