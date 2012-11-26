@@ -48,6 +48,7 @@ class Programmes_Controller extends Admin_Controller
         $this->data['programme_list'] = Programme::getAsList($year);
         $this->data['leaflets'] = Leaflet::getAsList();
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -77,6 +78,7 @@ class Programmes_Controller extends Admin_Controller
 
         $this->data['fields'] = $this->getProgrammeFields();
         $this->data['title_field'] = Programme::get_title_field();
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -177,7 +179,9 @@ class Programmes_Controller extends Admin_Controller
 
         $programme->useRevision($revision);
 
-        Messages::add('success', "Promoted revision of $revision->title created at $revision->updated_at to live version.");
+        $title_field = Programme::get_title_field();
+
+        Messages::add('success', "Promoted revision of ".$revision->$title_field." created at $revision->updated_at to live version.");
 
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
     }

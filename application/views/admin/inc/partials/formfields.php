@@ -1,4 +1,4 @@
-<?php 
+<?php
  /*
  Text Fields
  */
@@ -50,6 +50,37 @@
               <?php echo Form::label($col, $field->field_name,array('class'=>'control-label'))?>
               <div class="controls">
                 <?php echo $formpart?>
+                <?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
+                  <div class="info">
+                    <span class="badge badge-info" rel="popover"><i class="icon-flag"></i>
+                      <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
+                        <?php echo __('fields.form.programme_overwrite_text_title')?>
+                      <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
+                        <?php echo __('fields.form.programme_settings_overwrite_text_title')?>
+                      <?php endif; ?>
+                    </span>
+                    <div class="title">
+                      <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
+                        <?php echo __('fields.form.programme_overwrite_text_title')?>
+                      <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
+                        <?php echo __('fields.form.programme_settings_overwrite_text_title')?>
+                      <?php endif; ?>
+                    </div>
+                    <div class="description">
+                      <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
+                        <?php echo __('fields.form.programme_overwrite_text')?>
+                      <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
+                        <?php echo __('fields.form.programme_settings_overwrite_text')?>
+                      <?php endif; ?>
+                      
+                      <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
+                        <?php if(ProgrammeSetting::get_setting($year, $field->colname) != null): ?>
+                          <br />i.e. <br /> <pre><?php echo ProgrammeSetting::get_setting($year, $field->colname) ?></pre>
+                        <?php endif; ?>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                <?php endif; ?>
                 <span class="help-block"><?php echo  $field->field_description; ?></span>
               </div>
             </div>
@@ -59,3 +90,4 @@
     </p>
 <?php endif; ?>
 <?php endforeach; ?>
+

@@ -20,3 +20,11 @@ ins {
 	background-color:SpringGreen;
 	text-decoration: none;
 }
+
+/*info box*/
+div.info{
+	display: inline;
+}
+.info .description, .info .title {
+display: none;
+}
