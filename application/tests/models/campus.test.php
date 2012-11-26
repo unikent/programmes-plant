@@ -183,11 +183,11 @@ class TestCampus extends ModelTestCase
 
 	public function testAddAddress_3()
 	{
-		$campus = Campus::create(array('address_3', 'Address 3'));
+		$campus = Campus::create(array('address_3' => 'Address 3'));
 		$campus->save();
 
 		$this->assertCount(1, Campus::all());
-		$this->assertTrue(Campus::is_valid());
+		$this->assertTrue($this->check_for_data('address_3', 'Address 3'));
 	}
 
 	public function testAddress_3IsRequired() 
