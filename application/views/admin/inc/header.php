@@ -24,6 +24,7 @@
                 ?>
                 <ul class="nav">
                     <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( '/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
+                    <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( '/'.'pg'.'/'.$url)?>">Postgraduate</a></li>
                 </ul>
                 
                 <ul class="nav">
