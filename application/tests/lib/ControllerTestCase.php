@@ -95,6 +95,19 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Given a controller path, returns the HTML.
+	 * 
+	 * @param string $controller_path
+	 * @return string $html HTML result (including 404s and other errors)
+	 */
+	public function get_html($controller_path)
+	{
+		$page = $this->get($controller_path);
+
+		return $page->render();
+	}
+
+	/**
 	 * Helper function to extract data from a response object.
 	 * 
 	 * @param Laravel\Response $response The Laravel response object.
