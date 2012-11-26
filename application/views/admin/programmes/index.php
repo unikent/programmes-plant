@@ -27,7 +27,7 @@
     </thead><tbody>
     <?php foreach($programmes as $programme) : ?>
       <tr>
-        <td><?php echo $programme->title ?></td>
+        <td><?php echo $programme->$title_field ?></td>
         <td><?php //echo  $subjectList[$programme->subject_id] ?></td>
 
         <td><?php echo  Str::limit(strip_tags($programme->summary), 40) ?></td>

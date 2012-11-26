@@ -34,10 +34,6 @@
             <li><a href="<?php echo url('logout')?>">Logout</a></li>
           </ul>
 
-            <form class="navbar-search pull-right">
-              <input type="text" class="search-query" placeholder="UG <?php echo $selectedYear?> search">
-            </form>
-
           </div><!--/.nav-collapse -->
         </div>
       </div>

@@ -129,7 +129,7 @@ class GlobalSettings_Controller extends Admin_Controller
     {
         $model = 'GlobalSettingField';
 
-        return  $model::where('active','=','1')->order_by('id','asc')->get();
+        return  $model::where('active','=','1')->order_by('field_name','asc')->get();
     }
 
     /**

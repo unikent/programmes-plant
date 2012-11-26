@@ -7,15 +7,17 @@ foreach($sections as $section_name => $section){
 
     echo "<legend>{$section_name}</legend>";
 
-
    foreach($section as $field) {
 
       //Get Column Name
       $column_name = $field->colname;
       $type = $field->field_type;
-
-      //Get value of field.
-      $current_value = (!$create) ? $programme->$column_name : '';
+      
+      $current_value = '';
+      if (!$create && isset($programme->$column_name))
+      {
+          $current_value = $programme->$column_name;
+      }
 
       //Build select box
       if($type=='select'){
