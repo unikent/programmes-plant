@@ -12,4 +12,5 @@ class Campus extends SimpleData
     	'postcode' => 'required',
     	'url' => 'url'
     );
+    
 }
