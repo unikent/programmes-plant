@@ -99,8 +99,8 @@ class TestCampus extends ModelTestCase
 
 	public function testNameIsUnique() 
 	{
-		// A Campus is used as the name in $this->input
-		$campus = Campus::create(array('name' => 'A Campus'));
+		// A campus is used as the name in $this->input
+		$campus = Campus::create(array('name' => 'A campus'));
 		$campus->save();
 
 		Request::foundation()->request->add($this->input);
