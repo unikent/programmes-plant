@@ -1,5 +1,5 @@
-<h1><?php echo ( $create ? 'New Programme' : 'Edit Programme' )?></h1>
-<?php if (! $create) : ?><h2><?php echo  $programme->$title_field ?> </h2><?php endif; ?>
+<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></h1>
+
 <?php echo Messages::get_html()?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
@@ -29,23 +29,7 @@
   <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
 <?php endif; ?>
 
-<?php echo View::make('admin.inc.scripts')->render()?>
 
-<script>
-  $(function() {
 
-    $('#promote_revision').modal({
-      show:false
-    }); // Start the modal
 
-    // Populate the field with the right data for the modal when clicked
-    $(".promote_toggler").click(function(){
-      $('#promote_now').attr('href', $(this).attr('rel'));
-      $('#promote_revision').modal('show');
-    });
 
-  });
-
-    </script>
-  </body>
-</html>

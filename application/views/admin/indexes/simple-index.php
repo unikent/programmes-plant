@@ -27,7 +27,7 @@
 </div>
 <?php endif; ?>
 <div class="form-actions">
-  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary right"><?php echo __($type . '.create') ?></a>
+  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
 </div>
 
 <div class="modal hide fade" id="delete_<?php echo Str::singular($type); ?>">
@@ -46,7 +46,7 @@
     <?php echo Form::close()?>
   </div>
 </div>
-<?php echo View::make('admin.inc.scripts')->render()?>
+
 <script>
   $('#delete_<?php echo Str::singular($type); ?>').modal({
     show:false

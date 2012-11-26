@@ -34,7 +34,7 @@
 
 
   
-<?php echo View::make('admin.inc.scripts')->render()?>
+
 <script>
   $('#promote_revision').modal({
     show:false

@@ -7,7 +7,7 @@
   </head>
   <body>
     <?php echo View::make('admin.inc.header')->render()?>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row-fluid">
         <div class="span3">
           <!-- Sidebar -->
@@ -21,5 +21,7 @@
         </div><!-- /span9 crud -->
       </div><!-- /row-fluid -->
     </div><!-- /container -->
+    
+    <?php echo View::make('admin.inc.scripts')->render()?>
   </body>
 </html>
