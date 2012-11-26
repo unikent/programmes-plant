@@ -3,7 +3,7 @@
 <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/campuses/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
   
   <?php if(!$create): ?> <input type="hidden" name="id" value="<?php echo $item->id?>" /> <?php endif; ?>
-   
+  
   <fieldset>
     <legend>Campus Details</legend>
 
@@ -31,49 +31,49 @@
     <div class="control-group">
       <?php echo Form::label('address_2', 'Address Line 2', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('address_2',  ( Input::old('address_2') || $create ? Input::old('address_2') : $item->address_1 ),array('placeholder'=>'Campus Address Line 2'))?>
+        <?php echo Form::text('address_2',  ( Input::old('address_2') || $create ? Input::old('address_2') : $item->address_2 ),array('placeholder'=>'Campus Address Line 2'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('address_3', 'Address Line 3', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('address_3',  ( Input::old('address_3') || $create ? Input::old('address_3') : $item->address_1 ),array('placeholder'=>'Campus Address Line 3'))?>
+        <?php echo Form::text('address_3',  ( Input::old('address_3') || $create ? Input::old('address_3') : $item->address_3 ),array('placeholder'=>'Campus Address Line 3'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('town', 'Town', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('town',  ( Input::old('town') || $create ? Input::old('town') : $item->address_1 ),array('placeholder'=>'Campus Town'))?>
+        <?php echo Form::text('town',  ( Input::old('town') || $create ? Input::old('town') : $item->town ),array('placeholder'=>'Campus Town'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('postcode', 'Postcode', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('postcode',  ( Input::old('postcode') || $create ? Input::old('postcode') : $item->address_1 ),array('placeholder'=>'Campus Postcode'))?>
+        <?php echo Form::text('postcode',  ( Input::old('postcode') || $create ? Input::old('postcode') : $item->postcode ),array('placeholder'=>'Campus Postcode'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('email', 'E-mail', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('email',  ( Input::old('email') || $create ? Input::old('email') : $item->address_1 ),array('placeholder'=>'Campus E-mail'))?>
+        <?php echo Form::text('email',  ( Input::old('email') || $create ? Input::old('email') : $item->email ),array('placeholder'=>'Campus E-mail'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('phone', 'Telephone', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('phone',  ( Input::old('phone') || $create ? Input::old('phone') : $item->address_1 ),array('placeholder'=>'Campus Telephone'))?>
+        <?php echo Form::text('phone',  ( Input::old('phone') || $create ? Input::old('phone') : $item->phone ),array('placeholder'=>'Campus Telephone'))?>
       </div>
     </div>
 
     <div class="control-group">
       <?php echo Form::label('url', 'Website URL', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('url',  ( Input::old('url') || $create ? Input::old('url') : $item->address_1 ),array('placeholder'=>'Campus Website URL'))?>
+        <?php echo Form::text('url',  ( Input::old('url') || $create ? Input::old('url') : $item->url ),array('placeholder'=>'Campus Website URL'))?>
       </div>
     </div>
 
