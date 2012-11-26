@@ -34,7 +34,7 @@
  <fieldset>
             <legend>Programme settings</legend>
 
-            <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmesettings) ? $programmesettings : null,'create'=>$create))->render(); ?>
+            <?php echo View::make('admin.inc.partials.formFields', array('year' => $year,'fields' => $fields, 'subject' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings'))->render(); ?>
 
        </fieldset>
           <div class="form-actions">

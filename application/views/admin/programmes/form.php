@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <?php echo View::make('admin.inc.partials.formFields', array('fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone)))->render(); ?>
+  <?php echo View::make('admin.inc.partials.formFields', array('year' => $year,'fields' => $fields, 'subject' => isset($programmes) ? $programmes : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
 
 <div class="form-actions">

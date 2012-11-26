@@ -74,4 +74,18 @@
     		$(elem).wysihtml5();
     	});
     }
+
+    $(function(){
+      // Grab all popover elements.
+      var els = $('.info [rel=popover]');
+
+      els.each(function(){
+        var container = $(this).parent();
+        var label = $(container).find('.title').html();
+        console.log(label);
+        var content = $(container).find('.description').html();
+
+        $(this).popover({ "placement": "top", "title": label, "content": content });
+      });
+    });
 </script>

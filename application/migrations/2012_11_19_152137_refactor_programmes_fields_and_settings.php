@@ -142,7 +142,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		//Section: KIS details 
 		$programme_fields[] = array('KISCOURSEID', 'text', 'This is the programme’s KISCOURSEID and is used for the KIS widget.', ''); // Function: Read only to users, editable by superusers.
 		$programme_fields[] = array('KISTYPE ', 'text', 'This is the programme’s KISTYPE.', ''); // Function: Read only to users, editable by superusers.
-		$programme_fields[] = array('KIS explanatory text', 'textarea', 'Please note standard text will appear about the KIS widget. See ‘Standard messages’ (pdf). If the standard text is not applicable, please enter alternative text here.', ''); // Function: Overrides the standard message. 
+		$programme_override_fields[] = array('KIS explanatory text', 'textarea', 'Please note standard text will appear about the KIS widget. See ‘Standard messages’ (pdf). If the standard text is not applicable, please enter alternative text here.', ''); // Function: Overrides the standard message. 
 		$programme_fields[] = array('JACS code (subject 1)', 'text', 'Please add the JACS code for the main subject area', '');
 		$programme_fields[] = array('JACS code (subject 2)', 'text', 'Please add the JACS code for the additional subject area', '');
 
@@ -176,7 +176,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		//$programme_setting_fields[] = array('Funding', 'textarea', 'This text will appear under the Fees and Funding tab', '');
 		//$programme_setting_fields[] = array('How to apply', 'textarea', 'This text will appear under the Apply tab', '');
 		//$programme_setting_fields[] = array('Enquiries', 'textarea', 'This text will appear under the Further informtion tab', '');
-		$programme_setting_fields[] = array('KIS explanatory text', 'textarea', 'This text will appear under the Further informtion tab', '');
+		//$programme_setting_fields[] = array('KIS explanatory text', 'textarea', 'This text will appear under the Further informtion tab', '');
 		$programme_setting_fields[] = array('General disclaimer', 'textarea', 'This text will appear at the footer of each page', '');
 		$programme_setting_fields[] = array('Institution name', 'textarea', 'University of Kent', '');
 		$programme_setting_fields[] = array('UKPRN', 'text', '', '');
@@ -205,12 +205,12 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		// Add the fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('ProgrammeSettingField', 'programme_settings', $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['DEFAULT']);
+			$this->add_field('ProgrammeField', 'programme_settings', $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['DEFAULT']);
 		}
 
 		// Add the fields in
 		foreach ($programme_override_fields as $field) {
-			$this->add_field('ProgrammeSettingField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['OVERRIDABLE_DEFAULT']);
+			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['OVERRIDABLE_DEFAULT']);
 		}
 	}
 
