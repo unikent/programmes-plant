@@ -21,8 +21,8 @@ class ProgrammeSections_Controller extends Admin_Controller
     	if(!$object) return Redirect::to($this->views);
     	$this->data['section'] = $object;
     	$this->data['type'] = $type;
-      
-    	return View::make('admin.'.$this->views.'.form',$this->data);
+    	
+    	$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -33,7 +33,7 @@ class ProgrammeSections_Controller extends Admin_Controller
         $this->data['create'] = true;
         $this->data['type'] = $type;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     public function post_delete($type){
@@ -74,7 +74,7 @@ class ProgrammeSections_Controller extends Admin_Controller
     }
 
     public function post_edit($type){
-        
+        error_log('sdsds');exit;
         $rules = array(
             'id'  => 'required|exists:programmesections,id',
             'name'  => 'required|max:255|unique:programmesections,name,'.Input::get('id'),
