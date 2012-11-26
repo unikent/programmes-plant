@@ -133,6 +133,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         $new = new $this->model;
 
         $new->name = Input::get('name');
+        $new->populate_from_input();
         $new->save();
 
         Messages::add('success', __($this->l . 'success.create'));
@@ -161,6 +162,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         $update = $model::find(Input::get('id'));
 
         $update->name = Input::get('name');
+        $update->populate_from_input();
 
         $update->save();
 
