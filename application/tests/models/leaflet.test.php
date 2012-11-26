@@ -12,8 +12,15 @@ class TestLeaflet extends ModelTestCase
 	{
 		Tests\Helper::migrate();
 
-		$campus = new Campus;
-		$campus->save();
+		// Chuck all campuses to ensure clean database
+		$campuses = Campus::all();
+
+		foreach ($campuses as $campus)
+		{
+			$campus->delete();
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -27,8 +34,26 @@ class TestLeaflet extends ModelTestCase
 		{
 			$leaflet->delete();
 		}
+
+		// Chuck all campuses to ensure clean database
+		$campuses = Campus::all();
+
+		foreach ($campuses as $campus)
+		{
+			$campus->delete();
+		}
 		
 		parent::tearDown();
+	}
+
+	/**
+	 * We always want the ID here to be 1 - we only ever have a campus with this ID.
+	 */
+	public function setUp()
+	{
+		$campus = new Campus;
+		$campus->id = 1;
+		$campus->save();
 	}
 
 	public function testInputPopulatesLeafletObjectSuccessfully()
