@@ -21,7 +21,7 @@ class ProgrammeSetting extends Revisionable
     public static function get_setting($year, $colname){
     	$settings = self::where('year', '=', $year)->get($colname);
     	
-    	if(!empty($settings)){
+    	if(!empty($settings[0])){
     		return $settings[0]->$colname;
     	}
     	

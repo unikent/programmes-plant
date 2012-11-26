@@ -29,7 +29,7 @@ class Fields_Controller extends Admin_Controller
             $sections = ProgrammeSection::order_by('order','asc')->get();
         }
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'from' => $this->view));
     }
 
     public function get_add()
