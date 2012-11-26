@@ -56,7 +56,7 @@
         <?php echo Form::close()?>
       </div>
     </div>
-    <?php echo View::make('admin.inc.scripts')->render()?>
+    
     <script>
       $('#delete_section').modal({
         show:false

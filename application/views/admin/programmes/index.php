@@ -82,7 +82,7 @@
     <?php echo Form::close()?>
   </div>
 </div>
-<?php echo View::make('admin.inc.scripts')->render()?>
+
  <script>
   $('#deactivate_subject').modal({
     show:false

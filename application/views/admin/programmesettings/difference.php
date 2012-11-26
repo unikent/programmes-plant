@@ -59,7 +59,7 @@
                 <a class="btn btn-danger" id="promote_now">Promote Revision</a>
             <?php echo Form::close()?>
             </div>
-    <?php echo View::make('admin.inc.scripts')->render()?>
+    
 
     <script>
       $('#promote_revision').modal({

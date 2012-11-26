@@ -21,6 +21,6 @@
 
     </div> <!-- /container -->
 
-    <?php echo View::make('admin.inc.scripts')->render()?>
+    
   </body>
 </html>
