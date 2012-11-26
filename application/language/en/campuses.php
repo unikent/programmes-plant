@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This is a list of all the University of Kent campuses.',
 	'no_items' => 'No campuses yet',
 
 	// Modal On Deletion Attempt

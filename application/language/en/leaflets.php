@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This lists all programme leaflets.',
 	'no_items' => 'No leaflets yet',
 
 	// Modal On Deletion Attempt
