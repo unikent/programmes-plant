@@ -253,6 +253,9 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('phone', '07373 8737373'));
 	}
 
+	/**
+	 * For our purposes a valid phone number contains numbers and spaces.
+	 */
 	public function testPhoneFailsOnInvalidPhoneNumber() 
 	{
 		$this->input['phone'] = 'Blah haalakak invalid.';
