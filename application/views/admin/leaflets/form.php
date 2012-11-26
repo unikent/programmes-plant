@@ -42,4 +42,4 @@
   </div>
 
 <?php echo Form::close()?>
-<?php echo View::make('admin.inc.scripts')->render()?>
+

@@ -11,14 +11,14 @@ class ProgrammeSection extends Eloquent {
 	{
 		$sections = self::all();
 
-		$options = array();
+		$sections_ordered = array();
 
 		foreach ($sections as $section) 
 		{
-			$options[$section->id] = $section->name;
+			$sections_ordered[$section->id] = $section->name;
 		}
 
-		return $options;
+		return $sections_ordered;
      }
 
     public static function reorder($order_string)
