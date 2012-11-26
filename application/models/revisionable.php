@@ -160,10 +160,14 @@ class Revisionable extends Eloquent
       } else {
         $data = $model::where('year','=',$year)->get();
       }
-
-      foreach ($data as $record) {$options[$record->id] = $record->title;}
+      $title_field = self::get_title_field();
+      foreach ($data as $record) {$options[$record->id] = $record->$title_field;}
 
        return $options;
+     }
+
+     public static function get_title_field(){
+        return 'title';
      }
 
      public static function getAttributesList($year = false)

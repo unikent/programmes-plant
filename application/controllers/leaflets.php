@@ -15,6 +15,12 @@ class Leaflets_Controller extends Simple_Admin_Controller
         {
             Messages::add('error', $model::$validation->errors->all());
 
+            $leaflet = new Leaflet;
+            $leaflet->name = Input::get('name');
+            $leaflet->campuses_id = Input::get('campus');
+            $leaflet->tracking_code = Input::get('tracking_code');
+            $leaflet->main = Input::get('main-additional');
+
             return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views . '/create')->with_input();
         }
         

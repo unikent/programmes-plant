@@ -35,7 +35,7 @@ class GlobalSettings_Controller extends Admin_Controller
         
         $this->data['create'] = true;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -61,7 +61,7 @@ class GlobalSettings_Controller extends Admin_Controller
 
         $this->data['fields'] = $this->get_fields();
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
