@@ -1,5 +1,5 @@
-<h1><?php echo ( $create ? 'New Programme' : 'Edit Programme' )?></h1>
-<?php if (! $create) : ?><h2><?php echo  $programme->$title_field ?> </h2><?php endif; ?>
+<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></h1>
+
 <?php echo Messages::get_html()?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
