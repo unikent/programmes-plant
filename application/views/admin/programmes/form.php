@@ -29,23 +29,7 @@
   <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
 <?php endif; ?>
 
-<?php echo View::make('admin.inc.scripts')->render()?>
 
-<script>
-  $(function() {
 
-    $('#promote_revision').modal({
-      show:false
-    }); // Start the modal
 
-    // Populate the field with the right data for the modal when clicked
-    $(".promote_toggler").click(function(){
-      $('#promote_now').attr('href', $(this).attr('rel'));
-      $('#promote_revision').modal('show');
-    });
 
-  });
-
-    </script>
-  </body>
-</html>

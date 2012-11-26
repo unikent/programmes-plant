@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This is a list of all University of Kent faculties.',
 	'no_items' => 'No Faculties yet',
 
 	// Modal On Deletion Attempt

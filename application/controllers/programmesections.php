@@ -7,34 +7,36 @@ class ProgrammeSections_Controller extends Admin_Controller
     public $views = 'sections';
     protected $model = 'ProgrammeSection';
 
-    public function get_index()
+    public function get_index($type)
     {
     	//$this->data[$this->views] = ProgrammeSection::order_by('order','asc')->get();
        // return View::make('admin.'.$this->views.'.index',$this->data);
-       return Redirect::to('/fields/programmes');
+       return Redirect::to('/'.$type.'/fields/programmes');
     }
 
-    public function get_edit($object_id = false){
+    public function get_edit($type, $object_id = false){
     	// Do our checks to make sure things are in place
     	if(!$object_id) return Redirect::to($this->views);
     	$object = ProgrammeSection::find($object_id);
     	if(!$object) return Redirect::to($this->views);
     	$this->data['section'] = $object;
-      
-    	return View::make('admin.'.$this->views.'.form',$this->data);
+    	$this->data['type'] = $type;
+    	
+    	$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
      * Our user subject create function
      *
      **/
-    public function get_create(){
+    public function get_create($type){
         $this->data['create'] = true;
+        $this->data['type'] = $type;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
-    public function post_delete(){
+    public function post_delete($type){
         $rules = array(
             'id'  => 'required|exists:programmesections',
         );
@@ -42,16 +44,16 @@ class ProgrammeSections_Controller extends Admin_Controller
         if ($validation->fails())
         {
             Messages::add('error','You tried to delete a user that doesn\'t exist.');
-            return Redirect::to('/fields/programmes');
+            return Redirect::to('/'.$type.'/fields/programmes');
         }else{
             $section = ProgrammeSection::find(Input::get('id'));
             $section->delete();
             Messages::add('success','Section Removed');
-            return Redirect::to('/fields/programmes');
+            return Redirect::to('/'.$type.'/fields/programmes');
         }
     }
 
-    public function post_create(){
+    public function post_create($type){
         $rules = array(
             'name'  => 'required|unique:programmesections|max:255',
         );
@@ -67,12 +69,12 @@ class ProgrammeSections_Controller extends Admin_Controller
             $section->save();
  
             Messages::add('success','New Section Added');
-            return Redirect::to('/fields/programmes');
+            return Redirect::to('/'.$type.'/fields/programmes');
         }
     }
 
-    public function post_edit(){
-        
+    public function post_edit($type){
+        error_log('sdsds');exit;
         $rules = array(
             'id'  => 'required|exists:programmesections,id',
             'name'  => 'required|max:255|unique:programmesections,name,'.Input::get('id'),
@@ -94,7 +96,7 @@ class ProgrammeSections_Controller extends Admin_Controller
             $section->save();
 
             Messages::add('success','Section updated');
-            return Redirect::to('/fields/programmes');
+            return Redirect::to('/'.$type.'/fields/programmes');
         }
     }
     
@@ -103,7 +105,7 @@ class ProgrammeSections_Controller extends Admin_Controller
      *
      * This allows fields to be reordered via an AJAX request from the UI
      */
-    public function post_reorder()
+    public function post_reorder($type)
     {
         $model = $this->model;
         $model::reorder(Input::get('order'));
