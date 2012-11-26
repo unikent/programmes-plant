@@ -27,7 +27,7 @@
     	$(".multiselect").multiselect({dividerLocation: 0.5});
     }
     $(document).ready(function (){
-        $(".multiselect").multiselect({dividerLocation: 0.5});
+        
     });
 
 
@@ -48,4 +48,69 @@
     		$(elem).wysihtml5();
     	});
     }
+
+
+//onLoad setup JS listeners
+$(document).ready(function (){
+
+  //Quick/dirty toggle collapse
+  $('.toggleCollapse').click(function(a){
+    $(this).parent().parent().parent().find('ul').toggle();
+  });
+   
+  // For some reason jquery ui sortable does not provide a method to detect
+  // when a field is reorderd ONLY within the current sortable.
+  // The below code based on:
+  // http://stackoverflow.com/questions/4890923/jquery-ui-sortable-and-two-connected-lists
+  // http://jsfiddle.net/39ZvN/9/
+  // is needed to do this for us.
+  var oldList, newList, item;
+  $( "ul.sortable_fields" ).sortable({
+    //connect sections together
+    connectWith: "ul.sortable_fields",
+    //on start keep track of original list.
+    start: function(event, ui) {
+        item = ui.item; newList = oldList = ui.item.parent().parent();
+    },
+    //when changed update new list to list item was dragged to
+    change: function(event, ui) {  
+      if(ui.sender) newList = ui.placeholder.parent().parent();
+    },
+    //If list has changed trigger onMoved, else trigger onReordered
+    stop: function(event, ui) {    
+        if(oldList == newList){
+          onReorder($(this));
+        }else{
+           onMoved($(this));
+        }
+    }
+  });
+  //Handle reorder within section
+  var onReorder = function(sorter){
+    var order = sorter.sortable('toArray').toString();
+    $.post("<?php echo URL::to('/');?>ug/fields/programmes/reorder", {
+       'order': order,
+       'section': sorter.parent().attr('id')
+    });
+  }
+  //Handle item moved to new section
+  var onMoved = function(sorter){
+    var order = newList.find('ul.sortable_fields').sortable('toArray').toString();//sorter.sortable('toArray').toString();
+    $.post("<?php echo URL::to('/');?>ug/fields/programmes/reorder", {
+       'order': order,
+       'section': newList.attr('id')
+    });
+  }
+  //Handle sort for Sections
+   $( "div.sortable_sections" ).sortable({
+      update: function(event, ui) {
+        var order = $(this).sortable('toArray').toString();
+        // post to our reorder route
+       $.post("<?php echo URL::to('/');?>ug/sections/reorder", {
+            'order': order
+      });
+        
+      }
+    });    
+  });
 </script>

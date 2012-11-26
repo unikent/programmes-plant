@@ -2,7 +2,7 @@
 
 <?php echo Messages::get_html()?>
 
-<?php echo Form::open_for_files('/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
     <legend>&nbsp;</legend>
@@ -60,7 +60,7 @@
 <br/>
 
 <div class="form-actions">
-  <a class="btn btn-warning" href="<?php echo url('/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
+  <a class="btn btn-warning" href="<?php echo url('/'.$type.'/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
   <input type="submit" class="btn btn-primary" value="<?php echo __('fields.form.btn.save') ?>" />
           </div>
 <?php echo View::make('admin.inc.scripts')->render()?>

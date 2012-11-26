@@ -8,7 +8,7 @@ class Fields_Controller extends Admin_Controller
     /**
      * Display the fields index page.
      */
-    public function get_index()
+    public function get_index($type)
     {
         $model = $this->model;
         $fields = $model::select('*');
@@ -36,26 +36,27 @@ class Fields_Controller extends Admin_Controller
             $view = "index";
         }
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type));
     }
 
-    public function get_add()
+    public function get_add($type)
     {
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view, 'type'=>$type));
     }
 
-    public function get_edit($id)
+    public function get_edit($type, $id)
     {
         $data['id'] = $id;
 
         $model = $this->model;
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
+        $data['type'] = $type;
 
         $this->layout->nest('content', 'admin.fields.form', $data);
     }
 
-    public function post_add()
+    public function post_add($type)
     {
         $model = $this->model;
 
@@ -93,10 +94,10 @@ class Fields_Controller extends Admin_Controller
 
         Messages::add('success','Row added to schema');
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to('/'.$type.'/fields/'.$this->view);
     }
 
-    public function post_edit()
+    public function post_edit($type)
     {
         $model = $this->model;
 
@@ -126,7 +127,7 @@ class Fields_Controller extends Admin_Controller
 
         Messages::add('success','Edited field.');
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to('/'.$type.'/fields/'.$this->view);
     }
 
     // This needs to be moved to the model.
@@ -156,24 +157,24 @@ class Fields_Controller extends Admin_Controller
         });
     }
 
-    public function get_deactivate()
+    public function get_deactivate($type)
     {
         $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to($type.'/fields/'.$this->view);
     }
 
-    public function get_reactivate()
+    public function get_reactivate($type)
     {
         $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 1;
         $row->save();
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to($type.'/fields/'.$this->view);
     }
     
     /**
