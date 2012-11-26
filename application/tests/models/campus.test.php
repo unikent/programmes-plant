@@ -286,7 +286,7 @@ class TestCampus extends ModelTestCase
 		$campus->save();
 
 		$this->assertCount(1, Campus::all());
-		$this->assertEquals($this->check_for_data('url', 'http://example.com'));
+		$this->assertTrue($this->check_for_data('url', 'http://example.com'));
 	}
 
 	public function testURLFailsOnOInvalidURL() 
