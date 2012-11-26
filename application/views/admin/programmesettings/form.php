@@ -28,7 +28,7 @@
   <?php echo View::make('admin.programmesettings.partials.revisions', array('revisions' => $revisions, 'programme' => $programmesettings))->render(); ?>
 <?php endif; ?>
 
-<?php echo View::make('admin.inc.scripts')->render()?>
+
 <script>
 $('#promote_revision').modal({
   show:false

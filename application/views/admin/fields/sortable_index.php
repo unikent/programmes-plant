@@ -46,5 +46,5 @@
   </div>   
 </div>
 
-<?php echo View::make('admin.inc.scripts')->render()?>
+
    

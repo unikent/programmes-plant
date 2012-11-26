@@ -46,7 +46,7 @@
     <?php echo Form::close()?>
   </div>
 </div>
-<?php echo View::make('admin.inc.scripts')->render()?>
+
 <script>
   $('#delete_<?php echo Str::singular($type); ?>').modal({
     show:false

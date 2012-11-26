@@ -63,4 +63,3 @@
   <a class="btn btn-warning" href="<?php echo url('/'.$type.'/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
   <input type="submit" class="btn btn-primary" value="<?php echo __('fields.form.btn.save') ?>" />
           </div>
-<?php echo View::make('admin.inc.scripts')->render()?>

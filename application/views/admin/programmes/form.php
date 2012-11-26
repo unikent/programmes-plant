@@ -29,7 +29,7 @@
   <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
 <?php endif; ?>
 
-<?php echo View::make('admin.inc.scripts')->render()?>
+
 
 <script>
   $(function() {
