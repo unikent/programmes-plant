@@ -70,12 +70,6 @@ class Fields_Controller extends Admin_Controller
         $field->active = 1;
         $field->view = 1;
         
-        if ($this->where_clause)
-        {
-            $where_field = $this->where_clause[0];
-            $field->$where_field = $this->where_clause[2];
-        }
-
         $field->save();
 
         // Now we have an ID, set it as the corresponding column name.
