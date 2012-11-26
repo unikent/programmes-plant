@@ -1,19 +1,4 @@
-<?php echo View::make('admin.inc.meta')->render()?>
-    <title>Courses Dashboard</title>
-  </head>
-  <body>
-    <?php echo View::make('admin.inc.header')->render()?>
-    <div class="container">
 
-      <div class="row-fluid">
-
-        <div class="span3"> <!-- Sidebar -->
-          <div class="well">
-            <?php echo View::make('admin.inc.sidebar')->render()?>
-          </div>
-        </div> <!-- /Sidebar -->
-
-        <div class="span9 crud">
           <h1><?php echo ( $create ? 'New Section' : 'Edit Section' )?></h1>
           <?php echo Messages::get_html()?>
           <?php echo Form::open('/'.$type.'/sections/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
@@ -36,10 +21,7 @@
             </div>
 
           <?php echo Form::close()?>
-        </div>
-      </div>
 
-    </div> <!-- /container -->
     <div class="modal hide fade" id="delete_section">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
@@ -56,19 +38,3 @@
         <?php echo Form::close()?>
       </div>
     </div>
-    
-    <script>
-      $('#delete_section').modal({
-        show:false
-      }); // Start the modal
-
-      // Populate the field with the right data for the modal when clicked
-      $('.delete_toggler').each(function(index,elem) {
-          $(elem).click(function(){
-            $('#postvalue').attr('value',$(elem).attr('rel'));
-            $('#delete_section').modal('show');
-          });
-      });
-    </script>
-  </body>
-</html>
