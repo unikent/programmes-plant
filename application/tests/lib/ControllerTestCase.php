@@ -16,7 +16,6 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 */
 	public function setUp()
 	{
-		// For the moment lets try and do this without sessions.
 		Session::load();
 	}
 
