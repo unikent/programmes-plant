@@ -28,7 +28,7 @@ foreach($sections as $section_name => $section){
       }else if($type=='checkbox'){  
 
         $form_element = Form::hidden($column_name, 'false');//Provides default value
-        $form_element .= Form::$type($column_name, 'true', ($cur_val=='true') ? true : false);
+        $form_element .= Form::$type($column_name, 'true', ($current_value=='true') ? true : false);
 
       }else if($type=='table_select'){
 
