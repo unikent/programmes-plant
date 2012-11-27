@@ -159,7 +159,7 @@ class Programmes_Controller extends Admin_Controller
             $title_field = Programme::get_title_field();
             Messages::add('success', "Saved ".$programme->$title_field);
 
-            return Redirect::to($year.'/'. $type.'/'. $this->views);
+            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/programmes/edit/' . $programme->id);
         }
     }
 
