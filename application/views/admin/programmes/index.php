@@ -2,52 +2,48 @@
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('programmes.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
 <?php echo Messages::get_html()?>
 
-<div class="btn-group right" >
-  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-    Roll over all programmes to...
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu">
-    <li><a>2014</a></li>
-    <li><a>2015</a></li>
-  </ul>
-</div>
 <div style="margin-top:20px; margin-bottom:20px">
-  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes@create')?>" class="btn btn-primary">New Programme</a>
+  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes@create')?>" class="btn btn-primary"><?php echo __('programmes.create_programme'); ?></a>
 </div>
+
+
 <?php if($programmes) : ?>
-    <table class="table table-striped table-bordered table-condensed" width="100%">
-    <thead>
-      <tr>
-        <th><?php echo  __('programmes.title') ?></th>
-        <th>Subject</th>
-        <th><?php echo  __('programmes.excerpt') ?></th>
-        <th><?php echo  __('programmes.actions') ?></th>
-      </tr>
-    </thead><tbody>
-    <?php foreach($programmes as $programme) : ?>
-      <tr>
-        <td><?php echo $programme->$title_field ?></td>
-        <td><?php //echo  $subjectList[$programme->subject_id] ?></td>
-
-        <td><?php echo  Str::limit(strip_tags($programme->summary), 40) ?></td>
-        <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
-
-          <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
-
-          <?php if($programme->live == 1): ?>
-            <a class="deactivate_toggler btn btn-danger" rel="<?php echo $programme->id ?>">Deactivate</a>
-          <?php else: ?>
-            <a class="activate_toggler btn btn-success" rel="<?php echo $programme->id ?>">Activate</a>
-          <?php endif; ?>
-
-        </td>
-      </tr>
-    <?php endforeach; ?>
-    </tbody></table>
+    <table id="programme-list" class="table table-striped table-bordered table-condensed">
+        <thead>
+          <tr>
+            <th><?php echo  __('programmes.table_title') ?></th>
+            <th><?php echo  __('programmes.table_subject') ?></th>
+            <th><?php echo  __('programmes.table_excerpt') ?></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php foreach($programmes as $programme) : ?>
+          <tr>
+            <td><?php echo $programme->$title_field ?></td>
+            <td></td>
+    
+            <td></td>
+            <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
+    
+              <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
+    
+              <?php if($programme->live == 1): ?>
+                <a class="deactivate_toggler btn btn-danger" rel="<?php echo $programme->id ?>">Deactivate</a>
+              <?php else: ?>
+                <a class="activate_toggler btn btn-success" rel="<?php echo $programme->id ?>">Activate</a>
+              <?php endif; ?>
+    
+            </td>
+          </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    
 <?php else : ?>
   <div class="well"><?php echo  __('programmes.no_programmes', array('level' => __('programmes.' . URI::segment(2)), 'year' => URI::segment(1))) ?></div>
 <?php endif; ?>
+
 
 <div class="modal hide fade" id="deactivate_subject">
   <div class="modal-header">
@@ -83,29 +79,5 @@
   </div>
 </div>
 
- <script>
-  $('#deactivate_subject').modal({
-    show:false
-  }); // Start the modal
 
-  // Populate the field with the right data for the modal when clicked
-  $('.deactivate_toggler').each(function(index,elem) {
-      $(elem).click(function(){
-        $('#postvalue').attr('value',$(elem).attr('rel'));
-        $('#deactivate_subject').modal('show');
-      });
-  });
-
-  $('#activate_subject').modal({
-    show:false
-  }); // Start the modal
-
-  // Populate the field with the right data for the modal when clicked
-  $('.activate_toggler').each(function(index,elem) {
-      $(elem).click(function(){
-        $('#postvalue2').attr('value',$(elem).attr('rel'));
-        $('#activate_subject').modal('show');
-      });
-  });
-</script>
  

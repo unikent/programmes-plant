@@ -1,4 +1,4 @@
-<div class="well well-small">
+<div class="navwell">
   <ul class="nav nav-list">
 
   <?php
@@ -11,13 +11,14 @@
 	if (URI::segment(2) == 'fields') $selectedType = URI::segment(1);
   ?>
 
-        <li class="<?php echo ( URI::segment(3) == '' ? 'active' : false )?>"><a href="<?php echo url($mainpath)?>"><i class="icon-home"></i> Home</a></li>
+
+        <li class="nav-header">Core Data</li>
+        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-home"></i> Programmes</a></li>
        
         
         
         
         <li class="nav-header">Data</li>
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-list-alt"></i> Programmes</a></li>
         <li class="<?php echo ( URI::segment(3) == 'awards' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'awards')?>"><i class="icon-list-alt"></i> Awards</a></li>
         <li class="<?php echo ( URI::segment(3) == 'campuses' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'campuses')?>"><i class="icon-list-alt"></i> Campuses</a></li>
         <li class="<?php echo ( URI::segment(3) == 'faculties' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'faculties')?>"><i class="icon-list-alt"></i> Faculties</a></li>

@@ -305,7 +305,7 @@ class Programmes_Controller extends Admin_Controller
         } else {
             $programme = Programme::find(Input::get('id'));
             $programme->activate();
-            Messages::add('success','Programme Activated');
+            Messages::add('success','Programme activated');
 
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }
