@@ -119,6 +119,14 @@ $(document).ready(function (){
 <script>
   $(function() {
 
+    $(".popup_toggler").click(function(){
+      console.log($($(this).attr('href')).find('.yes_action'));
+      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
+      $($(this).attr('href')).modal('show');
+    });
+
+
+
     $('#promote_revision').modal({
       show:false
     }); // Start the modal
