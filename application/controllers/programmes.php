@@ -245,18 +245,31 @@ class Programmes_Controller extends Admin_Controller
         return View::make('admin.'.$this->views.'.difference',$this->data);
     }
 
-    private function splitToText($list,$options)
+    /**
+     * Converts a comma separated list into an array of these names as text proper.
+     * 
+     * So for example: thing,thing,thing.
+     * Where $options['thing'] = 'Sprout' would return "Sprout, Sprout, Sprout".
+     * 
+     * @param string Comma separated list of variables.
+     * @param array Translation of those variables in 
+     * @return string Empty if $list is empty, otherwise a string of the translated variables.
+     */
+    private function split_to_text($list, $options)
     {
         if($list == '' || $list == null) return '';
 
-        $list = explode(',',$list);
-        $l_str = '';
-        foreach ($list as $val) {
-            $l_str .= $options[$val].', ';
+        $list = explode(',', $list);
+        
+        $translation = '';
+
+        foreach ($list as $val)
+        {
+            $translation .= $options[$val].', ';
 
         }
 
-        return $l_str;
+        return $translation;
     }
 
     /**
