@@ -1,3 +1,7 @@
+body {
+    background:url(/img/admin/snow_@2X.png) repeat top left;
+}
+
 .container.loginwindow { width:500px; margin:0 auto; text-align:center; }
 .container.loginwindow h1 { margin-bottom:20px; }
 .crud textarea,
@@ -22,9 +26,48 @@ ins {
 }
 
 /*info box*/
+
 div.info{
 	display: inline;
 }
 .info .description, .info .title {
 display: none;
+}
+
+/* Styles for sortable sections/fields */
+  
+.section_content {
+    background-color: white;
+    box-shadow: 1px 1px 4px #dbdbdb;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px 0 20px 0;
+    border:1px solid rgba(200,200,200,1);
+}
+
+.section_name {
+    cursor: move;
+}
+
+.section_name_inactive {
+    color: #848484;
+}
+
+.sortableUI .field_item {
+  padding:5px 0 5px 0;
+  list-style: none;
+}
+.sortableUI .field_item i {padding-right:5px;cursor:pointer;}
+.sortableUI .field_item .title {display:inline-block; cursor: move; padding-right: 10px;}
+.sortableUI .field_item .type {width:15%;   display:inline-block;}
+.sortableUI .field_item .actions {width:20%;   display:inline-block;}
+.sortableUI legend { cursor:pointer;margin-top:10px;}
+
+.sortableUI .sortable_fields {
+  margin:0 0 20px 0;
+  list-style-type: none;
+
+}
+.sortableUI .sortable_fields.dropzone-large {
+  height:120px;
 }

@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This page lists all subject areas.',
 	'no_items' => 'No subjects yet',
 
 	// Modal On Deletion Attempt

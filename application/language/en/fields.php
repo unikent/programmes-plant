@@ -22,7 +22,7 @@ return array(
     'introduction' => array(
         'globalsettings' => 'This is the listing of fields which apply to global settings.',
         'programmesettings' => 'This is the listing of fields which apply to programme settings.',
-        'programmes' =>  'This is the listing of fields which apply to programmes.',
+        'programmes' =>  '<p>This is the listing of fields which apply to programmes.</p><p>You can drag fields around within a section, or even into new sections, to change their ordering on the programme create/edit pages.</p><p>You can also drag sections around to change their order on programme pages.</p>',
     ),
 
     // table header names for the fields listing table

@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This page lists all University of Kent academic schools.',
 	'no_items' => 'No schools yet',
 
 	// Modal On Deletion Attempt
