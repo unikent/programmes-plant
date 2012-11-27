@@ -3,7 +3,16 @@
 /*
  * Anything admin facing requires authorisation.
  */
-Route::group(array('before' => 'auth'), function(){
+
+if (Request::env() == 'test')
+{
+	$before = '';
+}
+else {
+	$before = 'auth';
+}
+
+Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
 	       return Redirect::to(date('Y').'/ug/');   

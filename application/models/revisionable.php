@@ -150,7 +150,7 @@ class Revisionable extends Eloquent
           }
      }
 
-     public static function getAsList($year = false)
+     public static function all_as_list($year = false)
      {
       $options = array();
       $model = get_called_class();

@@ -17,7 +17,7 @@
     <div class="control-group">
       <?php echo Form::label('campus', 'Campus', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::select('campus', Campus::getAsList(), ($create ? "" : $item->campuses_id ))?>
+        <?php echo Form::select('campus', Campus::all_as_list(), ($create ? "" : $item->campuses_id ))?>
       </div>
     </div>
 
