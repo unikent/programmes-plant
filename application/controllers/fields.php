@@ -80,7 +80,12 @@ class Fields_Controller extends Admin_Controller
             //check that this a kind of programme field before proceeding
             if(strcmp($model, 'ProgrammeField') == 0){
                 //set the right value for the kind of field
-                $field->programme_field_type = (strcmp($name, 'Programmes') == 0) ? ProgrammeField::$types['NORMAL'] : ProgrammeField::$types['DEFAULT'];
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
             }
         }
 
@@ -96,9 +101,7 @@ class Fields_Controller extends Admin_Controller
         //we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
         $tables_to_update = array($this->table);
         if(strcmp($model, 'ProgrammeField') == 0){
-            if($field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']){
-                $tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
-            }
+            $tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
         }
 
         //add relevant table columns
@@ -114,6 +117,7 @@ class Fields_Controller extends Admin_Controller
     public function post_edit($type)
     {
         $model = $this->model;
+        $name = $this->name;
 
         if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
         {
@@ -127,6 +131,20 @@ class Fields_Controller extends Admin_Controller
         $oldtype = $field->field_type;
 
         $field->get_input();
+
+        if(empty($field->programme_field_type)){
+            //check that this a kind of programme field before proceeding
+            if(strcmp($model, 'ProgrammeField') == 0){
+                //set the right value for the kind of field
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
+            }
+        }
+      
         $field->save();
 
         // If type changes, apply data type swapper.

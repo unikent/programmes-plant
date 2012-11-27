@@ -200,12 +200,12 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		// Add the fields in
 		foreach ($programme_fields as $field) {
-			$this->add_field('ProgrammeField', 'programmes', $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['NORMAL']);
+			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['NORMAL']);
 		}
 
 		// Add the fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('ProgrammeField', 'programme_settings', $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['DEFAULT']);
+			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['DEFAULT']);
 		}
 
 		// Add the fields in
