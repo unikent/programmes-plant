@@ -50,9 +50,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 		// Post to the edit page
 		$next_page_after_edit_page_post = $this->post('programmes@edit', $input, array('2012', 'ug'));
 
-		$edit_page = $this->get_view($edit_page);
-		$page_we_are_on = $this->get_view($next_page_after_edit_page_post);
-
-		$this->assertEquals($edit_page, $page_we_are_on, "We got redirected to $page_we_are_on, not $edit_page as we wanted.");
+		$this->assertEquals('302', $next_page_after_edit_page_post->status(), 'Page was not redirected.');
+		$this->assertEquals('/2012/ug/1', $this->get_location($next_page_after_edit_page_post), 'Page was not the same page.');
 	}
 }
