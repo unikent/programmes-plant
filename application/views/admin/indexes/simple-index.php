@@ -1,6 +1,11 @@
 <h1><?php echo Str::title($type); ?></h1>
 <p><?php echo __($type . '.introduction'); ?></p>
 <?php echo Messages::get_html()?>
+
+<div style="margin-top:20px; margin-bottom:20px">
+    <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
+</div>
+
 <?php if ($items) : ?>
 <table class="table table-striped table-bordered">
   <thead>
@@ -25,9 +30,6 @@
   <p><?php echo __($type . '.no_items') ?></p>
 </div>
 <?php endif; ?>
-<div class="form-actions">
-  <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
-</div>
 
 <div class="modal hide fade" id="delete_single_field">
   <div class="modal-header">
