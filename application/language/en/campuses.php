@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Campuses',
-	'delete' => 'Remove Campus',
-	'create' => 'Create Campus',
-	'back' => 'Go Back',
-	'save' => 'Save Campuses',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new campus',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.

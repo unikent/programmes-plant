@@ -1,7 +1,7 @@
 <h1><?php echo __('fields.title', array('field_name' => __('fields.'.$field_type))); ?></h1>
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.'.$field_type); ?></p>
 <div style="margin-top:20px; margin-bottom:20px">
-    <a href="<?php echo url('fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
+    <a href="<?php echo url($type.'/fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
 </div>
 <table class="table table-striped table-bordered table-condensed" width="100%">
   <thead>
@@ -18,12 +18,12 @@
       <td><?php echo $subject->field_type ?></td>
       <td>
 
-        <a class="btn btn-primary" href="<?php echo url('fields/'.$field_type.'/edit/'.$subject->id);?>"><?php echo __('fields.btn.edit'); ?></a>
+        <a class="btn btn-primary" href="<?php echo url($type.'/fields/'.$field_type.'/edit/'.$subject->id);?>"><?php echo __('fields.btn.edit'); ?></a>
 
         <?php if($subject->active == 1 ): ?>
-          <a class="btn btn-danger" href='<?php echo url('fields/'.$field_type.'/deactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.deactivate'); ?></a>
+          <a class="btn btn-danger" href='<?php echo url($type.'/fields/'.$field_type.'/deactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.deactivate'); ?></a>
         <?php else: ?>
-          <a class="btn btn-success" href='<?php echo url('fields/'.$field_type.'/reactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.reactivate'); ?></a>
+          <a class="btn btn-success" href='<?php echo url($type.'/fields/'.$field_type.'/reactivate');?>?id=<?php echo $subject->id;?>'><?php echo __('fields.btn.reactivate'); ?></a>
         <?php endif; ?>
 
       </td>
