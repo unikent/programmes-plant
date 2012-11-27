@@ -18,7 +18,9 @@
                 <td><?php echo ($revision->created_at); /*echo Date::forge($revision->created_at)->format('%A, %e %B %Y at %l:%M %p');*/ ?></td>
                 <td><?php echo $revision->created_by ?></td>
                 <td>
-                  <a class="promote_toggler btn btn-warning" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@promote', array($revision->id)) ?>">Promote Revision</a>
+                  <a class="promote_toggler btn btn-warning" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@make_live', array($revision->id)) ?>">Make Live</a>
+                  <a class="promote_toggler btn btn-warning" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@revert', array($revision->id)) ?>">Revert To Revision</a>
+
                   <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@difference', array($revision->id)) ?>">Difference</a>
                 </td>
               </tr>

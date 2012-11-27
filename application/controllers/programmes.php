@@ -114,7 +114,7 @@ class Programmes_Controller extends Admin_Controller
             $programme->save();
             Messages::add('success','Programme added');
 
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
         }
     }
 
@@ -149,10 +149,51 @@ class Programmes_Controller extends Admin_Controller
             $title_field = Programme::get_title_field();
             Messages::add('success', "Saved ".$programme->$title_field);
 
-            return Redirect::to($year.'/'. $type.'/'. $this->views);
+            return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
         }
     }
 
+
+    public function get_make_live($year, $type, $programme_id = false, $revision_id = false){
+         // Check to see we have what is required.
+        if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        // Get revision specified
+        $programme = Programme::find($programme_id);
+
+        if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        $revision = $programme->find_revision($revision_id);
+
+        if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        $programme->makeRevisionLive($revision);
+        
+        $title_field = Programme::get_title_field();
+        Messages::add('success', "Promoted revision of {$programme->$title_field} created at $revision->updated_at to live version.");
+
+        return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
+    }
+    public function get_revert($year, $type, $programme_id = false, $revision_id = false){
+         // Check to see we have what is required.
+        if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        // Get revision specified
+        $programme = Programme::find($programme_id);
+
+        if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        $revision = $programme->find_revision($revision_id);
+
+        if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+        $programme->revertToRevision($revision);
+        
+        $title_field = Programme::get_title_field();
+        Messages::add('success', "Promoted revision of {$programme->$title_field} created at $revision->updated_at to live version.");
+
+        return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
+    }
 
 
     /**
