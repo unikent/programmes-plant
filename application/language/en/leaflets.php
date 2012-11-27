@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Leaflet',
-	'delete' => 'Remove Leaflet',
-	'create' => 'Create Leaflet',
-	'back' => 'Go Back',
-	'save' => 'Save Leaflet',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new leaflet',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.
