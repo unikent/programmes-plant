@@ -31,7 +31,6 @@ class ProgrammeSettings_Controller extends Admin_Controller
      */
     public function get_create($year, $type)
     {
-
         $this->data['fields'] = $this->get_fields();
         $this->data['create'] = true;
         $this->data['year'] = $year;
