@@ -11,11 +11,15 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 {
 
 	/**
+	 * Populate the database.
+	 * 
 	 * The Laravel session must be re-loaded before each test, otherwise
 	 * the session state is retained across multiple tests.
 	 */
 	public function setUp()
 	{
+		Tests\Helper::migrate();
+
 		Session::load();
 	}
 
