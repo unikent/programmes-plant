@@ -1,6 +1,6 @@
 <h1><?php echo ( $create ? 'New ' . Str::title(Str::singular($type)) : 'Edit ' . Str::title(Str::singular($type)) )?></h1>
 <p><?php echo ( $create ? __($type . '.create_introduction') : __($type . '.edit_introduction') ); ?></p>
-<hr>
+
 <?php echo Messages::get_html()?>
 <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/'. $type .'/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 <?php if(! $create): ?> 

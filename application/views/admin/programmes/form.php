@@ -1,6 +1,5 @@
 <h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></h1>
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
-<hr>
 
 <?php echo Messages::get_html()?>
 
@@ -12,7 +11,7 @@
 <?php endif; ?>
 
 <div class="control-group">
-  <?php echo Form::label('year', "Programme Year",array('class'=>'control-label'))?>
+  <?php echo Form::label('year', "Year",array('class'=>'control-label'))?>
   <div class="controls">
       <span class="input-xlarge uneditable-input"><?php echo  ( $create ? URI::segment(1) : $programme->year )?></span>
       <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $programme->year ), array('class'=>'uneditable-input'))?>

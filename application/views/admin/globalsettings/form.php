@@ -26,7 +26,7 @@
 </fieldset>
 
 <div class="form-actions">
-  <input type="submit" class="btn btn-primary" value="Save" />
+  <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
 <?php if (isset($revisions)) : ?>
   <?php echo View::make('admin.globalsettings.partials.revisions', array('revisions' => $revisions, 'subject' => $globalsettings))->render(); ?>
