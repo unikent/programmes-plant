@@ -120,4 +120,22 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	{
 		return $response->content->data['content']->data;
 	}
+
+	/**
+	 * Helper function to return the view name from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return string|bool Either the view, or if it is not present, false.
+	 */
+	public function get_view($response)
+	{	
+		try 
+		{
+			return $response->content->data['content']->view;
+		} 
+		catch (Exception $e) 
+		{
+			return false;
+		}
+	}
 }
