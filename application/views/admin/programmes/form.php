@@ -1,4 +1,4 @@
-<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></h1>
+<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?>  (<?php echo isset($programme->award->name) ? $programme->award->name : '' ; ?>)</h1>
 
 <?php echo Messages::get_html()?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>

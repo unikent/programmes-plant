@@ -14,9 +14,11 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_index($year, $type)
     {
+
         $title_field = Programme::get_title_field();
         $model = $this->model;
-        $this->data[$this->views] = $model::where('year', '=', $year)->order_by($title_field)->get();
+        $programmes = $model::where('year', '=', $year)->order_by($title_field)->get();
+        $this->data[$this->views] = $programmes;
         $this->data['programmeList'] = Programme::getAsList();
         $this->data['title_field'] = $title_field;
 

@@ -27,8 +27,8 @@
     </thead><tbody>
     <?php foreach($programmes as $programme) : ?>
       <tr>
-        <td><?php echo $programme->$title_field ?></td>
-        <td><?php //echo  $subjectList[$programme->subject_id] ?></td>
+        <td><?php echo $programme->$title_field ?> (<?php echo isset($programme->award->name) ? $programme->award->name : '' ; ?>)</td>
+        <td></td>
 
         <td><?php echo  Str::limit(strip_tags($programme->summary), 40) ?></td>
         <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
