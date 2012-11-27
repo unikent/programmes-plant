@@ -166,10 +166,6 @@ class Revisionable extends Eloquent
        return $options;
      }
 
-     public static function get_title_field(){
-        return 'title';
-     }
-
      public static function getAttributesList($year = false)
      {
       $options = array();
