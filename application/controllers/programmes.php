@@ -79,9 +79,9 @@ class Programmes_Controller extends Admin_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        
         $this->data['title_field'] = Programme::get_title_field();
         $this->data['year'] = $year;
+
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
