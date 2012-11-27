@@ -14,11 +14,13 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_index($year, $type)
     {
+        $title_field = Programme::get_title_field();
         $model = $this->model;
-        $this->data[$this->views] = $model::where('year', '=', $year)->get();
+        $this->data[$this->views] = $model::where('year', '=', $year)->order_by($title_field)->get();
         $this->data['programmeList'] = Programme::getAsList();
+        $this->data['title_field'] = $title_field;
 
-        return View::make('admin.'.$this->views.'.index',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
 
     /**
@@ -36,12 +38,12 @@ class Programmes_Controller extends Admin_Controller
             $model = $this->model;
             $course = $model::find($item_id);
             $this->data['clone'] = true;
-            $this->data[$this->views] = $course ;
+            $this->data['programme'] = $course;
         } else {
             $this->data['clone'] = false;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
+        
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
         $this->data['campuses'] = Campus::getAsList();
         $this->data['school'] = School::getAsList();
         $this->data['awards'] = Award::getAsList();
@@ -67,16 +69,17 @@ class Programmes_Controller extends Admin_Controller
 
       // Ensure we have a corresponding course in the database
       $model = $this->model;
-        $course =  $model::find($itm_id);
+      $course = $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $this->data[$this->views] = $course ;
+        $this->data['programme'] = $course ;
 
         if ($revisions = $course->get_revisions()) {
             $this->data['revisions'] =  $revisions;
         }
-
-        $this->data['fields'] = $this->getProgrammeFields();
+        
+        $this->data['sections'] = ProgrammeField::programme_fields_by_section();
+        
         $this->data['title_field'] = Programme::get_title_field();
         $this->data['year'] = $year;
 
@@ -107,6 +110,8 @@ class Programmes_Controller extends Admin_Controller
             $programme->year = Input::get('year');
 
             $programme->created_by = Auth::user();
+            
+            ProgrammeField::assign_fields($programme);
 
             $programme->save();
             Messages::add('success','Programme added');
@@ -138,7 +143,9 @@ class Programmes_Controller extends Admin_Controller
             $programme = Programme::find(Input::get('programme_id'));
 
             $programme->year = Input::get('year');
-
+            
+            ProgrammeField::assign_fields($programme);
+            
             $programme->save();
 
             $title_field = Programme::get_title_field();
@@ -148,12 +155,7 @@ class Programmes_Controller extends Admin_Controller
         }
     }
 
-    private function getProgrammeFields()
-    {
-        $model = $this->model.'Field';
 
-        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
-    }
 
     /**
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
@@ -178,10 +180,9 @@ class Programmes_Controller extends Admin_Controller
         if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $programme->useRevision($revision);
-
+        
         $title_field = Programme::get_title_field();
-
-        Messages::add('success', "Promoted revision of ".$revision->$title_field." created at $revision->updated_at to live version.");
+        Messages::add('success', "Promoted revision of {$programme->$title_field} created at $revision->updated_at to live version.");
 
         return Redirect::to($year.'/'.$type.'/'.$this->views.'');
     }

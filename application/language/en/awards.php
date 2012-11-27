@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This lists all awards that can be applied to programmes.',
 	'no_items' => 'No awards yet',
 
 	// Modal On Deletion Attempt

@@ -36,7 +36,7 @@ class ProgrammeSettings_Controller extends Admin_Controller
         $this->data['create'] = true;
         $this->data['year'] = $year;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -61,10 +61,9 @@ class ProgrammeSettings_Controller extends Admin_Controller
         }
 
         $this->data['fields'] = $this->get_fields();
-
         $this->data['year'] = $year;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -128,7 +127,7 @@ class ProgrammeSettings_Controller extends Admin_Controller
     {
         $model = 'ProgrammeField';
 
-        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('id','asc')->get();
+        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
     }
 
     /**
