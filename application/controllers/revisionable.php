@@ -6,6 +6,13 @@ class Revisionable_Controller extends Admin_Controller
 	
 	private function get_revision_data($revisionable_item_id, $revision_id){
 
+		//Handle global settings & programesettings not having a revisionable_item_id (is always 1)
+		if($this->views =='globalsettings' || $this->views =='programmesettings'){
+			$revision_id = $revisionable_item_id;
+			$revisionable_item_id = 1;
+		}
+
+		//Get model
 		$model = $this->model;
 
         //Ensure item & revision id are supplied
@@ -18,14 +25,14 @@ class Revisionable_Controller extends Admin_Controller
         //Ensure Revision exists
         $revision = $revisionable_item->find_revision($revision_id);
         if (!$revision) return false;
-
         return array($revisionable_item,$revision);
 
     }
 
 
     /**
-     * Routing for GET /$year/$type/programmes/$programme_id/revert_to_revision/$revision_id
+     * Routing for GET /$year/$type/$object_id/revert_to_revision/$revision_id
+     * Routing for GET /$year/$type/revert_to_revision/$revision_id
      */
     public function get_revert_to_revision($year, $type, $revisionable_item_id = false, $revision_id = false){
         
@@ -45,7 +52,8 @@ class Revisionable_Controller extends Admin_Controller
 
 
     /**
-     * Routing for GET /$year/$type/programmes/$programme_id/make_live/$revision_id
+     * Routing for GET /$year/$type/$object_id/make_live/$revision_id
+     * Routing for GET /$year/$type/make_live/$revision_id
      */
 	public function get_make_live($year, $type, $revisionable_item_id = false, $revision_id = false){
 

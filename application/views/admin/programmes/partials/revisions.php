@@ -1,5 +1,5 @@
 <h2>Revisions</h2>
-          <p>The following are revisions of this subject.</p>
+          <p>The following are revisions of this programme.</p>
           <table class="table table-striped table-bordered table-condensed">
             <thead>
               <tr>
@@ -28,7 +28,6 @@
             </tbody>
           </table>
 
-
           <div class="modal hide fade" id="make_revision_live">
             <div class="modal-header">
               <a class="close" data-dismiss="modal">×</a>
@@ -45,7 +44,6 @@
               <?php echo Form::close()?>
             </div>
           </div>
-
 
           <div class="modal hide fade" id="revert">
             <div class="modal-header">
