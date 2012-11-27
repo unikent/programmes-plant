@@ -15,7 +15,7 @@
   <div class="control-group">
     <?php echo Form::label('faculty', __('schools.faculty'), array('class'=>'control-label'))?>
     <div class="controls">
-      <?php echo Form::select('faculty', Faculty::getAsList(), ($create ? "" : $school->faculties_id ))?>
+      <?php echo Form::select('faculty', Faculty::all_as_list(), ($create ? "" : $school->faculties_id ))?>
     </div>
   </div>
 
