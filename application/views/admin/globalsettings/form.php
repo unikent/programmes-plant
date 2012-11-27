@@ -35,15 +35,5 @@
 
   
 
-<script>
-  $('#promote_revision').modal({
-    show:false
-  }); // Start the modal
 
-  // Populate the field with the right data for the modal when clicked
-  $(".promote_toggler").click(function(){
-    $('#promote_now').attr('href', $(this).attr('rel'));
-    $('#promote_revision').modal('show');
-  });
-</script>
  

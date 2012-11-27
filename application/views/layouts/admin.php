@@ -1,6 +1,4 @@
 <?php echo View::make('admin.inc.meta')->render()?>
-<html>
-  <head>
     <title>
       Courses Dashboard
     </title>

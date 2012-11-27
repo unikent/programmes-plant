@@ -8,9 +8,16 @@
 <script src="<?php echo asset('js/admin/wysiwyg-bs.js')?>"></script>
 <script src="<?php echo asset('js/admin/ui.multiselect.js')?>"></script>
 <script src="<?php echo asset('js/admin/jquery-ui-listbuilder.js')?>"></script>
+<script src="<?php echo asset('js/admin/jquery.placeholder.min.js')?>"></script>
+
 <link type="text/css" href="<?php echo asset('css/admin/flick/jquery-ui-1.8.21.custom.css')?>" rel="stylesheet" />
 <link type="text/css" href="<?php echo asset('css/admin/ui.multiselect.css')?>" rel="stylesheet" />
 <link type="text/css" href="<?php echo asset('css/admin/jquery.ui.listbuilder.css')?>" rel="stylesheet" />
+
+<link rel="stylesheet" type="text/css" href="<?php echo asset('css/admin/DT_bootstrap.css')?>">
+
+<script type="text/javascript" charset="utf8" src="//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" language="javascript" src="<?php echo asset('js/admin/DT_bootstrap.js')?>"></script>
 
 <!-- wysiwyg editor -->
 <link rel="stylesheet" type="text/css" href="<?php echo asset('lib/css/prettify.css')?>"></link>
@@ -24,7 +31,7 @@
     
     // multiselect
     if($('.multiselect')){
-    	$(".multiselect").multiselect({dividerLocation: 0.5});
+        $(".multiselect").multiselect({dividerLocation: 0.5});
     }
     $(document).ready(function (){
         
@@ -34,19 +41,19 @@
 
     if($('#content')){
         $('#content').wysihtml5({
-        	"font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
-        	"emphasis": true, //Italics, bold, etc. Default true
-        	"lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-        	"html": false, //Button which allows you to edit the generated HTML. Default false
-        	"link": false, //Button to insert a link. Default true
-        	"image": false, //Button to insert an image. Default true
-    	});
+            "font-styles": false, //Font styling, e.g. h1, h2, etc. Default true
+            "emphasis": true, //Italics, bold, etc. Default true
+            "lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+            "html": false, //Button which allows you to edit the generated HTML. Default false
+            "link": false, //Button to insert a link. Default true
+            "image": false, //Button to insert an image. Default true
+        });
     }
 
     if($('.editable_text')){
-    	$('.editable_text').each(function(index,elem) {
-    		$(elem).wysihtml5();
-    	});
+        $('.editable_text').each(function(index,elem) {
+            $(elem).wysihtml5();
+        });
     }
 
 
@@ -78,14 +85,18 @@ $(document).ready(function (){
       if(ui.sender) newList = ui.placeholder.parent().parent();
     },
     //If list has changed trigger onMoved, else trigger onReordered
-    stop: function(event, ui) {    
+    stop: function(event, ui) {  
         if(oldList == newList){
           onReorder($(this));
         }else{
            onMoved($(this));
+           
         }
-    }
+    },
   });
+
+  
+  
   //Handle reorder within section
   var onReorder = function(sorter){
     var order = sorter.sortable('toArray').toString();
@@ -93,10 +104,14 @@ $(document).ready(function (){
        'order': order,
        'section': sorter.parent().attr('id')
     });
+    console.log(sorter.parent().attr('id'));
   }
   //Handle item moved to new section
   var onMoved = function(sorter){
-    var order = newList.find('ul.sortable_fields').sortable('toArray').toString();//sorter.sortable('toArray').toString();
+    var order_array = newList.find('ul.sortable_fields').sortable('toArray');
+    // in case the ordering has an empty list item at the start
+    if (order_array[0] == '') order_array.shift();
+    var order = order_array.toString();
     $.post("<?php echo URL::to('/');?>ug/fields/programmes/reorder", {
        'order': order,
        'section': newList.attr('id')
@@ -130,30 +145,96 @@ $(document).ready(function (){
     });
 
   });
-
-</script>
-
-
-    <script>
-      $('#delete_section').modal({
-        show:false
-      }); // Start the modal
-
-      // Populate the field with the right data for the modal when clicked
-      $('.delete_toggler').each(function(index,elem) {
-          $(elem).click(function(){
-            $('#postvalue').attr('value',$(elem).attr('rel'));
-            $('#delete_section').modal('show');
-          });
-      });
-    </script>
     
-    <script>
-// invoke the jquery placeholder plugin for IE
- $(function() {
-  // Invoke the plugin
-  //$('input, textarea').placeholder();
-  $("[rel=tooltip]").tooltip();
- });
- 
+    
+    /**
+    *
+    * delete section modal
+    *
+    */
+    $('#delete_section').modal({
+    show:false
+    }); // Start the modal
+    
+    // Populate the field with the right data for the modal when clicked
+    $('.delete_toggler').each(function(index,elem) {
+      $(elem).click(function(){
+        $('#postvalue').attr('value',$(elem).attr('rel'));
+        $('#delete_section').modal('show');
+      });
+    });
+    
+    
+    /**
+    *
+    * modals for activating and deactivating programmes
+    *
+    */
+    $('#delete_single_field').modal({
+    show:false
+    }); // Start the modal
+    
+    // Populate the field with the right data for the modal when clicked
+    $('.delete_toggler').each(function(index,elem) {
+      $(elem).click(function(){
+        $('#postvalue').attr('value',$(elem).attr('rel'));
+        $('#delete_single_field').modal('show');
+      });
+    });
+    
+    
+    $('#deactivate_subject').modal({
+    show:false
+    }); // Start the modal
+    
+    // Populate the field with the right data for the modal when clicked
+    $('.deactivate_toggler').each(function(index,elem) {
+      $(elem).click(function(){
+        $('#postvalue').attr('value',$(elem).attr('rel'));
+        $('#deactivate_subject').modal('show');
+      });
+    });
+    
+    $('#activate_subject').modal({
+    show:false
+    }); // Start the modal
+    
+    // Populate the field with the right data for the modal when clicked
+    $('.activate_toggler').each(function(index,elem) {
+      $(elem).click(function(){
+        $('#postvalue2').attr('value',$(elem).attr('rel'));
+        $('#activate_subject').modal('show');
+      });
+    });
+    
+    /**
+    *
+    * data tables for programme index page
+    *
+    */
+    $('#programme-list').dataTable( {
+        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 20,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "aoColumns": [ 
+          { "bSortable": false },
+          { "bSortable": false },
+          { "bSortable": false },
+          { "bSortable": false },
+          ]
+    });
+    $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
+    
+    /*
+    * invoke the jquery placeholder plugin for IE
+    */
+    $(function() {
+    // Invoke the plugin
+    $('input, textarea').placeholder();
+    $("[rel=tooltip]").tooltip();
+    });
+
 </script>

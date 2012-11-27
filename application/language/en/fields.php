@@ -22,7 +22,7 @@ return array(
     'introduction' => array(
         'globalsettings' => 'This is the listing of fields which apply to global settings.',
         'programmesettings' => 'This is the listing of fields which apply to programme settings.',
-        'programmes' =>  '<p>This is the listing of fields which apply to programmes.</p><p>You can drag fields around within a section, or even into new sections, to change their ordering on the programme create/edit pages.</p><p>You can also drag sections around to change their order on programme pages.</p>',
+        'programmes' =>  '<p>This is the listing of fields which will appear on the programme create and edit pages.</p><p>You can drag fields around to change their ordering or to move them to a different section.</p><p>You can drag sections around to change their order too.</p><div class="alert"><p>Empty sections will not show up on a programme edit page.</p></div>',
     ),
 
     // table header names for the fields listing table
@@ -33,10 +33,11 @@ return array(
     'table_fields_header_name' => 'Fields',
 
     'btn' => array(
-        'new' => 'Add field',
+        'new' => 'Make a new field',
         'edit' => 'Edit',
         'deactivate' => 'Deactivate',
         'reactivate' => 'Reactivate',
+        'new-section' => 'Make a new section',
     ),
 
     // used in the edit/add form

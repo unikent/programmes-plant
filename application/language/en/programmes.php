@@ -4,15 +4,19 @@ return array(
 	'pg' => 'Postgraduate',
 	'ug_introduction' => 'This is the listing for <strong>undergraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'pg_introduction' => 'This is the listing for <strong>postgraduate programmes</strong> beginning in <strong>:year</strong>.',
+	'create_introduction' => 'This form lets you enter information for a new programme.',
+	'edit_introduction' => 'This form lets you edit information for an existing programme.',
 	'edit_programme' => 'Edit',
 	'clone' => 'Clone',
 	'delete_programme' => 'Delete',
-	'title' => 'Title',
-	'excerpt' => 'Content Excerpt',
+	'table_title' => 'Title',
+	'table_subject' => 'Subject',
+	'table_excerpt' => 'Content excerpt',
 	'actions' => 'Actions',
 
-	'save_programme' => 'Save programme',
-	'create_programme' => 'Create programme',
+	'save_programme' => 'Save',
+	'create_programme' => 'Make a new programme',
+	'cancel' => 'Cancel',
 	
 	'create_programme_title' => 'New programme',
 

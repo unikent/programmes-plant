@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit School',
-	'delete' => 'Remove School',
-	'create' => 'Create School',
-	'back' => 'Go Back',
-	'save' => 'Save School',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new school',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.
