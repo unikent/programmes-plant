@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Subject',
-	'delete' => 'Remove Subject',
-	'create' => 'Create Subject',
-	'back' => 'Go Back',
-	'save' => 'Save Subject',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new subject',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.

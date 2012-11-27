@@ -37,8 +37,8 @@
 
   </fieldset>
   <div class="form-actions">
-    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Go Back</a>
-    <input type="submit" class="btn btn-primary" value="<?php echo ($create ? 'Create Leaflet' : 'Save Leaflet')?>" />
+    <input type="submit" class="btn btn-warning" value="<?php echo __('leaflets.save'); ?>" />
+    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Cancel</a>
   </div>
 
 <?php echo Form::close()?>

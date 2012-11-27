@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Faculty',
-	'delete' => 'Remove Faculty',
-	'create' => 'Create Faculty',
-	'back' => 'Go Back',
-	'save' => 'Save Faculty',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new faculty',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.

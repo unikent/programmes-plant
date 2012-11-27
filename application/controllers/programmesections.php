@@ -74,7 +74,6 @@ class ProgrammeSections_Controller extends Admin_Controller
     }
 
     public function post_edit($type){
-        error_log('sdsds');exit;
         $rules = array(
             'id'  => 'required|exists:programmesections,id',
             'name'  => 'required|max:255|unique:programmesections,name,'.Input::get('id'),
