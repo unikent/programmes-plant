@@ -138,4 +138,17 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 			return false;
 		}
 	}
+
+	/**
+	 * Helper function to return the cleaned up location from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return The location, if any.
+	 */
+	public function get_location($response)
+	{
+		$headers = $response->headers();
+
+		return substr(preg_replace('#^https?://#', '', $headers->get('location')), 1);
+	}
 }
