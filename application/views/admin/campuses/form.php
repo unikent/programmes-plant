@@ -10,7 +10,7 @@
     <div class="control-group">
       <?php echo Form::label('name', 'Name', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('name',  ( Input::old('name') || $create ? Input::old('name') : $item->name ),array('placeholder'=>'Enter Leaflet Name...'))?>
+        <?php echo Form::text('name',  ( Input::old('name') || $create ? Input::old('name') : $item->name ),array('placeholder'=>'Enter Campus Name...'))?>
       </div>
     </div>
 
