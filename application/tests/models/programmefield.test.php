@@ -25,9 +25,9 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Tests getAsList
+	 * Tests Reorder fields
 	 * 
-	 * @covers Award::getAsList
+	 * @covers Model:reorder()
 	 */
 	public function testReorderFields()
 	{

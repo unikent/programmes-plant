@@ -109,12 +109,20 @@
         });
         
       }
+
     });
     
     // toggle collapse
     $('.toggleCollapse').click(function(a){
         $(this).parent().parent().find('ul').slideToggle();
         $(this).find('i').toggleClass('icon-chevron-down');
+    });
+
+    //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
+    $(".popup_toggler").click(function(){
+      console.log($($(this).attr('href')).find('.yes_action'));
+      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
+      $($(this).attr('href')).modal('show');
     });
     
     
@@ -144,7 +152,7 @@
     *
     */
     $('#delete_section').modal({
-    show:false
+     show:false
     }); // Start the modal
     
     // Populate the field with the right data for the modal when clicked
