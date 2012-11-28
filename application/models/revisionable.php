@@ -48,12 +48,24 @@ class Revisionable extends Eloquent
           // the same as the update of the main table.
           $revision_attributes['created_at'] = $this->updated_at;
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
-          $revision_attributes['status'] = 'draft';
+          $revision_attributes['status'] = 'selected';
 
           $revision_attributes['created_by'] = Auth::user();
 
-          // Add a revision
+          // Deactivate any previosuly selected drafts
+          $r_model = $this->revision_model;
+          $r_model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
+
+          // Add new revision
           $revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
+
+          //Update selected item
+          if (sizeof($this->get_dirty())>0) {
+            $query = $this->query()->where(static::$key, '=', $this->get_key());
+            $result = $query->update($this->get_dirty()) === 1;
+          }
+
+           
 
           $this->exists = $result = is_numeric($this->get_key());
         } else {
@@ -61,6 +73,9 @@ class Revisionable extends Eloquent
             ->where('id', '=', $this->revision->id)
             ->update((array) $this->revision);
         }
+
+
+
       }
 
       // The subject does not exist, so we create it.
@@ -184,6 +199,52 @@ class Revisionable extends Eloquent
 
        return $options;
      }
+
+     //Needs urgent refactoring
+     public function makeRevisionLive($revision){
+
+        foreach ($this->attributes as $key => $attribute) {
+          if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
+          $this->$key = $revision->$key;
+        }
+        $this->published_by = Auth::user();
+        $this->live = 1;
+
+        //PING AGGRITAGOR AND ACTUALLY UPDATE STUFF!!!
+
+        $model = $this->revision_model;
+        $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
+
+        //Make new item "live"
+        $r = $model::find($revision->id);
+        $r->status = 'live';
+        $r->save();
+     }
+
+     //Needs urgent refactoring
+     public function revertToRevision($revision){
+       foreach ($this->attributes as $key => $attribute) {
+          if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
+          $this->$key = $revision->$key;
+        }
+
+        // Save
+        if (sizeof($this->get_dirty())>0) {
+          $query = $this->query()->where(static::$key, '=', $this->get_key());
+          $result = $query->update($this->get_dirty()) === 1;
+        }
+        
+        $model = $this->revision_model;
+        // reject later revisions
+        $model::where($this->revision_type.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'rejected'));
+
+        // Make new Revsion Live!
+        $r = $model::find($revision->id);
+        if($r->status != 'live')$r->status = 'selected';
+        $r->save();
+
+     }
+
 
      public function useRevision($revision)
      {

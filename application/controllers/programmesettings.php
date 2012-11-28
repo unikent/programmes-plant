@@ -1,6 +1,6 @@
 <?php
 
-class ProgrammeSettings_Controller extends Admin_Controller
+class ProgrammeSettings_Controller extends Revisionable_Controller
 {
     public $restful = true;
     public $views = 'programmesettings';
