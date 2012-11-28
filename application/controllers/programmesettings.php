@@ -34,10 +34,9 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
      */
     public function get_create($year, $type)
     {
-
         $this->data['fields'] = $this->get_fields();
-        
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -64,6 +63,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
         }
 
         $this->data['fields'] = $this->get_fields();
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -127,7 +127,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
 
     private function get_fields()
     {
-        $model = 'ProgrammeSettingField';
+        $model = 'ProgrammeField';
 
         return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
     }
