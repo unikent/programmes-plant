@@ -84,6 +84,10 @@ Route::group(array('before' => ''), function(){
 	// Customised routing for subjects
 	Route::any('([0-9]{4})/(ug|pg)/subjects', 'subjects@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:3)');
+
+	// Customised routing for subject categories
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 });
 
 // Login/out

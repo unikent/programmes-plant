@@ -17,9 +17,9 @@ class Programmes_Controller extends Revisionable_Controller
 
         $title_field = Programme::get_title_field();
         $model = $this->model;
-        $programmes = $model::where('year', '=', $year)->order_by($title_field)->get();
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id','programme_title_1','award_3'));
+       
         $this->data[$this->views] = $programmes;
-        $this->data['programmeList'] = Programme::all_as_list();
 
         $this->data['title_field'] = $title_field;
 
@@ -54,6 +54,7 @@ class Programmes_Controller extends Revisionable_Controller
         $this->data['leaflets'] = Leaflet::all_as_list();
 
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -82,8 +83,8 @@ class Programmes_Controller extends Revisionable_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        
         $this->data['title_field'] = Programme::get_title_field();
+        $this->data['year'] = $year;
 
         $this->data['programme_list'] = Programme::all_as_list($year);
         $this->data['fields'] = $this->getProgrammeFields();

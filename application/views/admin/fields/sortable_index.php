@@ -24,9 +24,7 @@
             <ul class='sortable_fields'>
                <?php foreach($fields as $field) : ?>
                  <?php if($field->section == $section->id):?>
-            
-                   <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type))->render();?>
-            
+                   <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type, 'from' => $from))->render();?>            
                  <?php endif;?>
                  
                <?php endforeach; ?>
@@ -43,7 +41,7 @@
             <?php foreach($fields as $field) : ?>
                <?php if($field->section == 0):?>
 
-                <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type))->render()?>
+                <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type, 'from' => $from))->render()?>
                <?php endif;?>
              <?php endforeach; ?>
         </ul> 

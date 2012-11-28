@@ -44,6 +44,28 @@
             $(elem).wysihtml5();
         });
     }
+
+$(function(){
+  // Grab all popover elements.
+  var els = $('.info [rel=popover]');
+
+  els.each(function(){
+    var container = $(this).parent();
+    var label = $(container).find('.title').html();
+    var content = $(container).find('.description').html();
+
+    $(this).popover({ "placement": "top", "title": label, "content": content });
+  });
+});
+
+//onLoad setup JS listeners
+$(document).ready(function (){
+
+  //Quick/dirty toggle collapse
+  $('.toggleCollapse').click(function(a){
+    $(this).parent().parent().find('ul').slideToggle();
+    $(this).find('i').toggleClass('icon-chevron-down');
+  });
    
    /**
    *
@@ -162,6 +184,32 @@
         $('#delete_section').modal('show');
       });
     });
+  });
+
+</script>
+
+    <script>
+      $('#delete_section').modal({
+        show:false
+      }); // Start the modal
+
+      // Populate the field with the right data for the modal when clicked
+      $('.delete_toggler').each(function(index,elem) {
+          $(elem).click(function(){
+            $('#postvalue').attr('value',$(elem).attr('rel'));
+            $('#delete_section').modal('show');
+          });
+      });
+    </script>
+    
+    <script>
+// invoke the jquery placeholder plugin for IE
+ $(function() {
+  // Invoke the plugin
+  //$('input, textarea').placeholder();
+  $("[rel=tooltip]").tooltip();
+ });
+
     
     
     /**
@@ -233,5 +281,4 @@
     $('input, textarea').placeholder();
     $("[rel=tooltip]").tooltip();
     });
-
 </script>

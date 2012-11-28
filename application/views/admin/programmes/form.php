@@ -18,8 +18,7 @@
   </div>
 </div>
 
-<?php echo View::make('admin.inc.partials.formfields', array('sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone)))->render(); ?>
-
+<?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('programmes.save_programme'); ?>" />
