@@ -3,7 +3,16 @@
 /*
  * Anything admin facing requires authorisation.
  */
-Route::group(array('before' => 'auth'), function(){
+
+if (Request::env() == 'test')
+{
+	$before = '';
+}
+else {
+	$before = 'auth';
+}
+
+Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
 	       return Redirect::to(date('Y').'/ug/');   
@@ -75,6 +84,10 @@ Route::group(array('before' => 'auth'), function(){
 	// Customised routing for subjects
 	Route::any('([0-9]{4})/(ug|pg)/subjects', 'subjects@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:3)');
+
+	// Customised routing for subject categories
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 });
 
 // Login/out

@@ -1,5 +1,5 @@
 <?php
-class Programmes_Controller extends Admin_Controller
+class Programmes_Controller extends Revisionable_Controller
 {
 
     public $restful = true;
@@ -14,10 +14,13 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_index($year, $type)
     {
+
         $title_field = Programme::get_title_field();
         $model = $this->model;
-        $this->data[$this->views] = $model::where('year', '=', $year)->order_by($title_field)->get();
-        $this->data['programmeList'] = Programme::getAsList();
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id','programme_title_1','award_3'));
+       
+        $this->data[$this->views] = $programmes;
+
         $this->data['title_field'] = $title_field;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
@@ -44,12 +47,14 @@ class Programmes_Controller extends Admin_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
-        $this->data['programme_list'] = Programme::getAsList($year);
-        $this->data['leaflets'] = Leaflet::getAsList();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['leaflets'] = Leaflet::all_as_list();
+
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -78,8 +83,14 @@ class Programmes_Controller extends Admin_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        
         $this->data['title_field'] = Programme::get_title_field();
+        $this->data['year'] = $year;
+
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['fields'] = $this->getProgrammeFields();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -114,7 +125,7 @@ class Programmes_Controller extends Admin_Controller
             $programme->save();
             Messages::add('success','Programme added');
 
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
         }
     }
 
@@ -149,13 +160,15 @@ class Programmes_Controller extends Admin_Controller
             $title_field = Programme::get_title_field();
             Messages::add('success', "Saved ".$programme->$title_field);
 
-            return Redirect::to($year.'/'. $type.'/'. $this->views);
+            return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
         }
     }
 
 
 
+
     /**
+     * TODO: fully depricate this item
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
      *
      * @param int    $year         The year of the programme (not used, but to keep routing happy).
@@ -215,9 +228,9 @@ class Programmes_Controller extends Admin_Controller
             unset($programme_attributes[$ignore]);
         }
 
-        $schools = School::getAsList();
-        $sub = Programme::getAsList();
-        $pro = Programme::getAsList();
+        $schools = School::all_as_list();
+        $sub = Programme::all_as_list();
+        $pro = Programme::all_as_list();
 
         $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
         $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);

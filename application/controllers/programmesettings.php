@@ -1,6 +1,6 @@
 <?php
 
-class ProgrammeSettings_Controller extends Admin_Controller
+class ProgrammeSettings_Controller extends Revisionable_Controller
 {
     public $restful = true;
     public $views = 'programmesettings';
@@ -14,12 +14,15 @@ class ProgrammeSettings_Controller extends Admin_Controller
      */
     public function get_index($year, $type)
     {
-
         $model = $this->model;
         $data = $model::where('year', '=', $year)->first();
-        if ($data == null) {
+
+        if ($data == null)
+        {
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create');
-        } else {
+        } 
+        else
+        {
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
         }
 
@@ -31,10 +34,9 @@ class ProgrammeSettings_Controller extends Admin_Controller
      */
     public function get_create($year, $type)
     {
-
         $this->data['fields'] = $this->get_fields();
-        
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -61,6 +63,7 @@ class ProgrammeSettings_Controller extends Admin_Controller
         }
 
         $this->data['fields'] = $this->get_fields();
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -124,7 +127,7 @@ class ProgrammeSettings_Controller extends Admin_Controller
 
     private function get_fields()
     {
-        $model = 'ProgrammeSettingField';
+        $model = 'ProgrammeField';
 
         return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
     }

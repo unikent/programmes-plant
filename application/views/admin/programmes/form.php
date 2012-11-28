@@ -1,4 +1,4 @@
-<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></h1>
+<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?>  <?php echo isset($programme->award->name) ? '('.$programme->award->name.')' : '' ; ?></h1>
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
 
 <?php echo Messages::get_html()?>
@@ -18,8 +18,7 @@
   </div>
 </div>
 
-<?php echo View::make('admin.inc.partials.formfields', array('sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone)))->render(); ?>
-
+<?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('programmes.save_programme'); ?>" />

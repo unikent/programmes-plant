@@ -25,16 +25,14 @@
         <li class="<?php echo ( URI::segment(3) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'leaflets')?>"><i class="icon-list-alt"></i> Leaflets</a></li>
         <li class="<?php echo ( URI::segment(3) == 'schools' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'schools')?>"><i class="icon-list-alt"></i> Schools</a></li>
         <li class="<?php echo ( URI::segment(3) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjects')?>"><i class="icon-list-alt"></i> Subjects</a></li>
-        
-        <li class="nav-header">Overrides</li>
         <li class="<?php echo ( URI::segment(3) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjectcategories')?>"><i class="icon-list-alt"></i> Subject categories</a></li>
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-book"></i> Global</a></li>
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmesettings')?>"><i class="icon-book"></i> Programme</a></li>
+        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-list-alt"></i> Globals</a></li>
+        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmesettings')?>"><i class="icon-list-alt"></i> Programme globals</a></li>
         
 
         <li class="nav-header">Field setup</li>
-        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/globalsettings')?>"><i class="icon-cog"></i> Global override fields </a></li>
-        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmesettings')?>"><i class="icon-cog"></i> Programme override fields </a></li>
+        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/globalsettings')?>"><i class="icon-cog"></i> Global fields </a></li>
+        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmesettings')?>"><i class="icon-cog"></i> Programme global fields </a></li>
         <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 </ul>
 </div>

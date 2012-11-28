@@ -36,7 +36,7 @@ class Fields_Controller extends Admin_Controller
             $view = "index";
         }
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type));
+        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type, 'from' => $this->view));
     }
 
     public function get_add($type)
@@ -59,6 +59,7 @@ class Fields_Controller extends Admin_Controller
     public function post_add($type)
     {
         $model = $this->model;
+        $name = $this->name;
 
         if (! $model::is_valid())
         {
@@ -74,7 +75,20 @@ class Fields_Controller extends Admin_Controller
         // By default this is both active and visable.
         $field->active = 1;
         $field->view = 1;
-        
+
+        if(empty($field->programme_field_type)){
+            //check that this a kind of programme field before proceeding
+            if(strcmp($model, 'ProgrammeField') == 0){
+                //set the right value for the kind of field
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
+            }
+        }
+
         $field->save();
 
         // Now we have an ID, set it as the corresponding column name.
@@ -84,7 +98,16 @@ class Fields_Controller extends Admin_Controller
         $field->colname = $colname;
         $field->save();
 
-        $this->update_schema($field->colname, $field->field_initval, $field->type);
+        //we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
+        $tables_to_update = array($this->table);
+        if(strcmp($model, 'ProgrammeField') == 0){
+            $tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
+        }
+
+        //add relevant table columns
+        foreach ($tables_to_update as $table_to_update) {
+            $this->update_schema($field->colname, $field->field_initval, $field->type, $table_to_update);
+        }
 
         Messages::add('success','Row added to schema');
 
@@ -94,6 +117,7 @@ class Fields_Controller extends Admin_Controller
     public function post_edit($type)
     {
         $model = $this->model;
+        $name = $this->name;
 
         if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
         {
@@ -107,6 +131,20 @@ class Fields_Controller extends Admin_Controller
         $oldtype = $field->field_type;
 
         $field->get_input();
+
+        if(empty($field->programme_field_type)){
+            //check that this a kind of programme field before proceeding
+            if(strcmp($model, 'ProgrammeField') == 0){
+                //set the right value for the kind of field
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
+            }
+        }
+      
         $field->save();
 
         // If type changes, apply data type swapper.
@@ -125,10 +163,14 @@ class Fields_Controller extends Admin_Controller
     }
 
     // This needs to be moved to the model.
-    private function update_schema($colname, $init_val, $type)
+    private function update_schema($colname, $init_val, $type, $table_to_update = null)
     {
+        if(!$table_to_update){
+            $table_to_update = $this->table;
+        }
+
         // Adjust Tables
-        Schema::table($this->table, function($table) use ($colname, $init_val, $type)
+        Schema::table($table_to_update, function($table) use ($colname, $init_val, $type)
         {
             if ($type=='textarea') {
                 $table->text($colname);
@@ -138,7 +180,7 @@ class Fields_Controller extends Admin_Controller
 
         });
 
-        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type)
+        Schema::table($table_to_update.'_revisions', function($table) use ($colname, $init_val, $type)
         {
             if ($type=='textarea')
             {

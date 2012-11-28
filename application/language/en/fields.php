@@ -53,6 +53,12 @@ return array(
         'label_description' => 'Description',
         'label_start' => 'Initial value',
         'label_placeholdertext' => 'Placeholder text',
+        'label_programme_field_type' => 'Overridable setting field?',
+        'label_programme_field_type_text' => 'Ticking this box will create a programmes setting field that can be overwritten in individual programmes.',
+        'programme_overwrite_text' => 'If left blank, this field will inherit its value from its programmes setting counterpart.',
+        'programme_overwrite_text_title' => 'This field has a default value',
+        'programme_settings_overwrite_text' => 'This field can be overwritten in individual programmes.',
+        'programme_settings_overwrite_text_title' => 'An overwritable field',
         'btn' => array(
             'cancel' => 'Cancel',
             'save' => 'Save',
