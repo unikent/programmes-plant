@@ -36,8 +36,6 @@ class Revisionable_Controller extends Admin_Controller
 
     }
 
-
-
     /**
      * Routing for GET /$year/$type/$object_id/revert_to_revision/$revision_id
      * Routing for GET /$year/$type/revert_to_revision/$revision_id
@@ -65,7 +63,6 @@ class Revisionable_Controller extends Admin_Controller
         Messages::add('success', "Reverted to previous revision.");
         return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
     }
-
 
      /**
      * Routing for GET /$year/$type/$object_id/make_live/$revision_id

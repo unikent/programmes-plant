@@ -14,12 +14,15 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
      */
     public function get_index($year, $type)
     {
-
         $model = $this->model;
         $data = $model::where('year', '=', $year)->first();
-        if ($data == null) {
+
+        if ($data == null)
+        {
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create');
-        } else {
+        } 
+        else
+        {
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
         }
 

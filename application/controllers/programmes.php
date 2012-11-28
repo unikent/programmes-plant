@@ -14,10 +14,13 @@ class Programmes_Controller extends Revisionable_Controller
      */
     public function get_index($year, $type)
     {
+
         $title_field = Programme::get_title_field();
         $model = $this->model;
-        $this->data[$this->views] = $model::where('year', '=', $year)->order_by($title_field)->get();
-        $this->data['programmeList'] = Programme::getAsList();
+        $programmes = $model::where('year', '=', $year)->order_by($title_field)->get();
+        $this->data[$this->views] = $programmes;
+        $this->data['programmeList'] = Programme::all_as_list();
+
         $this->data['title_field'] = $title_field;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
@@ -44,11 +47,12 @@ class Programmes_Controller extends Revisionable_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
-        $this->data['programme_list'] = Programme::getAsList($year);
-        $this->data['leaflets'] = Leaflet::getAsList();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['leaflets'] = Leaflet::all_as_list();
+
         $this->data['create'] = true;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
@@ -80,6 +84,12 @@ class Programmes_Controller extends Revisionable_Controller
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
         
         $this->data['title_field'] = Programme::get_title_field();
+
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['fields'] = $this->getProgrammeFields();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -217,9 +227,9 @@ class Programmes_Controller extends Revisionable_Controller
             unset($programme_attributes[$ignore]);
         }
 
-        $schools = School::getAsList();
-        $sub = Programme::getAsList();
-        $pro = Programme::getAsList();
+        $schools = School::all_as_list();
+        $sub = Programme::all_as_list();
+        $pro = Programme::all_as_list();
 
         $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
         $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
@@ -307,7 +317,7 @@ class Programmes_Controller extends Revisionable_Controller
         } else {
             $programme = Programme::find(Input::get('id'));
             $programme->activate();
-            Messages::add('success','Programme Activated');
+            Messages::add('success','Programme activated');
 
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }

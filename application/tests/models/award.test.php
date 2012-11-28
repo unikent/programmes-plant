@@ -1,6 +1,7 @@
 <?php
 
-class TestAward extends PHPUnit_Framework_TestCase {
+class TestAward extends ModelTestCase 
+{
 
 	/**
 	 * Set up the database.
@@ -22,14 +23,11 @@ class TestAward extends PHPUnit_Framework_TestCase {
 		{
 			$award->delete();
 		}
+
+		parent::tearDown();
 	}
 
-	/**
-	 * Tests getAsList
-	 * 
-	 * @covers Award::getAsList
-	 */
-	public function testgetAsList()
+	public function testall_as_list()
 	{
 		// Add in some elements to list.
 		$awards = array('BA (Hons)', 'MA', 'PhD');
@@ -42,7 +40,7 @@ class TestAward extends PHPUnit_Framework_TestCase {
 			$award->save();
 		}
 
-		$this->assertEquals($awards, Award::getAsList(), "Award::getAsList did not return the same as was added to the database.");
+		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database.");
 
 		// Remove an award from the database
 		$a = Award::first();
@@ -51,7 +49,7 @@ class TestAward extends PHPUnit_Framework_TestCase {
 		// Remove first award from the array
 		unset($awards[0]);
 
-		$this->assertEquals($awards, Award::getAsList(), "Award::getAsList did not return the same as was added to the database when we removed an award.");
+		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database when we removed an award.");
 	}
 
 }

@@ -1,4 +1,5 @@
 <?php
-class Role extends Eloquent {
+class Role extends Eloquent
+{
 	public static $timestamps = true;
 }

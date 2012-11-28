@@ -165,7 +165,7 @@ class Revisionable extends Eloquent
           }
      }
 
-     public static function getAsList($year = false)
+     public static function all_as_list($year = false)
      {
       $options = array();
       $model = get_called_class();
@@ -179,10 +179,6 @@ class Revisionable extends Eloquent
       foreach ($data as $record) {$options[$record->id] = $record->$title_field;}
 
        return $options;
-     }
-
-     public static function get_title_field(){
-        return 'title';
      }
 
      public static function getAttributesList($year = false)
