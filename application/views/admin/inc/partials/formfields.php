@@ -38,8 +38,7 @@ foreach($sections as $section_name => $section){
       }else if($type=='table_multiselect'){
 
         $model = $field->field_meta;
-        $form_element = Form::select($column_name, $model::getAsList(), $current_value, array('multiple' => 'multiple'));
-
+        $form_element = Form::select($column_name, $model::all_as_list(), $current_value, array('multiple' => 'multiple', 'class' => 'multiselect', 'style' => 'height:200px;width:420px;'));
       }
       else if ($type == 'help'){
 

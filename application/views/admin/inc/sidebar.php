@@ -26,8 +26,8 @@
         <li class="<?php echo ( URI::segment(3) == 'schools' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'schools')?>"><i class="icon-list-alt"></i> Schools</a></li>
         <li class="<?php echo ( URI::segment(3) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjects')?>"><i class="icon-list-alt"></i> Subjects</a></li>
         
-        
         <li class="nav-header">Overrides</li>
+        <li class="<?php echo ( URI::segment(3) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjectcategories')?>"><i class="icon-list-alt"></i> Subject categories</a></li>
         <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-book"></i> Global</a></li>
         <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmesettings')?>"><i class="icon-book"></i> Programme</a></li>
         

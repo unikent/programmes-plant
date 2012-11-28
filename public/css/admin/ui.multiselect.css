@@ -5,7 +5,6 @@
     border: 1px solid #ccc;
     font-size: 0.9em;
     border-radius: 3px;
-/*     box-shadow: 1px 1px 0px rgba(0,0,0,0.45); */
 }
 
 .ui-multiselect ul {
@@ -140,7 +139,7 @@
     padding: 2px;
     opacity: 0.5; 
     margin: 4px; 
-    width: 130px; 
+    width: 130px !important; 
     color: black;
     font-size: 1.1em;
 }
