@@ -31,7 +31,7 @@ class Add_More_Fields_To_Campuses {
 	 */
 	public function down()
 	{
-		Schema::table($table, function($table){
+		Schema::table('campuses', function($table){
 			$table->drop_column('title');
 			$table->drop_column('description');
 			$table->drop_column('address_1');
