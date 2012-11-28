@@ -1,10 +1,16 @@
 <?php
-class School extends Eloquent {
+class School extends SimpleData
+{
 
-	public static function getAsList(){
-       $data = School::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
+	public static $rules = array(
+		'name'  => 'required|unique:schools|max:255',
+		'faculty'  => 'required|exists:faculties,id'
+	);
 
-       return $options;
-     }
+	public function input()
+	{
+		$this->name = Input::get('name');
+        $this->faculties_id = Input::get('faculty');
+	}
+	
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Add_Programme_Data {
+class Add_Programme_Data_Year3 {
 
     public static $title_list = array(
         array('slug'=>'accounting-and-finance-and-economics', 'title'=>'Accounting and Finance and Economics'),
@@ -451,7 +451,7 @@ class Add_Programme_Data {
         {   
             // set up the new programme
             $programme = new Programme;
-            $programme->year = '2012';
+            $programme->year = '2014';
             $programme->created_by = 'at369';
             $programme->live = 1;
             $programme->published_by = 'at369';

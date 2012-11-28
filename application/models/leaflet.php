@@ -1,10 +1,17 @@
 <?php
-class Leaflet extends Eloquent {
+class Leaflet extends SimpleData
+{
+	public static $rules = array(
+            'name'  => 'required|unique:leaflets|max:255',
+            'campus'  => 'required|exists:campuses,id',
+            'tracking_code'  => 'required|url'
+    );
 
-	public static function getAsList(){
-       $data = Leaflet::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
-
-       return $options;
-     }
+    public function input()
+    {
+    	$this->name = Input::get('name');
+        $this->campuses_id = Input::get('campus');
+        $this->tracking_code = Input::get('tracking_code');
+    }
+    
 }
