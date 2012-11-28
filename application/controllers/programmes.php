@@ -1,5 +1,5 @@
 <?php
-class Programmes_Controller extends Admin_Controller
+class Programmes_Controller extends Revisionable_Controller
 {
 
     public $restful = true;
@@ -19,7 +19,7 @@ class Programmes_Controller extends Admin_Controller
         $model = $this->model;
         $programmes = $model::where('year', '=', $year)->order_by($title_field)->get();
         $this->data[$this->views] = $programmes;
-        $this->data['programmeList'] = Programme::getAsList();
+        $this->data['programmeList'] = Programme::all_as_list();
 
         $this->data['title_field'] = $title_field;
 
@@ -128,8 +128,8 @@ class Programmes_Controller extends Admin_Controller
             // success message
             Messages::add('success','Programme added');
             
-            // redirect back to the programme listing page
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+            // redirect back to the same page
+            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
         }
     }
 
@@ -168,13 +168,15 @@ class Programmes_Controller extends Admin_Controller
             Messages::add('success', "Saved ".$programme->$title_field);
             
             // redirect back to the same page we were on
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/programmes/edit/' . $programme->id);
+            return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
         }
     }
 
 
 
+
     /**
+     * TODO: fully depricate this item
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
      *
      * @param int    $year         The year of the programme (not used, but to keep routing happy).

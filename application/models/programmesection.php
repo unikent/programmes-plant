@@ -7,7 +7,7 @@ class ProgrammeSection extends Eloquent {
 	 * 
 	 * @return array $options An array where the record ID maps onto the record name.
 	 */
-	public static function getAsList()
+	public static function all_as_list()
 	{
 		$sections = self::all();
 

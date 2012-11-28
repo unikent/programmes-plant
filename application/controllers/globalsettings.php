@@ -1,6 +1,6 @@
 <?php
 
-class GlobalSettings_Controller extends Admin_Controller
+class GlobalSettings_Controller extends Revisionable_Controller
 {
     public $restful = true;
     public $views = 'globalsettings';
