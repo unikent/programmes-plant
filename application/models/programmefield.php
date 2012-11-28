@@ -2,6 +2,24 @@
 class ProgrammeField extends Field
 {
     public static $table = 'programmes_fields';
+
+    /**
+     * Stores programme field types.
+     */
+    public static $types = array(
+    								'NORMAL' => 0,
+    								'DEFAULT' => 1,
+    								'OVERRIDABLE_DEFAULT' => 2
+    							);
+
+    public static function get_types_as_list()
+    {
+    	$list_types = array();
+    	foreach (self::$types as $key => $value) {
+    		$list_types[$value] = $key;
+    	}
+    	return $list_types;
+    }
     
     public static function programme_fields_by_section()
     {
@@ -21,12 +39,6 @@ class ProgrammeField extends Field
         }
         return $sections_array;
     }
-    
-    public static $types = array(
-        'NORMAL' => 0,
-        'DEFAULT' => 1,
-        'OVERRIDABLE_DEFAULT' => 2
-    );
     
     public static function programme_fields()
     {

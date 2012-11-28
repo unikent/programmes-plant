@@ -1,6 +1,7 @@
 <?php
 class Programme extends Revisionable
 {
+	public static $table = 'programmes';
     public static $timestamps = true;
     public $revision = false;
     protected $revision_model = 'ProgrammeRevision';

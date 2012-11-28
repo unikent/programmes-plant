@@ -15,10 +15,9 @@
     </div>
   </div>
 </fieldset>
+
 <fieldset>
-
-   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array('Programme settings' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create))->render(); ?>
-
+   <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'sections' => array('Programme settings' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings'))->render(); ?>
 </fieldset>
 
 <div class="form-actions">

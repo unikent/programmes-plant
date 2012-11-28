@@ -54,6 +54,7 @@ class Programmes_Controller extends Revisionable_Controller
         $this->data['leaflets'] = Leaflet::all_as_list();
 
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -82,8 +83,8 @@ class Programmes_Controller extends Revisionable_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        
         $this->data['title_field'] = Programme::get_title_field();
+        $this->data['year'] = $year;
 
         $this->data['programme_list'] = Programme::all_as_list($year);
         $this->data['fields'] = $this->getProgrammeFields();
