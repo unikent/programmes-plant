@@ -105,26 +105,31 @@ class Programmes_Controller extends Revisionable_Controller
      */
     public function post_create($year, $type)
     {
+        // placeholder for any future validation rules
         $rules = array(
         );
-
         $validation = Validator::make(Input::all(), $rules);
-
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
-
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create')->with_input();
         } else {
             $programme = new Programme;
             $programme->year = Input::get('year');
-
             $programme->created_by = Auth::user();
             
-            ProgrammeField::assign_fields($programme);
-
-            $programme->save();
+            // get the programme fields
+            $programme_fields = ProgrammeField::programme_fields();
+            
+            // assign the input data to the programme fields
+            $programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+            
+            // save the modified programme data
+            $programme_modified->save();
+            
+            // success message
             Messages::add('success','Programme added');
-
+            
+            // redirect back to the same page
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
         }
     }
@@ -139,27 +144,31 @@ class Programmes_Controller extends Revisionable_Controller
      */
     public function post_edit($year, $type)
     {
+        // placeholder for any future validation rules
         $rules = array(
         );
-
         $validation = Validator::make(Input::all(), $rules);
-
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
-
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/')->with_input();
         } else {
             $programme = Programme::find(Input::get('programme_id'));
-
             $programme->year = Input::get('year');
             
-            ProgrammeField::assign_fields($programme);
+            // get the programme fields
+            $programme_fields = ProgrammeField::programme_fields();
             
-            $programme->save();
-
+            // assign the input data to the programme fields
+            $programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+            
+            // save the modified programme data
+            $programme_modified->save();
+            
+            // success message
             $title_field = Programme::get_title_field();
             Messages::add('success', "Saved ".$programme->$title_field);
-
+            
+            // redirect back to the same page we were on
             return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
         }
     }

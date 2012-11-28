@@ -268,9 +268,7 @@ $(document).ready(function (){
         },
         "aoColumns": [ 
           { "bSortable": false },
-          { "bSortable": false },
-          { "bSortable": false },
-          { "bSortable": false },
+          { "bSortable": false }
           ]
     });
     $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
