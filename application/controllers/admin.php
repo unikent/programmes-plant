@@ -14,5 +14,8 @@ class Admin_Controller extends Base_Controller {
     	// Construct parent.
     	parent::__construct();
     }
+
+
+    
     
 }

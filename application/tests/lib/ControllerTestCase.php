@@ -11,12 +11,15 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 {
 
 	/**
+	 * Populate the database.
+	 * 
 	 * The Laravel session must be re-loaded before each test, otherwise
 	 * the session state is retained across multiple tests.
 	 */
 	public function setUp()
 	{
-		// For the moment lets try and do this without sessions.
+		Tests\Helper::migrate();
+
 		Session::load();
 	}
 
@@ -95,6 +98,19 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Given a controller path, returns the HTML.
+	 * 
+	 * @param string $controller_path
+	 * @return string $html HTML result (including 404s and other errors)
+	 */
+	public function get_html($controller_path)
+	{
+		$page = $this->get($controller_path);
+
+		return $page->render();
+	}
+
+	/**
 	 * Helper function to extract data from a response object.
 	 * 
 	 * @param Laravel\Response $response The Laravel response object.
@@ -103,5 +119,36 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	public function extract_data($response)
 	{
 		return $response->content->data['content']->data;
+	}
+
+	/**
+	 * Helper function to return the view name from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return string|bool Either the view, or if it is not present, false.
+	 */
+	public function get_view($response)
+	{	
+		try 
+		{
+			return $response->content->data['content']->view;
+		} 
+		catch (Exception $e) 
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Helper function to return the cleaned up location from a response object.
+	 * 
+	 * @param Laravel\Response $response The Laravel response object.
+	 * @return The location, if any.
+	 */
+	public function get_location($response)
+	{
+		$headers = $response->headers();
+
+		return substr(preg_replace('#^https?://#', '', $headers->get('location')), 1);
 	}
 }

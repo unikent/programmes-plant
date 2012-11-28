@@ -25,15 +25,15 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Tests getAsList
+	 * Tests Reorder fields
 	 * 
-	 * @covers Award::getAsList
+	 * @covers Model:reorder()
 	 */
 	public function testReorderFields()
 	{
 		// do the reordering
 		$order_string = 'field-id-3,field-id-2,field-id-1';
-		ProgrammeField::reorder($order_string);
+		ProgrammeField::reorder($order_string, 1);
 		
 		// pull out id-1
 		$programme_field = ProgrammeField::find(1);
@@ -44,7 +44,7 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		
 		// do some more reordering
 		$order_string = 'field-id-2,field-id-1,field-id-3';
-		ProgrammeField::reorder($order_string);
+		ProgrammeField::reorder($order_string, 1);
 		
 		// pull out id-1 again
 		$programme_field = ProgrammeField::find(1);

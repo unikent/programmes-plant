@@ -5,8 +5,6 @@
 <div style="margin-top:20px; margin-bottom:20px">
   <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes@create')?>" class="btn btn-primary"><?php echo __('programmes.create_programme'); ?></a>
 </div>
-
-
 <?php if($programmes) : ?>
     <table id="programme-list" class="table table-striped table-bordered table-condensed">
         <thead>
@@ -20,7 +18,7 @@
         <tbody>
         <?php foreach($programmes as $programme) : ?>
           <tr>
-            <td><?php echo $programme->$title_field ?></td>
+            <td><?php echo $programme->$title_field ?> (<?php echo isset($programme->award->name) ? $programme->award->name : '' ; ?>)</td>
             <td></td>
     
             <td></td>
