@@ -17,9 +17,9 @@ class Programmes_Controller extends Revisionable_Controller
 
         $title_field = Programme::get_title_field();
         $model = $this->model;
-        $programmes = $model::where('year', '=', $year)->order_by($title_field)->get();
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id','programme_title_1','award_3'));
+       
         $this->data[$this->views] = $programmes;
-        $this->data['programmeList'] = Programme::all_as_list();
 
         $this->data['title_field'] = $title_field;
 
