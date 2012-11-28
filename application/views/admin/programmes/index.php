@@ -6,22 +6,17 @@
   <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes@create')?>" class="btn btn-primary"><?php echo __('programmes.create_programme'); ?></a>
 </div>
 <?php if($programmes) : ?>
-    <table id="programme-list" class="table table-striped table-bordered table-condensed">
+    <table id="programme-list" class="table table-striped table-bordered">
         <thead>
           <tr>
             <th><?php echo  __('programmes.table_title') ?></th>
-            <th><?php echo  __('programmes.table_subject') ?></th>
-            <th><?php echo  __('programmes.table_excerpt') ?></th>
-            <th></th>
+            <th width="250"></th>
           </tr>
         </thead>
         <tbody>
         <?php foreach($programmes as $programme) : ?>
           <tr>
-            <td><?php echo $programme->$title_field ?> (<?php echo isset($programme->award->name) ? $programme->award->name : '' ; ?>)</td>
-            <td></td>
-    
-            <td></td>
+            <td><?php echo $programme->$title_field ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></td>
             <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
     
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
