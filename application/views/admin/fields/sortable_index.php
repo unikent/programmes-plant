@@ -6,7 +6,7 @@
 
   <div style="margin-top:20px; margin-bottom:20px">
       <a href="<?php echo url($type.'/fields/'.$field_type.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
-        <a href="<?php echo action('/'.$type.'/sections@create')?>" class="btn btn-primary">New section</a>
+        <a href="<?php echo action('/'.$type.'/sections@create')?>" class="btn btn-primary"><?php echo __('fields.btn.new-section') ?></a>
   </div>
 
 
@@ -24,8 +24,7 @@
             <ul class='sortable_fields'>
                <?php foreach($fields as $field) : ?>
                  <?php if($field->section == $section->id):?>
-                   <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type, 'from' => $from))->render(); ?>
-            
+                   <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type, 'from' => $from))->render();?>            
                  <?php endif;?>
                  
                <?php endforeach; ?>

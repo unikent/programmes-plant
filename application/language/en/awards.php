@@ -5,11 +5,11 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Award',
-	'delete' => 'Remove Award',
-	'create' => 'Create Award',
-	'back' => 'Go Back',
-	'save' => 'Save Award',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new award',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.

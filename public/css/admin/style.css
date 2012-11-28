@@ -2,6 +2,27 @@ body {
     background:url(/img/admin/snow_@2X.png) repeat top left;
 }
 
+h1 {
+    padding-bottom: 20px;
+}
+
+.navwell {
+    background-color: white;
+    border:1px solid rgba(200,200,200,1);
+    -moz-box-shadow: 1px 1px 4px #dbdbdb;
+    -webkit-box-shadow: 1px 1px 4px #dbdbdb;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.table {
+    background-color:white;
+    -moz-box-shadow: 0px 0px 4px #ececec;
+    -webkit-box-shadow: 0px 0px 4px #ececec;
+    box-shadow: 0px 0px 4px #ececec;
+
+}
+
 .container.loginwindow { width:500px; margin:0 auto; text-align:center; }
 .container.loginwindow h1 { margin-bottom:20px; }
 .crud textarea,
@@ -35,14 +56,15 @@ display: none;
 }
 
 /* Styles for sortable sections/fields */
-  
 .section_content {
     background-color: white;
-    box-shadow: 1px 1px 4px #dbdbdb;
     border-radius: 5px;
     padding: 20px;
     margin: 20px 0 20px 0;
     border:1px solid rgba(200,200,200,1);
+    -moz-box-shadow: 1px 1px 4px #dbdbdb;
+    -webkit-box-shadow: 1px 1px 4px #dbdbdb;
+    box-shadow: 1px 1px 4px #dbdbdb;
 }
 
 .section_name {

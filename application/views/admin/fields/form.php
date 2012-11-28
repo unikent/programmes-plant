@@ -5,8 +5,6 @@
 <?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
-    <legend>&nbsp;</legend>
-
   <div class="control-group">
     <?php echo Form::label('title', __('fields.form.label_title'), array('class'=>'control-label'))?>
     <div class="controls">
@@ -41,7 +39,7 @@
     <?php echo Form::label('initval', __('fields.form.label_start'), array('class'=>'control-label'))?>
     <div class="controls">
 
-      <?php echo  Form::text('initval', (isset($values)) ? $values->field_initval  : '')?> <?php echo Form::checkbox('prefill','1', (isset($values)) ? ($values->prefill==1) ? 1 : 0 : false)?> (Pre fill forms?)<br/>
+      <?php echo  Form::text('initval', (isset($values)) ? $values->field_initval  : '')?>
      <?php  if(!isset($values)): ?> Warning, this value will be applied to all existing records (except if the datatype is textarea). <?php endif; ?>
     </div>
   </div>
@@ -70,6 +68,6 @@
 <br/>
 
 <div class="form-actions">
-  <a class="btn btn-warning" href="<?php echo url('/'.$type.'/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
-  <input type="submit" class="btn btn-primary" value="<?php echo __('fields.form.btn.save') ?>" />
-          </div>
+  <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
+  <a class="btn" href="<?php echo url('/'.$type.'/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
+</div>

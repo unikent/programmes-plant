@@ -21,22 +21,11 @@
 </fieldset>
 
 <div class="form-actions">
-  <input type="submit" class="btn btn-primary" value="Save" />
+  <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
 <?php if (isset($revisions)) : ?>
   <?php echo View::make('admin.programmesettings.partials.revisions', array('revisions' => $revisions, 'programme' => $programmesettings))->render(); ?>
 <?php endif; ?>
 
 
-<script>
-$('#promote_revision').modal({
-  show:false
-}); // Start the modal
-
-// Populate the field with the right data for the modal when clicked
-$(".promote_toggler").click(function(){
-  $('#promote_now').attr('href', $(this).attr('rel'));
-  $('#promote_revision').modal('show');
-});
-</script>
 
