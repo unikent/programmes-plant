@@ -58,7 +58,7 @@ foreach($sections as $section_name => $section)
                 <?php echo $form_element?>
                 <?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
                   <div class="info">
-                    <span class="badge badge-info" rel="popover"><i class="icon-flag"></i>
+                    <span class="badge badge-info" rel="popover"><i class="icon-flag icon-white"></i>
                       <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
                         <?php echo __('fields.form.programme_overwrite_text_title')?>
                       <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
