@@ -17,7 +17,7 @@
     <div class="control-group">
       <?php echo Form::label('campus', 'Campus', array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::select('campus', Campus::getAsList(), ($create ? "" : $item->campuses_id ))?>
+        <?php echo Form::select('campus', Campus::all_as_list(), ($create ? "" : $item->campuses_id ))?>
       </div>
     </div>
 
@@ -27,12 +27,19 @@
         <?php echo Form::text('tracking_code',  ( Input::old('tracking_code') || $create ? Input::old('tracking_code') : $item->tracking_code ),array('placeholder'=>'Enter Tracking code...'))?>
       </div>
     </div>
+    
+    <div class="control-group">
+      <?php echo Form::label('main-additional', 'Main/additional', array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::select('main-additional', array('1' => 'Main', '0' => 'Additional'), ($create ? "" : $item->campuses_id ))?>
+      </div>
+    </div>
 
   </fieldset>
   <div class="form-actions">
-    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Go Back</a>
-    <input type="submit" class="btn btn-primary" value="<?php echo ($create ? 'Create Leaflet' : 'Save Leaflet')?>" />
+    <input type="submit" class="btn btn-warning" value="<?php echo __('leaflets.save'); ?>" />
+    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Cancel</a>
   </div>
 
 <?php echo Form::close()?>
-<?php echo View::make('admin.inc.scripts')->render()?>
+

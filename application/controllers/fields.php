@@ -7,119 +7,171 @@ class Fields_Controller extends Admin_Controller
 
     /**
      * Display the fields index page.
-     *
      */
-    public function get_index()
+    public function get_index($type)
     {
         $model = $this->model;
-        $fields = $model::order_by('id','asc')->get();
+        $fields = $model::select('*');
+        
+        if($this->where_clause){
+            foreach ($this->where_clause as $clause) {
+                $fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
+            }
+        }
+        
+        // Sections
+        $sections = "";
 
-        return View::make('admin.'.$this->views.'.index', array('fields' => $fields, 'field_type' => $this->view));
+        // Only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
+        if ($this->view == 'programmes')
+        {
+            $fields = $fields->order_by('order','asc')->get();
+            $sections = ProgrammeSection::order_by('order','asc')->get();
+            $view = "sortable_index";
+        }
+        // standard view, so order by field_name not order number
+        else
+        {
+            $fields = $fields->order_by('field_name','asc')->get();
+            $view = "index";
+        }
+
+        $this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type, 'from' => $this->view));
     }
 
-    public function get_add()
+    public function get_add($type)
     {
-        return View::make('admin.'.$this->views.'.form',array('field_type'=>$this->view));
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view, 'type'=>$type));
     }
 
-    public function get_edit($id)
+    public function get_edit($type, $id)
     {
-
         $data['id'] = $id;
 
         $model = $this->model;
         $data['values'] =  $model::find($id);
         $data['field_type'] = $this->view;
+        $data['type'] = $type;
 
-        return View::make('admin.fields.form',$data);
+        $this->layout->nest('content', 'admin.fields.form', $data);
     }
 
-    public function post_add()
+    public function post_add($type)
     {
-        $rules = array(
-            'title'  => 'required|max:255'
-        );
+        $model = $this->model;
+        $name = $this->name;
 
-        $validation = Validator::make(Input::all(), $rules);
-
-        if ($validation->fails()) {
-            Messages::add('error',$validation->errors->all());
-
-            return Redirect::to($this->view.'fields/add')->with_input();
-        } else {
-
-            $datatype = Input::get('type');
-
-            if (Input::get('id')) {
-                $model = $this->model;
-                $subject = $model::find(Input::get('id'));
-                $subject->field_name = Input::get('title');
-                $subject->field_description = Input::get('description');
-                $subject->field_meta = Input::get('options');
-
-                $oldtype = $subject->field_type;
-                $subject->field_type = Input::get('type');
-                $subject->field_initval =  Input::get('initval');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill =  (Input::get('prefill')==1) ? 1 : 0;
-
-                $subject->save();
-
-                //If type changes, apply data type swapper.
-                if ($oldtype != Input::get('type')) {
-                    $type_str = 'varchar(255)';
-                    if($subject->field_type=='textarea') $type_str = 'TEXT';
-                    DB::statement("alter table {$this->table} MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                    DB::statement("alter table {$this->table}_revisions MODIFY {$subject->colname} {$type_str}  DEFAULT '{$subject->field_initval}';");
-                }
-
-            } else {
-                $colname = Str::slug(Input::get('title'), '_');
-                $init_val = Input::get('initval');
-
-                //Add Row
-                $model = $this->model;
-                $subject = new $model;
-                $subject->field_name = Input::get('title');
-                $subject->field_type = Input::get('type');
-                $subject->field_description = Input::get('description');
-
-                $subject->field_meta = Input::get('options');
-                $subject->placeholder =  Input::get('placeholder');
-                $subject->prefill = (Input::get('prefill')==1) ? 1 : 0;
-
-                $subject->field_initval =  $init_val;
-
-                $subject->active = 1;
-                $subject->view = 1;
-
-                $subject->save();
-
-                //Now we have an id, set it as part of the colname
-                //to avoid risk of duplication
-                $colname .= '_'.$subject->id;
-                $subject->colname = $colname;
-                $subject->save();
-
-                $this->updateSchema($colname, $init_val, $datatype);
-
-            }
-
-            Messages::add('success','Row added to schema');
-            //return $this->redirect('index');//Redirect::to('meta/'.$this->table.'s/index');
-            return Redirect::to('fields/'.$this->view);
+        if (! $model::is_valid())
+        {
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
         }
+
+        // Add Row
+        $field = new $model;
+
+        $field->get_input();
+
+        // By default this is both active and visable.
+        $field->active = 1;
+        $field->view = 1;
+
+        if(empty($field->programme_field_type)){
+            //check that this a kind of programme field before proceeding
+            if(strcmp($model, 'ProgrammeField') == 0){
+                //set the right value for the kind of field
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
+            }
+        }
+
+        $field->save();
+
+        // Now we have an ID, set it as the corresponding column name.
+        // to avoid risk of duplication
+        $colname = Str::slug(Input::get('title'), '_');
+        $colname .= '_' . $field->id;
+        $field->colname = $colname;
+        $field->save();
+
+        //we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
+        $tables_to_update = array($this->table);
+        if(strcmp($model, 'ProgrammeField') == 0){
+            $tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
+        }
+
+        //add relevant table columns
+        foreach ($tables_to_update as $table_to_update) {
+            $this->update_schema($field->colname, $field->field_initval, $field->type, $table_to_update);
+        }
+
+        Messages::add('success','Row added to schema');
+
+        return Redirect::to('/'.$type.'/fields/'.$this->view);
     }
 
-    private function redirect($action)
+    public function post_edit($type)
     {
-        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/fields/'.$this->view.'s/'.$action);
+        $model = $this->model;
+        $name = $this->name;
+
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
+        {
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
+        }
+
+        $field = $model::find(Input::get('id'));
+
+        // Grab the old type it used to be before getting input.
+        $oldtype = $field->field_type;
+
+        $field->get_input();
+
+        if(empty($field->programme_field_type)){
+            //check that this a kind of programme field before proceeding
+            if(strcmp($model, 'ProgrammeField') == 0){
+                //set the right value for the kind of field
+                if(strcmp($name, 'Programmes') == 0){
+                    $field->programme_field_type = ProgrammeField::$types['NORMAL'];
+                }
+                elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+                    $field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+                }
+            }
+        }
+      
+        $field->save();
+
+        // If type changes, apply data type swapper.
+        if ($oldtype != Input::get('type')) 
+        {
+            $type_str = 'varchar(255)';
+            if($field->field_type=='textarea') $type_str = 'TEXT';
+
+            DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+            DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
+        }
+
+        Messages::add('success','Edited field.');
+
+        return Redirect::to('/'.$type.'/fields/'.$this->view);
     }
 
-    private function updateSchema($colname, $init_val, $type)
+    // This needs to be moved to the model.
+    private function update_schema($colname, $init_val, $type, $table_to_update = null)
     {
-        //Adjust Tables
-        Schema::table($this->table, function($table) use ($colname, $init_val, $type) {
+        if(!$table_to_update){
+            $table_to_update = $this->table;
+        }
+
+        // Adjust Tables
+        Schema::table($table_to_update, function($table) use ($colname, $init_val, $type)
+        {
             if ($type=='textarea') {
                 $table->text($colname);
             } else {
@@ -127,32 +179,53 @@ class Fields_Controller extends Admin_Controller
             }
 
         });
-        Schema::table($this->table.'_revisions', function($table) use ($colname, $init_val, $type) {
-            if ($type=='textarea') {
+
+        Schema::table($table_to_update.'_revisions', function($table) use ($colname, $init_val, $type)
+        {
+            if ($type=='textarea')
+            {
                 $table->text($colname);
-            } else {
+            } 
+            else 
+            {
                 $table->string($colname,255)->default($init_val);
             }
         });
     }
 
-    public function get_deactivate()
+    public function get_deactivate($type)
     {
-            $model = $this->model;
+        $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 0;
         $row->save();
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to($type.'/fields/'.$this->view);
     }
 
-     public function get_reactivate()
+    public function get_reactivate($type)
     {
         $model = $this->model;
         $row = $model::find(Input::get('id'));
         $row->active = 1;
         $row->save();
 
-        return Redirect::to('fields/'.$this->view);
+        return Redirect::to($type.'/fields/'.$this->view);
+    }
+    
+    /**
+     * Routing for POST /reorder
+     *
+     * This allows fields to be reordered via an AJAX request from the UI
+     */
+    public function post_reorder()
+    {
+        $model = $this->model;
+
+        if($model::reorder(Input::get('order'), Input::get('section'))){
+            return 'true';
+        }else{
+            return 'false';
+        }
     }
 }
