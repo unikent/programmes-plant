@@ -27,13 +27,6 @@
         <?php echo Form::text('tracking_code',  ( Input::old('tracking_code') || $create ? Input::old('tracking_code') : $item->tracking_code ),array('placeholder'=>'Enter Tracking code...'))?>
       </div>
     </div>
-    
-    <div class="control-group">
-      <?php echo Form::label('main-additional', 'Main/additional', array('class'=>'control-label'))?>
-      <div class="controls">
-        <?php echo Form::select('main-additional', array('1' => 'Main', '0' => 'Additional'), ($create ? "" : $item->campuses_id ))?>
-      </div>
-    </div>
 
   </fieldset>
   <div class="form-actions">
