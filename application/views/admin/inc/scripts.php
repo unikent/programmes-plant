@@ -60,12 +60,6 @@ $(function(){
 
 //onLoad setup JS listeners
 $(document).ready(function (){
-
-  //Quick/dirty toggle collapse
-  $('.toggleCollapse').click(function(a){
-    $(this).parent().parent().find('ul').slideToggle();
-    $(this).find('i').toggleClass('icon-chevron-down');
-  });
    
    /**
    *
