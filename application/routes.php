@@ -90,8 +90,8 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 
 	//Webservices
-	Route::any('([0-9]{4})/(ug|pg)/ws', 'webservices@index');
-	Route::get('([0-9]{4})/(ug|pg)/ws/(:any?)/(:num?)', 'webservices@(:3)');
+	Route::any('/ws/([0-9]{4})/(ug|pg)', 'webservices@index');
+	Route::get('/ws/([0-9]{4})/(ug|pg)/(:any?)/(:num?)', 'webservices@(:3)');
 });
 
 // Login/out
