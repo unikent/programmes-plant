@@ -23,7 +23,7 @@ class ProgrammeField extends Field
     
     public static function programme_fields_by_section()
     {
-        $sections = ProgrammeSection::order_by('order','asc')->get();
+        $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
 
         $sections_array = array();
 

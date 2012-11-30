@@ -86,12 +86,7 @@ class Programmes_Controller extends Revisionable_Controller
         $this->data['title_field'] = Programme::get_title_field();
         $this->data['year'] = $year;
 
-        $this->data['programme_list'] = Programme::all_as_list($year);
-        $this->data['fields'] = $this->getProgrammeFields();
-        $this->data['campuses'] = Campus::all_as_list();
-        $this->data['school'] = School::all_as_list();
-        $this->data['awards'] = Award::all_as_list();
-
+        //Get lists data
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
