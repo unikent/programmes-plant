@@ -217,6 +217,7 @@ class Revisionable extends Eloquent
           $indexData[] = array(
             'id' => $programme->programme_id,
             'name' => $programme->programme_title_1,
+            'slug' => $programme->slug_2,
             'subject' => $programme->subject_area_1_8
           );
         }
