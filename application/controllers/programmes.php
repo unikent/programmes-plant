@@ -16,12 +16,19 @@ class Programmes_Controller extends Revisionable_Controller
     {
 
         $title_field = Programme::get_title_field();
+        $award_field = Programme::get_award_field();
+        $withdrawn_field = Programme::get_withdrawn_field();
+        $suspended_field = Programme::get_suspended_field();
+        $subject_to_approval_field = Programme::get_subject_to_approval_field();
         $model = $this->model;
-        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id','programme_title_1','award_3'));
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field));
        
         $this->data[$this->views] = $programmes;
 
         $this->data['title_field'] = $title_field;
+        $this->data['withdrawn_field'] = $withdrawn_field;
+        $this->data['suspended_field'] = $suspended_field;
+        $this->data['subject_to_approval_field'] = $subject_to_approval_field;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
