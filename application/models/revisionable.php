@@ -202,6 +202,64 @@ class Revisionable extends Eloquent
        return $options;
      }
 
+
+     private function generate_feed_index($new_programme, $path){
+
+      //if(file_exists($path.'index.json')){
+        //update just json
+      //}else{
+        //
+        $indexData = array();
+        $programmes = ProgrammeRevision::where('year','=',$new_programme->year)->where('status','=','live')->get();
+
+        foreach($programmes as $programme){
+
+          $indexData[] = array(
+            'id' => $programme->programme_id,
+            'name' => $programme->programme_title_1,
+            'subject' => $programme->subject_area_1_8
+          );
+        }
+        file_put_contents($path.'index.json',json_encode($indexData));
+
+      //}
+
+     }
+     private function generate_feed_file($revision){
+       
+       //globalsettings.json
+       //programmesettings.json
+       //index.json
+       //1.json - 360.json
+
+
+       //global, settings, programme
+       $data_type = get_called_class();
+       $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
+
+       if($data_type == 'Programme'){
+
+          file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
+          $this->generate_feed_index($revision,$cache_location);
+
+       }else{
+          file_put_contents($cache_location.$data_type.'.json',json_encode($revision));
+       }
+
+       //ProgrammeSetting::where('year','=',$revision->year)->get();
+
+
+      
+
+       echo $cache_location;
+
+
+ 
+
+     }
+
+
+
      //Needs urgent refactoring
      public function makeRevisionLive($revision){
 
@@ -212,8 +270,6 @@ class Revisionable extends Eloquent
         $this->published_by = Auth::user();
         $this->live = 1;
 
-        //PING AGGRITAGOR AND ACTUALLY UPDATE STUFF!!!
-
         $model = $this->revision_model;
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
 
@@ -221,6 +277,12 @@ class Revisionable extends Eloquent
         $r = $model::find($revision->id);
         $r->status = 'live';
         $r->save();
+
+        //update feed file
+        $this->generate_feed_file($revision);
+
+      
+
      }
 
      //Needs urgent refactoring
