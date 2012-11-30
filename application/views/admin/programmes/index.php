@@ -16,7 +16,18 @@
         <tbody>
         <?php foreach($programmes as $programme) : ?>
           <tr>
-            <td><?php echo $programme->$title_field ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></td>
+            <td>
+                <?php echo $programme->$title_field ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?>
+                <?php if(strcmp($programme->$withdrawn_field, 'true') == 0): ?>
+                  <span class="label label-important"><?php echo __('programmes.withdrawn_field_text')  ?></span>
+                <?php endif; ?>
+                <?php if(strcmp($programme->$suspended_field, 'true') == 0): ?>
+                  <span class="label label-important"><?php echo __('programmes.suspended_field_text')  ?></span>
+                <?php endif; ?>
+                <?php if(strcmp($programme->$subject_to_approval_field, 'true') == 0): ?>
+                  <span class="label label-important"><?php echo __('programmes.subject_to_approval_field_text')  ?></span>
+                <?php endif; ?>
+            </td>
             <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
     
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
