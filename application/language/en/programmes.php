@@ -44,4 +44,9 @@ return array(
 	// Messages
 	'no_programmes' => 'There are no programmes created yet for the :level programme in :year.',
 	'no_change_requests' => 'There are currently no current change requests in the queue.',
+
+	//field text
+	'withdrawn_field_text' => 'Withdrawn',
+	'suspended_field_text' => 'Suspended',
+	'subject_to_approval_field_text' => 'Subject to approval',
 );

@@ -54,6 +54,7 @@ class Refactor_Programmes_Fields_And_Settings {
 	public function addProgrammeFields(){
 		$programme_fields = array();
 		$programme_override_fields = array();
+		$programme_setting_fields = array();
 		
 		//Section: Programme title and key facts
 		$programme_fields[] = array('Programme title', 'text', 'eg Accounting and Finance and Economics', '');
@@ -157,15 +158,12 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or withdrawn. ', ''); // Function: Read only to users, editable by superusers. 
 		$programme_fields[] = array('New programme', 'text', 'Check the box if this is a new programme that has been added since the start of the prospectus cycle', ''); //Type: checkbox. Function: Read only to users, editable by superusers. 
 		$programme_fields[] = array('Prorgamme specification URL', 'text', '', ''); //Type: URL to programme spec. 
-		$programme_fields[] = array('Subject to approval', 'text', 'Check the box if this programme has been approved for advertising subject to approval by PASC. ', ''); //Type: Checkbox. Function: Read only to users, editable by superusers. 
-		$programme_fields[] = array('Programme suspended', 'text', 'Only tick the box if the programme has been suspended.  Please unpublish the programme if necessary or add a holding message.', ''); //Type: Checkbox. Function: Read only to users, editable by superusers.
-		$programme_fields[] = array('Programme withdrawn', 'text', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', ''); //Type: Checkbox. Function: Read only to users, editable by superusers.
+		$programme_fields[] = array('Subject to approval', 'checkbox', 'Check the box if this programme has been approved for advertising subject to approval by PASC. ', ''); //Type: Checkbox. Function: Read only to users, editable by superusers. 
+		$programme_fields[] = array('Programme suspended', 'checkbox', 'Only tick the box if the programme has been suspended.  Please unpublish the programme if necessary or add a holding message.', ''); //Type: Checkbox. Function: Read only to users, editable by superusers.
+		$programme_fields[] = array('Programme withdrawn', 'checkbox', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', ''); //Type: Checkbox. Function: Read only to users, editable by superusers.
 
 
 		//defaults
-		$programme_setting_fields = array();
-		
-		//$programme_setting_fields[] = array('Start', 'text', 'eg 29 September 2014', '');
 		$programme_setting_fields[] = array('Foundation year', 'textarea', 'This text will appear under the foundation year text on the Modules tab.', '');
 		$programme_setting_fields[] = array('Module disclaimer', 'textarea', 'This text will appear under each stage on the Modules tab', '');
 		$programme_setting_fields[] = array('Year in industry', 'textarea', 'This text will appear under the Year in industry text on the Modules tab.', '');
@@ -173,10 +171,6 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_setting_fields[] = array('Careers/employability text', 'textarea', 'This text will appear under the text on the Careers tab', '');
 		$programme_setting_fields[] = array('Entry requirements', 'textarea', 'This text will appear under the Entry requirements tab', '');
 		$programme_setting_fields[] = array('Tuition fees', 'textarea', 'This text will appear under the Fees and Funding tab', '');
-		//$programme_setting_fields[] = array('Funding', 'textarea', 'This text will appear under the Fees and Funding tab', '');
-		//$programme_setting_fields[] = array('How to apply', 'textarea', 'This text will appear under the Apply tab', '');
-		//$programme_setting_fields[] = array('Enquiries', 'textarea', 'This text will appear under the Further informtion tab', '');
-		//$programme_setting_fields[] = array('KIS explanatory text', 'textarea', 'This text will appear under the Further informtion tab', '');
 		$programme_setting_fields[] = array('General disclaimer', 'textarea', 'This text will appear at the footer of each page', '');
 		$programme_setting_fields[] = array('Institution name', 'textarea', 'University of Kent', '');
 		$programme_setting_fields[] = array('UKPRN', 'text', '', '');
