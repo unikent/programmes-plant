@@ -8,7 +8,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 	{
 		// Setup something we can edit.
 		$input = array(
-			'id' => 1,
 			'year' => '2012',
 			'live' => '1',
 			'created_by' => 'aa',
