@@ -164,12 +164,14 @@ class Revisionable extends Eloquent
       $options = array();
       $model = get_called_class();
 
-      if (!$year) {
-        $data = $model::get();
-      } else {
-        $data = $model::where('year','=',$year)->get();
-      }
       $title_field = self::get_title_field();
+      
+      if (!$year) {
+        $data = $model::get(array('id',$title_field));
+      } else {
+        $data = $model::where('year','=',$year)->get(array('id',$title_field));
+      }
+      
       foreach ($data as $record) {$options[$record->id] = $record->$title_field;}
 
        return $options;

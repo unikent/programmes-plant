@@ -23,7 +23,7 @@ class ProgrammeField extends Field
     
     public static function programme_fields_by_section()
     {
-        $sections = ProgrammeSection::order_by('order','asc')->get();
+        $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
 
         $sections_array = array();
 
@@ -69,5 +69,14 @@ class ProgrammeField extends Field
             }
         }
         return $programme_obj;
+    }
+
+    /**
+     * Extract input into model.
+     */
+    public function get_input()
+    {
+        parent::get_input();
+        $this->programme_field_type =  Input::get('programme_field_type');
     }
 }
