@@ -115,7 +115,7 @@ class TestLeaflet extends ModelTestCase
 
 		foreach($input as $key => $value)
 		{
-			$this->assertEquals($value, $return[0][$key], "Inputted $key => $value came back wrongly.");
+			$this->assertEquals($value, $return[0]->$key, "Inputted $key => $value came back wrongly.");
 		}
 	}
 
