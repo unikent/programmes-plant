@@ -8,7 +8,10 @@ class Admin_Controller extends Base_Controller {
     {  	
     	//Check auth for any controllers using Admin_controller
     	//this should include everything other than the auth page itself
-    	$this->filter('before', 'auth');
+    	if (Request::env() != 'test')
+    	{
+    	    $this->filter('before', 'auth');
+    	}
 
         // Default variable set for CRUD usage.
     	$this->data['create'] = false;

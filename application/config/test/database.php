@@ -1,6 +1,8 @@
 <?php
 
 return array(
+	'profile' => true,
+	'fetch' => PDO::FETCH_CLASS,
 	'default' => 'sqlite',
 
 	'connections' => array(

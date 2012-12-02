@@ -33,7 +33,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 
 	public function testRemainOnTheSamePageWhenSavingProgrammes()
 	{
-		$this->populate();
 
 		$edit_page = $this->get('programmes@edit', array('2012', 'ug', '1'));
 
@@ -51,7 +50,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 		$next_page_after_edit_page_post = $this->post('programmes@edit', $input, array('2012', 'ug'));
 
 		$this->assertEquals('302', $next_page_after_edit_page_post->status(), 'Page was not redirected.');
-		$this->assertEquals('/programmes/edit/1', $this->get_location($next_page_after_edit_page_post), 'Page was not the same page.');
+		$this->assertEquals('/2012/ug/programmes/edit/1', $this->get_location($next_page_after_edit_page_post), 'Page was not the same page.');
 	}
 
 }
