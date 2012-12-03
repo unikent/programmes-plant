@@ -27,7 +27,7 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 ## Testing
 
-Unit tests are written in PHPUnit. To run the tests run `php artisan tests`. The tests use an in memory SQLite database to make them significantly faster.
+Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.
 
 ## Licensing
 
