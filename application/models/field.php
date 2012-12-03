@@ -52,8 +52,6 @@ class Field extends Eloquent
         $this->placeholder =  Input::get('placeholder');
 
         $this->field_initval =  Input::get('initval');
-       
-        $this->programme_field_type =  Input::get('programme_field_type');
         
         $this->prefill =  (Input::get('prefill')==1) ? 1 : 0;
 	}

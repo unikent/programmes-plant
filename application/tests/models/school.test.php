@@ -10,8 +10,8 @@ class TestSchool extends ModelTestCase
 	{
 		Tests\Helper::migrate();
 
-		$campus = new Faculty;
-		$campus->save();
+		$faculty = new Faculty;
+		$faculty->save();
 	}
 
 	/**
@@ -70,7 +70,7 @@ class TestSchool extends ModelTestCase
 
 		foreach($input as $key => $value)
 		{
-			$this->assertEquals($value, $return[0][$key], "Inputted $key => $value came back wrongly.");
+			$this->assertEquals($value, $return[0]->$key, "Inputted $key => $value came back wrongly.");
 		}
 	}
 
@@ -131,7 +131,7 @@ class TestSchool extends ModelTestCase
 
 	public function testFailsToValidateWhenFacultyDoesNotExist()
 	{
-		Request::foundation()->request->add(array('name' => 'Blah', 'faculty' => 2));
+		Request::foundation()->request->add(array('name' => 'Blah', 'faculty' => 200));
 
 		$this->assertFalse(School::is_valid());
 	}

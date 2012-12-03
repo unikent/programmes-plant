@@ -13,6 +13,8 @@ class SimpleData extends Eloquent
 	 */
 	public static $rules = array();
 
+	public static $list_cache = array();
+
 	/**
 	 * Validates input for Field.
 	 * 
@@ -41,7 +43,10 @@ class SimpleData extends Eloquent
 	 */
 	public static function all_as_list()
 	{
-		$data = self::all();
+
+		if(isset(static::$list_cache[get_called_class()])) return static::$list_cache[get_called_class()];
+
+		$data = self::get(array('id','name'));
 
 		$options = array();
 
@@ -49,6 +54,8 @@ class SimpleData extends Eloquent
 		{
 			$options[$item->id] = $item->name;
 		}
+
+		static::$list_cache[get_called_class()] = $options;
 
 		return $options;
     }
