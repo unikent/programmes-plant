@@ -60,7 +60,7 @@ class SimpleData extends Eloquent
 			$options[$item->id] = $item->name;
 		}
 
-		// Save the items to our in memory cache.
+		// Save the obtained items to our in memory cache, for later faster use.
 		static::$list_cache[get_called_class()] = $options;
 
 		return $options;
