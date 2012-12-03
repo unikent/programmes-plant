@@ -1,21 +1,15 @@
 <?php echo View::make('admin.inc.meta')->render();?>
-    <title>Login &lt; Courses Dashboard</title>
+    <title>Programmes Plant</title>
   </head>
   <body>
     <div class="container loginwindow">
-
-          <h1>Login To Your Dashboard</h1>
-
-          
-          <?php 
-
+          <h1>Login To The Programmes Plant</h1>
+          <?php
           if(Session::has('flash')){
              echo '<div class="alert">'.Session::get('flash').'</div>';
 
           }
           ?>
-
-
           <?php echo Form::open('login', 'POST',array('class'=>'form-inline'));?>
           <?php echo Form::token()?>
             <div class="control-group">
@@ -32,8 +26,6 @@
             </div>
             <input type="submit" class="btn btn-primary" value="Login" />
           <?php echo Form::close()?>
-    </div> <!-- /container -->
-
-    
+    </div> <!-- /container --> 
   </body>
 </html>
