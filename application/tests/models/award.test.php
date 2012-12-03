@@ -27,18 +27,25 @@ class TestAward extends ModelTestCase
 		parent::tearDown();
 	}
 
+	/**
+	 * Populates the database with inputted array.
+	 * 
+	 * @param array $input An array of items to add the database.
+	 * @return void
+	 */
+	public function populate($input)
+	{
+		foreach ($input as $position => $name)
+		{
+			$award = Award::create(array('id' => $position, 'name' => $name))->save();
+		}
+	}
+
 	public function testall_as_list()
 	{
 		// Add in some elements to list.
 		$awards = array('BA (Hons)', 'MA', 'PhD');
-
-		foreach ($awards as $position => $name)
-		{
-			$award = new Award;
-			$award->id = $position;
-			$award->name = $name;
-			$award->save();
-		}
+		$this->populate($awards);
 
 		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database.");
 
@@ -52,5 +59,5 @@ class TestAward extends ModelTestCase
 
 		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database when we removed an award.");
 	}
-
+	
 }
