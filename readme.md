@@ -1,6 +1,6 @@
 # Programmes Plant
 
-Programmes Factory 2.0 is part of the XCRI project at the University of Kent, and is a replacement for the existing Programmes Factory.
+The Programmes Plant is part of the [XCRI-CAP project](http://www.kent.ac.uk/is/projects/xcri/) at the University of Kent, and is a replacement for the existing Programmes Factory.
 
 It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
