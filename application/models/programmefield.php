@@ -64,6 +64,10 @@ class ProgrammeField extends Field
             if ($programme_field->section > 0)
             {
                 if (isset($input_fields[$colname])) {
+                    if (is_array($input_fields[$colname]))
+                    {
+                        $input_fields[$colname] = implode(',', $input_fields[$colname]);
+                    }
                     $programme_obj->$colname = $input_fields[$colname];
                 }
             }
