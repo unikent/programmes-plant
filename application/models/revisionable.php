@@ -33,14 +33,11 @@ class Revisionable extends Eloquent
           $query = DB::table($this->revision_table);
 
           // Establish the next ID in the revisions table.
-          $last = $query->lists('id');
-          $last = end($last);
           $revision_attributes = $this->attributes;
-          $revision_attributes['id'] = $last + 1;
-
           $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
           // We don't have published by in revisions
+          unset($revision_attributes['id']);
           unset($revision_attributes['published_by']);
           unset($revision_attributes['live']);
 
@@ -93,14 +90,11 @@ class Revisionable extends Eloquent
         $query = DB::table($this->revision_table);
 
         // Establish the next ID in the revisions table.
-        $last = $query->lists('id');
-        $last = end($last);
         $revision_attributes = $this->attributes;
-        $revision_attributes['id'] = $last + 1;
-
         $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
         // We don't have published by in revisions
+        unset($revision_attributes['id']);
           unset($revision_attributes['published_by']);
           unset($revision_attributes['live']);
 

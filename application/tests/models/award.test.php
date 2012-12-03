@@ -46,7 +46,8 @@ class TestAward extends ModelTestCase
 		$a = Award::first();
 		$a->delete();
 
-		// Remove first award from the array
+		// Remove first award from the array and clear the awards list cache
+		Award::$list_cache = array();
 		unset($awards[0]);
 
 		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database when we removed an award.");
