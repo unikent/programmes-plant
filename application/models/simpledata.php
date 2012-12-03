@@ -14,6 +14,13 @@ class SimpleData extends Eloquent
 	public static $rules = array();
 
 	/**
+	 * A variable caching the output of all_as_list across all SimpleData's children for fast response without hitting the database.
+	 * 
+	 * The format is 'child' => array(id => field), e.g. 'schools' => array('1' => 'Humanities', '2' => 'Arts')
+	 */
+	public static $list_cache = array();
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -41,7 +48,10 @@ class SimpleData extends Eloquent
 	 */
 	public static function all_as_list()
 	{
-		$data = self::all();
+		// If we have cached our list then return it from cache.
+		if(isset(static::$list_cache[get_called_class()])) return static::$list_cache[get_called_class()];
+
+		$data = self::get(array('id','name'));
 
 		$options = array();
 
@@ -49,6 +59,9 @@ class SimpleData extends Eloquent
 		{
 			$options[$item->id] = $item->name;
 		}
+
+		// Save the obtained items to our in memory cache, for later faster use.
+		static::$list_cache[get_called_class()] = $options;
 
 		return $options;
     }

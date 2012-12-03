@@ -60,12 +60,6 @@ $(function(){
 
 //onLoad setup JS listeners
 $(document).ready(function (){
-
-  //Quick/dirty toggle collapse
-  $('.toggleCollapse').click(function(a){
-    $(this).parent().parent().find('ul').slideToggle();
-    $(this).find('i').toggleClass('icon-chevron-down');
-  });
    
    /**
    *
@@ -265,9 +259,7 @@ $(document).ready(function (){
         },
         "aoColumns": [ 
           { "bSortable": false },
-          { "bSortable": false },
-          { "bSortable": false },
-          { "bSortable": false },
+          { "bSortable": false }
           ]
     });
     $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
