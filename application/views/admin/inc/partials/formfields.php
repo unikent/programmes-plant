@@ -39,8 +39,7 @@ foreach($sections as $section_name => $section)
       else if($type=='table_multiselect')
       {
         $model = $field->field_meta;
-        $current_value = explode(',',$current_value);
-        $form_element = Form::select($column_name.'[]', $model::all_as_list($year), $current_value, array('multiple' => 'multiple', 'class' => 'multiselect', 'style' => 'height:200px;width:420px;'));
+        $form_element = ExtForm::multiselect($column_name.'[]', $model::all_as_list($year), explode(',',$current_value), array('style'=>'height:200px;width:420px;'));
       }
       else if ($type == 'help')
       {
