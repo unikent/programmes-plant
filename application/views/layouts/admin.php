@@ -1,6 +1,6 @@
 <?php echo View::make('admin.inc.meta')->render()?>
     <title>
-      Courses Dashboard
+      Programmes Plant
     </title>
   </head>
   <body>
