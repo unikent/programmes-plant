@@ -102,7 +102,6 @@ $(document).ready(function (){
        'order': order,
        'section': sorter.parent().attr('id')
     });
-    console.log(sorter.parent().attr('id'));
     }
     //Handle item moved to new section
     var onMoved = function(sorter){
@@ -135,9 +134,7 @@ $(document).ready(function (){
     });
 
     //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
-    $(".popup_toggler").click(function(){
-      console.log($($(this).attr('href')).find('.yes_action'));
-      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
+    $(".popup_toggler").click(function(){      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
       $($(this).attr('href')).modal('show');
     });
     
