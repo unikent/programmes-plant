@@ -6,9 +6,9 @@ It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](htt
 
 ## Build Status
 
-[![Build Status - master](https://travis-ci.org/unikent/programmes-plant.png?branch=master)](https://travis-ci.org/[unikent/programmes-plant) `master` 
+[![Build Status - master](https://travis-ci.org/unikent/programmes-plant.png?branch=master)](https://travis-ci.org/unikent/programmes-plant) `master` 
 
-[![Build Status - develop](https://travis-ci.org/unikent/programmes-plant.png?branch=develop)](https://travis-ci.org/[unikent/programmes-plant) `develop`
+[![Build Status - develop](https://travis-ci.org/unikent/programmes-plant.png?branch=develop)](https://travis-ci.org/unikent/programmes-plant) `develop`
 
 ## Development Setup
 
