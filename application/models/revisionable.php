@@ -177,7 +177,7 @@ class Revisionable extends Eloquent
       if (! $year) 
       {
         $data = $model::get(array('id',$title_field));
-      } 
+      }
       else 
       {
         $data = $model::where('year','=',$year)->get(array('id',$title_field));
