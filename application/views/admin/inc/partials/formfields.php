@@ -33,13 +33,13 @@ foreach($sections as $section_name => $section)
       else if($type=='table_select')
       {
         $model = $field->field_meta;
-        $form_element = Form::select($column_name, $model::all_as_list(), $current_value);
+        $form_element = Form::select($column_name, $model::all_as_list($year), $current_value);
 
       }
       else if($type=='table_multiselect')
       {
         $model = $field->field_meta;
-        $form_element = Form::select($column_name, $model::all_as_list(), $current_value, array('multiple' => 'multiple', 'class' => 'multiselect', 'style' => 'height:200px;width:420px;'));
+        $form_element = ExtForm::multiselect($column_name.'[]', $model::all_as_list($year), explode(',',$current_value), array('style'=>'height:200px;width:420px;'));
       }
       else if ($type == 'help')
       {
@@ -58,7 +58,7 @@ foreach($sections as $section_name => $section)
                 <?php echo $form_element?>
                 <?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
                   <div class="info">
-                    <span class="badge badge-info" rel="popover"><i class="icon-flag"></i>
+                    <span class="badge badge-info" rel="popover"><i class="icon-flag icon-white"></i>
                       <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
                         <?php echo __('fields.form.programme_overwrite_text_title')?>
                       <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
