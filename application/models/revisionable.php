@@ -159,6 +159,14 @@ class Revisionable extends Eloquent
           }
      }
 
+     /**
+      * Gives a flat array of id => item_title for all items.
+      * 
+      * Used generally to create select dropdowns.
+      * 
+      * @param string $year The year from which to get the array.
+      * @return array $options List of items in the format id => item_title.
+      */
      public static function all_as_list($year = false)
      {
       $options = array();
@@ -166,13 +174,19 @@ class Revisionable extends Eloquent
 
       $title_field = self::get_title_field();
       
-      if (!$year) {
+      if (! $year) 
+      {
         $data = $model::get(array('id',$title_field));
-      } else {
+      } 
+      else 
+      {
         $data = $model::where('year','=',$year)->get(array('id',$title_field));
       }
       
-      foreach ($data as $record) {$options[$record->id] = $record->$title_field;}
+      foreach ($data as $record)
+      {
+        $options[$record->id] = $record->$title_field;
+      }
 
        return $options;
      }
