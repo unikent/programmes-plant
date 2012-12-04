@@ -5,6 +5,11 @@ class Revisionable extends Eloquent
 
      public $revision = false;
 
+     /**
+      * This is an in memory cache used by the all_as_list method for additional speed.
+      */
+     public static $list_cache = false;
+
      public function user()
      {
           return $this->belongs_to('User','user_id');
@@ -164,31 +169,41 @@ class Revisionable extends Eloquent
       * 
       * Used generally to create select dropdowns.
       * 
+      * This has two levels of caching. First a database lookup cache, then an in memory cache.
+      * 
+      * This is done for application performance.
+      * 
       * @param string $year The year from which to get the array.
       * @return array $options List of items in the format id => item_title.
       */
      public static function all_as_list($year = false)
      {
-      $options = array();
-      $model = get_called_class();
+        $model = get_called_class();
 
-      $title_field = self::get_title_field();
-      
-      if (! $year)
-      {
-        $data = $model::get(array('id',$title_field));
-      }
-      else 
-      {
-        $data = $model::where('year','=',$year)->get(array('id',$title_field));
-      }
-      
-      foreach ($data as $record)
-      {
-        $options[$record->id] = $record->$title_field;
-      }
+        if (isset(static::$list_cache[$model])) return static::$list_cache[$model];
 
-       return $options;
+        $title_field = self::get_title_field();
+        
+        return static::$list_cache[$model] = Cache::remember("$model-$year-options-list", function() use ($year, $model, $title_field)
+        {
+          $options = array();
+
+            if (! $year)
+            {
+              $data = $model::get(array('id', $title_field));
+            }
+            else 
+            {
+              $data = $model::where('year','=', $year)->get(array('id',$title_field));
+            }
+            
+            foreach ($data as $record)
+            {
+              $options[$record->id] = $record->$title_field;
+            }
+
+            return $options;
+        }, 'forever');
      }
 
      public static function getAttributesList($year = false)
