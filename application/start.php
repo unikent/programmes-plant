@@ -60,6 +60,7 @@ Laravel\Autoloader::$aliases = $aliases;
 */
 
 Autoloader::map(array(
+	'Revisionable_Controller' => path('app').'controllers/revisionable.php',
 	'Fields_Controller' => path('app').'controllers/fields.php',
 	'Admin_Controller' => path('app').'controllers/admin.php',
 	'Simple_Admin_Controller' => path('app').'controllers/simpleadmin.php',

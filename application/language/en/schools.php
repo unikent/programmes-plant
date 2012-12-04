@@ -5,16 +5,16 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit School',
-	'delete' => 'Remove School',
-	'create' => 'Create School',
-	'back' => 'Go Back',
-	'save' => 'Save School',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new school',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This page lists all University of Kent academic schools.',
 	'no_items' => 'No schools yet',
 
 	// Modal On Deletion Attempt

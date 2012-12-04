@@ -1,10 +1,16 @@
 <?php
-class Campus extends Eloquent {
-
-	public static function getAsList(){
-       $data = Campus::get(); $options = array();
-       foreach ($data as $record) $options[$record->id] = $record->name;
-
-       return $options;
-     }
+class Campus extends SimpleData
+{
+	public static $rules = array(
+    	'name' => 'required|unique:campuses|max:255',
+    	'identifier' => 'numeric',
+    	'address_1' => 'required',
+    	'address_2' => 'required',
+    	'address_3' => 'required',
+    	'email' => 'email',
+    	'phone' => 'required|match:/^([0-9 ]+)$/',
+    	'postcode' => 'required',
+    	'url' => 'url'
+    );
+    
 }

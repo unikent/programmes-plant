@@ -1,6 +1,6 @@
 <?php
 
-class GlobalSettings_Controller extends Admin_Controller
+class GlobalSettings_Controller extends Revisionable_Controller
 {
     public $restful = true;
     public $views = 'globalsettings';
@@ -35,7 +35,7 @@ class GlobalSettings_Controller extends Admin_Controller
         
         $this->data['create'] = true;
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -61,7 +61,7 @@ class GlobalSettings_Controller extends Admin_Controller
 
         $this->data['fields'] = $this->get_fields();
 
-        return View::make('admin.'.$this->views.'.form',$this->data);
+        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
     /**
@@ -129,7 +129,7 @@ class GlobalSettings_Controller extends Admin_Controller
     {
         $model = 'GlobalSettingField';
 
-        return  $model::where('active','=','1')->order_by('id','asc')->get();
+        return  $model::where('active','=','1')->order_by('field_name','asc')->get();
     }
 
     /**

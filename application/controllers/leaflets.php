@@ -9,63 +9,48 @@ class Leaflets_Controller extends Simple_Admin_Controller
 
     public function post_create()
     {
-        $rules = array(
-            'name'  => 'required|unique:leaflets|max:255',
-            'campus'  => 'required|exists:campuses,id',
-            'tracking_code'  => 'required|url'
-        );
-        
-        $validation = Validator::make(Input::all(), $rules);
-        
-        if ($validation->fails())
+        $model = $this->model;
+
+        if (! $model::is_valid())
         {
-            Messages::add('error',$validation->errors->all());
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
-        }
-        else
-        {
+            Messages::add('error', $model::$validation->errors->all());
+
             $leaflet = new Leaflet;
             $leaflet->name = Input::get('name');
             $leaflet->campuses_id = Input::get('campus');
             $leaflet->tracking_code = Input::get('tracking_code');
 
-            $leaflet->save();
- 
-            Messages::add('success','New Leaflet Added');
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+            return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views . '/create')->with_input();
         }
+        
+        $leaflet = new Leaflet;
+        $leaflet->input();
+        $leaflet->save();
+
+        Messages::add('success', 'New Leaflet Added');
+        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
     }
 
     public function post_edit()
     {
+        $model = $this->model;
         
         $rules = array(
-            'id'  => 'required|exists:leaflets',
-            'name'  => 'required|max:255|unique:leaflets,name,'.Input::get('id'),
-            'campus'  => 'required|exists:campuses,id',
-            'tracking_code'  => 'required|url'
+            'id'  => 'required|exists:leaflets'
         );
         
-        $validation = Validator::make(Input::all(), $rules);
-
-        if ($validation->fails())
+        if (! $model::is_valid($rules))
         {
-            Messages::add('error',$validation->errors->all());
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
+            Messages::add('error', $model::$validation->errors->all());
+            return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views . '/edit/' . Input::get('id'));
         }
-        else
-        {
-            $leaflet = Leaflet::find(Input::get('id'));
-   
-            $leaflet->name = Input::get('name');
-            $leaflet->campuses_id = Input::get('campus');
-            $leaflet->tracking_code = Input::get('tracking_code');
 
-            $leaflet->save();
+        $leaflet = Leaflet::find(Input::get('id'));
+        $leaflet->input();
+        $leaflet->save();
 
-            Messages::add('success','Leaflet updated');
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
-        }
+        Messages::add('success', 'Leaflet updated');
+        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
     }
 
 }

@@ -9,27 +9,20 @@ class Schools_Controller extends Simple_Admin_Controller
 
     public function post_create()
     {
-        $rules = array(
-            'name'  => 'required|unique:schools|max:255',
-            'faculty'  => 'required|exists:faculties,id'
-        );
-        
-        $validation = Validator::make(Input::all(), $rules);
-        
-        if ($validation->fails())
-        {
-            Messages::add('error',$validation->errors->all());
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
-        }else{
-            $school = new School;
-            $school->name = Input::get('name');
-            $school->faculties_id = Input::get('faculty');
+        $model = $this->model;
 
-            $school->save();
- 
-            Messages::add('success','New School Added');
-            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+        if (! $model::is_valid())
+        {
+            Messages::add('error', $validation->errors->all());
+            return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
         }
+        
+        $school = new School;
+        $school->input();
+        $school->save();
+ 
+        Messages::add('success','New School Added');
+        return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
     }
 
     public function post_edit()
