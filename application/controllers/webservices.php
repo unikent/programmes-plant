@@ -9,7 +9,7 @@ class Webservices_Controller extends Base_Controller {
     {
          $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
 
-         echo file_get_contents($path.'index.json');
+         echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
          die();
     }
 

@@ -80,7 +80,7 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		//Section: Overview
 		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters.  The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '');//140 character limit
-		$programme_fields[] = array('Programme overview text', 'text', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '');//max 300 words... shows users when they have reached word limit but does allow over-matter.
+		$programme_fields[] = array('Programme overview text', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '');//max 300 words... shows users when they have reached word limit but does allow over-matter.
 		
 		//Section: Course Structure (modules tab)
 			//This modules by stage information below is read only. Changes to modules cannot be made here but must be made to the v_pos_modules table in SDS. Please ask your SDS administrator to make any changes and they will be updated here on a X basis. 
