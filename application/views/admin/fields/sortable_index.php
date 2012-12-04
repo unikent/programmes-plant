@@ -26,9 +26,7 @@
                  <?php if($field->section == $section->id):?>
                    <?php echo View::make('admin.fields.field-row')->with(array('field'=>$field, 'field_type'=>$field_type, 'type'=>$type, 'from' => $from))->render();?>            
                  <?php endif;?>
-                 
                <?php endforeach; ?>
-               <li>&nbsp;</li>
             </ul>
         </div>
      <?php endforeach ?>

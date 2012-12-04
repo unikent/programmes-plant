@@ -1,6 +1,6 @@
 # Programmes Plant
 
-Programmes Factory 2.0 is part of the XCRI project at the University of Kent, and is a replacement for the existing Programmes Factory.
+The Programmes Plant is part of the [XCRI-CAP project](http://www.kent.ac.uk/is/projects/xcri/) at the University of Kent, and is a replacement for the existing Programmes Factory.
 
 It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
@@ -8,7 +8,7 @@ It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](htt
 
 The following are instructions on running the Programmes Plant on a local machine for development.
 
-1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init` then `git submodule update`, unless you have done a recursive clone. Note that this app uses the [unikent Laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the Laravel core. This fork is generally kept up to date with the Laravel master branch, so including it as a submodule should give you the latest version of Laravel.
+1. Clone this repository. Obtain Laravel as a submodule by running `git submodule init` then `git submodule update`, unless you have done a recursive clone. Note that this app uses the [University of Kent Laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the Laravel core. This fork is generally kept up to date with the Laravel master branch, so including it as a submodule should give you the latest version of Laravel.
 
 2. You need to setup the application by editing all the sample files in `config/` and moving them to `config/local/` filling in as appropriate. To move the files in one command, run:
 ```shell
@@ -27,7 +27,7 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 ## Testing
 
-Unit tests are written in PHPUnit. To run the tests run `php artisan tests`. The tests use an in memory SQLite database to make them significantly faster.
+Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.
 
 ## Licensing
 
