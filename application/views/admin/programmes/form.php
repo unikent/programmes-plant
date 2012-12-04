@@ -6,7 +6,7 @@
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 
-<?php if(!$create): ?>
+<?php if (! $create): ?>
   <?php echo  Form::hidden('programme_id', $programme->id); ?>
 <?php endif; ?>
 
