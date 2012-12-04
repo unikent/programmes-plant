@@ -9,8 +9,6 @@ class ProgrammeSections_Controller extends Admin_Controller
 
     public function get_index($type)
     {
-    	//$this->data[$this->views] = ProgrammeSection::order_by('order','asc')->get();
-       // return View::make('admin.'.$this->views.'.index',$this->data);
        return Redirect::to('/'.$type.'/fields/programmes');
     }
 
