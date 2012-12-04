@@ -1,5 +1,5 @@
 <?php echo View::make('admin.inc.meta')->render()?>
-    <title>Courses Dashboard</title>
+    <title>Programmes Plant</title>
   </head>
   <body>
     <?php echo View::make('admin.inc.header')->render()?>
@@ -66,7 +66,7 @@
         <?php echo Form::close()?>
       </div>
     </div>
-    <?php echo View::make('admin.inc.scripts')->render()?>
+    
     <script>
       $('#delete_user').modal({
         show:false

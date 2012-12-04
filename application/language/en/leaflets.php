@@ -5,16 +5,16 @@ return array(
 	 * Buttons
 	 */
 	'actions_column' => 'Actions',
-	'edit' => 'Edit Leaflet',
-	'delete' => 'Remove Leaflet',
-	'create' => 'Create Leaflet',
-	'back' => 'Go Back',
-	'save' => 'Save Leaflet',
+	'edit' => 'Edit',
+	'delete' => 'Remove',
+	'create' => 'Make a new leaflet',
+	'back' => 'Cancel',
+	'save' => 'Save',
 
 	/**
 	 * Index page.
 	 */
-	'introduction' => 'Use this form ',
+	'introduction' => 'This lists all programme leaflets.',
 	'no_items' => 'No leaflets yet',
 
 	// Modal On Deletion Attempt

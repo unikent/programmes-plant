@@ -3,10 +3,19 @@
 /*
  * Anything admin facing requires authorisation.
  */
-Route::group(array('before' => 'auth'), function(){
+
+if (Request::env() == 'test')
+{
+	$before = '';
+}
+else {
+	$before = 'auth';
+}
+
+Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
-	       return Redirect::to(date('Y').'/ug');   
+	       return Redirect::to(date('Y').'/ug/');   
 	});
 
 	// Index
@@ -34,17 +43,18 @@ Route::group(array('before' => 'auth'), function(){
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
 
 	// Access fields systems
-	Route::any('fields/programmes', 'programmefields@index');
-	Route::any('fields/programmes/(:any?)', 'programmefields@(:1)');
-	Route::any('fields/programmes/(:any?)/(:num?)', 'programmefields@(:1)');
+	Route::any('(ug|pg)/fields/programmes', 'programmefields@index');
+	Route::post('(ug|pg)/fields/programmes/reorder', 'programmefields@reorder');
+	Route::any('(ug|pg)/fields/programmes/(:any?)', 'programmefields@(:2)');
+	Route::any('(ug|pg)/fields/programmes/(:any?)/(:num?)', 'programmefields@(:2)');
 
-	Route::any('fields/globalsettings', 'globalsettingfields@index');
-	Route::any('fields/globalsettings/(:any?)', 'globalsettingfields@(:1)');
-	Route::any('fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:1)');
+	Route::any('(ug|pg)/fields/globalsettings', 'globalsettingfields@index');
+	Route::any('(ug|pg)/fields/globalsettings/(:any?)', 'globalsettingfields@(:2)');
+	Route::any('(ug|pg)/fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:2)');
 
-	Route::any('fields/programmesettings', 'programmesettingfields@index');
-	Route::any('fields/programmesettings/(:any?)', 'programmesettingfields@(:1)');
-	Route::any('fields/programmesettings/(:any?)/(:num?)', 'programmesettingfields@(:1)');
+	Route::any('(ug|pg)/fields/programmesettings', 'programmesettingfields@index');
+	Route::any('(ug|pg)/fields/programmesettings/(:any?)', 'programmesettingfields@(:2)');
+	Route::any('(ug|pg)/fields/programmesettings/(:any?)/(:num?)', 'programmesettingfields@(:2)');
 
 	// Customised routing for campuses
 	Route::any('([0-9]{4})/(ug|pg)/campuses', 'campuses@index');
@@ -61,10 +71,23 @@ Route::group(array('before' => 'auth'), function(){
 	// Customised routing for awards
 	Route::any('([0-9]{4})/(ug|pg)/awards', 'awards@index');
 	Route::any('([0-9]{4})/(ug|pg)/awards/(:any?)/(:num?)', 'awards@(:3)');
+	
+	// Customised routing for sections
+	Route::any('(ug|pg)/sections', 'programmesections@index');
+	Route::post('(ug|pg)/sections/reorder', 'programmesections@reorder');
+	Route::any('(ug|pg)/sections/(:any?)/(:num?)', 'programmesections@(:2)');
 
 	// Customised routing for leaflets
 	Route::any('([0-9]{4})/(ug|pg)/leaflets', 'leaflets@index');
 	Route::any('([0-9]{4})/(ug|pg)/leaflets/(:any?)/(:num?)', 'leaflets@(:3)');
+
+	// Customised routing for subjects
+	Route::any('([0-9]{4})/(ug|pg)/subjects', 'subjects@index');
+	Route::any('([0-9]{4})/(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:3)');
+
+	// Customised routing for subject categories
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
+	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 });
 
 // Login/out

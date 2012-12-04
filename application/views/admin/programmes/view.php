@@ -1,5 +1,5 @@
 <?php echo View::make('admin.inc.meta')->render()?>
-    <title>Courses Dashboard</title>
+    <title>Programmes Plant</title>
   </head>
   <body>
     <?php echo View::make('admin.inc.header')->render()?>
@@ -21,6 +21,6 @@
 
     </div> <!-- /container -->
 
-    <?php echo View::make('admin.inc.scripts')->render()?>
+    
   </body>
 </html>
