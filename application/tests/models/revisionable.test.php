@@ -186,6 +186,19 @@ class TestRevisionable extends ModelTestCase
 		$this->assertEquals($result, Programme::all_as_list());
 	}
 
+	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
+		// Populate a couple of years.
+		$first = array('year' => '2012', 'programme_title_1' => 'Thing 2012', 'id' => 1);
+		$this->populate('Programme', $first);
+
+		$second = array('year' => '2013', 'programme_title_1' => 'Thing 2013', 'id' => 2);
+		$this->populate('Programme', $second);
+
+		$this->assertCount(2, Programme::all(), "We don't get two back when we populate two.");
+
+		$this->assertCount(2, Programme::all_as_list());
+	}
+
 	public function testall_as_listResultsAreReturnedInTheCorrectYear() 
 	{
 		// Populate a couple of years.
