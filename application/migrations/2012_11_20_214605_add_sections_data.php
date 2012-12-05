@@ -10,7 +10,7 @@ class Add_Sections_Data {
 	public function up()
 	{
 		// Add award demo data
-		foreach (array('Overview', 'Teaching', 'Careers', 'Entry', 'Further info') as $count => $section)
+		foreach (array('Programme title and key facts', 'Overview', 'Course Structure', 'Teaching and Assessment', 'Careers', 'Entry requirements ', 'Fees and Funding', 'How to apply', 'Further information', 'KIS details', 'Page administration') as $count => $section)
 		{
 			$tmp = new ProgrammeSection;
 			$tmp->name = $section;
