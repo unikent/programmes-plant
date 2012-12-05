@@ -38,8 +38,7 @@ class TestRevisionable extends ModelTestCase
 			$input = $this->input;
 		}
 
-		$object = $model::create($input);
-		$object->save();
+		$object = $model::create($input)->save();
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
