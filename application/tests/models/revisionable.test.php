@@ -206,10 +206,10 @@ class TestRevisionable extends ModelTestCase
 		$this->populate('Programme', $second);
 
 		// Expect only our 2013 data back.
-		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013));
+		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
 
 		// Expect only our 2012 databack.
-		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012));
+		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
 	}
 
 }
