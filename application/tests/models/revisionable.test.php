@@ -1,6 +1,6 @@
 <?php
 
-class SomethingElse extends Revisionable {}
+class RevisionableThing extends Revisionable {}
 
 class TestRevisionable extends ModelTestCase
 {
