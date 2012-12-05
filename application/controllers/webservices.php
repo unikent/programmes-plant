@@ -1,24 +1,24 @@
 <?php
 
-class Webservices_Controller extends Base_Controller {
+class Webservices_Controller extends Base_Controller 
+{
 
     public $restful = true;
 
-
-    public function get_index($year,$lvl)
-    {
-         $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
-
-         echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
-         die();
-    }
-
-    public function get_programme($year,$lvl,$programme_id)
+    public function get_index($year, $lvl)
     {
         $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
 
-        if(file_exists($path.$programme_id.'.json')){
+        echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
+        die();
+    }
 
+    public function get_programme($year, $lvl, $programme_id)
+    {
+        $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
+
+        if(file_exists($path.$programme_id.'.json'))
+        {
             $globals = json_decode(file_get_contents($path.'GlobalSetting.json'));
             $settings = json_decode(file_get_contents($path.'ProgrammeSetting.json'));
             $programme = json_decode(file_get_contents($path.$programme_id.'.json'));
@@ -52,8 +52,9 @@ class Webservices_Controller extends Base_Controller {
             echo json_encode($final);
             die();//return ended up with profiler still attached
 
-        }else{
-
+        }
+        else
+        {
             echo "{'error':'none found'}";
         }
         
