@@ -185,30 +185,41 @@ class TestRevisionable extends ModelTestCase
 		$this->assertEquals($result, Programme::all_as_list());
 	}
 
-	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
-		// Populate a couple of years.
+	public function populate_two_years()
+	{
 		$first = array('year' => '2012', 'programme_title_1' => 'Thing 2012', 'id' => 1);
 		$this->populate('Programme', $first);
 
 		$second = array('year' => '2013', 'programme_title_1' => 'Thing 2013', 'id' => 2);
 		$this->populate('Programme', $second);
-
-		$this->assertEquals(count(Programme::all()), count(Programme::all_as_list()));
 	}
 
-	public function testall_as_listResultsAreReturnedInTheCorrectYear() 
-	{
-		// Populate a couple of years.
-		$first = array('year' => '2012', 'programme_title_1' => 'Thing 2012', 'id' => 1);
-		$this->populate('Programme', $first);
+	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
+		$this->populate_two_years();
 
-		$second = array('year' => '2013', 'programme_title_1' => 'Thing 2013', 'id' => 2);
-		$this->populate('Programme', $second);
+		$this->assertEquals(count(Programme::all()), count(Programme::all_as_list()));
+		$this->assertCount(2, Programme::all_as_list());
+	}
+
+	public function testall_as_listCheckNumberWeGetOutWithNumberWePutInWithYear()
+	{
+		$this->populate_two_years();
+
+		$this->assertEquals(count(Programme::where('year', '=', '2012')), count(Programme::all_as_list(2012)));
+		$this->assertCount(1, Programme::all_as_list(2012));
+
+		$this->assertEquals(count(Programme::where('year', '=', '2013')), count(Programme::all_as_list(2013)));
+		$this->assertCount(1, Programme::all_as_list(2013));
+	}
+
+	public function testall_as_listYearCacheSavesDifferentYears() 
+	{
+		$this->populate_two_years();
 
 		// Expect only our 2013 data back.
 		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
 
-		// Expect only our 2012 databack.
+		// Expect only our 2012 data back.
 		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
 	}
 
