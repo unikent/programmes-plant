@@ -225,26 +225,102 @@ class Revisionable extends Eloquent
        return $options;
      }
 
-     //Needs urgent refactoring
-     public function makeRevisionLive($revision){
+  /**
+   * 
+   */
+  private function generate_feed_index($new_programme, $path)
+  {
+    $index_file = $path.'Index.json';
+  
+    $title_field = Programme::get_title_field();
+    $slug_field = Programme::get_slug_field();
+    $withdrawn_field = Programme::get_withdrawn_field();
+    $suspended_field = Programme::get_suspended_field();
+    $subject_area_1_field = Programme::get_subject_area_1_field();
+    $index_data = array();
+    $programmes = ProgrammeRevision::where('year','=',$new_programme->year)
+                      ->where('status','=','live')
+                      ->where($withdrawn_field,'!=','true')
+                      ->where($suspended_field,'!=','true')
+                      ->get();
 
-        foreach ($this->attributes as $key => $attribute) {
-          if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
-          $this->$key = $revision->$key;
-        }
-        $this->published_by = Auth::user();
-        $this->live = 1;
+    foreach($programmes as $programme)
+    {
+      $index_data[$programme->programme_id] = array(
+        'id' => $programme->programme_id,
+        'name' => $programme->$title_field,
+        'slug' => $programme->$slug_field,
+        'subject' => $programme->$subject_area_1_field
+        );
+    }
+    
+    file_put_contents($index_file, json_encode($index_data));
 
-        //PING AGGRITAGOR AND ACTUALLY UPDATE STUFF!!!
+  }
 
-        $model = $this->revision_model;
-        $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
+  /**
+   * Generate all the necessary JSON files that are used in our API. These are:
+   * GlobalSettings.json
+   * ProgrammeSettings.json
+   * Index.json -- this function calls $this->generate_feed_index() to generate this
+   * {programme_id}.json
+   * 
+   * If we're saving a programme, we generate the programme's json file as well as update our index file to reflect the changes.
+   * All other revisionables are 
+   * 
+   * @param $revision The revision to base our saving on
+   *
+   */
+  private function generate_feed_file($revision)
+  {
+    //global, settings, programme
+    $data_type = get_called_class();
+    $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
 
-        //Make new item "live"
-        $r = $model::find($revision->id);
-        $r->status = 'live';
-        $r->save();
-     }
+    // if our $cache_location isnt available, create it
+    if (!is_dir($cache_location)) {
+      mkdir($cache_location, 0644, true);
+    }
+
+    // if we're saving a programme
+    if($data_type == 'Programme')
+    {
+      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
+      $this->generate_feed_index($revision,$cache_location);
+
+    }else{
+      file_put_contents($cache_location.$data_type.'.json', json_encode($revision));
+    }
+
+  }
+
+  /**
+   * This function makes the specified revision live
+   * 
+   * @param $revision The revision to make live
+   */
+  public function makeRevisionLive($revision)
+  {
+
+    foreach ($this->attributes as $key => $attribute) {
+      if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
+      $this->$key = $revision->$key;
+    }
+
+    $this->published_by = Auth::user();
+    $this->live = 1;
+
+    $model = $this->revision_model;
+    $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
+
+    //Make new item "live"
+    $r = $model::find($revision->id);
+    $r->status = 'live';
+    $r->save();
+
+    //update feed file
+    $this->generate_feed_file($revision);
+  }
 
      //Needs urgent refactoring
      public function revertToRevision($revision){
@@ -329,5 +405,23 @@ class Revisionable extends Eloquent
         // Make current live draft "selected"
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
      }
+
+
+    /**
+     * Removes the automatically generate field ids from our field names
+     * 
+     * @param $record Record to remove field ids from
+     * @return $new_record Record with field ids removed
+     */
+    public static function remove_ids_from_field_names($record)
+    {
+        $new_record = array();
+        foreach ($record as $name => $value) {
+          $name = preg_replace('/_\d{1,3}$/', '', $name);
+          $new_record[$name] = $value;
+        }
+
+        return $new_record;
+    }
 
 }
