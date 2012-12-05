@@ -57,7 +57,7 @@ class Webservices_Controller extends Base_Controller {
             echo "{'error':'none found'}";
         }
         
-        die();
+        return true;
     }
 
 }
