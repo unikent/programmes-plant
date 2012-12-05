@@ -19,6 +19,17 @@
 
 <script type="text/javascript">
     
+    // show options on edit programmes field page
+    show_options();
+    function show_options() {
+        if ($(this + ':selected').val() == 'select' || $(this + ':selected').val() == 'checkbox' || $(this + ':selected').val() == 'table_select' ||$(this + ':selected').val() == 'table_multiselect') {
+            $('#ext_opt').show();
+        }
+        else {
+            $('#ext_opt').hide();
+        }
+    }
+    
     // multiselect
     if($('.multiselect')){
         $(".multiselect").multiselect({dividerLocation: 0.5});
