@@ -10,6 +10,8 @@ class Webservices_Controller extends Base_Controller
         $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
 
         echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
+        
+        // Returning true still attaches the profiler.
         die();
     }
 
@@ -58,7 +60,8 @@ class Webservices_Controller extends Base_Controller
             echo "{'error':'none found'}";
         }
         
-        return true;
+        // Return true still attaches profiler.
+        die();
     }
 
 }
