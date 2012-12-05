@@ -23,17 +23,28 @@ class Webservices_Controller extends Base_Controller {
             $settings = json_decode(file_get_contents($path.'ProgrammeSetting.json'));
             $programme = json_decode(file_get_contents($path.$programme_id.'.json'));
 
+            //lets start with the globals
             $final = $globals;
 
+            //Now add the programme globals
             //No inhertence needed so just do basic overwrite
             foreach($settings as $key => $value){
                 $final->{$key} = $value;
             }
+
+            //now pull in all programme dependancies
+            $programme = Programme::pull_external_data($programme);
+
+            //now remove ids, they're not necessary
+            $programme = Programme::remove_ids_from_field_names($programme);
+
+            //finally, add the programme itself
             foreach($programme as $key => $value){
                 //Overwrite any duplicates with prog data (if prog data isn't blank)
                 if(isset($final->{$key}) && $value != '') $final->{$key} = $value;
             }
 
+            //tidy up
             foreach(array('id','global_setting_id') as $key){
                 unset($final->{$key});
             }

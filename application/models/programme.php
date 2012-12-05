@@ -55,7 +55,7 @@ class Programme extends Revisionable
      */
     public static function get_withdrawn_field()
     {
-        return 'programme_withdrawn_64';
+        return 'programme_withdrawn_57';
     }
     
     /**
@@ -65,7 +65,7 @@ class Programme extends Revisionable
      */
     public static function get_suspended_field()
     {
-        return 'programme_suspended_63';
+        return 'programme_suspended_56';
     }
     
     /**
@@ -75,7 +75,7 @@ class Programme extends Revisionable
      */
     public static function get_subject_to_approval_field()
     {
-        return 'subject_to_approval_62';
+        return 'subject_to_approval_55';
     }
     
     /**
@@ -86,6 +86,60 @@ class Programme extends Revisionable
     public function award()
     {
       return $this->belongs_to('Award', static::get_award_field());
+    }
+
+    
+    /**
+     * look through the passed in record and substitute any ids with data from their correct table
+     * primarily for our json api
+     * 
+     * @param $record The record
+     * @return $new_record A new record with ids substituted
+     */
+    public static function pull_external_data($record)
+    {
+        //get programme fields
+        $programme_fields = ProgrammeField::where_in('field_type', array('table_select', 'table_multiselect'))
+                        ->get(array('colname', 'field_meta'));
+        
+        //make neater programme fields array
+        $fields_array = array();
+        foreach ($programme_fields as $field) {
+            $fields_array[$field->colname] = $field->field_meta;
+        }
+        
+        //substitute the concerned ids with actual data
+        $new_record = array();
+        foreach ($record as $field_name => $field_value) {
+            if(isset($fields_array[$field_name])){
+                $model = $fields_array[$field_name];
+                $field_value = $model::replace_ids_with_values($field_value);
+            }
+            $new_record[$field_name] = $field_value;
+        }
+
+        return $new_record;
+    }
+
+    /**
+     * This function replaces the passed-in ids with their actual record
+     * Limiting the record to its name and id
+     */
+    public static function replace_ids_with_values($ids){
+
+        $ds_fields = static::where_in('id', explode(',', $ids))->get();
+        $values = array();
+        foreach ($ds_fields as $ds_field) {
+            $title_field = static::get_title_field();
+            $slug_field = static::get_slug_field();
+            $values[$ds_field->id] = static::remove_ids_from_field_names(array(
+                    'id' => $ds_field->id,
+                    $title_field => $ds_field->$title_field,
+                    $slug_field => $ds_field->$slug_field
+                ));
+        }
+
+        return $values;
     }
     
 }

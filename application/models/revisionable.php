@@ -206,14 +206,12 @@ class Revisionable extends Eloquent
     $title_field = Programme::get_title_field();
     $slug_field = Programme::get_slug_field();
     $withdrawn_field = Programme::get_withdrawn_field();
-    $subject_to_approval_field = Programme::get_subject_to_approval_field();
     $suspended_field = Programme::get_suspended_field();
     $subject_area_1_field = Programme::get_subject_area_1_field();
     $index_data = array();
     $programmes = ProgrammeRevision::where('year','=',$new_programme->year)
                       ->where('status','=','live')
                       ->where($withdrawn_field,'!=','true')
-                      ->where($subject_to_approval_field,'!=','true')
                       ->where($suspended_field,'!=','true')
                       ->get();
 
@@ -258,32 +256,13 @@ class Revisionable extends Eloquent
     // if we're saving a programme
     if($data_type == 'Programme')
     {
-
-      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($this->remove_ids_from_field_names($revision)));
+      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
       $this->generate_feed_index($revision,$cache_location);
 
     }else{
-      file_put_contents($cache_location.$data_type.'.json', json_encode($this->remove_ids_from_field_names($revision)));
+      file_put_contents($cache_location.$data_type.'.json', json_encode($revision));
     }
 
-  }
-
-
-  /**
-   * Removes the automatically generate field ids from our field names
-   * 
-   * @param $record Record to remove field ids from
-   * @return $new_record Record with field ids removed
-   */
-  public function remove_ids_from_field_names($record)
-  {
-    $new_record = array();
-    foreach ($record as $name => $value) {
-      $name = preg_replace('/_\d{1,3}$/', '', $name);
-      $new_record[$name] = $value;
-    }
-
-    return $new_record;
   }
 
   /**
@@ -397,5 +376,23 @@ class Revisionable extends Eloquent
         // Make current live draft "selected"
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
      }
+
+
+    /**
+     * Removes the automatically generate field ids from our field names
+     * 
+     * @param $record Record to remove field ids from
+     * @return $new_record Record with field ids removed
+     */
+    public static function remove_ids_from_field_names($record)
+    {
+        $new_record = array();
+        foreach ($record as $name => $value) {
+          $name = preg_replace('/_\d{1,3}$/', '', $name);
+          $new_record[$name] = $value;
+        }
+
+        return $new_record;
+    }
 
 }
