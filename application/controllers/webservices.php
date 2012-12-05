@@ -35,9 +35,6 @@ class Webservices_Controller extends Base_Controller {
             //now pull in all programme dependancies
             $programme = Programme::pull_external_data($programme);
 
-            //now remove ids, they're not necessary
-            $programme = Programme::remove_ids_from_field_names($programme);
-
             //finally, add the programme itself
             foreach($programme as $key => $value){
                 //Overwrite any duplicates with prog data (if prog data isn't blank)
@@ -48,6 +45,9 @@ class Webservices_Controller extends Base_Controller {
             foreach(array('id','global_setting_id') as $key){
                 unset($final->{$key});
             }
+
+            //now remove ids from our field names, they're not necessary
+            $final = Programme::remove_ids_from_field_names($final);
 
             echo json_encode($final);
             die();//return ended up with profiler still attached
