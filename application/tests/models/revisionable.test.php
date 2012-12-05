@@ -212,15 +212,32 @@ class TestRevisionable extends ModelTestCase
 		$this->assertCount(1, Programme::all_as_list(2013));
 	}
 
-	public function testall_as_listYearCacheSavesDifferentYears() 
+	public function testall_as_listMemoryCacheSavesDifferentYears() 
 	{
 		$this->populate_two_years();
 
 		// Expect only our 2013 data back.
 		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
 
+		// Wipe the disk cache so we are relying on memory.
+		Cache::forget('Programme-2013-options-list');
+
 		// Expect only our 2012 data back.
 		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
 	}
 
+	public function testall_as_listDiskCacheSavesDifferentYears() 
+	{
+		$this->populate_two_years();
+
+		// Expect only our 2013 data back.
+		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
+
+		// Wipe the memory cache so we are relying on disk.
+		Programme::$list_cache = false;
+
+		// Expect only our 2012 data back.
+		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
+	}
+	
 }
