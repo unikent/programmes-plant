@@ -15,11 +15,11 @@
   <div class="control-group">
     <?php echo Form::label('type', __('fields.form.label_type'), array('class'=>'control-label'))?>
     <div class="controls">
-      <?php echo  Form::select('type', array('text'=>'text','textarea'=>'textarea','select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model'), (isset($values)) ? $values->field_type : '', array('onchange'=>'tryShow(this);') )?>
+      <?php echo Form::select('type', array('text'=>'text','textarea'=>'textarea','select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model'), (isset($values)) ? $values->field_type : '', array('onchange'=>'show_options();') )?>
     </div>
   </div>
 
-  <div class="control-group" id='ext_opt' <?php if (isset($values) && $values->field_type=='select') {} else { echo 'style="display:none;"'; }?>>
+  <div class="control-group" id='ext_opt'>
     <?php echo Form::label('options', "Options",array('class'=>'control-label'))?>
     <div class="controls">
       <?php echo  Form::text('options', (isset($values)) ? $values->field_meta : '' )?><br/>
