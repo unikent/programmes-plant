@@ -11,7 +11,7 @@ class Webservices_Controller extends Base_Controller
 
         echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
         
-        // Returning true still attaches the profiler.
+        // Returning true still attaches the Profiler.
         die();
     }
 
@@ -52,7 +52,7 @@ class Webservices_Controller extends Base_Controller
             $final = Programme::remove_ids_from_field_names($final);
 
             echo json_encode($final);
-            die();//return ended up with profiler still attached
+            die();//return ended up with Profiler still attached
 
         }
         else
@@ -60,7 +60,7 @@ class Webservices_Controller extends Base_Controller
             echo "{'error':'none found'}";
         }
         
-        // Return true still attaches profiler.
+        // Return true still attaches Profiler.
         die();
     }
 
