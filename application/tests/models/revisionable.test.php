@@ -99,7 +99,7 @@ class TestRevisionable extends ModelTestCase
 		Programme::all_as_list();
 
 		// Check we only have one element here.
-		$this->assertCount(1, Programme::$list_cache['Programme']);
+		$this->assertCount(1, Programme::$list_cache['Programme--options-list']);
 	}
 
 	public function testall_as_listIfWeRemoveTheCacheThenWeCanStillGetList()
@@ -126,7 +126,7 @@ class TestRevisionable extends ModelTestCase
 
 		Programme::all_as_list();
 
-		$this->assertEquals(array('1' => 'Thing'), Programme::$list_cache['Programme']);
+		$this->assertEquals(array('1' => 'Thing'), Programme::$list_cache['Programme--options-list']);
 	}
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
@@ -138,7 +138,7 @@ class TestRevisionable extends ModelTestCase
 
 		// Add a false cache to the object
 		$false_cache = array('1' => 'Other Thing');
-		Programme::$list_cache['Programme'] = $false_cache;
+		Programme::$list_cache['Programme--options-list'] = $false_cache;
 
 		// Remove the disk cache
 		Cache::forget('Programme--options-list');
@@ -162,7 +162,7 @@ class TestRevisionable extends ModelTestCase
 	{
 		// Artifically create a memory cache something.
 		$false_cache = array('1' => 'Other Thing');
-		Programme::$list_cache['Programme'] = $false_cache;
+		Programme::$list_cache['Programme--options-list'] = $false_cache;
 
 		// We have only an in memory cache, no disk and no database at all.
 		// If we get something back, we are getting it from the memory cache.
@@ -239,5 +239,5 @@ class TestRevisionable extends ModelTestCase
 		// Expect only our 2012 data back.
 		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
 	}
-	
+
 }

@@ -180,9 +180,11 @@ class Revisionable extends Eloquent
      {
         $model = get_called_class();
 
-        if (isset(static::$list_cache[$model])) return static::$list_cache[$model];
+        $cache_key = "$model-$year-options-list";
 
-        return static::$list_cache[$model] = Cache::remember("$model-$year-options-list", function() use ($year, $model)
+        if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
+
+        return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model)
         {
           $options = array();
 
