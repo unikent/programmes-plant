@@ -4,6 +4,12 @@ The Programmes Plant is part of the [XCRI-CAP project](http://www.kent.ac.uk/is/
 
 It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
+## Build Status
+
+[![Build Status - master](https://travis-ci.org/unikent/programmes-plant.png?branch=master)](https://travis-ci.org/unikent/programmes-plant) `master` 
+
+[![Build Status - develop](https://travis-ci.org/unikent/programmes-plant.png?branch=develop)](https://travis-ci.org/unikent/programmes-plant) `develop`
+
 ## Development Setup
 
 The following are instructions on running the Programmes Plant on a local machine for development.
