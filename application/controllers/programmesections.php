@@ -9,8 +9,6 @@ class ProgrammeSections_Controller extends Admin_Controller
 
     public function get_index($type)
     {
-    	//$this->data[$this->views] = ProgrammeSection::order_by('order','asc')->get();
-       // return View::make('admin.'.$this->views.'.index',$this->data);
        return Redirect::to('/'.$type.'/fields/programmes');
     }
 
@@ -74,7 +72,6 @@ class ProgrammeSections_Controller extends Admin_Controller
     }
 
     public function post_edit($type){
-        error_log('sdsds');exit;
         $rules = array(
             'id'  => 'required|exists:programmesections,id',
             'name'  => 'required|max:255|unique:programmesections,name,'.Input::get('id'),

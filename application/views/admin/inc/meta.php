@@ -7,9 +7,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Courses Dashboard">
+    <meta name="description" content="Programmes Plant">
 
-    <!-- Le styles -->
+    <!-- css
+    ================================================== -->
     <link href="<?php echo asset('css/admin/bootstrap.css')?>" rel="stylesheet">
     <style>
       body {
@@ -17,6 +18,18 @@
       }
     </style>
     <link href="<?php echo asset('css/admin/bootstrap-responsive.css')?>" rel="stylesheet">
+    <!-- jquery ui css -->
+    <link type="text/css" href="<?php echo asset('css/admin/flick/jquery-ui-1.8.21.custom.css')?>" rel="stylesheet" />
+    <!-- multiselect css -->
+    <link type="text/css" href="<?php echo asset('css/admin/ui.multiselect.css')?>" rel="stylesheet" />
+    <link type="text/css" href="<?php echo asset('css/admin/jquery.ui.listbuilder.css')?>" rel="stylesheet" />
+    <!-- data tables css -->
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/admin/DT_bootstrap.css')?>">
+    <!-- wysiwyg editor css -->
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('lib/css/prettify.css')?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('src/bootstrap-wysihtml5.css')?>"></link>
+    
+
     <!-- Call our own stylesheets -->
     <link href="<?php echo asset('css/admin/style.css')?>" rel="stylesheet">
 

@@ -5,6 +5,11 @@ class Revisionable extends Eloquent
 
      public $revision = false;
 
+     /**
+      * This is an in memory cache used by the all_as_list method for additional speed.
+      */
+     public static $list_cache = false;
+
      public function user()
      {
           return $this->belongs_to('User','user_id');
@@ -33,14 +38,11 @@ class Revisionable extends Eloquent
           $query = DB::table($this->revision_table);
 
           // Establish the next ID in the revisions table.
-          $last = $query->lists('id');
-          $last = end($last);
           $revision_attributes = $this->attributes;
-          $revision_attributes['id'] = $last + 1;
-
           $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
           // We don't have published by in revisions
+          unset($revision_attributes['id']);
           unset($revision_attributes['published_by']);
           unset($revision_attributes['live']);
 
@@ -48,12 +50,24 @@ class Revisionable extends Eloquent
           // the same as the update of the main table.
           $revision_attributes['created_at'] = $this->updated_at;
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
-          $revision_attributes['status'] = 'draft';
+          $revision_attributes['status'] = 'selected';
 
           $revision_attributes['created_by'] = Auth::user();
 
-          // Add a revision
+          // Deactivate any previosuly selected drafts
+          $r_model = $this->revision_model;
+          $r_model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
+
+          // Add new revision
           $revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
+
+          //Update selected item
+          if (sizeof($this->get_dirty())>0) {
+            $query = $this->query()->where(static::$key, '=', $this->get_key());
+            $result = $query->update($this->get_dirty()) === 1;
+          }
+
+           
 
           $this->exists = $result = is_numeric($this->get_key());
         } else {
@@ -61,6 +75,9 @@ class Revisionable extends Eloquent
             ->where('id', '=', $this->revision->id)
             ->update((array) $this->revision);
         }
+
+
+
       }
 
       // The subject does not exist, so we create it.
@@ -78,14 +95,11 @@ class Revisionable extends Eloquent
         $query = DB::table($this->revision_table);
 
         // Establish the next ID in the revisions table.
-        $last = $query->lists('id');
-        $last = end($last);
         $revision_attributes = $this->attributes;
-        $revision_attributes['id'] = $last + 1;
-
         $revision_attributes[$this->revision_type.'_id'] = $this->id;
 
         // We don't have published by in revisions
+        unset($revision_attributes['id']);
           unset($revision_attributes['published_by']);
           unset($revision_attributes['live']);
 
@@ -150,24 +164,46 @@ class Revisionable extends Eloquent
           }
      }
 
-     public static function getAsList($year = false)
+     /**
+      * Gives a flat array of id => item_title for all items.
+      * 
+      * Used generally to create select dropdowns.
+      * 
+      * This has two levels of caching. First a database lookup cache, then an in memory cache.
+      * 
+      * This is done for application performance.
+      * 
+      * @param string $year The year from which to get the array.
+      * @return array $options List of items in the format id => item_title.
+      */
+     public static function all_as_list($year = false)
      {
-      $options = array();
-      $model = get_called_class();
+        $model = get_called_class();
 
-      if (!$year) {
-        $data = $model::get();
-      } else {
-        $data = $model::where('year','=',$year)->get();
-      }
-      $title_field = self::get_title_field();
-      foreach ($data as $record) {$options[$record->id] = $record->$title_field;}
+        if (isset(static::$list_cache[$model])) return static::$list_cache[$model];
 
-       return $options;
-     }
+        $title_field = self::get_title_field();
+        
+        return static::$list_cache[$model] = Cache::remember("$model-$year-options-list", function() use ($year, $model, $title_field)
+        {
+          $options = array();
 
-     public static function get_title_field(){
-        return 'title';
+            if (! $year)
+            {
+              $data = $model::get(array('id', $title_field));
+            }
+            else 
+            {
+              $data = $model::where('year','=', $year)->get(array('id',$title_field));
+            }
+            
+            foreach ($data as $record)
+            {
+              $options[$record->id] = $record->$title_field;
+            }
+
+            return $options;
+        }, 'forever');
      }
 
      public static function getAttributesList($year = false)
@@ -188,6 +224,128 @@ class Revisionable extends Eloquent
 
        return $options;
      }
+
+  /**
+   * 
+   */
+  private function generate_feed_index($new_programme, $path)
+  {
+    $index_file = $path.'Index.json';
+  
+    $title_field = Programme::get_title_field();
+    $slug_field = Programme::get_slug_field();
+    $withdrawn_field = Programme::get_withdrawn_field();
+    $suspended_field = Programme::get_suspended_field();
+    $subject_area_1_field = Programme::get_subject_area_1_field();
+    $index_data = array();
+    $programmes = ProgrammeRevision::where('year','=',$new_programme->year)
+                      ->where('status','=','live')
+                      ->where($withdrawn_field,'!=','true')
+                      ->where($suspended_field,'!=','true')
+                      ->get();
+
+    foreach($programmes as $programme)
+    {
+      $index_data[$programme->programme_id] = array(
+        'id' => $programme->programme_id,
+        'name' => $programme->$title_field,
+        'slug' => $programme->$slug_field,
+        'subject' => $programme->$subject_area_1_field
+        );
+    }
+    
+    file_put_contents($index_file, json_encode($index_data));
+
+  }
+
+  /**
+   * Generate all the necessary JSON files that are used in our API. These are:
+   * GlobalSettings.json
+   * ProgrammeSettings.json
+   * Index.json -- this function calls $this->generate_feed_index() to generate this
+   * {programme_id}.json
+   * 
+   * If we're saving a programme, we generate the programme's json file as well as update our index file to reflect the changes.
+   * All other revisionables are 
+   * 
+   * @param $revision The revision to base our saving on
+   *
+   */
+  private function generate_feed_file($revision)
+  {
+    //global, settings, programme
+    $data_type = get_called_class();
+    $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
+
+    // if our $cache_location isnt available, create it
+    if (!is_dir($cache_location)) {
+      mkdir($cache_location, 0644, true);
+    }
+
+    // if we're saving a programme
+    if($data_type == 'Programme')
+    {
+      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
+      $this->generate_feed_index($revision,$cache_location);
+
+    }else{
+      file_put_contents($cache_location.$data_type.'.json', json_encode($revision));
+    }
+
+  }
+
+  /**
+   * This function makes the specified revision live
+   * 
+   * @param $revision The revision to make live
+   */
+  public function makeRevisionLive($revision)
+  {
+
+    foreach ($this->attributes as $key => $attribute) {
+      if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
+      $this->$key = $revision->$key;
+    }
+
+    $this->published_by = Auth::user();
+    $this->live = 1;
+
+    $model = $this->revision_model;
+    $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
+
+    //Make new item "live"
+    $r = $model::find($revision->id);
+    $r->status = 'live';
+    $r->save();
+
+    //update feed file
+    $this->generate_feed_file($revision);
+  }
+
+     //Needs urgent refactoring
+     public function revertToRevision($revision){
+       foreach ($this->attributes as $key => $attribute) {
+          if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
+          $this->$key = $revision->$key;
+        }
+
+        // Save
+        if (sizeof($this->get_dirty())>0) {
+          $query = $this->query()->where(static::$key, '=', $this->get_key());
+          $result = $query->update($this->get_dirty()) === 1;
+        }
+        
+        $model = $this->revision_model;
+        // reject later revisions
+        $model::where($this->revision_type.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'rejected'));
+
+        // Make new Revsion Live!
+        $r = $model::find($revision->id);
+        if($r->status != 'live')$r->status = 'selected';
+        $r->save();
+
+     }
+
 
      public function useRevision($revision)
      {
@@ -247,5 +405,23 @@ class Revisionable extends Eloquent
         // Make current live draft "selected"
         $model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
      }
+
+
+    /**
+     * Removes the automatically generate field ids from our field names
+     * 
+     * @param $record Record to remove field ids from
+     * @return $new_record Record with field ids removed
+     */
+    public static function remove_ids_from_field_names($record)
+    {
+        $new_record = array();
+        foreach ($record as $name => $value) {
+          $name = preg_replace('/_\d{1,3}$/', '', $name);
+          $new_record[$name] = $value;
+        }
+
+        return $new_record;
+    }
 
 }

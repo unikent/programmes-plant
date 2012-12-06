@@ -6,7 +6,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="<?php echo url('/')?>">Courses Dashboard</a>
+            <a class="brand" href="<?php echo url('/')?>">Programmes Plant</a>
             <div class="nav-collapse collapse">
             
                 <?php 
@@ -24,7 +24,6 @@
                 ?>
                 <ul class="nav">
                     <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( '/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
-                    <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( '/'.'pg'.'/'.$url)?>">Postgraduate</a></li>
                 </ul>
                 
                 <ul class="nav">
@@ -45,7 +44,6 @@
                 
                 <ul class="nav">
                   <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
-                  <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/'.'pg'.'/'.$url)?>">Postgraduate</a></li>
                 </ul>
                 <ul class="nav">
                     <li class="divider-vertical"></li>
@@ -59,6 +57,7 @@
                 <?php endif ?>
                 
                 <ul class="nav pull-right">
+                    <li><a href="#"><?php echo Auth::user() ?></a></li>
                     <li><a href="<?php echo url('logout')?>">Logout</a></li>
                 </ul>
 

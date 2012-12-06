@@ -65,6 +65,28 @@ class Create_GlobalSettings {
 		$this->add_field('GlobalSettingField', 'global_settings', 'Apply content', 'textarea', '', '');
 		$this->add_field('GlobalSettingField', 'global_settings', 'Fees content', 'textarea', '', '');
 		$this->add_field('GlobalSettingField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
+		
+		//Section: Xcri-CAP / KIS global fields
+		$this->add_field('GlobalSettingField', 'global_settings', 'Institution name', 'textarea', 'University of Kent', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'UKPRN', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Contributor', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Catalog description', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Provider description', 'textarea', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Provider URL', 'text', 'http://www.kent.ac.uk', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Address line 1', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Address line 2', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Address line 3', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Town', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Email', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Fax', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Phone', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Postcode', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Location URL', 'text', '', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Image source', 'text', 'University logo', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Image title', 'text', 'eg \'University of Kent logo\'', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Image alt', 'text', 'eg \'University of Kent logo\'', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Regulations', 'text', 'a link to the University\'s regulations', '');
+
 	}
 
 	/**

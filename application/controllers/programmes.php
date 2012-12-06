@@ -1,5 +1,5 @@
 <?php
-class Programmes_Controller extends Admin_Controller
+class Programmes_Controller extends Revisionable_Controller
 {
 
     public $restful = true;
@@ -14,11 +14,21 @@ class Programmes_Controller extends Admin_Controller
      */
     public function get_index($year, $type)
     {
+
         $title_field = Programme::get_title_field();
+        $award_field = Programme::get_award_field();
+        $withdrawn_field = Programme::get_withdrawn_field();
+        $suspended_field = Programme::get_suspended_field();
+        $subject_to_approval_field = Programme::get_subject_to_approval_field();
         $model = $this->model;
-        $this->data[$this->views] = $model::where('year', '=', $year)->order_by($title_field)->get();
-        $this->data['programmeList'] = Programme::getAsList();
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field));
+       
+        $this->data[$this->views] = $programmes;
+
         $this->data['title_field'] = $title_field;
+        $this->data['withdrawn_field'] = $withdrawn_field;
+        $this->data['suspended_field'] = $suspended_field;
+        $this->data['subject_to_approval_field'] = $subject_to_approval_field;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
     }
@@ -44,12 +54,14 @@ class Programmes_Controller extends Admin_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        $this->data['campuses'] = Campus::getAsList();
-        $this->data['school'] = School::getAsList();
-        $this->data['awards'] = Award::getAsList();
-        $this->data['programme_list'] = Programme::getAsList($year);
-        $this->data['leaflets'] = Leaflet::getAsList();
+        $this->data['campuses'] = Campus::all_as_list();
+        $this->data['school'] = School::all_as_list();
+        $this->data['awards'] = Award::all_as_list();
+        $this->data['programme_list'] = Programme::all_as_list($year);
+        $this->data['leaflets'] = Leaflet::all_as_list();
+
         $this->data['create'] = true;
+        $this->data['year'] = $year;
 
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
@@ -78,9 +90,10 @@ class Programmes_Controller extends Admin_Controller
         }
         
         $this->data['sections'] = ProgrammeField::programme_fields_by_section();
-        
         $this->data['title_field'] = Programme::get_title_field();
+        $this->data['year'] = $year;
 
+        //Get lists data
         $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
     }
 
@@ -94,27 +107,32 @@ class Programmes_Controller extends Admin_Controller
      */
     public function post_create($year, $type)
     {
+        // placeholder for any future validation rules
         $rules = array(
         );
-
         $validation = Validator::make(Input::all(), $rules);
-
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
-
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/create')->with_input();
         } else {
             $programme = new Programme;
             $programme->year = Input::get('year');
-
             $programme->created_by = Auth::user();
             
-            ProgrammeField::assign_fields($programme);
-
-            $programme->save();
+            // get the programme fields
+            $programme_fields = ProgrammeField::programme_fields();
+            
+            // assign the input data to the programme fields
+            $programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+            
+            // save the modified programme data
+            $programme_modified->save();
+            
+            // success message
             Messages::add('success','Programme added');
-
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+            
+            // redirect back to the same page
+            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->id);
         }
     }
 
@@ -128,34 +146,40 @@ class Programmes_Controller extends Admin_Controller
      */
     public function post_edit($year, $type)
     {
+        // placeholder for any future validation rules
         $rules = array(
         );
-
         $validation = Validator::make(Input::all(), $rules);
-
         if ($validation->fails()) {
             Messages::add('error',$validation->errors->all());
-
             return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/')->with_input();
         } else {
             $programme = Programme::find(Input::get('programme_id'));
-
             $programme->year = Input::get('year');
             
-            ProgrammeField::assign_fields($programme);
+            // get the programme fields
+            $programme_fields = ProgrammeField::programme_fields();
             
-            $programme->save();
-
+            // assign the input data to the programme fields
+            $programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+            
+            // save the modified programme data
+            $programme_modified->save();
+            
+            // success message
             $title_field = Programme::get_title_field();
             Messages::add('success', "Saved ".$programme->$title_field);
-
-            return Redirect::to($year.'/'. $type.'/'. $this->views);
+            
+            // redirect back to the same page we were on
+            return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
         }
     }
 
 
 
+
     /**
+     * TODO: fully depricate this item
      * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
      *
      * @param int    $year         The year of the programme (not used, but to keep routing happy).
@@ -215,9 +239,9 @@ class Programmes_Controller extends Admin_Controller
             unset($programme_attributes[$ignore]);
         }
 
-        $schools = School::getAsList();
-        $sub = Programme::getAsList();
-        $pro = Programme::getAsList();
+        $schools = School::all_as_list();
+        $sub = Programme::all_as_list();
+        $pro = Programme::all_as_list();
 
         $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
         $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
@@ -318,7 +342,7 @@ class Programmes_Controller extends Admin_Controller
         } else {
             $programme = Programme::find(Input::get('id'));
             $programme->activate();
-            Messages::add('success','Programme Activated');
+            Messages::add('success','Programme activated');
 
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
         }
