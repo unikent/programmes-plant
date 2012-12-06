@@ -279,7 +279,7 @@ class Revisionable extends Eloquent
 
     // if our $cache_location isnt available, create it
     if (!is_dir($cache_location)) {
-      mkdir($cache_location, 0644, true);
+      mkdir($cache_location, 0755, true);
     }
 
     // if we're saving a programme

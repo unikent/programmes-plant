@@ -99,8 +99,9 @@ class SimpleData extends Eloquent
 		}
 
     	// if our $cache_location isnt available, create it
-	    if (!is_dir($cache_location)) {
-	     	mkdir($cache_location, 0644, true);
+	    if (!is_dir($cache_location)) 
+	    {
+	     	mkdir($cache_location, 0755, true);
 	    }
 
 	    file_put_contents($cache_file, json_encode($data));
