@@ -61,10 +61,6 @@ class Create_GlobalSettings {
 		});
 
 		// Add some fields in
-		$this->add_field('GlobalSettingField', 'global_settings', 'KIS institution id', 'text', '', '');
-		$this->add_field('GlobalSettingField', 'global_settings', 'Apply content', 'textarea', '', '');
-		$this->add_field('GlobalSettingField', 'global_settings', 'Fees content', 'textarea', '', '');
-		$this->add_field('GlobalSettingField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
 		
 		//Section: Xcri-CAP / KIS global fields
 		$this->add_field('GlobalSettingField', 'global_settings', 'Institution name', 'text', 'University of Kent', '');
