@@ -83,7 +83,7 @@ class Programmes_Controller extends Revisionable_Controller
       $course = $model::find($itm_id);
       if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $this->data['programme'] = $course ;
+        $this->data['programme'] = $course;
 
         if ($revisions = $course->get_revisions()) {
             $this->data['revisions'] =  $revisions;
