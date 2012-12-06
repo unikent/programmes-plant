@@ -240,8 +240,8 @@ class Programmes_Controller extends Revisionable_Controller
         }
 
         $schools = School::all_as_list();
-        $sub = Subject::all_as_list();
-        $pro = Programme::all_as_list();
+        $subjects = Subject::all_as_list();
+        $programmes = Programme::all_as_list();
 
         $differences = array_diff_assoc($programme_attributes, $revision_for_diff);
 
