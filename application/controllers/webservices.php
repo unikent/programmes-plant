@@ -26,45 +26,43 @@ class Webservices_Controller extends Base_Controller
         $globals = json_decode(file_get_contents($path . 'GlobalSetting.json'));
         $settings = json_decode(file_get_contents($path . 'ProgrammeSetting.json'));
 
-        if(file_exists($path.$programme_id.'.json'))
-        {
-            $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
-
-            // lets start with the globals
-            $final = $globals;
-
-            // Now add the programme globals
-            // No inhertence needed so just do basic overwrite
-            foreach($settings as $key => $value)
-            {
-                $final->{$key} = $value;
-            }
-
-            // now pull in all programme dependancies
-            $programme = Programme::pull_external_data($programme);
-
-            // finally, add the programme itself
-            foreach($programme as $key => $value)
-            {
-                // Overwrite any duplicates with prog data (if prog data isn't blank)
-                if (isset($final->{$key}) && $value != '') $final->{$key} = $value;
-            }
-
-            // tidy up
-            foreach(array('id','global_setting_id') as $key)
-            {
-                unset($final->{$key});
-            }
-
-            // now remove ids from our field names, they're not necessary
-            $final = Programme::remove_ids_from_field_names($final);
-
-            return json_encode($final);
-        }
-        else
+        if (! file_exists($path.$programme_id.'.json'))
         {
             return Response::error('404');
         }
+
+        $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
+
+        // lets start with the globals
+        $final = $globals;
+
+        // Now add the programme globals
+        // No inhertence needed so just do basic overwrite
+        foreach($settings as $key => $value)
+        {
+            $final->{$key} = $value;
+        }
+
+        // now pull in all programme dependancies
+        $programme = Programme::pull_external_data($programme);
+
+        // finally, add the programme itself
+        foreach($programme as $key => $value)
+        {
+            // Overwrite any duplicates with prog data (if prog data isn't blank)
+            if (isset($final->{$key}) && $value != '') $final->{$key} = $value;
+        }
+
+        // tidy up
+        foreach(array('id','global_setting_id') as $key)
+        {
+            unset($final->{$key});
+        }
+
+        // now remove ids from our field names, they're not necessary
+        $final = Programme::remove_ids_from_field_names($final);
+
+        return json_encode($final);
     }
 
 }
