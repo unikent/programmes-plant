@@ -187,10 +187,10 @@ class TestRevisionable extends ModelTestCase
 
 	public function populate_two_years()
 	{
-		$first = array('year' => '2012', 'programme_title_1' => 'Thing 2012', 'id' => 1);
+		$first = array('year' => '2014', 'programme_title_1' => 'Thing 2014', 'id' => 1);
 		$this->populate('Programme', $first);
 
-		$second = array('year' => '2013', 'programme_title_1' => 'Thing 2013', 'id' => 2);
+		$second = array('year' => '2015', 'programme_title_1' => 'Thing 2015', 'id' => 2);
 		$this->populate('Programme', $second);
 	}
 
@@ -205,39 +205,39 @@ class TestRevisionable extends ModelTestCase
 	{
 		$this->populate_two_years();
 
-		$this->assertEquals(count(Programme::where('year', '=', '2012')), count(Programme::all_as_list(2012)));
-		$this->assertCount(1, Programme::all_as_list(2012));
+		$this->assertEquals(count(Programme::where('year', '=', '2014')), count(Programme::all_as_list(2014)));
+		$this->assertCount(1, Programme::all_as_list(2014));
 
-		$this->assertEquals(count(Programme::where('year', '=', '2013')), count(Programme::all_as_list(2013)));
-		$this->assertCount(1, Programme::all_as_list(2013));
+		$this->assertEquals(count(Programme::where('year', '=', '2015')), count(Programme::all_as_list(2015)));
+		$this->assertCount(1, Programme::all_as_list(2015));
 	}
 
 	public function testall_as_listMemoryCacheSavesDifferentYears() 
 	{
 		$this->populate_two_years();
 
-		// Expect only our 2013 data back.
-		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
+		// Expect only our 2015 data back.
+		$this->assertEquals(array(2 => 'Thing 2015'), Programme::all_as_list(2015), "Didn't get back 2015");
 
 		// Wipe the disk cache so we are relying on memory.
-		Cache::forget('Programme-2013-options-list');
+		Cache::forget('Programme-2015-options-list');
 
-		// Expect only our 2012 data back.
-		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
+		// Expect only our 2014 data back.
+		$this->assertEquals(array(1 => 'Thing 2014'), Programme::all_as_list(2014), "Didn't get back 2014");
 	}
 
 	public function testall_as_listDiskCacheSavesDifferentYears() 
 	{
 		$this->populate_two_years();
 
-		// Expect only our 2013 data back.
-		$this->assertEquals(array(2 => 'Thing 2013'), Programme::all_as_list(2013), "Didn't get back 2013");
+		// Expect only our 2015 data back.
+		$this->assertEquals(array(2 => 'Thing 2015'), Programme::all_as_list(2015), "Didn't get back 2015");
 
 		// Wipe the memory cache so we are relying on disk.
 		Programme::$list_cache = false;
 
-		// Expect only our 2012 data back.
-		$this->assertEquals(array(1 => 'Thing 2012'), Programme::all_as_list(2012), "Didn't get back 2012");
+		// Expect only our 2014 data back.
+		$this->assertEquals(array(1 => 'Thing 2014'), Programme::all_as_list(2014), "Didn't get back 2014");
 	}
 
 }
