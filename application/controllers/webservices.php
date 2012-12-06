@@ -9,17 +9,25 @@ class Webservices_Controller extends Base_Controller
     {
         $path = $GLOBALS['laravel_paths']['storage'] . 'api/' . $lvl . '/' . $year . '/';
 
-        return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('404');
+        // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+        return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('204');
     }
 
     public function get_programme($year, $lvl, $programme_id)
     {
         $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
 
+        if (! file_exists($path . 'GlobalSetting.json') or ! file_exists($path . 'ProgrammeSetting.json'))
+        {
+            // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+            return Response::error('204');
+        }
+
+        $globals = json_decode(file_get_contents($path . 'GlobalSetting.json'));
+        $settings = json_decode(file_get_contents($path . 'ProgrammeSetting.json'));
+
         if(file_exists($path.$programme_id.'.json'))
         {
-            $globals = json_decode(file_get_contents($path . 'GlobalSetting.json'));
-            $settings = json_decode(file_get_contents($path . 'ProgrammeSetting.json'));
             $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
 
             // lets start with the globals
@@ -56,7 +64,7 @@ class Webservices_Controller extends Base_Controller
         }
         else
         {
-            Response::error('404');
+            return Response::error('404');
         }
     }
 
