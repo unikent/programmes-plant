@@ -5,17 +5,17 @@ class Webservices_Controller extends Base_Controller
 
     public $restful = true;
 
-    public function get_index($year, $lvl)
+    public function get_index($year, $level)
     {
-        $path = path('storage') . 'api/' . $lvl . '/' . $year . '/';
+        $path = path('storage') . 'api/' . $level . '/' . $year . '/';
 
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
         return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('204');
     }
 
-    public function get_programme($year, $lvl, $programme_id)
+    public function get_programme($year, $level, $programme_id)
     {
-        $path = path('storage') .'api/'.$lvl.'/'.$year.'/';
+        $path = path('storage') .'api/'.$level.'/'.$year.'/';
 
         if (! file_exists($path . 'GlobalSetting.json') or ! file_exists($path . 'ProgrammeSetting.json'))
         {
