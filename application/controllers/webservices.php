@@ -15,7 +15,7 @@ class Webservices_Controller extends Base_Controller
 
     public function get_programme($year, $level, $programme_id)
     {
-        $path = path('storage') .'api/'.$level.'/'.$year.'/';
+        $path = path('storage') . 'api/' . $level . '/' . $year . '/';
 
         if (! file_exists($path . 'GlobalSetting.json') or ! file_exists($path . 'ProgrammeSetting.json'))
         {
