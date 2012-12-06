@@ -9,10 +9,7 @@ class Webservices_Controller extends Base_Controller
     {
         $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
 
-        echo file_exists($path.'index.json') ? file_get_contents($path.'index.json') : 'No json found';
-        
-        // Returning true still attaches the Profiler.
-        die();
+        return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('404');
     }
 
     public function get_programme($year, $lvl, $programme_id)
@@ -51,17 +48,13 @@ class Webservices_Controller extends Base_Controller
             //now remove ids from our field names, they're not necessary
             $final = Programme::remove_ids_from_field_names($final);
 
-            echo json_encode($final);
-            die();//return ended up with Profiler still attached
+            return json_encode($final);
 
         }
         else
         {
-            echo "{'error':'none found'}";
+            Response::error('404');
         }
-        
-        // Return true still attaches Profiler.
-        die();
     }
 
 }
