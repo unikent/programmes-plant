@@ -7,7 +7,7 @@ class Webservices_Controller extends Base_Controller
 
     public function get_index($year, $lvl)
     {
-        $path = $GLOBALS['laravel_paths']['storage'] . 'api/' . $lvl . '/' . $year . '/';
+        $path = path('storage') . 'api/' . $lvl . '/' . $year . '/';
 
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
         return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('204');
@@ -15,7 +15,7 @@ class Webservices_Controller extends Base_Controller
 
     public function get_programme($year, $lvl, $programme_id)
     {
-        $path = $GLOBALS['laravel_paths']['storage'].'api/'.$lvl.'/'.$year.'/';
+        $path = path('storage') .'api/'.$lvl.'/'.$year.'/';
 
         if (! file_exists($path . 'GlobalSetting.json') or ! file_exists($path . 'ProgrammeSetting.json'))
         {
@@ -60,7 +60,6 @@ class Webservices_Controller extends Base_Controller
             $final = Programme::remove_ids_from_field_names($final);
 
             return json_encode($final);
-
         }
         else
         {
