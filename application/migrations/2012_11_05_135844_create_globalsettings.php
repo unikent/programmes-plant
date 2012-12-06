@@ -67,7 +67,7 @@ class Create_GlobalSettings {
 		$this->add_field('GlobalSettingField', 'global_settings', 'Additional entry requirement information', 'textarea', '', '');
 		
 		//Section: Xcri-CAP / KIS global fields
-		$this->add_field('GlobalSettingField', 'global_settings', 'Institution name', 'textarea', 'University of Kent', '');
+		$this->add_field('GlobalSettingField', 'global_settings', 'Institution name', 'text', 'University of Kent', '');
 		$this->add_field('GlobalSettingField', 'global_settings', 'UKPRN', 'text', '', '');
 		$this->add_field('GlobalSettingField', 'global_settings', 'Contributor', 'textarea', '', '');
 		$this->add_field('GlobalSettingField', 'global_settings', 'Catalog description', 'textarea', '', '');
