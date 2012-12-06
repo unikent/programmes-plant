@@ -240,14 +240,8 @@ class Programmes_Controller extends Revisionable_Controller
         }
 
         $schools = School::all_as_list();
-        $sub = Programme::all_as_list();
+        $sub = Subject::all_as_list();
         $pro = Programme::all_as_list();
-
-        $revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
-        $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
-        $revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
-        $programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
-        $revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
 
         $differences = array_diff_assoc($programme_attributes, $revision_for_diff);
 
