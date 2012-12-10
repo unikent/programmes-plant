@@ -1,6 +1,6 @@
 <?php
 
-class Webservices_Controller extends Base_Controller 
+class API_Controller extends Base_Controller 
 {
 
     public $restful = true;
