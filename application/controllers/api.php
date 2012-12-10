@@ -4,6 +4,12 @@ class API_Controller extends Base_Controller
 {
 
     public $restful = true;
+    
+    public function __construct()
+    {
+        // turn off the profiler because this interferes with the web service
+        Config::set('application.profiler', false);
+    }
 
     public function get_index($year, $level)
     {
@@ -58,11 +64,10 @@ class API_Controller extends Base_Controller
         {
             unset($final->{$key});
         }
-
+        
         // now remove ids from our field names, they're not necessary
-        $final = Programme::remove_ids_from_field_names($final);
-
-        return json_encode($final);
+        $final = Programme::remove_ids_from_field_names($final); 
+        return Response::json($final);
     }
 
 }
