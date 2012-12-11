@@ -77,7 +77,6 @@ class GlobalSettings_Controller extends Revisionable_Controller
 
             $subject = new GlobalSetting;
             $subject->year = Input::get('year');
-            $subject->institution = Input::get('institution');
 
              //Save varible fields
             $f = $this->get_fields();
@@ -108,7 +107,6 @@ class GlobalSettings_Controller extends Revisionable_Controller
             $subject = GlobalSetting::where('year', '=', $year)->first();
 
             $subject->year = Input::get('year');
-            $subject->institution = Input::get('institution');
 
             //Save varible fields
             $f = $this->get_fields();
@@ -119,7 +117,9 @@ class GlobalSettings_Controller extends Revisionable_Controller
 
             $subject->save();
 
-            Messages::add('success', "Saved $subject->institution.");
+            $institution_name_field = GlobalSetting::get_institution_name_field();
+
+            Messages::add('success', "Saved $subject->$institution_name_field.");
 
             return Redirect::to($year.'/'. $type.'/'. $this->views);
 
