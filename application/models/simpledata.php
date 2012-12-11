@@ -81,6 +81,51 @@ class SimpleData extends Eloquent
     	$this->fill($input);
     }
 
+    /**
+     * Override Eloquent's save so that we jenerate a new json file for our API
+     */
+    public function save(){
+    	$saved = parent::save();
+    	if($saved){
+    		static::generate_json();
+    	}
+    	return $saved;
+    }
+
+    /**
+     * Generate a json file that represents the records in this model
+     */
+    private static function generate_json(){
+		$cache_location = path('storage') .'api/';
+		$cache_file = $cache_location.get_called_class().'.json';
+    	$data = array();
+
+		foreach (static::all() as $record) {
+			$data[$record->id] = $record->to_array();
+		}
+
+    	// if our $cache_location isnt available, create it
+	    if (!is_dir($cache_location)) 
+	    {
+	     	mkdir($cache_location, 0755, true);
+	    }
+
+	    file_put_contents($cache_file, json_encode($data));
+    }
+
+    /**
+     * This function replaces the passed-in ids with their actual record
+     */
+    public static function replace_ids_with_values($ids){
+
+    	$ds_fields = static::where_in('id', explode(',',$ids))->get();
+        $values = array();
+        foreach ($ds_fields as $ds_field) {
+            $values[$ds_field->id] = $ds_field->to_array();
+        }
+
+        return $values;
+    }
 }
 
 class NoValidationException extends \Exception {}

@@ -5,7 +5,7 @@ Text Fields
 
 foreach($sections as $section_name => $section)
 {
-  echo "<legend>{$section_name}</legend>";
+  if ($section_name != '') echo "<legend>{$section_name}</legend>";
 
   foreach($section as $field)
   {
