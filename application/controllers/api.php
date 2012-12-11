@@ -23,7 +23,13 @@ class API_Controller extends Base_Controller
         $path = path('storage') . 'api/' . $level . '/' . $year . '/';
 
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-        return file_exists($path . 'index.json') ? file_get_contents($path . 'index.json') : Response::error('204');
+        if (! file_exists($path . 'index.json'))
+        {
+            return Response::error('204');
+        }
+
+        // Return the cached index file with the correct headers.
+        return Response::make(file_get_contents($path . 'index.json'), '200', array('Content-Type' => 'application/json'));
     }
     
     /**
