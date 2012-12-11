@@ -280,7 +280,7 @@ class Revisionable extends Eloquent
   {
     //global, settings, programme
     $data_type = get_called_class();
-    $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
+    $cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
 
     // if our $cache_location isnt available, create it
     if (!is_dir($cache_location)) {

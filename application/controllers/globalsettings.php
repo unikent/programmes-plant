@@ -47,7 +47,6 @@ class GlobalSettings_Controller extends Revisionable_Controller
      */
     public function get_edit($year, $type)
     {
-
         $model = $this->model;
         $globalsetting = $model::where('year', '=', $year)->first();
 
@@ -117,7 +116,9 @@ class GlobalSettings_Controller extends Revisionable_Controller
 
             $subject->save();
 
-            Messages::add('success', "Settings saved.");
+            $institution_name_field = GlobalSetting::get_institution_name_field();
+
+            Messages::add('success', "Saved $subject->$institution_name_field.");
 
             return Redirect::to($year.'/'. $type.'/'. $this->views);
 
