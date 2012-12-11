@@ -171,7 +171,6 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_setting_fields[] = array('Year in industry', 'textarea', 'This text will appear under the Year in industry text on the Modules tab.', '');
 		$programme_setting_fields[] = array('Year abroad', 'textarea', 'This text will appear under the Year Abroad text on the Modules tab', '');
 		$programme_setting_fields[] = array('Careers/employability text', 'textarea', 'This text will appear under the text on the Careers tab', '');
-		$programme_setting_fields[] = array('Tuition fees', 'textarea', 'This text will appear under the Fees and Funding tab', '');
 		$programme_setting_fields[] = array('General disclaimer', 'textarea', 'This text will appear at the footer of each page', '');
 
 
