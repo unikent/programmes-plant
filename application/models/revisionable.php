@@ -52,7 +52,10 @@ class Revisionable extends Eloquent
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
           $revision_attributes['status'] = 'selected';
 
-          $revision_attributes['created_by'] = Auth::user();
+          if ($revision_attributes['created_by'] == null)
+          {
+              $revision_attributes['created_by'] = Auth::user();
+          }
 
           // Deactivate any previosuly selected drafts
           $r_model = $this->revision_model;
@@ -232,7 +235,7 @@ class Revisionable extends Eloquent
    */
   private function generate_feed_index($new_programme, $path)
   {
-    $index_file = $path.'Index.json';
+    $index_file = $path.'index.json';
   
     $title_field = Programme::get_title_field();
     $slug_field = Programme::get_slug_field();
