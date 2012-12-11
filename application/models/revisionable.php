@@ -235,7 +235,7 @@ class Revisionable extends Eloquent
    */
   private function generate_feed_index($new_programme, $path)
   {
-    $index_file = $path.'Index.json';
+    $index_file = $path.'index.json';
   
     $title_field = Programme::get_title_field();
     $slug_field = Programme::get_slug_field();
