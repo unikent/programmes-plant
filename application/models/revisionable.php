@@ -52,7 +52,10 @@ class Revisionable extends Eloquent
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
           $revision_attributes['status'] = 'selected';
 
-          $revision_attributes['created_by'] = Auth::user();
+          if ($revision_attributes['created_by'] == null)
+          {
+              $revision_attributes['created_by'] = Auth::user();
+          }
 
           // Deactivate any previosuly selected drafts
           $r_model = $this->revision_model;
