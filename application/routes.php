@@ -15,7 +15,7 @@ else {
 Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
-	       return Redirect::to(date('Y').'/ug/');   
+	       return Redirect::to('2014/ug/');
 	});
 
 	// Index
