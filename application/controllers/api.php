@@ -55,7 +55,17 @@ class API_Controller extends Base_Controller
         $global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
         $programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
         $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
-        $modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
+        
+        // in local and test environments we're using a faked json file rather than one generated from the sds web service
+        $modules = '';
+        if (Request::env() == 'test' or Request::env() == 'local')
+        {
+            $modules = json_decode(file_get_contents($path . $programme_id . '_modules_test.json'));
+        }
+        else
+        {
+            $modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
+        }
         
         // build up $final which will be an object with all the data in we need
         // start with the global settings
