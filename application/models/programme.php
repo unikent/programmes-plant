@@ -55,7 +55,7 @@ class Programme extends Revisionable
      */
     public static function get_withdrawn_field()
     {
-        return 'programme_withdrawn_57';
+        return 'programme_withdrawn_54';
     }
     
     /**
@@ -65,7 +65,7 @@ class Programme extends Revisionable
      */
     public static function get_suspended_field()
     {
-        return 'programme_suspended_56';
+        return 'programme_suspended_53';
     }
     
     /**
@@ -75,7 +75,7 @@ class Programme extends Revisionable
      */
     public static function get_subject_to_approval_field()
     {
-        return 'subject_to_approval_55';
+        return 'subject_to_approval_52';
     }
     
     /**
