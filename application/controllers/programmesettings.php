@@ -169,21 +169,21 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
      */
     public function get_difference($year, $type, $revision_id = false)
     {
-
         // Get revision specified
         $programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
 
-        if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        if (! $programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $revision = $programmesetting->find_revision($revision_id);
         
-        if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+        if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
         $revision_attributes = $programmesetting->attributes;
         $revision_for_diff = (array) $revision;
 
         // Ignore these fields which will always change
-        foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
+        foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
+        {
             unset($revision_for_diff[$ignore]);
             unset($revision_attributes[$ignore]);
         }
@@ -192,7 +192,8 @@ class ProgrammeSettings_Controller extends Revisionable_Controller
 
         $diff = array();
 
-        foreach ($differences as $field => $value) {
+        foreach ($differences as $field => $value) 
+        {
             $diff[$field] = SimpleDiff::htmlDiff($revision_attributes[$field], $revision_for_diff[$field]);
         }
 
