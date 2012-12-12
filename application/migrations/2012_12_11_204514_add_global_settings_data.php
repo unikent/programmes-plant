@@ -9,10 +9,6 @@ class Add_Global_Settings_Data {
 	 */
 	public function up()
 	{
-	    Schema::table('global_settings', function($table){	
-			$table->drop_column('institution');
-		});
-		
         $global_setting = new GlobalSetting;
         $global_setting->year = '2014';	 	 	 		
         $global_setting->created_by = 'at369';		 	 	 	 	 	 		
@@ -48,10 +44,6 @@ class Add_Global_Settings_Data {
 	 */
 	public function down()
 	{
-	    Schema::table('global_settings', function($table){
-			$table->boolean('institution');
-		});
-		
 		$global_setting = GlobalSetting::find(1);
 		$global_setting->delete();
 	}
