@@ -52,7 +52,7 @@ class ProgrammeField extends Field
     *
     * @param object $programme_obj the programme object
     * @param array $programme_fields programme fields from db
-    * @param array $input_fields data from the form
+    * @param array $input_fields user input fields from the form
     * @return object $programme_obj modified programme object
     */
     public static function assign_fields($programme_obj, $programme_fields, $input_fields)
@@ -60,10 +60,12 @@ class ProgrammeField extends Field
         foreach ($programme_fields as $programme_field)
         {
             $colname = $programme_field->colname;
-            // make sure the field is being used (if it's in section 0 then it isn't)
+            // make sure the field is being used (if it's in section 0 then it isn't so ignore it completely)
             if ($programme_field->section > 0)
             {
+                // if the field is being used add its value to the appropriate colname in the programme object
                 if (isset($input_fields[$colname])) {
+                    // if the field's value is an array, convert it into a comma-separated string
                     if (is_array($input_fields[$colname]))
                     {
                         $input_fields[$colname] = implode(',', $input_fields[$colname]);
@@ -75,6 +77,7 @@ class ProgrammeField extends Field
         return $programme_obj;
     }
 
+
     /**
      * Extract input into model.
      */
@@ -82,5 +85,47 @@ class ProgrammeField extends Field
     {
         parent::get_input();
         $this->programme_field_type =  Input::get('programme_field_type');
+    }
+
+
+    /**
+     * Override Eloquent's save so that we jenerate a new json file for our API
+     * 
+     */
+    public function save()
+    {
+        $saved = parent::save();
+
+        if($saved){
+            static::generate_json();
+        }
+        
+        return $saved;
+    }
+
+    /**
+     * Generate a json file that represents the records in this model
+     * We're however only interested in fields that have other models as their type
+     */
+    private static function generate_json(){
+        $cache_location = path('storage') .'api/';
+        $cache_file = $cache_location . get_called_class() . '.json';
+        $data = array();
+        
+        foreach (static::where_in('field_type', array('table_select', 'table_multiselect'))
+                        ->get(array('colname', 'field_meta')) as $record) {
+            $data[$record->colname] = array(
+                    'colname' => $record->colname,
+                    'field_meta' => $record->field_meta
+                );
+        }
+
+        // if our $cache_location isnt available, create it
+        if (!is_dir($cache_location)) 
+        {
+            mkdir($cache_location, 0755, true);
+        }
+
+        file_put_contents($cache_file, json_encode($data));
     }
 }

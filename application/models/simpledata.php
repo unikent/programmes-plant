@@ -81,6 +81,9 @@ class SimpleData extends Eloquent
     	$this->fill($input);
     }
 
+    /**
+     * Override Eloquent's save so that we jenerate a new json file for our API
+     */
     public function save(){
     	$saved = parent::save();
     	if($saved){
@@ -89,8 +92,11 @@ class SimpleData extends Eloquent
     	return $saved;
     }
 
+    /**
+     * Generate a json file that represents the records in this model
+     */
     private static function generate_json(){
-		$cache_location = $GLOBALS['laravel_paths']['storage'].'api/';
+		$cache_location = path('storage') .'api/';
 		$cache_file = $cache_location.get_called_class().'.json';
     	$data = array();
 

@@ -87,9 +87,6 @@ class TestLeaflet extends ModelTestCase
 			'tracking_code' => 'http://example.com/tracking'
 		);
 
-		// Handle closure
-		$GLOBALS['input'] = $input;
-
 		$leaflet = new Leaflet;
 
 		foreach($input as $key => $value)
@@ -99,10 +96,8 @@ class TestLeaflet extends ModelTestCase
 		$leaflet->save();
 
 		$return = DB::table('leaflets')
-				  ->where(function($query)
+				  ->where(function($query) use ($input)
 				  {
-				  	$input = $GLOBALS['input'];
-
 				  	$query->where('name', '=', $input['name']);
 				  	$query->where('campuses_id', '=', $input['campuses_id']);
 				  	$query->where('tracking_code', '=', $input['tracking_code']);

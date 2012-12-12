@@ -52,7 +52,10 @@ class Revisionable extends Eloquent
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
           $revision_attributes['status'] = 'selected';
 
-          $revision_attributes['created_by'] = Auth::user();
+          if ($revision_attributes['created_by'] == null)
+          {
+              $revision_attributes['created_by'] = Auth::user();
+          }
 
           // Deactivate any previosuly selected drafts
           $r_model = $this->revision_model;
@@ -180,30 +183,32 @@ class Revisionable extends Eloquent
      {
         $model = get_called_class();
 
-        if (isset(static::$list_cache[$model])) return static::$list_cache[$model];
+        $cache_key = "$model-$year-options-list";
 
-        $title_field = self::get_title_field();
-        
-        return static::$list_cache[$model] = Cache::remember("$model-$year-options-list", function() use ($year, $model, $title_field)
+        if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
+
+        return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model)
         {
           $options = array();
 
-            if (! $year)
-            {
-              $data = $model::get(array('id', $title_field));
-            }
-            else 
-            {
-              $data = $model::where('year','=', $year)->get(array('id',$title_field));
-            }
-            
-            foreach ($data as $record)
-            {
-              $options[$record->id] = $record->$title_field;
-            }
+          $title_field = $model::get_title_field();
+
+          if (! $year)
+          {
+            $data = $model::get(array('id', $title_field));
+          }
+          else 
+          {
+            $data = $model::where('year','=', $year)->get(array('id',$title_field));
+          }
+
+          foreach ($data as $record)
+          {
+            $options[$record->id] = $record->$title_field;
+          }
 
             return $options;
-        }, 'forever');
+        }, 2628000); // Cache forever.
      }
 
      public static function getAttributesList($year = false)
@@ -230,7 +235,7 @@ class Revisionable extends Eloquent
    */
   public function generate_feed_index($new_programme, $path)
   {
-    $index_file = $path.'Index.json';
+    $index_file = $path.'index.json';
   
     $title_field = Programme::get_title_field();
     $slug_field = Programme::get_slug_field();
@@ -275,7 +280,7 @@ class Revisionable extends Eloquent
   {
     //global, settings, programme
     $data_type = get_called_class();
-    $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
+    $cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
 
     // if our $cache_location isnt available, create it
     if (!is_dir($cache_location)) {
