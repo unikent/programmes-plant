@@ -290,11 +290,11 @@ class Revisionable extends Eloquent
     // if we're saving a programme
     if($data_type == 'Programme')
     {
-      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
+      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
       $this->generate_feed_index($revision,$cache_location);
 
     }else{
-      file_put_contents($cache_location.$data_type.'.json', json_encode($revision));
+      file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
     }
 
   }
@@ -324,7 +324,7 @@ class Revisionable extends Eloquent
     $r->save();
 
     //update feed file
-    $this->generate_feed_file($revision);
+    $this->generate_feed_file($r);
   }
 
      //Needs urgent refactoring
@@ -422,8 +422,7 @@ class Revisionable extends Eloquent
     {
         $new_record = array();
         foreach ($record as $name => $value) {
-          $name = preg_replace('/_\d{1,3}$/', '', $name);
-          $new_record[$name] = $value;
+          $new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
         }
 
         return $new_record;

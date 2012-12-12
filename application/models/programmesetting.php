@@ -11,7 +11,7 @@ class ProgrammeSetting extends Revisionable
 
     
     /**
-     * get the default setting for the specified column
+     * Get the default setting for the specified column
      *
      * @param $year The year of the setting to retrieve
      * @param $colname column name of the setting to retrieve
