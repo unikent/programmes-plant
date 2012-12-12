@@ -47,7 +47,7 @@ class API_Controller extends Base_Controller
         
         // try to get json files for global and programme settings, as well as the programme data itself
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-        if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') or ! file_exists($path . $programme_id . '_modules.json') )
+        if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') )
         {
             return Response::error('204');
         }
