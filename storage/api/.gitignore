@@ -5,5 +5,5 @@
 # we'll need to take this out once we have the real web services #
 ##################################################################
 ug/2014/*
-!ug/2014/1_modules.json
-!ug/2014/3_modules.json
+!ug/2014/1_modules_test.json
+!ug/2014/3_modules_test.json
