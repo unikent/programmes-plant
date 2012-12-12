@@ -47,7 +47,7 @@ class API_Controller extends Base_Controller
         
         // try to get json files for global and programme settings, as well as the programme data itself
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-        if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json'))
+        if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') or ! file_exists($path . $programme_id . '_modules.json') )
         {
             return Response::error('204');
         }
@@ -56,9 +56,24 @@ class API_Controller extends Base_Controller
         $programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
         $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
         
+        // in local and test environments we're using a faked json file rather than one generated from the sds web service
+        $modules = '';
+        if (Request::env() == 'test' or Request::env() == 'local')
+        {
+            $modules = json_decode(file_get_contents($path . $programme_id . '_modules_test.json'));
+        }
+        else
+        {
+            $modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
+        }
+        
         // build up $final which will be an object with all the data in we need
         // start with the global settings
         $final = $global_settings;
+        
+        // modules
+        // note that the web service contains two levels we won't need: response and rubric. This may need fixing once we get the finished web service
+        $final->modules = $modules->response->rubric;
 
         // now add programme settings to the $final object
         // no inhertence needed so just loop through the settings, adding them to the object
@@ -78,7 +93,8 @@ class API_Controller extends Base_Controller
             }
                 
         }
-
+        
+        
         // tidy up
         foreach(array('id','global_setting_id') as $key)
         {
