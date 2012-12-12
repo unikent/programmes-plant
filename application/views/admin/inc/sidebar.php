@@ -2,7 +2,7 @@
   <ul class="nav nav-list">
 
   <?php
-	$selectedYear = date('Y');
+	$selectedYear = '2014';
 	$selectedType = 'ug';
     if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
     if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
