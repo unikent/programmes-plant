@@ -78,7 +78,10 @@ class API_Controller extends Base_Controller
         foreach($programme as $key => $value)
         {
             // make sure any existing key in the $final object gets updated with the new $value
-            $final->{$key} = ( isset($final->{$key} ) && $value != '' ) ? $value : null;
+            if(!empty($value) ){
+                $final->{$key} = $value;
+            }
+                
         }
         
         
@@ -89,7 +92,7 @@ class API_Controller extends Base_Controller
         }
         
         // now remove ids from our field names, they're not necessary
-        // eg 'programme_id_1' becomes simply 'programme_id'
+        // eg 'programme_title_1' simply becomes 'programme_title'
         $final = Programme::remove_ids_from_field_names($final);
         
         // return a json version of the newly-created $final object
