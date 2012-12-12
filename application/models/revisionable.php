@@ -52,7 +52,10 @@ class Revisionable extends Eloquent
           $revision_attributes['updated_at'] = $revision_attributes['created_at'];
           $revision_attributes['status'] = 'selected';
 
-          $revision_attributes['created_by'] = Auth::user();
+          if ($revision_attributes['created_by'] == null)
+          {
+              $revision_attributes['created_by'] = Auth::user();
+          }
 
           // Deactivate any previosuly selected drafts
           $r_model = $this->revision_model;
@@ -232,7 +235,7 @@ class Revisionable extends Eloquent
    */
   private function generate_feed_index($new_programme, $path)
   {
-    $index_file = $path.'Index.json';
+    $index_file = $path.'index.json';
   
     $title_field = Programme::get_title_field();
     $slug_field = Programme::get_slug_field();
@@ -277,7 +280,7 @@ class Revisionable extends Eloquent
   {
     //global, settings, programme
     $data_type = get_called_class();
-    $cache_location = $GLOBALS['laravel_paths']['storage'].'api'.'/ug/'.$revision->year.'/';
+    $cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
 
     // if our $cache_location isnt available, create it
     if (!is_dir($cache_location)) {
@@ -287,11 +290,11 @@ class Revisionable extends Eloquent
     // if we're saving a programme
     if($data_type == 'Programme')
     {
-      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision));
+      file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
       $this->generate_feed_index($revision,$cache_location);
 
     }else{
-      file_put_contents($cache_location.$data_type.'.json', json_encode($revision));
+      file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
     }
 
   }
@@ -321,7 +324,7 @@ class Revisionable extends Eloquent
     $r->save();
 
     //update feed file
-    $this->generate_feed_file($revision);
+    $this->generate_feed_file($r);
   }
 
      //Needs urgent refactoring
@@ -419,8 +422,7 @@ class Revisionable extends Eloquent
     {
         $new_record = array();
         foreach ($record as $name => $value) {
-          $name = preg_replace('/_\d{1,3}$/', '', $name);
-          $new_record[$name] = $value;
+          $new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
         }
 
         return $new_record;

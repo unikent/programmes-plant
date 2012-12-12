@@ -55,7 +55,7 @@ class Programme extends Revisionable
      */
     public static function get_withdrawn_field()
     {
-        return 'programme_withdrawn_57';
+        return 'programme_withdrawn_54';
     }
     
     /**
@@ -65,7 +65,7 @@ class Programme extends Revisionable
      */
     public static function get_suspended_field()
     {
-        return 'programme_suspended_56';
+        return 'programme_suspended_53';
     }
     
     /**
@@ -75,7 +75,7 @@ class Programme extends Revisionable
      */
     public static function get_subject_to_approval_field()
     {
-        return 'subject_to_approval_55';
+        return 'subject_to_approval_52';
     }
     
     /**
@@ -98,9 +98,17 @@ class Programme extends Revisionable
      */
     public static function pull_external_data($record)
     {
+        $path = path('storage') . 'api/';
+        $programme_fields_path = $path . 'ProgrammeField.json';
+
+        //if we dont have a json file, return the $record as it was
+        if (!file_exists($programme_fields_path))
+        {
+            return $record;
+        }
+
         //get programme fields
-        $programme_fields = ProgrammeField::where_in('field_type', array('table_select', 'table_multiselect'))
-                        ->get(array('colname', 'field_meta'));
+        $programme_fields = json_decode(file_get_contents($programme_fields_path));
         
         //make neater programme fields array
         $fields_array = array();

@@ -83,16 +83,6 @@ class Refactor_Programmes_Fields_And_Settings {
 		//Section: Overview
 		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters.  The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '', 2);//140 character limit
 		$programme_fields[] = array('Programme overview text', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '', 2);//max 300 words... shows users when they have reached word limit but does allow over-matter.
-		
-		//Section: Course Structure (modules tab)
-			//This modules by stage information below is read only. Changes to modules cannot be made here but must be made to the v_pos_modules table in SDS. Please ask your SDS administrator to make any changes and they will be updated here on a X basis. 
-			//[output for module by stages taken from v_pos_module]
-		$programme_fields[] = array('Foundation year', 'textarea', 'If the programme has a Foundation Year, please give details explaining what it entails and how students can benefit. Max 200 words.', '', 3); // Shows users when they have reached word limit but does allow over-matter. 
-		//[note on form] Please note standard text will appear under this tab. See ‘Standard messages’ (pdf). * [Note we could either have a pdf or similar with all the standard text or give admins read-only access to the global settings so they can read the notes)] 
-		$programme_fields[] = array('Year in industry', 'textarea', 'If the programme has a year in industry, please give details explaining what it entails and how students can benefit. Max 200 words.', '', 3); // Function: Shows users when they have reached word limit but does allow over-matter. 
-		//[note on form] Please note standard text will appear under this tab. See ‘Standard messages’ (pdf). 
-		$programme_fields[] = array('Year abroad', 'textarea', 'If the programme has a year abroad, please give details explaining what it entails and how students can benefit. Max 200 words.', '', 3); // Function: Shows users when they have reached word limit but does allow over-matter. 
-		//[note on form] Please note standard text will appear under this tab. See ‘Standard messages’ (pdf).
  
 		//Section: Teaching and Assessment 
 		$programme_fields[] = array('Teaching and assessment', 'textarea', 'Please give details of how the programme is taught and assessed here. Max 200 words.', '', 4); // Function: Shows users when they have reached word limit but does allow over-matter. 
@@ -171,7 +161,6 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_setting_fields[] = array('Year in industry', 'textarea', 'This text will appear under the Year in industry text on the Modules tab.', '');
 		$programme_setting_fields[] = array('Year abroad', 'textarea', 'This text will appear under the Year Abroad text on the Modules tab', '');
 		$programme_setting_fields[] = array('Careers/employability text', 'textarea', 'This text will appear under the text on the Careers tab', '');
-		$programme_setting_fields[] = array('Tuition fees', 'textarea', 'This text will appear under the Fees and Funding tab', '');
 		$programme_setting_fields[] = array('General disclaimer', 'textarea', 'This text will appear at the footer of each page', '');
 
 
