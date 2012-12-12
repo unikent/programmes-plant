@@ -10,7 +10,7 @@
             <div class="nav-collapse collapse">
             
                 <?php 
-                    $year = $selectedYear = date('Y');
+                    $year = $selectedYear = '2014';
                     $selectedType = 'ug';
                 ?>
                 
