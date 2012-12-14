@@ -25,7 +25,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		$this->clean_request();
+		ControllerTestCase::clean_request();
 	}
 
 	/**

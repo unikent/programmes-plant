@@ -85,7 +85,7 @@ class Programme extends Revisionable
      */
     public function award()
     {
-      return $this->belongs_to('Award', static::get_award_field());
+        return $this->belongs_to('Award', static::get_award_field());
     }
 
     
