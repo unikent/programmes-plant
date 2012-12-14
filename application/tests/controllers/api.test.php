@@ -168,10 +168,8 @@ class TestAPI_Controller extends ControllerTestCase
 			$course->makeRevisionLive($revisions[0]);
 		}
 
-		$response = $this->get('api@programme', array('2012', 'ug', 'programme', $input['id']));
+		$response = $this->get('api@programme', array('2012', 'ug', $input['id']));
 		$this->assertEquals('200', $response->status());
-
-		$this->markTestIncomplete();
 	}
 
 	public function testget_indexReturnsJSONWithData()
