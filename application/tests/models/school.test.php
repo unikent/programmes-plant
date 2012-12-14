@@ -48,17 +48,13 @@ class TestSchool extends ModelTestCase
 	{
 		$input = array('name' => 'A School', 'faculties_id' => 1);
 
-		// Handle closure
-		$GLOBALS['input'] = $input;
-
 		$school = new School;
 		foreach($input as $key => $value){ $school->$key = $value; }
 		$school->save();
 
 		$return = DB::table('schools')
-				  ->where(function($query)
+				  ->where(function($query) use ($input)
 				  {
-				  	$input = $GLOBALS['input'];
 				  	$query->where('name', '=', $input['name']);
 				  	$query->where('faculties_id', '=', $input['faculties_id']);
 				  })

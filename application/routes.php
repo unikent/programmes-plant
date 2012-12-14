@@ -15,7 +15,7 @@ else {
 Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
-	       return Redirect::to(date('Y').'/ug/');   
+	       return Redirect::to('2014/ug/');
 	});
 
 	// Index
@@ -88,6 +88,10 @@ Route::group(array('before' => ''), function(){
 	// Customised routing for subject categories
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
+
+	// API
+	Route::any('/api/([0-9]{4})/(ug|pg)/programmes', 'api@index');
+	Route::get('/api/([0-9]{4})/(ug|pg)/programmes/(:num?)', 'api@programme');
 });
 
 // Login/out

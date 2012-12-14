@@ -2,7 +2,7 @@
   <ul class="nav nav-list">
 
   <?php
-	$selectedYear = date('Y');
+	$selectedYear = '2014';
 	$selectedType = 'ug';
     if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
     if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
@@ -26,12 +26,12 @@
         <li class="<?php echo ( URI::segment(3) == 'schools' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'schools')?>"><i class="icon-list-alt"></i> Schools</a></li>
         <li class="<?php echo ( URI::segment(3) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjects')?>"><i class="icon-list-alt"></i> Subjects</a></li>
         <li class="<?php echo ( URI::segment(3) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url($mainpath.'subjectcategories')?>"><i class="icon-list-alt"></i> Subject categories</a></li>
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-list-alt"></i> Globals</a></li>
+        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'globalsettings')?>"><i class="icon-list-alt"></i> XCRI/KIS globals</a></li>
         <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmesettings')?>"><i class="icon-list-alt"></i> Programme globals</a></li>
         
 
         <li class="nav-header">Field setup</li>
-        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/globalsettings')?>"><i class="icon-cog"></i> Global fields </a></li>
+        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/globalsettings')?>"><i class="icon-cog"></i> XCRI/KIS global fields </a></li>
         <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmesettings')?>"><i class="icon-cog"></i> Programme global fields </a></li>
         <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmes')?>"><i class="icon-cog"></i> Programme fields </a></li>
 </ul>
