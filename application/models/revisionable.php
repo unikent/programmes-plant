@@ -125,19 +125,23 @@ class Revisionable extends Eloquent
 
      /**
       * Returns the revisions of a given subject as an array.
-      *
+      * If $status is specified, returns revisions with the specified status.
+      * 
+      * @param $status 
       * @return array|bool $results Either return an array of revisions or false.
       */
-     public function get_revisions()
+     public function get_revisions($status = null)
      {
       if (! $this->exists) {
         return false;
       }
 
-      $results = DB::table($this->revision_table)
-        ->where($this->revision_type.'_id', '=', $this->get_key())
-        ->order_by('created_at', 'desc')
-        ->get();
+      $results = DB::table($this->revision_table)->select('*');
+      $results = $results->where($this->revision_type.'_id', '=', $this->get_key());
+      if(!empty($status)){
+        $results = $results->where('status', '=', $status);
+      }
+      $results = $results->order_by('created_at', 'desc')->get();
 
       if ($results) {
         return $results;

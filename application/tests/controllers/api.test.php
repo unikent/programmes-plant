@@ -1,7 +1,7 @@
 <?php
 require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
 
-class TestWebservices_Controller extends ControllerTestCase
+class TestAPI_Controller extends ControllerTestCase
 {
 	public $input = false;
 
@@ -26,7 +26,7 @@ class TestWebservices_Controller extends ControllerTestCase
 		Tests\Helper::migrate();
 
 		// Remove all Programmes
-		TestWebservices_Controller::tearDown();
+		TestAPI_Controller::tearDown();
 	}
 
 	public static function tearDownAfterClass()
@@ -45,7 +45,26 @@ class TestWebservices_Controller extends ControllerTestCase
 			$programme->delete();
 		}
 
-		// @todo Nuke also the revisions table.
+		$programme_revisions = ProgrammeRevision::all();
+
+		foreach ($programme_revisions as $revision)
+		{
+			$revision->delete();
+		}
+
+		$global_settings = GlobalSetting::all();
+
+		foreach ($global_settings as $setting)
+		{
+			$setting->delete();
+		}
+
+		$programme_settings = ProgrammeSetting::all();
+
+		foreach ($programme_settings as $setting)
+		{
+			$setting->delete();
+		}
 
 		// We need to reset our API cache somehow.
 		// This also deletes our .gitignore, which we restore after the tests are done.
@@ -57,14 +76,84 @@ class TestWebservices_Controller extends ControllerTestCase
 		parent::tearDown();
 	}
 
+	public function generate_programme_dependancies(){
+		ProgrammeField::create(
+				array(
+						'field_name' => 'New field',
+						'field_type' => 'textarea',
+						'prefill' => 0,
+						'active' => 1,
+						'view' => 1
+					)
+			)->save();
+
+		Award::create(
+				array(
+						'name' => 'Hello Award',
+						'longname' => 'Long hello award'
+					)
+			)->save();
+
+		Campus::create(
+				array(
+						'name' => 'Hello Campus'
+					)
+			)->save();
+
+		Faculty::create(
+				array(
+						'name' => 'Hello Faculty'
+					)
+			)->save();
+
+		Leaflet::create(
+				array(
+						'name' => 'Hello Leaflet'
+					)
+			)->save();
+
+		School::create(
+				array(
+						'name' => 'Hello School',
+						'faculties_id' => 1
+					)
+			)->save();
+
+		Subject::create(
+				array(
+						'name' => 'Hello Subject'
+					)
+			)->save();
+
+		ProgrammeSetting::create(
+				array(
+						'id' => 1,
+						'year' => '2012'
+					)
+			)->save();
+		$ps = ProgrammeSetting::find(1);
+		$ps->makeRevisionLive($ps->get_revisions('selected')[0]);
+
+		GlobalSetting::create(
+				array(
+						'id' => 1,
+						'year' => '2012'
+					)
+			)->save();
+		$gs = GlobalSetting::find(1);
+		$gs->makeRevisionLive($gs->get_revisions('selected')[0]);
+	}
+
 	public function testget_indexReturnsHTTPCode204WithNoDataCached()
 	{
-		$response = $this->get('webservices@index', array('2012', 'ug'));
+		$response = $this->get('api@index', array('2012', 'ug'));
 		$this->assertEquals('204', $response->status());
 	}
 
 	public function testget_indexReturnsHTTPCode200WithDataCached()
 	{
+		$this->generate_programme_dependancies();
+
 		$input = array(
 			'id' => 1, 
 			Programme::get_title_field() => 'Programme 1',
@@ -73,8 +162,14 @@ class TestWebservices_Controller extends ControllerTestCase
 
 		$this->populate($input);
 		$course = Programme::find(1);
-		$revisions = $course->get_revisions();
-		// Set revision to live to generate a feed file - don't know how to do this!
+		$revisions = $course->get_revisions('selected');
+
+		if (isset($revisions[0])) {
+			$course->makeRevisionLive($revisions[0]);
+		}
+
+		$response = $this->get('api@programme', array('2012', 'ug', 'programme', $input['id']));
+		$this->assertEquals('200', $response->status());
 
 		$this->markTestIncomplete();
 	}
