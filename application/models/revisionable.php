@@ -241,7 +241,10 @@ class Revisionable extends Eloquent
     $slug_field = Programme::get_slug_field();
     $withdrawn_field = Programme::get_withdrawn_field();
     $suspended_field = Programme::get_suspended_field();
-    $subject_area_1_field = Programme::get_subject_area_1_field();
+    $subject_to_approval_field = Programme::get_subject_to_approval_field();
+    $new_programme_field = Programme::get_new_programme_field();
+    $mode_of_study_field = Programme::get_mode_of_study_field();
+    $ucas_code_field = Programme::get_ucas_code_field();
     $index_data = array();
     $programmes = ProgrammeRevision::where('year','=',$new_programme->year)
                       ->where('status','=','live')
@@ -255,7 +258,16 @@ class Revisionable extends Eloquent
         'id' => $programme->programme_id,
         'name' => $programme->$title_field,
         'slug' => $programme->$slug_field,
-        'subject' => $programme->$subject_area_1_field
+        'award' => $programme->award->name,
+        'subject' => $programme->subject_area_1->name,
+        'withdrawn' => $programme->$withdrawn_field,
+        'main_school' => $programme->administrative_school->name,
+        'secondary_school' => $programme->additional_school->name,
+        'campus' => $programme->location->name,
+        'new_programme' => $programme->$new_programme_field,
+        'subject_to_approval' => $programme->$subject_to_approval_field,
+        'mode_of_study' => $programme->$mode_of_study_field,
+        'ucas_code' => $programme->$ucas_code_field
         );
     }
     
