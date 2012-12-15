@@ -126,7 +126,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
-
+            Input::flash();//Save previous inputs to avoid blanking form.
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
         }
 
@@ -156,6 +156,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
+            Input::flash();//Save previous inputs to avoid blanking form.
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
         }
 
