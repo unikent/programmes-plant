@@ -68,25 +68,25 @@ class GlobalSettings_Controller extends Revisionable_Controller
      *
      * The change request page.
      *
-     * @param int    $year The year of the created subject.
+     * @param int    $year The year of the created settings data
      * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
      */
     public function post_create($year, $type)
     {
 
-            $subject = new GlobalSetting;
-            $subject->year = Input::get('year');
+            $global_settings = new GlobalSetting;
+            $global_settings->year = Input::get('year');
 
              //Save varible fields
             $f = $this->get_fields();
             foreach ($f as $c) {
                 $col = $c->colname;
-                if(Input::get($col) != null)  $subject->$col = Input::get($col);
+                if(Input::get($col) != null)  $global_settings->$col = Input::get($col);
             }
 
-            $subject->save();
+            $global_settings->save();
 
-            Messages::add('success','Subject added');
+            Messages::add('success','Global settings have been saved');
 
             return Redirect::to($year.'/'.$type.'/'.$this->views.'');
 
@@ -97,28 +97,28 @@ class GlobalSettings_Controller extends Revisionable_Controller
      *
      * Make a change.
      *
-     * @param int    $year The year of the created subject.
+     * @param int    $year The year of the settings data
      * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
      */
     public function post_edit($year, $type)
     {
 
-            $subject = GlobalSetting::where('year', '=', $year)->first();
+            $global_settings = GlobalSetting::where('year', '=', $year)->first();
 
-            $subject->year = Input::get('year');
+            $global_settings->year = Input::get('year');
 
             //Save varible fields
             $f = $this->get_fields();
             foreach ($f as $c) {
                 $col = $c->colname;
-                if(Input::get($col) != null)  $subject->$col = Input::get($col);
+                if(Input::get($col) != null)  $global_settings->$col = Input::get($col);
             }
 
-            $subject->save();
+            $global_settings->save();
 
             $institution_name_field = GlobalSetting::get_institution_name_field();
 
-            Messages::add('success', "Saved $subject->$institution_name_field.");
+            Messages::add('success', "Saved {$global_settings->$institution_name_field}.");
 
             return Redirect::to($year.'/'. $type.'/'. $this->views);
 
@@ -211,7 +211,7 @@ class GlobalSettings_Controller extends Revisionable_Controller
      */
     public function get_changes()
     {
-       $this->data['revisions'] = DB::table('subjects_revisions')
+       $this->data['revisions'] = DB::table('global_settings_revisions')
             ->where('status', '=', 'pending')
             ->get();
 
