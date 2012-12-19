@@ -113,6 +113,12 @@ Route::filter('csrf', function()
 	if (Request::forged()) return Response::error('500');
 });
 
+Route::filter('before', function()
+{
+	// Push IE to max avaliable.
+	header('X-UA-Compatible: IE=Edge,chrome=1');
+});
+
 Route::filter('auth', function()
 {
     Session::put('referrer', URL::current());
