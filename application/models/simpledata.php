@@ -44,9 +44,10 @@ class SimpleData extends Eloquent
     /**
 	 * Gives us all the items in this model as a flat id => name array, for use in a <option> tag.
 	 * 
+	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
 	 * @return array $options An array where the record ID maps onto the record name.
 	 */
-	public static function all_as_list()
+	public static function all_as_list($empty_default_value = 0)
 	{
 		// If we have cached our list then return it from cache.
 		if(isset(static::$list_cache[get_called_class()])) return static::$list_cache[get_called_class()];
@@ -54,7 +55,12 @@ class SimpleData extends Eloquent
 		$data = self::get(array('id','name'));
 
 		$options = array();
-
+		// set the 'none' select value, as per the $empty_default_value param
+        if ( $empty_default_value != 0 )
+        {
+            $options[0] = __('fields.empty_default_value');
+        }
+        
 		foreach ($data as $item) 
 		{
 			$options[$item->id] = $item->name;

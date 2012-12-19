@@ -119,10 +119,10 @@ class Fields_Controller extends Admin_Controller
         $model = $this->model;
         $name = $this->name;
 
-        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect')))
         {
             Messages::add('error', $model::$validation->errors->all());
-            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
+            return Redirect::to('/' . $type . '/' . $this->views . '/' . $this->view .'/edit/' . Input::get('id'))->with_input();
         }
 
         $field = $model::find(Input::get('id'));
