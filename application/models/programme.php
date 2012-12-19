@@ -79,7 +79,67 @@ class Programme extends Revisionable
     }
     
     /**
-     * Get this proramme's award.
+     * Get the name of the 'get new programme' field/column in the database.
+     * 
+     * @return The name of the 'get new programme' field.
+     */
+    public static function get_new_programme_field()
+    {
+        return 'new_programme_50';
+    }
+    
+    /**
+     * Get the name of the 'mode of stude' field/column in the database.
+     * 
+     * @return The name of the 'mode of study' field.
+     */
+    public static function get_mode_of_study_field()
+    {
+        return 'mode_of_study_12';
+    }
+    
+    /**
+     * Get the name of the 'ucas code' field/column in the database.
+     * 
+     * @return The name of the 'ucas code' field.
+     */
+    public static function get_ucas_code_field()
+    {
+        return 'ucas_code_10';
+    }
+
+    /**
+     * Get the name of the 'additional school' field/column in the database.
+     * 
+     * @return The name of the 'additional school' field.
+     */
+    public static function get_additional_school_field()
+    {
+        return 'additional_school_7';
+    }
+
+    /**
+     * Get the name of the 'administrative school' field/column in the database.
+     * 
+     * @return The name of the 'administrative school' field.
+     */
+    public static function get_administrative_school_field()
+    {
+        return 'administrative_school_6';
+    }
+
+    /**
+     * Get the name of the 'location' field/column in the database.
+     * 
+     * @return The name of the 'location' field.
+     */
+    public static function get_location_field()
+    {
+        return 'location_11';
+    }
+
+    /**
+     * Get this programme's award.
      * 
      * @return Award The award for this programme.
      */
@@ -88,6 +148,45 @@ class Programme extends Revisionable
         return $this->belongs_to('Award', static::get_award_field());
     }
 
+    /**
+     * Get this programme's first subject area.
+     * 
+     * @return Subject The first subject area for this programme.
+     */
+    public function subject_area_1()
+    {
+      return $this->belongs_to('Subject', static::get_subject_area_1_field());
+    }
+
+    /**
+     * Get this programme's administrative school.
+     * 
+     * @return School The administrative school for this programme.
+     */
+    public function administrative_school()
+    {
+      return $this->belongs_to('School', static::get_administrative_school_field());
+    }
+
+    /**
+     * Get this programme's additional school.
+     * 
+     * @return School The additional school for this programme.
+     */
+    public function additional_school()
+    {
+      return $this->belongs_to('School', static::get_additional_school_field());
+    }
+
+    /**
+     * Get this programme's campus.
+     * 
+     * @return School The additional school for this programme.
+     */
+    public function location()
+    {
+      return $this->belongs_to('Campus', static::get_location_field());
+    }
     
     /**
      * look through the passed in record and substitute any ids with data from their correct table

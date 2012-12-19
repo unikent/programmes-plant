@@ -88,23 +88,24 @@ class Simple_Admin_Controller extends Admin_Controller {
     /**
      * Route for deletion of an item.
      */
-    public function post_delete()
+    public function get_delete($year, $type, $id)
     {
         $model = $this->model;
 
         $rules = array(
-            'id'  => 'required|exists:' . $this->views,
+            'id'  => 'required|integer|exists:' . $this->views,
         );
 
-        if (! $model::is_valid($rules))
+        //Don't call core validator method or deletes will never pass (since they only ever have id)
+        if (!  Validator::make(array('id' => $id), $rules)->passes())
         {
-            Message::add('error', __($this->l . 'error.delete'));
+            Messages::add('error', __($this->l . 'error.delete'));
 
             return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
         }
         else
         {
-            $remove = $model::find(Input::get('id'));
+            $remove = $model::find($id);
             $remove->delete();
 
             Messages::add('success', __($this->l . 'success.delete'));
@@ -126,7 +127,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
-
+            Input::flash();//Save previous inputs to avoid blanking form.
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
         }
 
@@ -156,6 +157,7 @@ class Simple_Admin_Controller extends Admin_Controller {
         if (! $model::is_valid($rules))
         {
             Messages::add('error', $model::$validation->errors->all());
+            Input::flash();//Save previous inputs to avoid blanking form.
             return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
         }
 

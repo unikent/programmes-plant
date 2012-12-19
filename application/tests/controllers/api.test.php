@@ -144,6 +144,37 @@ class TestAPI_Controller extends ControllerTestCase
 		$gs->makeRevisionLive($gs->get_revisions('selected')[0]);
 	}
 
+	public function create_programme($id = 1, $title = 'Programme 1', $year = '2012')
+	{
+		$input = array(
+			'id' => $id, 
+			Programme::get_title_field() => $title,
+			'year' => $year
+		);
+
+		$this->populate($input);
+
+		$course = Programme::find($id);
+		return $course;
+	}
+
+	public function make_programme_live($id = 1)
+	{
+		$course = Programme::find($id);
+		
+		if(!empty($course))
+		{
+			$revisions = $course->get_revisions('selected');
+
+			if (isset($revisions[0])) {
+				$course->makeRevisionLive($revisions[0]);
+			}
+			return $course;
+		}
+		
+		return null;
+	}
+
 	public function testget_indexReturnsHTTPCode204WithNoDataCached()
 	{
 		$response = $this->get('api@index', array('2012', 'ug'));
@@ -154,32 +185,30 @@ class TestAPI_Controller extends ControllerTestCase
 	{
 		$this->generate_programme_dependancies();
 
-		$input = array(
-			'id' => 1, 
-			Programme::get_title_field() => 'Programme 1',
-			'year' => '2012'
-		);
-
-		$this->populate($input);
-		$course = Programme::find(1);
-		$revisions = $course->get_revisions('selected');
-
-		if (isset($revisions[0])) {
-			$course->makeRevisionLive($revisions[0]);
-		}
-
-		$response = $this->get('api@programme', array('2012', 'ug', $input['id']));
+		$course = $this->create_programme();
+		$course = $this->make_programme_live($course->id);
+	
+		$response = $this->get('api@index', array($course->year, 'ug'));
 		$this->assertEquals('200', $response->status());
 	}
 
 	public function testget_indexReturnsJSONWithData()
 	{
+		$this->generate_programme_dependancies();
+
+		$course = $this->create_programme();
+		$course = $this->make_programme_live($course->id);
+
+		$response = $this->get('api@index', array($course->year, 'ug'));
+		$returned_data = json_decode($response->render());
+		
 		// Setup data, get response, then use $response->render() and check JSON is right.
 		$this->markTestIncomplete();
 	}
 
 	public function testget_programmeReturns404WithNoCache()
 	{
+		//$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 		$this->markTestIncomplete();
 	}
 
