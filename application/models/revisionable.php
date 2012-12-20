@@ -260,7 +260,6 @@ class Revisionable extends Eloquent
         'slug' => $programme->$slug_field,
         'award' => $programme->award->name,
         'subject' => $programme->subject_area_1->name,
-        'withdrawn' => $programme->$withdrawn_field,
         'main_school' => $programme->administrative_school->name,
         'secondary_school' => $programme->additional_school->name,
         'campus' => $programme->location->name,
