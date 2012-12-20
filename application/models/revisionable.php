@@ -235,7 +235,7 @@ class Revisionable extends Eloquent
      }
 
   /**
-   * 
+   * Generate a representation of all 'live' programmes into an index file
    */
   public function generate_feed_index($new_programme, $path)
   {
@@ -262,12 +262,12 @@ class Revisionable extends Eloquent
         'id' => $programme->programme_id,
         'name' => $programme->$title_field,
         'slug' => $programme->$slug_field,
-        'award' => $programme->award->name,
-        'subject' => $programme->subject_area_1->name,
+        'award' => !empty($programme->award) ? $programme->award->name : '',
+        'subject' => !empty($programme->subject_area_1) ? $programme->subject_area_1->name : '',
         'withdrawn' => $programme->$withdrawn_field,
-        'main_school' => $programme->administrative_school->name,
-        'secondary_school' => $programme->additional_school->name,
-        'campus' => $programme->location->name,
+        'main_school' => !empty($programme->administrative_school) ? $programme->administrative_school->name : '',
+        'secondary_school' => !empty($programme->additional_school) ? $programme->additional_school->name : '',
+        'campus' => !empty($programme->location) ? $programme->location->name : '',
         'new_programme' => $programme->$new_programme_field,
         'subject_to_approval' => $programme->$subject_to_approval_field,
         'mode_of_study' => $programme->$mode_of_study_field,

@@ -196,34 +196,69 @@ class TestAPI_Controller extends ControllerTestCase
 	{
 		$this->generate_programme_dependancies();
 
-		$course = $this->create_programme();
-		$course = $this->make_programme_live($course->id);
+		$id = 1; 
+		$title = 'Programme 1'; 
+		$year = '2012';
 
-		$response = $this->get('api@index', array($course->year, 'ug'));
+		$course = $this->create_programme($id, $title, $year);
+		$course = $this->make_programme_live($id);
+
+		$response = $this->get('api@index', array($year, 'ug'));
 		$returned_data = json_decode($response->render());
+		//currently this produces an error because our index returns nothing.
+		//it seems to be a bug with sqlite that it doesnt like the query in the 
+		//revisionable model that generates the index feed
+		$returned_data = $returned_data->$id;
 		
-		// Setup data, get response, then use $response->render() and check JSON is right.
-		$this->markTestIncomplete();
+		$this->assertEquals($id, $returned_data->id);
+		$this->assertEquals($title, $returned_data->name);
 	}
 
-	public function testget_programmeReturns404WithNoCache()
+	public function testget_programmeReturns204WithNoCache()
 	{
-		//$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
-		$this->markTestIncomplete();
+		$id = 1; 
+		$title = 'Programme 1'; 
+		$year = '2012';
+
+		$course = $this->create_programme($id, $title, $year);
+		$course = $this->make_programme_live($id);
+
+		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+
+		$this->assertEquals('204', $response->status());
 	}
 
 	public function testget_programmeReturns200WhenCachePresent()
 	{
-		$this->markTestIncomplete();
+		$this->generate_programme_dependancies();
+
+		$id = 1; 
+		$title = 'Programme 1'; 
+		$year = '2012';
+
+		$course = $this->create_programme($id, $title, $year);
+		$course = $this->make_programme_live($id);
+
+		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+
+		$this->assertEquals('200', $response->status());
 	}
 
 	public function testget_programmeReturnsJSONWhenCachePresent()
 	{
-		$this->markTestIncomplete();
-	}
+		$this->generate_programme_dependancies();
 
-	public function testget_programmesReturnsHTTPCode204WhenOtherJSONCachesNotPresent()
-	{
-		$this->markTestIncomplete();
+		$id = 1; 
+		$title = 'Programme 1'; 
+		$year = '2012';
+
+		$course = $this->create_programme($id, $title, $year);
+		$course = $this->make_programme_live($id);
+
+		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+		$returned_data = json_decode($response->render());
+		
+		$this->assertEquals($title, $returned_data->programme_title);
+		//perhaps some more assertions needed here
 	}
 }

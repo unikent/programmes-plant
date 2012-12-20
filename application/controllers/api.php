@@ -98,7 +98,7 @@ class API_Controller extends Base_Controller
         }
         
         // tidy up
-        foreach(array('id','global_setting_id') as $key)
+        foreach(array('id','global_setting_id', 'programme_setting_id') as $key)
         {
             unset($final->{$key});
         }
