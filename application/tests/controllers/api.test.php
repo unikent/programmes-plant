@@ -132,7 +132,8 @@ class TestAPI_Controller extends ControllerTestCase
 					)
 			)->save();
 		$ps = ProgrammeSetting::find(1);
-		$ps->makeRevisionLive($ps->get_revisions('selected')[0]);
+		$revisions = $ps->get_revisions('selected');
+		$ps->makeRevisionLive($revisions[0]);
 
 		GlobalSetting::create(
 				array(
@@ -141,20 +142,24 @@ class TestAPI_Controller extends ControllerTestCase
 					)
 			)->save();
 		$gs = GlobalSetting::find(1);
-		$gs->makeRevisionLive($gs->get_revisions('selected')[0]);
+		$revisions = $gs->get_revisions('selected');
+		$gs->makeRevisionLive($revisions[0]);
 	}
 
-	public function create_programme($id = 1, $title = 'Programme 1', $year = '2012')
+	public function create_programme($input = false)
 	{
-		$input = array(
-			'id' => $id, 
-			Programme::get_title_field() => $title,
-			'year' => $year
-		);
+	    if (! $input)
+	    {
+    		$input = array(
+    			'id' => 1, 
+    			Programme::get_title_field() => 'Programme 1',
+    			'year' => '2012'
+    		);
+		}
 
 		$this->populate($input);
 
-		$course = Programme::find($id);
+		$course = Programme::find($input['id']);
 		return $course;
 	}
 
@@ -195,33 +200,65 @@ class TestAPI_Controller extends ControllerTestCase
 	public function testget_indexReturnsJSONWithData()
 	{
 		$this->generate_programme_dependancies();
+		
+		$input = array(
+    		'id' => 1, 
+    		'programme_title_1' => 'Programme 1',
+    		'year' => '2012'
+    		);
 
-		$id = 1; 
-		$title = 'Programme 1'; 
-		$year = '2012';
+		$course = $this->create_programme($input);
+		$course = $this->make_programme_live($input['id']);
 
-		$course = $this->create_programme($id, $title, $year);
-		$course = $this->make_programme_live($id);
-
-		$response = $this->get('api@index', array($year, 'ug'));
+		$response = $this->get('api@index', array($input['year'], 'ug'));
 		$returned_data = json_decode($response->render());
+		
 		//currently this produces an error because our index returns nothing.
 		//it seems to be a bug with sqlite that it doesnt like the query in the 
 		//revisionable model that generates the index feed
-		$returned_data = $returned_data->$id;
+		$returned_data = $returned_data->$input['id'];
 		
-		$this->assertEquals($id, $returned_data->id);
-		$this->assertEquals($title, $returned_data->name);
+		$this->assertEquals($input['id'], $returned_data->id);
+		$this->assertEquals($input['programme_title_1'], $returned_data->name);
+	}
+	
+	public function testget_indexReturnsJSONWithSuspendedWithdrawnData()
+	{
+		$this->generate_programme_dependancies();
+		
+		$input = array(
+    		'id' => 1, 
+    		'programme_title_1' => 'Programme 1',
+    		'year' => '2012',
+    		'programme_suspended_53' => '',
+    		'programme_withdrawn_54' => ''
+		);
+
+		$course = $this->create_programme($input);
+		$course = $this->make_programme_live($input['id']);
+
+		$response = $this->get('api@index', array($input['year'], 'ug'));
+		$returned_data = json_decode($response->render());
+		
+		//currently this produces an error because our index returns nothing.
+		//it seems to be a bug with sqlite that it doesnt like the query in the 
+		//revisionable model that generates the index feed
+		$returned_data = $returned_data->$input['id'];
+		
+		$this->assertEquals($input['id'], $returned_data->id);
+		$this->assertEquals($input['programme_title_1'], $returned_data->name);
 	}
 
 	public function testget_programmeReturns204WithNoCache()
 	{
-		$id = 1; 
-		$title = 'Programme 1'; 
-		$year = '2012';
+    	$input = array(
+    		'id' => 1, 
+    		'programme_title_1' => 'Programme 1',
+    		'year' => '2012',
+		);
 
-		$course = $this->create_programme($id, $title, $year);
-		$course = $this->make_programme_live($id);
+		$course = $this->create_programme($input);
+		$course = $this->make_programme_live($input['id']);
 
 		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 
@@ -232,12 +269,14 @@ class TestAPI_Controller extends ControllerTestCase
 	{
 		$this->generate_programme_dependancies();
 
-		$id = 1; 
-		$title = 'Programme 1'; 
-		$year = '2012';
+		$input = array(
+    		'id' => 1, 
+    		'programme_title_1' => 'Programme 1',
+    		'year' => '2012',
+		);
 
-		$course = $this->create_programme($id, $title, $year);
-		$course = $this->make_programme_live($id);
+		$course = $this->create_programme($input);
+		$course = $this->make_programme_live($input['id']);
 
 		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 
@@ -248,17 +287,19 @@ class TestAPI_Controller extends ControllerTestCase
 	{
 		$this->generate_programme_dependancies();
 
-		$id = 1; 
-		$title = 'Programme 1'; 
-		$year = '2012';
+		$input = array(
+    		'id' => 1, 
+    		'programme_title_1' => 'Programme 1',
+    		'year' => '2012',
+		);
 
-		$course = $this->create_programme($id, $title, $year);
-		$course = $this->make_programme_live($id);
+		$course = $this->create_programme($input);
+		$course = $this->make_programme_live($input['id']);
 
 		$response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 		$returned_data = json_decode($response->render());
 		
-		$this->assertEquals($title, $returned_data->programme_title);
+		$this->assertEquals($input['programme_title_1'], $returned_data->programme_title);
 		//perhaps some more assertions needed here
 	}
 }

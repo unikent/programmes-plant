@@ -255,6 +255,7 @@ class Revisionable extends Eloquent
                       ->where($withdrawn_field,'!=','true')
                       ->where($suspended_field,'!=','true')
                       ->get();
+                      
 
     foreach($programmes as $programme)
     {
