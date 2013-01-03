@@ -82,13 +82,17 @@ class SimpleData extends Eloquent
     }
 
     /**
-     * Override Eloquent's save so that we jenerate a new json file for our API
+     * Override Eloquent's save so that we generate a new JSON file for our API
      */
-    public function save(){
+    public function save()
+    {
     	$saved = parent::save();
-    	if($saved){
+
+    	if($saved)
+    	{
     		static::generate_json();
     	}
+    	
     	return $saved;
     }
 
