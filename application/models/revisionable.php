@@ -5,6 +5,11 @@ class Revisionable extends SimpleData
 
      public $revision = false;
 
+      /**
+     * Does this model seperate items by year? (by default this is false.)
+     */
+    public static $data_by_year = true;
+
      /**
       * This is an in memory cache used by the all_as_list method for additional speed.
       */
@@ -167,7 +172,6 @@ class Revisionable extends SimpleData
           }
      }
 
- 
 
      public static function getAttributesList($year = false)
      {

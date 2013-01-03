@@ -26,6 +26,12 @@ class SimpleData extends Eloquent
 	public static $title_field = 'name';
 
 	/**
+	 * Does this model seperate items by year? (by default this is false.)
+	 */
+	public static $data_by_year = false;
+
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -70,6 +76,9 @@ class SimpleData extends Eloquent
      public static function all_as_list($year = false)
      {
         $model = get_called_class();
+
+        //If this datatype cannot be seperated by year, make year false.
+        if(!static::$data_by_year) $year = false;
 
         $cache_key = "$model-$year-options-list";
 

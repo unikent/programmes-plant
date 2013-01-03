@@ -1,6 +1,9 @@
 <?php
 
-class Thing extends SimpleData {}
+class Thing extends SimpleData {
+	//Things are seperated by years
+	 public static $data_by_year = true;
+}
 
 class TestSimpleData extends ModelTestCase
 {
