@@ -23,6 +23,7 @@ foreach($sections as $section_name => $section)
       if($type=='select')
       {
         $options_list = explode(',',$field->field_meta);
+        asort($options_list);
         $form_element = Form::$type($column_name, array_combine( $options_list, $options_list), $current_value);
       }
       else if($type=='checkbox')
@@ -30,8 +31,10 @@ foreach($sections as $section_name => $section)
         //Provides default value as all empty checkbox's will result in nothing being sent.
         $form_element = Form::hidden($column_name, '');
 
+        $options = explode(',', $field->field_meta);
+        asort($options);
         //Explode comma seperated options and loop through the results
-        foreach(explode(',', $field->field_meta) as $opt){
+        foreach($options as $opt){
           if($opt=='')continue;//Ignore blanks (this is user inputted after all so we cant true it entirely.)
           
           // Output checkbox (name[] will be converted to array by php)
