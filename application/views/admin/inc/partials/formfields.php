@@ -44,7 +44,7 @@ foreach($sections as $section_name => $section)
           asort($options);
         }
         
-        // Explode comma seperated options and loop through the results.
+        // Explode comma separated options and loop through the results.
         foreach($options as $opt)
         {
           if($opt=='') continue; //Ignore blanks (this is user inputted after all so we cant true it entirely.)
