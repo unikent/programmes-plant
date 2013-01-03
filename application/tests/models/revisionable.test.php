@@ -240,4 +240,70 @@ class TestRevisionable extends ModelTestCase
 		$this->assertEquals(array(1 => 'Thing 2014'), Programme::all_as_list(2014), "Didn't get back 2014");
 	}
 
+	/**
+	 * Make a minor change and save it.
+	 * 
+	 * Helps with all caching tests to ensure cache is wiped on save.
+	 * 
+	 * Always saves the programme with the ID of 1, which is, when we
+	 * have two years 2014.
+	 */
+	public function resave_entry()
+	{
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Thing 2';
+		$programme->save();
+	}
+
+	public function populate_cache_and_resave()
+	{
+		$this->populate();
+		Programme::all_as_list(); // Warm cache.
+		$this->resave_entry();
+	}
+	
+	public function testsave_OnlyRemovesMemoryCacheForTheYearOnSave()
+	{}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(isset(Programme::$list_cache['Programme--options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(Cache::has('Programme--options-list'));
+	}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Programme::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Thing 2';
+		$programme->save();
+
+		$this->assertFalse(isset(Programme::$list_cache['Programme-2014-options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Programme::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Thing 2';
+		$programme->save();
+
+		$this->assertFalse(Cache::has('Programme-2014-options-list'));
+	}
 }
