@@ -51,7 +51,7 @@ class SimpleData extends Eloquent
 		// If we have cached our list then return it from cache.
 		if(isset(static::$list_cache[get_called_class()])) return static::$list_cache[get_called_class()];
 
-		$data = self::get(array('id','name'));
+		$data = self::order_by('name','asc')->get(array('id','name'));
 
 		$options = array();
 
