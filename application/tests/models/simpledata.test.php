@@ -26,6 +26,7 @@ class TestSimpleData extends ModelTestCase
 
 		parent::tearDown();
 	}
+
 	public function setUp(){
 		Schema::create('things', function($table){
 			$table->increments('id');
@@ -99,6 +100,10 @@ class TestSimpleData extends ModelTestCase
 
 
 
+	// Test all the all_as_list stuff
+
+
+
 	public function populate($model = 'Thing', $input = false)
 	{
 		if (! $input)
@@ -110,17 +115,17 @@ class TestSimpleData extends ModelTestCase
 	}
 
 
-	public function testall_as_listReturnsArray() {}
-
-	public function testall_as_listReturnsData() {}
-
 	public function testall_as_listAlphabeticallyOrdered(){
+
+		$this->populate('Thing', array('name' => 'BBB', 'id' => 1));
+		$this->populate('Thing', array('name' => 'DDD', 'id' => 2));
+		$this->populate('Thing', array('name' => 'AAA', 'id' => 3));
+		$this->populate('Thing', array('name' => 'CCC', 'id' => 4));
+
+		//check results are ordered as expected (and that arrays still assoc correctly to ids)
+		$this->assertEquals(array('3' => 'AAA','1' => 'BBB','4' => 'CCC','2' => 'DDD'), Thing::all_as_list());
 		
 	}
-
-
-
-
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
