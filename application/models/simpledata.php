@@ -83,11 +83,11 @@ class SimpleData extends Eloquent
 
           if (! $year)
           {
-            $data = $model::get(array('id', $title_field));
+            $data = $model::order_by($title_field,'asc')->get(array('id', $title_field));
           }
           else 
           {
-            $data = $model::where('year','=', $year)->get(array('id',$title_field));
+            $data = $model::where('year','=', $year)->order_by($title_field,'asc')->get(array('id',$title_field));
           }
 
           foreach ($data as $record)
