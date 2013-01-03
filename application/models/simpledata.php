@@ -21,6 +21,11 @@ class SimpleData extends Eloquent
 	public static $list_cache = array();
 
 	/**
+	 * Name of field containing item title. By default this is set to "name"
+	 */
+	public static $title_field = 'name';
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -41,30 +46,58 @@ class SimpleData extends Eloquent
         return static::$validation->passes();
 	}
 
-    /**
-	 * Gives us all the items in this model as a flat id => name array, for use in a <option> tag.
-	 * 
-	 * @return array $options An array where the record ID maps onto the record name.
-	 */
-	public static function all_as_list()
-	{
-		// If we have cached our list then return it from cache.
-		if(isset(static::$list_cache[get_called_class()])) return static::$list_cache[get_called_class()];
+	/**
+      * Get the name of the filed containing the "title" for a given data type.
+      * 
+      * @return string $title_field Name of field containing item title.
+      */
+	public static function get_title_field(){
+		return static::$title_field;
+	}
 
-		$data = self::order_by('name','asc')->get(array('id','name'));
+     /**
+      * Gives a flat array of id => item_title for all items.
+      * 
+      * Used generally to create select dropdowns.
+      * 
+      * This has two levels of caching. First a database lookup cache, then an in memory cache.
+      * 
+      * This is done for application performance.
+      * 
+      * @param string $year The year from which to get the array.
+      * @return array $options List of items in the format id => item_title.
+      */
+     public static function all_as_list($year = false)
+     {
+        $model = get_called_class();
 
-		$options = array();
+        $cache_key = "$model-$year-options-list";
 
-		foreach ($data as $item) 
-		{
-			$options[$item->id] = $item->name;
-		}
+        if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
 
-		// Save the obtained items to our in memory cache, for later faster use.
-		static::$list_cache[get_called_class()] = $options;
+        return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model)
+        {
+          $options = array();
 
-		return $options;
-    }
+          $title_field = $model::get_title_field();
+
+          if (! $year)
+          {
+            $data = $model::get(array('id', $title_field));
+          }
+          else 
+          {
+            $data = $model::where('year','=', $year)->get(array('id',$title_field));
+          }
+
+          foreach ($data as $record)
+          {
+            $options[$record->id] = $record->$title_field;
+          }
+
+            return $options;
+        }, 2628000); // Cache forever.
+     }
 
     public function populate_from_input()
     {
