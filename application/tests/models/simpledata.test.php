@@ -4,6 +4,10 @@ class Thing extends SimpleData {}
 
 class TestSimpleData extends ModelTestCase
 {
+
+
+	public $input =  array('name' => 'Thing', 'id' => 1);
+
 	public function tearDown()
 	{
 		Thing::$rules = array();
@@ -13,12 +17,24 @@ class TestSimpleData extends ModelTestCase
 			Thing::$validation = null;
 		}
 
+
+		// Flush the cache.
+		Cache::flush();
+		Thing::$list_cache = false;
+
+		Schema::drop('things');
+
 		parent::tearDown();
 	}
-
-	public function testall_as_listReturnsArray() {}
-
-	public function testall_as_listReturnsData() {}
+	public function setUp(){
+		Schema::create('things', function($table){
+			$table->increments('id');
+			$table->string('name');
+			$table->string('year');
+			$table->timestamps();
+		});
+		parent::setUp();
+	}
 
 	public function testis_validRulesAreAddedSuccessfully() 
 	{
@@ -79,6 +95,233 @@ class TestSimpleData extends ModelTestCase
 
 		$thing = new Thing;
 		$thing->populate_from_input();
+	}
+
+
+
+	public function populate($model = 'Thing', $input = false)
+	{
+		if (! $input)
+		{
+			$input = $this->input;
+		}
+
+		$object = $model::create($input)->save();
+	}
+
+
+	public function testall_as_listReturnsArray() {}
+
+	public function testall_as_listReturnsData() {}
+
+	public function testall_as_listAlphabeticallyOrdered(){
+		
+	}
+
+
+
+
+
+	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
+	{
+		$this->assertCount(0, Thing::all_as_list());
+	}
+
+	public function testall_as_listReturnsAnArrayOfItemsFromDatabase() 
+	{
+		$this->populate();
+
+		$result = Thing::all_as_list();
+
+		$this->assertTrue(is_array($result));
+		$this->assertEquals(array('1' => 'Thing'), $result);
+	}
+
+	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
+	{
+		$this->populate();
+
+		// Warm up the cache.
+		$before_cache = Thing::all_as_list();
+
+		// Wipe memory cache
+		Thing::$list_cache = false;
+
+		$after_cache = Thing::all_as_list();
+
+		$this->assertEquals($before_cache, $after_cache);
+	}
+
+	public function testall_as_listReturnsTheSameWhenWhenItIsInMemoryCache() 
+	{
+		// Warm up the cache.
+		$before_cache = Thing::all_as_list();
+
+		// Wipe disk cache
+		Cache::forget('Thing--options-list');
+
+		$after_cache = Thing::all_as_list();
+
+		$this->assertEquals($before_cache, $after_cache);
+	}
+
+	public function testall_as_listResultsCacheToDiskWhenThereIsNoCache() 
+	{
+		$this->populate();
+
+		Thing::all_as_list();
+
+		$this->assertTrue(Cache::has('Thing--options-list'));
+	}
+
+	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache() {
+		$this->populate();
+
+		Thing::all_as_list();
+
+		// Check we only have one element here.
+		$this->assertCount(1, Thing::$list_cache['Thing--options-list']);
+	}
+
+	public function testall_as_listIfWeRemoveTheCacheThenWeCanStillGetList()
+	{
+		$this->populate();
+
+		// Warm up cache.
+		$result = Thing::all_as_list();
+
+		// Remove the cache
+		// This would be run, for example, when we save something.
+		Cache::forget('Thing--options-list');
+
+		// Check we actually forgot it.
+		$this->assertFalse(Cache::has('Thing--options-list'), 'Cache has not been forgotten');
+
+		// Everything should still work, even if we haven't cached.
+		$this->assertEquals($result, Thing::all_as_list());
+	}
+
+	public function testall_as_listResultsCacheInMemoryAsWellAsOnDisk()
+	{
+		$this->populate();
+
+		Thing::all_as_list();
+
+		$this->assertEquals(array('1' => 'Thing'), Thing::$list_cache['Thing--options-list']);
+	}
+
+	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
+	{
+		$this->populate();
+
+		// Warm cache, presumably also the in memory cache.
+		$result = Thing::all_as_list();
+
+		// Add a false cache to the object
+		$false_cache = array('1' => 'Other Thing');
+		Thing::$list_cache['Thing--options-list'] = $false_cache;
+
+		// Remove the disk cache
+		Cache::forget('Thing--options-list');
+
+		// If we get this false cache out, we know we are hitting the in memory, not the file cache.
+		$this->assertEquals($false_cache, Thing::all_as_list());
+	}
+
+	public function testall_as_listResultsComeFromDiskCacheWhenCacheIsWarmedUp() 
+	{
+		// Artifically disk cache something.
+		$false_cache = array('1' => 'Other Thing');
+		Cache::forever('Thing--options-list', $false_cache);
+
+
+		print_r(Thing::all_as_list());
+
+		// We now have nothing in the database, but a cache object.
+		// If we get something back then we aren't hitting the database at all.
+		$this->assertEquals($false_cache, Thing::all_as_list());
+	}
+
+	public function testall_as_listResultsComeFromMemoryCacheWhenCacheIsWarmedUp()
+	{
+		// Artifically create a memory cache something.
+		$false_cache = array('1' => 'Other Thing');
+		Thing::$list_cache['Thing--options-list'] = $false_cache;
+
+		// We have only an in memory cache, no disk and no database at all.
+		// If we get something back, we are getting it from the memory cache.
+		$this->assertEquals($false_cache, Thing::all_as_list());
+	}
+
+	public function testall_as_listResultsFallBackToDiskWhenMemoryIsNotPresent()
+	{
+		$this->populate();
+
+		// Setup both the memory and disk cache.
+		$result = Thing::all_as_list();
+
+		// Wipe the memory cache.
+		Thing::$list_cache = false;
+
+		// Check we still have the disk cache
+		$this->assertTrue(Cache::has('Thing--options-list'), 'Somehow we wiped the disk cache when we wiped the memory cache.');
+
+		$this->assertEquals($result, Thing::all_as_list());
+	}
+
+	public function populate_two_years()
+	{
+		$first = array('year' => '2014', 'name' => 'Thing 2014', 'id' => 1);
+		$this->populate('Thing', $first);
+
+		$second = array('year' => '2015', 'name' => 'Thing 2015', 'id' => 2);
+		$this->populate('Thing', $second);
+	}
+
+	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
+		$this->populate_two_years();
+
+		$this->assertEquals(count(Thing::all()), count(Thing::all_as_list()));
+		$this->assertCount(2, Thing::all_as_list());
+	}
+
+	public function testall_as_listCheckNumberWeGetOutWithNumberWePutInWithYear()
+	{
+		$this->populate_two_years();
+
+		$this->assertEquals(count(Thing::where('year', '=', '2014')), count(Thing::all_as_list(2014)));
+		$this->assertCount(1, Thing::all_as_list(2014));
+
+		$this->assertEquals(count(Thing::where('year', '=', '2015')), count(Thing::all_as_list(2015)));
+		$this->assertCount(1, Thing::all_as_list(2015));
+	}
+
+	public function testall_as_listMemoryCacheSavesDifferentYears() 
+	{
+		$this->populate_two_years();
+
+		// Expect only our 2015 data back.
+		$this->assertEquals(array(2 => 'Thing 2015'), Thing::all_as_list(2015), "Didn't get back 2015");
+
+		// Wipe the disk cache so we are relying on memory.
+		Cache::forget('Thing-2015-options-list');
+
+		// Expect only our 2014 data back.
+		$this->assertEquals(array(1 => 'Thing 2014'), Thing::all_as_list(2014), "Didn't get back 2014");
+	}
+
+	public function testall_as_listDiskCacheSavesDifferentYears() 
+	{
+		$this->populate_two_years();
+
+		// Expect only our 2015 data back.
+		$this->assertEquals(array(2 => 'Thing 2015'), Thing::all_as_list(2015), "Didn't get back 2015");
+
+		// Wipe the memory cache so we are relying on disk.
+		Thing::$list_cache = false;
+
+		// Expect only our 2014 data back.
+		$this->assertEquals(array(1 => 'Thing 2014'), Thing::all_as_list(2014), "Didn't get back 2014");
 	}
 
 }
