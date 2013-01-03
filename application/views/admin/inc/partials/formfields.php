@@ -28,11 +28,20 @@ foreach($sections as $section_name => $section)
       }
       else if($type=='checkbox')
       {  
-        //Provides default value as all empty checkbox's will result in nothing being sent.
+      //Provides default value as all empty checkbox's will result in nothing being sent.
         $form_element = Form::hidden($column_name, '');
+        $showLabel = true;
 
-        $options = explode(',', $field->field_meta);
-        asort($options);
+        if(trim($field->field_meta) == ''){
+            //Single checkbox
+          $options = array($field->field_name => 'true');
+          $showLabel = false;
+        }else{
+            //multi checkbox
+            $options = explode(',', $field->field_meta);
+            asort($options);
+        }
+        
         //Explode comma seperated options and loop through the results
         foreach($options as $opt){
           if($opt=='')continue;//Ignore blanks (this is user inputted after all so we cant true it entirely.)
@@ -42,7 +51,7 @@ foreach($sections as $section_name => $section)
           // WARNING: This may need to become smarter as it will not handle partal matching well 
           // (ie if u have math selected it would also select mathmatics just becuse maths was within it)
           $form_element .= '<label class="checkbox">'.Form::$type($column_name.'[]', $opt, (strpos($current_value, $opt)!==false) ? true : false);
-          $form_element .= ' '.$opt.'</label>';
+          $form_element .= ' '.(($showLabel)?$opt:'').'</label>';
         }
       }
       else if($type=='table_select')
