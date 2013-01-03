@@ -21,8 +21,17 @@ class ProgrammeField extends Field
     	return $list_types;
     }
     
+    /**
+     * Gets programme sections and fields in an array
+     *
+     * gets all programme sections and the fields within each, and orders the sections by their order value
+     * a double-loop then goes through each section and builds up an array of ordered fields
+     *
+     * @return array $sections_array
+     */
     public static function programme_fields_by_section()
     {
+        // get the section and field data
         $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
 
         $sections_array = array();
@@ -31,11 +40,15 @@ class ProgrammeField extends Field
         {
             foreach ($section->programmefields as $programmefield)
             {
+                // make sure the section is active
                 if ($section->id > 0)
                 {
-                    $sections_array[$section->name][] = $programmefield;
+                    // build up the final array indexed by section name and programme field order
+                    $sections_array[$section->name][$programmefield->order] = $programmefield;
                 }
             }
+            // sort each section sub-array so that the fields are in the correct order
+            if (isset($sections_array[$section->name])) ksort($sections_array[$section->name]);
         }
         return $sections_array;
     }
