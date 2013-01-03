@@ -70,16 +70,12 @@ class Revisionable extends Eloquent
             $result = $query->update($this->get_dirty()) === 1;
           }
 
-           
-
           $this->exists = $result = is_numeric($this->get_key());
         } else {
           $query = DB::table($this->revision_table)
             ->where('id', '=', $this->revision->id)
             ->update((array) $this->revision);
         }
-
-
 
       }
 
@@ -116,6 +112,18 @@ class Revisionable extends Eloquent
         $revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
       }
 
+      // Remove caches.
+      $model = get_called_class();
+
+      // Flash the in memory cache.
+      $model::$list_cache = false;
+
+      // Flash the disc cache for everything.
+      foreach (array("$model--options-list", $model . '-' . $this->year . '-options-list') as $key)
+      {
+        Cache::forget($key);
+      }
+      
       // Set the original attributes to match the current attributes so the model will not be viewed
       // as being dirty and subsequent calls won't hit the database.
       $this->original = $this->attributes;
