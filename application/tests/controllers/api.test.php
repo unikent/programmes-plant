@@ -204,7 +204,9 @@ class TestAPI_Controller extends ControllerTestCase
 		$input = array(
     		'id' => 1, 
     		'programme_title_1' => 'Programme 1',
-    		'year' => '2012'
+    		'year' => '2012',
+    		'programme_suspended_53' => '',
+    		'programme_withdrawn_54' => '',
     		);
 
 		$course = $this->create_programme($input);
