@@ -35,6 +35,9 @@ h1 {
 .right { float:right; }
 .crud label { font-weight:700; }
 .crud .controls label { font-weight:400; }
+.crud .ui-multiselect input.search {
+    width: 120px !important;
+}
 div.alert { margin-top:10px; margin-bottom:10px; }
 div.alert p { margin:0; }
 .gallery_images .caption { text-align:center; }
