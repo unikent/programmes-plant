@@ -75,8 +75,8 @@ class SimpleData extends Eloquent {
 	{
 		$model = get_called_class();
 
-		//If this datatype cannot be seperated by year, make year false.
-		if(!static::$data_by_year) $year = false;
+		// If this datatype cannot be seperated by year, make year false.
+		if (!static::$data_by_year) $year = false;
 
 		$cache_key = "$model-$year-options-list";
 
@@ -139,7 +139,8 @@ class SimpleData extends Eloquent {
 	/**
 	 * Generate a json file that represents the records in this model
 	 */
-	private static function generate_json(){
+	private static function generate_json()
+	{
 		$cache_location = path('storage') .'api/';
 		$cache_file = $cache_location.get_called_class().'.json';
 		$data = array();
