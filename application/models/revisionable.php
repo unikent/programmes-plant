@@ -1,6 +1,5 @@
 <?php
-class Revisionable extends SimpleData
-{
+class Revisionable extends SimpleData {
 
 	public static $timestamps = true;
 
