@@ -54,7 +54,8 @@ class SimpleData extends Eloquent {
 	 * 
 	 * @return string $title_field Name of field containing item title.
 	 */
-	public static function get_title_field(){
+	public static function get_title_field()
+	{
 		return static::$title_field;
 	}
 
