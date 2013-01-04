@@ -7,7 +7,7 @@
 <!-- bootstrap js -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js" type="text/javascript" charset="utf8" ></script>
 <!-- wysihtml5 js -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/wysihtml5/0.3.0/wysihtml5.min.js" type="text/javascript" charset="utf8" ></script>
+<script src="<?php echo asset('js/wysihtml5-0.4.0pre.min.js')?>"></script>
 <!-- data tables js -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript" charset="utf8" ></script>
 
