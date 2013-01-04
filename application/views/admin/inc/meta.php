@@ -12,7 +12,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" rel="stylesheet">
 
     <!-- jquery ui css -->
-    <link type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery.ui.base.css" rel="stylesheet" />
+    <link type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery.ui.all.css" rel="stylesheet" />
    
     <!-- multiselect css -->
     <link type="text/css" href="<?php echo asset('css/ui.multiselect.css')?>" rel="stylesheet" />
