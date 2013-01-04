@@ -11,12 +11,14 @@ class Revisionable extends SimpleData {
 	/**
 	 * The name of the the revisionable data object.
 	 * 
-	 * e.g. programmes.
+	 * For example the model Programme might have a revision type of programmes.
 	 */
 	protected $revision_type = false;
 
 	/**
 	 * The model that represents the revision of the object.
+	 * 
+	 * For example, a model Thing may have a model called ThingRevision.
 	 */
 	protected $revision_model = false;
 
