@@ -123,6 +123,8 @@ class SimpleData extends Eloquent {
 
 	/**
 	 * Override Eloquent's save so that we jenerate a new json file for our API
+	/**
+	 * Override Eloquent's save so that we generate a new json file for our API
 	 */
 	public function save()
 	{
