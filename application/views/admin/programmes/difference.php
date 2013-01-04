@@ -55,7 +55,7 @@
             </div>
             <div class="modal-footer">
               <?php echo Form::open('programmess/promote', 'POST')?>
-                <a data-toggle="modal" href="#promote_revision" class="btn">Not Right Now</a>
+                <a data-dismiss="modal" href="#promote_revision" class="btn">Not Right Now</a>
                 <a class="btn btn-danger" id="promote_now">Promote Revision</a>
             <?php echo Form::close()?>
             </div>

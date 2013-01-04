@@ -59,7 +59,7 @@
   </div>
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/deactivate', 'POST')?>
-    <a data-toggle="modal" href="#deactivate_subject" class="btn">Keep</a>
+    <a data-dismiss="modal" href="#deactivate_subject" class="btn">Keep</a>
     <input type="hidden" name="id" id="postvalue" value="" />
     <input type="submit" class="btn btn-danger" value="Deactivate" />
     <?php echo Form::close()?>
@@ -76,7 +76,7 @@
   </div>
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/activate', 'POST')?>
-    <a data-toggle="modal" href="#activate_subject" class="btn">Keep</a>
+    <a data-dismiss="modal" href="#activate_subject" class="btn">Keep</a>
     <input type="hidden" name="id" id="postvalue2" value="" />
     <input type="submit" class="btn btn-danger" value="Activate" />
     <?php echo Form::close()?>
