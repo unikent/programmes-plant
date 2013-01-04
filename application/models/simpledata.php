@@ -84,23 +84,23 @@ class SimpleData extends Eloquent {
 
 		return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model)
 		{
-		  $options = array();
+			$options = array();
 
-		  $title_field = $model::get_title_field();
+			$title_field = $model::get_title_field();
 
-		  if (! $year)
-		  {
+			if (! $year)
+			{
 			$data = $model::order_by($title_field,'asc')->get(array('id', $title_field));
-		  }
-		  else 
-		  {
+			}
+			else 
+			{
 			$data = $model::where('year','=', $year)->order_by($title_field,'asc')->get(array('id',$title_field));
-		  }
+			}
 
-		  foreach ($data as $record)
-		  {
+			foreach ($data as $record)
+			{
 			$options[$record->id] = $record->$title_field;
-		  }
+			}
 
 			return $options;
 		}, 2628000); // Cache forever.
