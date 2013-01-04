@@ -1,3 +1,12 @@
+//methods
+function show_options(selectbox) {
+    if ($(selectbox).val() == 'select' || $(selectbox).val() == 'checkbox' || $(selectbox).val() == 'table_select' || $(selectbox).val() == 'table_multiselect') {
+        $('#ext_opt').show();
+    }else {
+        $('#ext_opt').hide();
+    }
+}
+
 //onLoad setup JS listeners
 $(document).ready(function (){
 
@@ -9,13 +18,6 @@ $(document).ready(function (){
 
     // show options on edit programmes field page
     show_options(document.getElementById('type'));
-    function show_options(selectbox) {
-        if ($(selectbox).val() == 'select' || $(selectbox).val() == 'checkbox' || $(selectbox).val() == 'table_select' || $(selectbox).val() == 'table_multiselect') {
-            $('#ext_opt').show();
-        }else {
-            $('#ext_opt').hide();
-        }
-    }
 
     // multiselect
     if($('.multiselect')){
