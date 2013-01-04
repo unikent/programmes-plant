@@ -239,9 +239,6 @@ class TestSimpleData extends ModelTestCase {
 		$false_cache = array('1' => 'Other Thing');
 		Cache::forever('Thing--options-list', $false_cache);
 
-
-		print_r(Thing::all_as_list());
-
 		// We now have nothing in the database, but a cache object.
 		// If we get something back then we aren't hitting the database at all.
 		$this->assertEquals($false_cache, Thing::all_as_list());
