@@ -192,9 +192,6 @@ class Revisionable extends SimpleData
        return $options;
      }
 
-  /**
-   * 
-   */
   private function generate_feed_index($new_programme, $path)
   {
     $index_file = $path.'index.json';
@@ -233,7 +230,6 @@ class Revisionable extends SimpleData
     }
     
     file_put_contents($index_file, json_encode($index_data));
-
   }
 
   /**
