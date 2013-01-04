@@ -17,10 +17,10 @@
 <script src="<?php echo asset('js/dataTables_bootstrap.js')?>" ></script>
 
 <!-- multiselect js -->
-<script src="<?php echo asset('js/admin/ui.multiselect.js')?>"></script>
-<script src="<?php echo asset('js/admin/jquery-ui-listbuilder.js')?>"></script>
+<script src="<?php echo asset('js/ui.multiselect.js')?>"></script>
+<script src="<?php echo asset('js/jquery-ui-listbuilder.js')?>"></script>
 <!-- placeholder for ie fix js -->
-<script src="<?php echo asset('js/admin/jquery.placeholder.min.js')?>"></script>
+<script src="<?php echo asset('js/jquery.placeholder.min.js')?>"></script>
 
 
 
