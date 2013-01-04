@@ -121,21 +121,11 @@ class Revisionable extends SimpleData {
 			$revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
 		}
 
-		// Remove caches.
-		$model = get_called_class();
-
-		// Flash the in memory cache.
-		$model::$list_cache = false;
-
-		// Flash the disc cache for everything.
-		foreach (array("$model--options-list", $model . '-' . $this->year . '-options-list') as $key)
-		{
-			Cache::forget($key);
-		}
-
 		// Set the original attributes to match the current attributes so the model will not be viewed
 		// as being dirty and subsequent calls won't hit the database.
 		$this->original = $this->attributes;
+
+		static::clear_all_as_list_cache($this->year);
 
 		return $result;
 	}

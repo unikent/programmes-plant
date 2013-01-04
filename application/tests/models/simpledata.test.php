@@ -324,4 +324,75 @@ class TestSimpleData extends ModelTestCase {
 		$this->assertEquals(array(1 => 'Thing 2014'), Thing::all_as_list(2014), "Didn't get back 2014");
 	}
 
+	/**
+	 * Test related to flashing of cache on save.
+	 */
+
+	/**
+	 * Make a minor change and save it.
+	 * 
+	 * Helps with all caching tests to ensure cache is wiped on save.
+	 * 
+	 * Always saves the programme with the ID of 1, which is, when we
+	 * have two years 2014.
+	 */
+	public function resave_entry()
+	{
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+	}
+
+	public function populate_cache_and_resave()
+	{
+		$this->populate();
+		Thing::all_as_list(); // Warm cache.
+		$this->resave_entry();
+	}
+	
+	public function testsave_OnlyRemovesMemoryCacheForTheYearOnSave()
+	{}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(isset(Thing::$list_cache['Thing--options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(Cache::has('Thing--options-list'));
+	}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+
+		$this->assertFalse(isset(Thing::$list_cache['Thing-2014-options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+
+		$this->assertFalse(Cache::has('Thing-2014-options-list'));
+	}
+
 }
