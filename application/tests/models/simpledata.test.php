@@ -1,13 +1,11 @@
 <?php
 
 class Thing extends SimpleData {
-	//Things are seperated by years
-	 public static $data_by_year = true;
+	// Things are separated by years
+	public static $data_by_year = true;
 }
 
-class TestSimpleData extends ModelTestCase
-{
-
+class TestSimpleData extends ModelTestCase {
 
 	public $input =  array('name' => 'Thing', 'id' => 1);
 
@@ -20,7 +18,6 @@ class TestSimpleData extends ModelTestCase
 			Thing::$validation = null;
 		}
 
-
 		// Flush the cache.
 		Cache::flush();
 		Thing::$list_cache = false;
@@ -30,13 +27,15 @@ class TestSimpleData extends ModelTestCase
 		parent::tearDown();
 	}
 
-	public function setUp(){
+	public function setUp()
+	{
 		Schema::create('things', function($table){
 			$table->increments('id');
 			$table->string('name');
 			$table->string('year');
 			$table->timestamps();
 		});
+
 		parent::setUp();
 	}
 
@@ -101,11 +100,7 @@ class TestSimpleData extends ModelTestCase
 		$thing->populate_from_input();
 	}
 
-
-
 	// Test all the all_as_list stuff
-
-
 
 	public function populate($model = 'Thing', $input = false)
 	{
@@ -118,8 +113,8 @@ class TestSimpleData extends ModelTestCase
 	}
 
 
-	public function testall_as_listAlphabeticallyOrdered(){
-
+	public function testall_as_listAlphabeticallyOrdered()
+	{
 		$this->populate('Thing', array('name' => 'BBB', 'id' => 1));
 		$this->populate('Thing', array('name' => 'DDD', 'id' => 2));
 		$this->populate('Thing', array('name' => 'AAA', 'id' => 3));
@@ -127,7 +122,6 @@ class TestSimpleData extends ModelTestCase
 
 		//check results are ordered as expected (and that arrays still assoc correctly to ids)
 		$this->assertEquals(array('3' => 'AAA','1' => 'BBB','4' => 'CCC','2' => 'DDD'), Thing::all_as_list());
-		
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
@@ -242,9 +236,6 @@ class TestSimpleData extends ModelTestCase
 		$false_cache = array('1' => 'Other Thing');
 		Cache::forever('Thing--options-list', $false_cache);
 
-
-		print_r(Thing::all_as_list());
-
 		// We now have nothing in the database, but a cache object.
 		// If we get something back then we aren't hitting the database at all.
 		$this->assertEquals($false_cache, Thing::all_as_list());
@@ -286,7 +277,8 @@ class TestSimpleData extends ModelTestCase
 		$this->populate('Thing', $second);
 	}
 
-	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
+	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn()
+	{
 		$this->populate_two_years();
 
 		$this->assertEquals(count(Thing::all()), count(Thing::all_as_list()));
@@ -330,6 +322,77 @@ class TestSimpleData extends ModelTestCase
 
 		// Expect only our 2014 data back.
 		$this->assertEquals(array(1 => 'Thing 2014'), Thing::all_as_list(2014), "Didn't get back 2014");
+	}
+
+	/**
+	 * Test related to flashing of cache on save.
+	 */
+
+	/**
+	 * Make a minor change and save it.
+	 * 
+	 * Helps with all caching tests to ensure cache is wiped on save.
+	 * 
+	 * Always saves the programme with the ID of 1, which is, when we
+	 * have two years 2014.
+	 */
+	public function resave_entry()
+	{
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+	}
+
+	public function populate_cache_and_resave()
+	{
+		$this->populate();
+		Thing::all_as_list(); // Warm cache.
+		$this->resave_entry();
+	}
+	
+	public function testsave_OnlyRemovesMemoryCacheForTheYearOnSave()
+	{}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(isset(Thing::$list_cache['Thing--options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(Cache::has('Thing--options-list'));
+	}
+
+	public function testsave_RemovesMemoryCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+
+		$this->assertFalse(isset(Thing::$list_cache['Thing-2014-options-list']));
+	}
+
+	public function testsave_RemovesDiscCacheOnSaveWithYear()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+
+		$this->assertFalse(Cache::has('Thing-2014-options-list'));
 	}
 
 }
