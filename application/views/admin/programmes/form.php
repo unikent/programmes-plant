@@ -20,11 +20,8 @@
 
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
-<div class="form-actions">
-  <input type="submit" class="btn btn-warning" value="<?php echo __('programmes.save_programme'); ?>" />
-  <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>"><?php echo __('programmes.cancel'); ?></a>
-</div>
 
+<?php echo Form::actions('programmes')?>
 
 <?php if (isset($revisions)) : ?>
   <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>

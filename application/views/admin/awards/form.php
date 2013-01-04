@@ -22,10 +22,8 @@
     </div>
 
   </fieldset>
-  <div class="form-actions">
-    <input type="submit" class="btn btn-warning" value="<?php echo __('awards.save'); ?>" />
-    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/awards')?>">Cancel</a>
-  </div>
+  
+<?php echo Form::actions('awards')?>
 
 <?php echo Form::close()?>
 
