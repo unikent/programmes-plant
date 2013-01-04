@@ -3,7 +3,22 @@ class Revisionable extends SimpleData {
 
 	public static $timestamps = true;
 
-	public $revision = false;
+	/**
+	 * Sets the table that revisions are saved into.
+	 */
+	protected $revision_table = false;
+
+	/**
+	 * The name of the the revisionable data object.
+	 * 
+	 * e.g. programmes.
+	 */
+	protected $revision_type = false;
+
+	/**
+	 * The model that represents the revision of the object.
+	 */
+	protected $revision_model = false;
 
 	/**
 	 * Does this model seperate items by year? (by default this is false.)
@@ -14,6 +29,8 @@ class Revisionable extends SimpleData {
 	 * This is an in memory cache used by the all_as_list method for additional speed.
 	 */
 	public static $list_cache = false;
+
+	public $revision = false;
 
 	public function user() 
 	{
