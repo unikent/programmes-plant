@@ -1,9 +1,14 @@
 <?php
-class Revisionable extends Eloquent
+class Revisionable extends SimpleData
 {
      public static $timestamps = true;
 
      public $revision = false;
+
+      /**
+     * Does this model seperate items by year? (by default this is false.)
+     */
+    public static $data_by_year = true;
 
      /**
       * This is an in memory cache used by the all_as_list method for additional speed.
@@ -167,49 +172,6 @@ class Revisionable extends Eloquent
           }
      }
 
-     /**
-      * Gives a flat array of id => item_title for all items.
-      * 
-      * Used generally to create select dropdowns.
-      * 
-      * This has two levels of caching. First a database lookup cache, then an in memory cache.
-      * 
-      * This is done for application performance.
-      * 
-      * @param string $year The year from which to get the array.
-      * @return array $options List of items in the format id => item_title.
-      */
-     public static function all_as_list($year = false)
-     {
-        $model = get_called_class();
-
-        $cache_key = "$model-$year-options-list";
-
-        if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
-
-        return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model)
-        {
-          $options = array();
-
-          $title_field = $model::get_title_field();
-
-          if (! $year)
-          {
-            $data = $model::get(array('id', $title_field));
-          }
-          else 
-          {
-            $data = $model::where('year','=', $year)->get(array('id',$title_field));
-          }
-
-          foreach ($data as $record)
-          {
-            $options[$record->id] = $record->$title_field;
-          }
-
-            return $options;
-        }, 2628000); // Cache forever.
-     }
 
      public static function getAttributesList($year = false)
      {

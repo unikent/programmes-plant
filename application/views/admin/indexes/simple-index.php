@@ -41,7 +41,7 @@
     <p><?php echo __($type . '.modal_body') ?></p>
   </div>
   <div class="modal-footer">
-      <a data-toggle="modal" href="#" class="btn"><?php echo __($type . '.modal_keep') ?></a>
+      <a data-dismiss="modal" href="#" class="btn"><?php echo __($type . '.modal_keep') ?></a>
       <a class="btn btn-danger yes_action"><?php echo __($type . '.modal_delete'); ?></a>
   </div>
 </div>
