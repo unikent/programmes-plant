@@ -10,7 +10,7 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
 	/**
 	 * Ensures we don't have problems with dirty requests.
 	 */
-	private function clean_request(){
+	protected static function clean_request(){
         $request = \Laravel\Request::foundation()->request;
 
         $req_keys = $request->keys();

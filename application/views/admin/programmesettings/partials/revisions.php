@@ -19,7 +19,6 @@
                   <a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmesettings@make_live', array($revision->id)) ?>">Make Live</a>
                   <a class="popup_toggler btn btn-warning" href="#revert" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmesettings@revert_to_revision', array($revision->id)) ?>">Revert To Revision</a>
 
-
                   <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmesettings@difference', array($revision->id)) ?>">Difference</a>
                 </td>
               </tr>
@@ -38,7 +37,7 @@
             </div>
             <div class="modal-footer">
               <?php echo Form::open('subjects/promote', 'POST')?>
-                <a data-toggle="modal" href="#" class="btn">Not Right Now</a>
+                <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
                 <a class="btn btn-danger yes_action">Make Live</a>
               <?php echo Form::close()?>
             </div>
@@ -55,7 +54,7 @@
             </div>
             <div class="modal-footer">
               <?php echo Form::open('subjects/promote', 'POST')?>
-                <a data-toggle="modal" href="#" class="btn">Not Right Now</a>
+                <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
                 <a class="btn btn-danger yes_action">Revert</a>
               <?php echo Form::close()?>
             </div>

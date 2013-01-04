@@ -23,6 +23,7 @@ foreach($sections as $section_name => $section)
       if($type=='select')
       {
         $options_list = explode(',',$field->field_meta);
+        asort($options_list);
         $form_element = Form::$type($column_name, array_combine( $options_list, $options_list), $current_value);
       }
       else if($type=='checkbox')
