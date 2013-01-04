@@ -27,12 +27,11 @@
 <script type="text/javascript">
     
     // show options on edit programmes field page
-    show_options();
-    function show_options() {
-        if ($(this + ':selected').val() == 'select' || $(this + ':selected').val() == 'checkbox' || $(this + ':selected').val() == 'table_select' ||$(this + ':selected').val() == 'table_multiselect') {
+    show_options(document.getElementById('type'));
+    function show_options(selectbox) {
+        if ($(selectbox).val() == 'select' || $(selectbox).val() == 'checkbox' || $(selectbox).val() == 'table_select' || $(selectbox).val() == 'table_multiselect') {
             $('#ext_opt').show();
-        }
-        else {
+        }else {
             $('#ext_opt').hide();
         }
     }
@@ -152,30 +151,10 @@ $(document).ready(function (){
     });
 
     //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
-    $(".popup_toggler").click(function(){      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
-      $($(this).attr('href')).modal('show');
+    $(".popup_toggler").click(function(){  
+      $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
+      $($(this).attr('href')).modal('toggle');
     });
-    
-    
-    /**
-    *
-    * promote revision modal
-    *
-    */
-    $(function() {
-    
-        $('#promote_revision').modal({
-          show:false
-        }); // Start the modal
-        
-        // Populate the field with the right data for the modal when clicked
-        $(".promote_toggler").click(function(){
-          $('#promote_now').attr('href', $(this).attr('rel'));
-          $('#promote_revision').modal('show');
-        });
-    
-    });
-    
     
     /**
     *
