@@ -6,6 +6,16 @@ h1 {
     padding-bottom: 20px;
 }
 
+.icon-link {
+    background: url(/img/admin/icon-link.png) no-repeat center center;
+}
+
+textarea { 
+    width:500px !important;
+    height: 300px !important;
+    overflow: scroll;
+}
+
 .sortable_fields {
     min-height: 20px;
 }
