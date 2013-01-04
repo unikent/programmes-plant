@@ -2,8 +2,8 @@
 
 class RevisionableThing extends Revisionable {}
 
-class TestRevisionable extends ModelTestCase
-{
+class TestRevisionable extends ModelTestCase {
+
 	public $input =  array('programme_title_1' => 'Thing', 'id' => 1);
 
 	public static function setUpBeforeClass()
