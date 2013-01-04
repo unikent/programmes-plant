@@ -28,7 +28,6 @@ class SimpleData extends Eloquent {
 	 */
 	public static $data_by_year = false;
 
-
 	/**
 	 * Validates input for Field.
 	 * 
