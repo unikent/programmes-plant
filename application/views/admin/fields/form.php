@@ -15,7 +15,7 @@
   <div class="control-group">
     <?php echo Form::label('type', __('fields.form.label_type'), array('class'=>'control-label'))?>
     <div class="controls">
-      <?php echo Form::select('type', array('text'=>'text','textarea'=>'textarea','select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model'), (isset($values)) ? $values->field_type : '', array('onchange'=>'show_options();') )?>
+      <?php echo Form::select('type', array('text'=>'text','textarea'=>'textarea', 'select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model'), (isset($values)) ? $values->field_type : '', array('onchange'=>'show_options(this);') )?>
     </div>
   </div>
 

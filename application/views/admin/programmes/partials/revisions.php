@@ -39,7 +39,7 @@
             </div>
             <div class="modal-footer">
               <?php echo Form::open('subjects/promote', 'POST')?>
-                <a data-toggle="modal" href="#" class="btn">Not Right Now</a>
+                <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
                 <a class="btn btn-danger yes_action">Make Live</a>
               <?php echo Form::close()?>
             </div>
@@ -56,7 +56,7 @@
             </div>
             <div class="modal-footer">
               <?php echo Form::open('subjects/promote', 'POST')?>
-                <a data-toggle="modal" href="#" class="btn">Not Right Now</a>
+                <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
                 <a class="btn btn-danger yes_action">Revert</a>
               <?php echo Form::close()?>
             </div>

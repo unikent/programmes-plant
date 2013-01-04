@@ -60,7 +60,7 @@
       </div>
       <div class="modal-footer">
         <?php echo Form::open('users/delete', 'POST')?>
-        <a data-toggle="modal" href="#delete_user" class="btn">Keep</a>
+        <a data-dismiss="modal" href="#delete_user" class="btn">Keep</a>
         <input type="hidden" name="id" id="postvalue" value="" />
         <input type="submit" class="btn btn-danger" value="Delete" />
         <?php echo Form::close()?>
