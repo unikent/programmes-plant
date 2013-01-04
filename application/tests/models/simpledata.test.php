@@ -5,9 +5,7 @@ class Thing extends SimpleData {
 	 public static $data_by_year = true;
 }
 
-class TestSimpleData extends ModelTestCase
-{
-
+class TestSimpleData extends ModelTestCase {
 
 	public $input =  array('name' => 'Thing', 'id' => 1);
 
@@ -19,7 +17,6 @@ class TestSimpleData extends ModelTestCase
 		{
 			Thing::$validation = null;
 		}
-
 
 		// Flush the cache.
 		Cache::flush();
