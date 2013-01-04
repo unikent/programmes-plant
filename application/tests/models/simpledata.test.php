@@ -115,7 +115,6 @@ class TestSimpleData extends ModelTestCase {
 
 	public function testall_as_listAlphabeticallyOrdered()
 	{
-
 		$this->populate('Thing', array('name' => 'BBB', 'id' => 1));
 		$this->populate('Thing', array('name' => 'DDD', 'id' => 2));
 		$this->populate('Thing', array('name' => 'AAA', 'id' => 3));
@@ -278,7 +277,8 @@ class TestSimpleData extends ModelTestCase {
 		$this->populate('Thing', $second);
 	}
 
-	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
+	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn()
+	{
 		$this->populate_two_years();
 
 		$this->assertEquals(count(Thing::all()), count(Thing::all_as_list()));
