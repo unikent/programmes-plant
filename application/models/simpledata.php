@@ -1,5 +1,4 @@
 <?php
-
 class SimpleData extends Eloquent
 {
 
