@@ -15,16 +15,16 @@
     <link type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery.ui.base.css" rel="stylesheet" />
    
     <!-- multiselect css -->
-    <link type="text/css" href="<?php echo asset('css/admin/ui.multiselect.css')?>" rel="stylesheet" />
-    <link type="text/css" href="<?php echo asset('css/admin/jquery.ui.listbuilder.css')?>" rel="stylesheet" />
+    <link type="text/css" href="<?php echo asset('css/ui.multiselect.css')?>" rel="stylesheet" />
+    <link type="text/css" href="<?php echo asset('css/jquery.ui.listbuilder.css')?>" rel="stylesheet" />
     <!-- data tables css -->
-    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/admin/DT_bootstrap.css')?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/datatable_bootstrap.css')?>">
     <!-- wysiwyg editor css -->
-    <link rel="stylesheet" type="text/css" href="<?php echo asset('lib/css/prettify.css')?>"></link>
-    <link rel="stylesheet" type="text/css" href="<?php echo asset('src/bootstrap-wysihtml5.css')?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/prettify.css')?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/bootstrap-wysihtml5.css')?>"></link>
 
     <!-- Call our own stylesheets -->
-    <link href="<?php echo asset('css/admin/style.css')?>" rel="stylesheet">
+    <link href="<?php echo asset('css/style.css')?>" rel="stylesheet">
 
     <style type='text/css'>
       body {
