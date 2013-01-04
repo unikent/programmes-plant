@@ -35,7 +35,8 @@ class Revisionable extends SimpleData {
 		// If the subject exists we want to create a new version of it in our revision table.
 		// If they have set it to "live" then we want to handle this, but pushing this revision into
 		// the live table.
-		if ($this->exists) {
+		if ($this->exists) 
+		{
 			// If we have $this->revision then we loaded up a revision of this class and we don't save a
 			// revision.
 			// @todo Abstract this.
