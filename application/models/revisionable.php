@@ -272,7 +272,7 @@ class Revisionable extends SimpleData {
 	 * 
 	 * @param $revision The revision to base our saving on
 	 */
-	private function generate_feed_file($revision)
+	public function generate_feed_file($revision)
 	{
 		// global, settings, programme
 		$data_type = get_called_class();
@@ -301,17 +301,14 @@ class Revisionable extends SimpleData {
 	 * This function makes the specified revision live
 	 * 
 	 * @param $revision The revision to make live
+	 * @return $r the (modified) revision object
 	 */
 	public function makeRevisionLive($revision)
 	{
-		foreach ($this->attributes as $key => $attribute)
-		{
-		  if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
-		  $this->$key = $revision->$key;
-		}
-
-		$this->published_by = Auth::user();
-		$this->live = 2;
+    	// update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
+    	$model = get_class($this);
+		$model::where('id','=',$revision->programme_id)->update(array('live'=>2));
 
 		$model = $this->revision_model;
 		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
@@ -321,12 +318,10 @@ class Revisionable extends SimpleData {
 		$r->status = 'live';
 		$r->save();
 
-		// update feed file
-		$this->generate_feed_file($r);
+		return $r;
 	}
 
 	// Needs urgent refactoring
-/*
 	public function revertToRevision($revision)
 	{
 		foreach ($this->attributes as $key => $attribute) 
@@ -351,21 +346,18 @@ class Revisionable extends SimpleData {
 		
 		$r->save();
 	}
-*/
 
 
 	public function useRevision($revision)
 	{
-		// Create live from revison
-		foreach ($this->attributes as $key => $attribute)
+    	// update the 'live' setting in the main item (not the revision) so it's marked as version published is not the latest version (ie 1)
+    	// this should only happen if 'live' is not 0 ie the programme has at some stage been published
+    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
+		if ($this->live != 0)
 		{
-			if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
-
-			$this->$key = $revision->$key;
-		}
-
-		$this->published_by = Auth::user();
-		if ($this->live != 0)  $this->live = 1;
+		  $model = get_class($this);
+		  $model::where('id','=',$revision->programme_id)->update(array('live'=>1));
+        }
 
 		// Save
 		if (sizeof($this->get_dirty())>0)
