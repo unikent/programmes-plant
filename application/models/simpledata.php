@@ -134,6 +134,7 @@ class SimpleData extends Eloquent {
 		// Flash the in memory cache.
 		$model::$list_cache = false;
 
+		// Flash the disc cache and the year if asked for.
 		Cache::forget("$model--options-list");
 
 		if ($year)
