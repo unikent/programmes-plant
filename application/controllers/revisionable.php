@@ -11,6 +11,7 @@ class Revisionable_Controller extends Admin_Controller
 	 *
      * @return false | array(revisonble Object, revision object)
      */
+/*
 	private function get_revision_data($revisionable_item_id, $revision_id){
 
 		//Handle global settings & programesettings not having a revisionable_item_id (is always 1)
@@ -35,6 +36,7 @@ class Revisionable_Controller extends Admin_Controller
         return array($revisionable_item,$revision);
 
     }
+*/
 
     /**
      * Routing for GET /$year/$type/$object_id/revert_to_revision/$revision_id

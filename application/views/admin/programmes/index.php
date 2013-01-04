@@ -32,6 +32,7 @@
     
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
     
+              <?php echo $programme->live; ?>
               <?php if($programme->live == 1): ?>
                 <a class="deactivate_toggler btn btn-danger" rel="<?php echo $programme->id ?>">Deactivate</a>
               <?php else: ?>

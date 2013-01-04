@@ -51,9 +51,7 @@ class Revisionable extends SimpleData {
 		// Time stamp the entry
 		$this->timestamp();
 
-		// If the subject exists we want to create a new version of it in our revision table.
-		// If they have set it to "live" then we want to handle this, but pushing this revision into
-		// the live table.
+		// If the programme exists we want to create a new version of it in our revision table.
 		if ($this->exists) 
 		{
 			// If we have $this->revision then we loaded up a revision of this class and we don't save a
@@ -91,6 +89,7 @@ class Revisionable extends SimpleData {
 				$revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
 
 				// Update selected item
+				if ($this->live != 0)  $this->live = 1;
 				if (sizeof($this->get_dirty())>0)
 				{
 					$query = $this->query()->where(static::$key, '=', $this->get_key());
@@ -106,10 +105,10 @@ class Revisionable extends SimpleData {
 				->update((array) $this->revision);
 			}
 		}
-		// The subject does not exist, so we create it.
+		// The programme does not exist, so we create it.
 		else 
 		{
-			// By Default this subject is inactive!
+			// By Default this programme is inactive!
 			$this->live = 0;
 
 			$id = $this->query()->insert_get_id($this->attributes, $this->sequence());
@@ -312,7 +311,7 @@ class Revisionable extends SimpleData {
 		}
 
 		$this->published_by = Auth::user();
-		$this->live = 1;
+		$this->live = 2;
 
 		$model = $this->revision_model;
 		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
@@ -327,6 +326,7 @@ class Revisionable extends SimpleData {
 	}
 
 	// Needs urgent refactoring
+/*
 	public function revertToRevision($revision)
 	{
 		foreach ($this->attributes as $key => $attribute) 
@@ -351,6 +351,7 @@ class Revisionable extends SimpleData {
 		
 		$r->save();
 	}
+*/
 
 
 	public function useRevision($revision)
@@ -364,7 +365,7 @@ class Revisionable extends SimpleData {
 		}
 
 		$this->published_by = Auth::user();
-		$this->live = 1;
+		if ($this->live != 0)  $this->live = 1;
 
 		// Save
 		if (sizeof($this->get_dirty())>0)
