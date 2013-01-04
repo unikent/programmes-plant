@@ -1,21 +1,28 @@
 <!-- javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="<?php echo asset('js/jquery.js')?>"></script>
-<script src="<?php echo asset('js/admin/jquery-ui-1.8.21.custom.min.js')?>"></script>
-<script src="<?php echo asset('js/admin/bootstrap.js')?>"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript" charset="utf8" ></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf8" ></script>
+
+<!-- bootstrap js -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js" type="text/javascript" charset="utf8" ></script>
 <!-- wysihtml5 js -->
-<script src="<?php echo asset('lib/js/wysihtml5-0.3.0.js')?>"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/wysihtml5/0.3.0/wysihtml5.min.js" type="text/javascript" charset="utf8" ></script>
+<!-- data tables js -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript" charset="utf8" ></script>
+
+<!-- Additional js to make datatables & wysihtml5 work with bootstrap -->
 <script src="<?php echo asset('src/bootstrap-wysihtml5.js')?>"></script>
 <script src="<?php echo asset('js/bootstrap-wysihtml5-kent.js')?>"></script>
+<script src="<?php echo asset('js/admin/DT_bootstrap.js')?>" ></script>
+
 <!-- multiselect js -->
 <script src="<?php echo asset('js/admin/ui.multiselect.js')?>"></script>
 <script src="<?php echo asset('js/admin/jquery-ui-listbuilder.js')?>"></script>
 <!-- placeholder for ie fix js -->
 <script src="<?php echo asset('js/admin/jquery.placeholder.min.js')?>"></script>
-<!-- data tables js -->
-<script type="text/javascript" charset="utf8" src="//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/jquery.dataTables.min.js"></script>
-<script type="text/javascript" charset="utf-8" language="javascript" src="<?php echo asset('js/admin/DT_bootstrap.js')?>"></script>
+
+
 
 <script type="text/javascript">
     
