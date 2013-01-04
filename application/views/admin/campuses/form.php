@@ -92,9 +92,7 @@
     </div>
 
   </fieldset>
-  <div class="form-actions">
-    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Go Back</a>
-    <input type="submit" class="btn btn-primary" value="<?php echo ($create ? 'Create Campus' : 'Save Campus')?>" />
-  </div>
+
+  <?php echo Form::actions('campuses')?>
 
 <?php echo Form::close()?>

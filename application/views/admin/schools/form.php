@@ -20,8 +20,5 @@
   </div>
 
 </fieldset>
-<div class="form-actions">
-  <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/schools')?>"><?php echo __('schools.back'); ?></a>
-  <input type="submit" class="btn btn-primary" value="<?php echo ($create ? __('schools.create') : __('schools.save'))?>" />
-</div>
+<?php echo Form::actions('schools')?>
 <?php echo Form::close()?>
