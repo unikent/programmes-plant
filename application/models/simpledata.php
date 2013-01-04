@@ -128,8 +128,8 @@ class SimpleData extends Eloquent {
 	{
 		$saved = parent::save();
 
-		if($saved)
-		{
+		if ($saved)
+		{	
 			static::generate_json();
 		}
 
