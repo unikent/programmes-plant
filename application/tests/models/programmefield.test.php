@@ -10,6 +10,8 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		Tests\Helper::migrate();
 	}
 
+
+
 	/**
 	 * Tests Reorder fields
 	 * 
@@ -67,4 +69,55 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 				
 	}
 
+	public function testprogramme_fields_by_sectionReturnsAnMultiDimensionalArray()
+	{
+		$outer = ProgrammeField::programme_fields_by_section();
+
+		// Grab the first section.
+		list($key, $inner) = each($outer);
+
+		$this->assertTrue(is_array($inner));
+		$this->assertTrue(is_array($outer));
+	}
+
+	public function testprogramme_fields_by_sectionReturnsAnArrayOfProgrammeFieldsAtSecondLevel()
+	{
+		$outer = ProgrammeField::programme_fields_by_section();
+
+		// Grab the first section.
+		list($key, $inner) = each($outer);
+
+		foreach($inner as $item)
+		{
+			$this->assertTrue(is_object($item));
+			$this->assertEquals('ProgrammeField', get_class($item));
+		}
+	}
+
+	/**
+	 * This bug is recorded at https://github.com/unikent/programmes-plant/issues/151
+	 * 
+	 * In the case where the order of a section has never been changed (i.e they have not been dragged and dropped around)
+	 * then the section does not appear on the programme entry form. See test for further explaination.
+	 */
+	public function testBugWhereProgrammeFieldsAreNotInTheirSectionsByDefault()
+	{
+		// programme_fields_by_section returns a multidimensional array of the sections which has them ordered by the database order field.
+		// If this is never set - i.e. they have never been (re)ordered - then the output loop skips them.
+		$outer_returned_array = ProgrammeField::programme_fields_by_section();
+		
+		// Get the first section.
+		list($key, $inner_returned_array) = each($outer_returned_array);
+
+		$this->assertTrue(is_array($inner_returned_array));
+
+		print_r($inner_returned_array);
+
+		// The inner array should be not associative, but numeric - therefore 'keys' should be numeric.
+		foreach ($inner_returned_array as $key => $value)
+		{
+			$this->assertTrue(is_numeric($key), "$key is not numeric but a " . gettype($key) . ". Field is named $value->field_name");
+			$this->assertNotEquals('', $key, "\$key is a blank string - it shouldn't be");
+		}
+	}
 }
