@@ -39,30 +39,64 @@
               "</div>" +
             "</li>";
             },
+            "link": function(locale) {
+                return "<li>" +
+                  "<div class='bootstrap-wysihtml5-insert-link-modal modal hide fade'>" +
+                    "<div class='modal-header'>" +
+                      "<a class='close' data-dismiss='modal'>&times;</a>" +
+                      "<h3>" + locale.link.insert + "</h3>" +
+                    "</div>" +
+                    "<div class='modal-body'>" +
+                      "<input value='http://' class='bootstrap-wysihtml5-insert-link-url input-xlarge'>" +
+                    "</div>" +
+                    "<div class='modal-footer'>" +
+                      "<a href='#' class='btn' data-dismiss='modal'>" + locale.link.cancel + "</a>" +
+                      "<a href='#' class='btn btn-primary' data-dismiss='modal'>" + locale.link.insert + "</a>" +
+                    "</div>" +
+                  "</div>" +
+                  "<a class='btn' data-wysihtml5-command='createLink' title='" + locale.link.insert + "'><i class='icon-link'></i></a>" +
+                "</li>";
+            },
+            "html": function(locale) {
+                return "<li>" +
+                "<div class='btn-group'>" +
+                "<a class='btn' data-wysihtml5-action='change_view' title='" + locale.html.edit + "'>HTML</a>" +
+                "</div>" +
+                "</li>";
+           }
+            
         };
 
 
         // wysiwyg
-        $('textarea').each( function(){ $(this).wysihtml5('deepExtend', {
-        
+        $('textarea').each( function(){
+            
+            var textarea = $(this);
+            $(this).wysihtml5('deepExtend', {
+            
             "customTemplates": myCustomTemplates,
-        
-        	"font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+            "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
         	"emphasis": true, //Italics, bold, etc. Default true
         	"lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
         	"link": true, //Button to insert a link. Default true
-        	"html": true, //Button which allows you to edit the generated HTML. Default false
         	"image": false, //Button to insert an image. Default true
-        	
-        	
+        	"html" : true,
         	"events": {
         		"paste": function() { 
         			//alert("Watch it!");
         		},
+        		// highlight the html button and textarea when in html mode
+        		"change_view": function() {
+        		  var changeViewSelector = "a[data-wysihtml5-action='change_view']";
+        		  textarea.parent().find(changeViewSelector).toggleClass('btn-warning');
+        		  textarea.css('border-color', 'orange');
+        		}
         	},
+        	"useLineBreaks": false,
         	
         	"parserRules": {
                 "tags": {
+                    "p": {},
                     "strong": {},
                     "em": {},
                     "h1": {

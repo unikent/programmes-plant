@@ -29,10 +29,8 @@
     </div>
 
   </fieldset>
-  <div class="form-actions">
-    <input type="submit" class="btn btn-warning" value="<?php echo __('leaflets.save'); ?>" />
-    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/leaflets')?>">Cancel</a>
-  </div>
+
+<?php echo Form::actions('leaflets')?>
 
 <?php echo Form::close()?>
 

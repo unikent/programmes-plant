@@ -14,9 +14,9 @@ return array(
 	'table_excerpt' => 'Content excerpt',
 	'actions' => 'Actions',
 
-	'save_programme' => 'Save',
+	'save' => 'Save',
 	'create_programme' => 'Make a new programme',
-	'cancel' => 'Cancel',
+	'back' => 'Cancel',
 	
 	'create_programme_title' => 'New programme',
 

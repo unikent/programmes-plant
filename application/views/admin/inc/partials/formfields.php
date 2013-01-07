@@ -9,7 +9,7 @@ foreach($sections as $section_name => $section)
 
   foreach($section as $field)
   {
-      //Get Column Name
+      // Get Column Name
       $column_name = $field->colname;
       $type = $field->field_type;
 
@@ -19,27 +19,43 @@ foreach($sections as $section_name => $section)
           $current_value = $programme->$column_name;
       }
 
-      //Build select box
+      // Build select box
       if($type=='select')
       {
         $options_list = explode(',',$field->field_meta);
+        asort($options_list);
         $form_element = Form::$type($column_name, array_combine( $options_list, $options_list), $current_value);
       }
       else if($type=='checkbox')
       {  
-        //Provides default value as all empty checkbox's will result in nothing being sent.
+        // Provides a default value as all empty checkboxes will otherwise result in nothing being sent and an error.
         $form_element = Form::hidden($column_name, '');
+        $showLabel = true;
 
-        //Explode comma seperated options and loop through the results
-        foreach(explode(',', $field->field_meta) as $opt){
-          if($opt=='')continue;//Ignore blanks (this is user inputted after all so we cant true it entirely.)
+        if (trim($field->field_meta) == '')
+        {  
+          // Single checkbox.
+          $options = array($field->field_name => 'true');
+          $showLabel = false;
+        }
+        else
+        {
+          // Multiple checkboxes.
+          $options = explode(',', $field->field_meta);
+          asort($options);
+        }
+        
+        // Explode comma separated options and loop through the results.
+        foreach($options as $opt)
+        {
+          if($opt=='') continue; //Ignore blanks (this is user inputted after all so we cant true it entirely.)
           
-          // Output checkbox (name[] will be converted to array by php)
-          // if its in current value string, select it, else leave unselected
-          // WARNING: This may need to become smarter as it will not handle partal matching well 
-          // (ie if u have math selected it would also select mathmatics just becuse maths was within it)
+          // Output checkbox (name[] will be converted to array by PHP)
+          // If its in current value string, select it, else leave unselected
+          // WARNING: This may need to become smarter as it will not handle partal matching well.
+          // (i.e. if you have math selected it would also select mathmatics just becuse maths was within it)
           $form_element .= '<label class="checkbox">'.Form::$type($column_name.'[]', $opt, (strpos($current_value, $opt)!==false) ? true : false);
-          $form_element .= ' '.$opt.'</label>';
+          $form_element .= ' '.(($showLabel)?$opt:'').'</label>';
         }
       }
       else if($type=='table_select')
