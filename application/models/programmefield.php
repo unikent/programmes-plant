@@ -40,16 +40,27 @@ class ProgrammeField extends Field
         {
             foreach ($section->programmefields as $programmefield)
             {
-                // make sure the section is active
+                // Make sure the section is active.
                 if ($section->id > 0)
                 {
-                    // build up the final array indexed by section name and programme field order
-                    $sections_array[$section->name][$programmefield->order] = $programmefield;
+                    // Build up the final array indexed by section name and programme field order.
+                    if ($programmefield->order == '')
+                    {
+                        $order = 1;
+                    }
+                    else
+                    {
+                        $order = $programmefield->order;
+                    }
+                    
+                    $sections_array[$section->name][$order] = $programmefield;
                 }
             }
-            // sort each section sub-array so that the fields are in the correct order
+
+            // Sort each section sub-array so that the fields are in the correct order.
             if (isset($sections_array[$section->name])) ksort($sections_array[$section->name]);
         }
+
         return $sections_array;
     }
     
