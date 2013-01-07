@@ -61,7 +61,7 @@ foreach($sections as $section_name => $section)
       else if($type=='table_select')
       {
         $model = $field->field_meta;
-        $form_element = Form::select($column_name, $model::all_as_list($field->empty_default_value), $current_value);
+        $form_element = Form::select($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
 
       }
       else if($type=='table_multiselect')
