@@ -81,7 +81,7 @@ class SimpleData extends Eloquent {
 		// If this datatype cannot be separated by year, make year false.
 		if (!static::$data_by_year) $year = false;
 
-		$cache_key = "$model-$year-options-list";
+		$cache_key = ( $empty_default_value != 0 ) ? "$model-$year-defaulttonone-options-list" : "$model-$year-options-list";
 
 		if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
 		
