@@ -8,15 +8,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
-
-		// Remove all elements in the awards table.
-		// These are added by the Create_Intial_Awards migration.
-		//TestProgrammeField::tearDown();
-	}
-
-	public function tearDown()
-	{
-
 	}
 
 	/**
