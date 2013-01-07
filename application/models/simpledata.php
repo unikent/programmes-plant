@@ -96,7 +96,7 @@ class SimpleData extends Eloquent {
 			{
 			$data = $model::where('year','=', $year)->order_by($title_field,'asc')->get(array('id',$title_field));
 			}
-
+			
 			foreach ($data as $record)
 			{
 			$options[$record->id] = $record->$title_field;

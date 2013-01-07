@@ -26,29 +26,6 @@ class TestSimpleData extends ModelTestCase {
 
 		parent::tearDown();
 	}
-	
-	/**
-	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 1
-	*/
-	public function testall_as_listReturnsEmptyDefault()
-	{
-	    Award::$list_cache = false;
-	    $empty_default_value = 1;
-    	$options = Award::all_as_list($empty_default_value);
-    	$this->assertNotNull($options[0]);
-    	$this->assertEquals(__('fields.empty_default_value'), $options[0]);
-	}
-	
-	/**
-	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 0
-	*/
-	public function testall_as_listReturnsNoDefault()
-	{
-	    Award::$list_cache = false;
-	    $empty_default_value = 0;
-    	$options = Award::all_as_list($empty_default_value);
-    	$this->assertArrayNotHasKey(0, $options);
-	}
 
 	public function setUp()
 	{
