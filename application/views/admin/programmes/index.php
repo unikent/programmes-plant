@@ -15,11 +15,11 @@
             <td>
                               
                 <?php if ( $programme->live == 0 ): ?>
-                    <span class="label label-important" rel="tooltip" data-original-title="'New' marks programmes which have never been pushed to live.">New</span>
+                    <span class="label label-important" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.new.tooltip') ?>"><?php echo __('programmes.traffic-lights.new.label') ?></span>
                 <?php elseif ( $programme->live == 1 ): ?>
-                    <span class="label label-warning" rel="tooltip" data-original-title="'Editing' marks programmes which have been edited since they were last pushed to live.">Editing</span>
+                    <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
                 <?php elseif ( $programme->live == 2 ): ?>
-                    <span class="label label-success" rel="tooltip" data-original-title="'Published' marks programmes where the most recently edited version is also the live version.">Published</span>
+                    <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
                 <?php endif; ?>
                 
             </td>
