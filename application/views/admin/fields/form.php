@@ -25,6 +25,9 @@
       <?php echo  Form::text('options', (isset($values)) ? $values->field_meta : '' )?><br/>
       <?php echo __('fields.form.label_options'); ?>
     </div>
+    <div class="controls">
+      <?php echo  Form::checkbox('empty_default_value', '1', (isset($values)) ? $values->empty_default_value : false )?>&nbsp;<?php echo __('fields.form.label_empty_default_value'); ?>
+    </div>
   </div>
 
   <div class="control-group">

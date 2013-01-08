@@ -267,6 +267,29 @@ class TestSimpleData extends ModelTestCase {
 
 		$this->assertEquals($result, Thing::all_as_list());
 	}
+	
+	/**
+	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 1
+	*/
+	public function testall_as_listReturnsEmptyDefault()
+	{
+	    $empty_default_value = 1;
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+    	$options = Thing::all_as_list(false, $empty_default_value);
+    	$this->assertNotNull($options[0]);
+    	$this->assertEquals(__('fields.empty_default_value'), $options[0]);
+	}
+	
+	/**
+	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 0
+	*/
+	public function testall_as_listReturnsNoDefault()
+	{
+	    $empty_default_value = 0;
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+    	$options = Thing::all_as_list(false, $empty_default_value);
+    	$this->assertArrayNotHasKey(0, $options);
+	}
 
 	public function populate_two_years()
 	{
@@ -358,11 +381,23 @@ class TestSimpleData extends ModelTestCase {
 		$this->populate_cache_and_resave();
 		$this->assertFalse(isset(Thing::$list_cache['Thing--options-list']));
 	}
+	
+	public function testsave_RemovesMemoryCacheOnSaveWithNoYearDefaultToNone()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(isset(Thing::$list_cache['Thing--defaulttonone-options-list']));
+	}
 
 	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
 	{
 		$this->populate_cache_and_resave();
 		$this->assertFalse(Cache::has('Thing--options-list'));
+	}
+	
+	public function testsave_RemovesDiscCacheOnSaveWithNoYearDefaultToNone()
+	{
+		$this->populate_cache_and_resave();
+		$this->assertFalse(Cache::has('Thing--defaulttonone-options-list'));
 	}
 
 	public function testsave_RemovesMemoryCacheOnSaveWithYear()
@@ -379,6 +414,20 @@ class TestSimpleData extends ModelTestCase {
 
 		$this->assertFalse(isset(Thing::$list_cache['Thing-2014-options-list']));
 	}
+	
+	public function testsave_RemovesMemoryCacheOnSaveWithYearDefaultToNone()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+		$this->assertFalse(isset(Thing::$list_cache['Thing-2014-defaulttonone-options-list']));
+	}
 
 	public function testsave_RemovesDiscCacheOnSaveWithYear()
 	{
@@ -393,6 +442,20 @@ class TestSimpleData extends ModelTestCase {
 		$thing->save();
 
 		$this->assertFalse(Cache::has('Thing-2014-options-list'));
+	}
+	
+	public function testsave_RemovesDiscCacheOnSaveWithYearDefaultToNone()
+	{
+		$this->populate_two_years();
+
+		// Warm cache
+		Thing::all_as_list(2014);
+
+		// 2014 example here I know to be ID 1
+		$thing = Thing::find(1);
+		$thing->name = 'Thing 2';
+		$thing->save();
+		$this->assertFalse(Cache::has('Thing-2014-defaulttonone-options-list'));
 	}
 
 }
