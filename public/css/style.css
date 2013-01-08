@@ -37,6 +37,10 @@ textarea {
 
 }
 
+.checkbox {
+	width: 300px;
+}
+
 .container.loginwindow { width:500px; margin:0 auto; text-align:center; }
 .container.loginwindow h1 { margin-bottom:20px; }
 .crud textarea,
