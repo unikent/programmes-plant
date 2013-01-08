@@ -145,10 +145,15 @@ class SimpleData extends Eloquent {
 
 		// Flash the disc cache and the year if asked for.
 		Cache::forget("$model--options-list");
+		
+		// empty cache for defaulttonone cache key as well
+		Cache::forget("$model--defaulttonone-options-list");
 
 		if ($year)
 		{
 			Cache::forget("$model-$year-options-list");
+			// empty cache for defaulttonone cache key as well
+			Cache::forget("$model-$year-defaulttonone-options-list");
 		}
 	}
 
