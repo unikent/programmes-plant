@@ -227,7 +227,8 @@ $(document).ready(function (){
             "sSearch": ""
         },
         "aoColumns": [ 
-          { "bSortable": false },
+          { "bSortable": false, 'iDataSort': false },
+          { "bSortable": false, 'iDataSort': true },
           { "bSortable": false }
           ]
     });

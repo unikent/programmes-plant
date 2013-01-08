@@ -306,4 +306,92 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
+	
+	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->find_revision(1);
+        
+        // make the revision live
+        $revisionable_item->makeRevisionLive($revision);
+        
+        // find programme #1 and check its 'live' value is 2
+        $programme = Programme::find(1);
+        $this->assertEquals(2, $programme->live);
+	}
+	
+	public function testUseRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // use a revision
+        $programme->useRevision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testUseRevisionSetsLiveFieldToLatestUnpublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // make the revision live
+        $programme->makeRevisionLive($revision);
+        
+        // make a new revision
+        $programme_new = Programme::find(1);
+        $programme_new->slug = 'test';
+        $programme_new->save();
+        
+        // find programme #1 again and now check its 'live' value is now 1
+        // it should be 1 because previously the latest version was published, but then a newer version was made
+        // ie there is something newer than the live version
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(1, $programme_modified->live);
+	}
+	
+	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // use a revision
+        $programme->revertToRevision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // use a revision
+        $programme->revertToRevision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
 }
