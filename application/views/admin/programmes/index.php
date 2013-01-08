@@ -8,14 +8,21 @@
 <?php if($programmes) : ?>
     <table id="programme-list" class="table table-striped table-bordered">
         <thead>
-          <tr>
-            <th><?php echo  __('programmes.table_title') ?></th>
-            <th width="250"></th>
-          </tr>
         </thead>
         <tbody>
         <?php foreach($programmes as $programme) : ?>
           <tr>
+            <td>
+                              
+                <?php if ( $programme->live == 0 ): ?>
+                    <span class="label label-important" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.new.tooltip') ?>"><?php echo __('programmes.traffic-lights.new.label') ?></span>
+                <?php elseif ( $programme->live == 1 ): ?>
+                    <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
+                <?php elseif ( $programme->live == 2 ): ?>
+                    <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
+                <?php endif; ?>
+                
+            </td>
             <td>
                 <?php echo $programme->$title_field ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?>
                 <?php if(strcmp($programme->$withdrawn_field, 'true') == 0): ?>
@@ -31,13 +38,6 @@
             <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
     
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
-    
-              <?php if($programme->live == 1): ?>
-                <a class="deactivate_toggler btn btn-danger" rel="<?php echo $programme->id ?>">Deactivate</a>
-              <?php else: ?>
-                <a class="activate_toggler btn btn-success" rel="<?php echo $programme->id ?>">Activate</a>
-              <?php endif; ?>
-    
             </td>
           </tr>
         <?php endforeach; ?>

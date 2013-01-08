@@ -49,4 +49,19 @@ return array(
 	'withdrawn_field_text' => 'Withdrawn',
 	'suspended_field_text' => 'Suspended',
 	'subject_to_approval_field_text' => 'Subject to approval',
+	
+	'traffic-lights' => array(
+		'published' => array(
+			'label' => 'Published',
+			'tooltip' => '\'Published\' marks programmes where the most recently edited version is also the live version.',
+		),
+		'editing' => array(
+			'label' => 'Editing',
+			'tooltip' => '\'Editing\' marks programmes which have been edited since they were last pushed to live.',
+		),
+		'new' => array(
+			'label' => 'New',
+			'tooltip' => '\'New\' marks programmes which have never been pushed to live.',
+		),
+	),
 );

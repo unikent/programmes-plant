@@ -12,7 +12,6 @@ class Revisionable_Controller extends Admin_Controller
      * @return false | array(revisonble Object, revision object)
      */
 	private function get_revision_data($revisionable_item_id, $revision_id){
-
 		//Handle global settings & programesettings not having a revisionable_item_id (is always 1)
 		if($this->views =='globalsettings' || $this->views =='programmesettings'){
 			$revision_id = $revisionable_item_id;
@@ -85,10 +84,10 @@ class Revisionable_Controller extends Admin_Controller
 
     	//Get data & make revision live
     	list($item, $revision) = $data;
-        $item->makeRevisionLive($revision);
+        $modified_revision = $item->makeRevisionLive($revision);
         
-        //@todo
-        //physical make it live, ping aggrigator or somthing
+        // update feed file
+		$item->generate_feed_file($modified_revision);
 
         //Redirect to point of origin
         Messages::add('success', "The selected revision has been made live.");
