@@ -90,7 +90,7 @@ class SimpleData extends Eloquent {
 		{
 			$options = array();
 			// set the 'none' select value, as per the $empty_default_value param
-			if ( isset($empty_default_value) && $empty_default_value != 0 )
+			if ( $empty_default_value != 0 )
 			{
 				$options[0] = __('fields.empty_default_value');
 			}
