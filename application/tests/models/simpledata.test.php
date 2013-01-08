@@ -267,6 +267,29 @@ class TestSimpleData extends ModelTestCase {
 
 		$this->assertEquals($result, Thing::all_as_list());
 	}
+	
+	/**
+	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 1
+	*/
+	public function testall_as_listReturnsEmptyDefault()
+	{
+	    $empty_default_value = 1;
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+    	$options = Thing::all_as_list(false, $empty_default_value);
+    	$this->assertNotNull($options[0]);
+    	$this->assertEquals(__('fields.empty_default_value'), $options[0]);
+	}
+	
+	/**
+	* test that all_as_list for an example class returns the correct empty drop-down, where $empty_default_value (which would be from the db) is set to 0
+	*/
+	public function testall_as_listReturnsNoDefault()
+	{
+	    $empty_default_value = 0;
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+    	$options = Thing::all_as_list(false, $empty_default_value);
+    	$this->assertArrayNotHasKey(0, $options);
+	}
 
 	public function populate_two_years()
 	{

@@ -68,6 +68,10 @@ return array(
             'cancel' => 'Cancel',
             'save' => 'Save',
         ),
+        'label_empty_default_value' => 'For \'select from model\' allow a blank default value of \'None\'',
     ),
+    
+    // the empty value used when select boxes don't need a value setting
+    'empty_default_value' => 'None',
 
 );
