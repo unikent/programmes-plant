@@ -360,4 +360,38 @@ class TestRevisionable extends ModelTestCase {
         $programme_modified = Programme::find(1);
         $this->assertEquals(1, $programme_modified->live);
 	}
+	
+	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // use a revision
+        $programme->revertToRevision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->find_revision(1);
+        
+        // use a revision
+        $programme->revertToRevision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
 }

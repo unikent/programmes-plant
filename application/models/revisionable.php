@@ -324,11 +324,14 @@ class Revisionable extends SimpleData {
 	// Needs urgent refactoring
 	public function revertToRevision($revision)
 	{
-		foreach ($this->attributes as $key => $attribute) 
+		// update the 'live' setting in the main item (not the revision) so it's marked as version published is not the latest version (ie 1)
+    	// this should only happen if 'live' is not 0 ie the programme has at some stage been published
+    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
+		if ($this->live != 0)
 		{
-			if(in_array($key, array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'))) continue;
-			$this->$key = $revision->$key;
-		}
+		  $model = get_class($this);
+		  $model::where('id','=',$revision->programme_id)->update(array('live'=>1));
+        }
 
 		// Save
 		if (sizeof($this->get_dirty())>0) {

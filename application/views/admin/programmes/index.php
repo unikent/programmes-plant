@@ -15,11 +15,11 @@
             <td>
                               
                 <?php if ( $programme->live == 0 ): ?>
-                    <span class="label label-important">New</span>
+                    <span class="label label-important" rel="tooltip" data-original-title="'New' marks programmes which have never been pushed to live.">New</span>
                 <?php elseif ( $programme->live == 1 ): ?>
-                    <span class="label label-warning">Editing</span>
+                    <span class="label label-warning" rel="tooltip" data-original-title="'Editing' marks programmes which have been edited since they were last pushed to live.">Editing</span>
                 <?php elseif ( $programme->live == 2 ): ?>
-                    <span class="label label-success">Published</span>
+                    <span class="label label-success" rel="tooltip" data-original-title="'Published' marks programmes where the most recently edited version is also the live version.">Published</span>
                 <?php endif; ?>
                 
             </td>
