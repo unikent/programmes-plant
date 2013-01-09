@@ -7,9 +7,9 @@
 
   <div style='padding:10px;' class='alert alert-success alert-block'>
    <span class="label label-success" >Published</span>
-   <?php echo $revision->created_at;?><br/>
+   <?php echo $revision->created_at;?> by <?php echo $revision->edits_by ?><br/>
 
-   From <?php echo $revision->created_by ?>
+   Published at <?php echo $revision->published_at; ?> by <?php echo $revision->published_by; ?>
   </div>
 
   <?php break?>
@@ -29,11 +29,11 @@
 
  <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@difference', array($revision->id)) ?>">Differences from live</a>
   <a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@make_live', array($revision->id)) ?>">Make Live</a>
-    <a class="popup_toggler btn btn-warning" href="#revert" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@revert_to_revision', array($revision->id)) ?>">Reject</a>
+    <a class="popup_toggler btn btn-warning" href="#revert" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@revert_to_revision', array($revision->id)) ?>">Use previous</a>
 
   </div><br/>
 
-   From <?php echo $revision->created_by ?>
+   From <?php echo $revision->edits_by ?>
   </div>
 
 
@@ -43,7 +43,7 @@
 
 
     <div style='padding:5px;margin-left:25px;' class='alert alert-info'>
-      <span class="label label-info" >R</span> <?php echo $revision->created_at;?> From <?php echo $revision->created_by ?>
+      <span class="label label-info" >R</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
     </div>
 
 
@@ -85,7 +85,7 @@ foreach ($revisions as $revision) :
 
 
 
-      From <?php echo $revision->created_by ?>
+      From <?php echo $revision->edits_by ?>
 
 
      

@@ -68,6 +68,7 @@ class Revisionable extends SimpleData {
 				// We don't have published by in revisions
 				unset($revision_attributes['id']);
 				unset($revision_attributes['published_by']);
+				unset($revision_attributes['created_by']);
 				unset($revision_attributes['live']);
 
 				// Timestamp revision - the time stamp of the newly created revision should be
@@ -76,10 +77,9 @@ class Revisionable extends SimpleData {
 				$revision_attributes['updated_at'] = $revision_attributes['created_at'];
 				$revision_attributes['status'] = 'selected';
 
-				if ($revision_attributes['created_by'] == null)
-				{
-					$revision_attributes['created_by'] = Auth::user();
-				}
+				//created by should be edited by?
+				$revision_attributes['edits_by'] = Auth::user();
+
 
 				// Deactivate any previosuly selected drafts
 				$r_model = $this->revision_model;
@@ -311,11 +311,13 @@ class Revisionable extends SimpleData {
 		$model::where('id','=',$revision->programme_id)->update(array('live'=>2));
 
 		$model = $this->revision_model;
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
+		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 
 		// Make new item "live"
 		$r = $model::find($revision->id);
 		$r->status = 'live';
+		$r->published_at = date('Y-m-d H:i:s');
+		$r->published_by = Auth::user();
 		$r->save();
 
 		return $r;
@@ -379,40 +381,6 @@ class Revisionable extends SimpleData {
 		$r->status = 'live';
 		$r->save();
 	 }
-
-	public function deactivate()
-	{
-		// Remove live option
-		$this->live = 0;
-
-		if (sizeof($this->get_dirty()) > 0)
-		{
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-
-		// Make current live draft "selected"
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'selected'));
-	}
-
-	public function activate()
-	{
-		// Add live option
-		$this->live = 1;
-		
-		if (sizeof($this->get_dirty())>0)
-		{
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-
-		// Make current live draft "selected"
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
-	}
 
 	/**
 	 * Removes the automatically generated field ids from our field names.
