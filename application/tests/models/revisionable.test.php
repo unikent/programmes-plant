@@ -334,7 +334,7 @@ class TestRevisionable extends ModelTestCase {
         $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->useRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
@@ -351,7 +351,7 @@ class TestRevisionable extends ModelTestCase {
         $revision = $programme->get_revision(1);
         
         // make the revision live
-        $programme->makeRevisionLive($revision);
+        $programme->make_revision_live($revision);
         
         // make a new revision
         $programme_new = Programme::find(1);
@@ -373,7 +373,7 @@ class TestRevisionable extends ModelTestCase {
         $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->revertToRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
@@ -387,10 +387,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->revertToRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
