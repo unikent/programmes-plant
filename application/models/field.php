@@ -53,9 +53,9 @@ class Field extends Eloquent
 
         $this->field_initval =  Input::get('initval');
         
-        $this->prefill =  (Input::get('prefill')==1) ? 1 : 0;
+        $this->prefill =  ( Input::get('prefill') ==1 ) ? 1 : 0;
         
-        $this->empty_default_value = Input::get('empty_default_value');
+        $this->empty_default_value = ( Input::get('empty_default_value') == 1 ) ? 1 : 0;
         
 	}
 
