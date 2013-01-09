@@ -1,5 +1,16 @@
 <h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+
+<style>
+  .nav-tabs li {float:right;}
+</style>
+<ul class="nav nav-tabs nav-tabs-right" >
+  <li ><a href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@revisions', array($programme->id))?>">Revisions</a></li>
+  <li class="active"> <a href="#">Main form</a></li>
+</ul>
+
+
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
+
 
 <?php echo Messages::get_html()?>
 
@@ -23,9 +34,7 @@
 
 <?php echo Form::actions('programmes')?>
 
-<?php if (isset($revisions)) : ?>
-  <?php echo View::make('admin.inc.partials.mini_revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
-<?php endif; ?>
+
 
 
 

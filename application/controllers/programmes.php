@@ -86,10 +86,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$this->data['programme'] = $course ;
-
-		if ($revisions = $course->get_revisions()) {
-				$this->data['revisions'] =  $revisions;
-		}
 		
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
@@ -164,13 +160,13 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$programme = Programme::find(Input::get('programme_id'));
 			$programme->year = Input::get('year');
-			
+
 			// get the programme fields
 			$programme_fields = ProgrammeField::programme_fields();
 			
 			// assign the input data to the programme fields
 			$programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
-			
+
 			// save the modified programme data
 			$programme_modified->save();
 			

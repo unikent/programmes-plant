@@ -29,7 +29,7 @@ class Revisionable_Controller extends Admin_Controller {
 		if (!$revisionable_item) return false;
 
 		//Ensure Revision exists
-		$revision = $revisionable_item->find_revision($revision_id);
+		$revision = $revisionable_item->get_revision($revision_id);
 		if (!$revision) return false;
 		return array($revisionable_item,$revision);
 
@@ -86,14 +86,32 @@ class Revisionable_Controller extends Admin_Controller {
 
 		//Get data & make revision live
 		list($item, $revision) = $data;
-		$modified_revision = $item->makeRevisionLive($revision);
+		$modified_revision = $item->make_revision_live($revision);
 		
-		// update feed file
-		$item->generate_feed_file($modified_revision);
+
 
 		//Redirect to point of origin
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+	}
+
+
+
+	public function get_revisions($year, $type, $itm_id = false){
+
+		$model = $this->model;
+		$course = $model::find($itm_id);
+		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$this->data['programme'] = $course ;
+		if ($revisions = $course->get_revisions()) {
+				$this->data['revisions'] =  $revisions;
+		}
+
+
+
+
+		$this->layout->nest('content', 'admin.revisions.index', $this->data);
 	}
 
 }

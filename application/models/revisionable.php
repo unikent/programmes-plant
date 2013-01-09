@@ -1,22 +1,29 @@
 <?php
 class Revisionable extends SimpleData {
 
-
-	/**
-	 * Revision model
-	 */
+	//Revision model (name of model for revisions of this type)
 	protected $revision_model = false;
 
 	//Data Type (Programme, Global, etc)
 	private $data_type = false;
 
+	/**
+	 * Create new instance of a revisionble object
+	 *
+	 */
 	public function __construct($attributes = array(), $exists = false){
 		//Use called class to deterime datatype
 		$this->data_type = get_called_class();
+		//if not set in parent, just assume modelRevision as name
+		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
+		//Pass to real constructor
 		parent::__construct($attributes, $exists);
 	}
 
-
+	/**
+	 * Save item (with revision)
+	 *
+	 */
 	public function save(){
 
 		if (!$this->dirty()) return true;
@@ -31,6 +38,10 @@ class Revisionable extends SimpleData {
 		parent::save();
 	}
 
+	/**
+	 * Save revision of this item
+	 *
+	 */
 	private function save_revision(){
 		
 		$revision_model = $this->revision_model;
@@ -57,16 +68,175 @@ class Revisionable extends SimpleData {
 		//Set the data in to the revision
 		$revision->fill($revision_values);
 
-		//Save revision
-		$revision->save();
-
 		//Set previous revision back to draft
 		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+
+		//Save revision
+		$revision->save();
+	
+	}
+
+	public function get_revisions(){
+		$model = $this->revision_model;
+		return $model::where($this->data_type.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+	}
+
+	public function get_revision($revision_id){
+		$model = $this->revision_model;
+		return $model::find($revision_id);
+	}
+	public function use_revision(){
+
+
+	}
+
+	//revision Revision|id
+	public function make_revision_live($revision){
+
+		//get model
+		$model = $this->data_type;
+
+		//if its an id, convert to actual revision
+		if(is_int($revision)){
+			$revision = $model::find($revision);
+		}
+
+		// Set data status as 2
+		// update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+		$this->live = '2';
+		parent::save();
+
+		//Get revision model.
+		$revision_model = $this->revision_model;
+
+		//Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
+		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+		
+		//Update and save this revision 
+		$revision->status = 'live';
+		$revision->published_at = date('Y-m-d H:i:s');
+		$revision->made_live_by = Auth::user();
+		$revision->save();
+
+		// update feed file
+		$this->generate_feed_file($revision);
+
+		//Return result
+		return $revision;
 	}
 
 
+	public static function get_attributes_list($year = false)
+	{
+		$options = array();
 
+		$model = get_called_class();
 
+		$model .= 'Field';
+
+		if (!$year)
+		{
+			$data = $model::get();
+		} 
+		else 
+		{
+			$data = $model::where('year','=',$year)->get();
+		}
+
+		foreach ($data as $record) {$options[$record->colname] = $record->field_name;}
+
+		return $options;
+	}
+
+	public static function remove_ids_from_field_names($record)
+	{
+		$new_record = array();
+		
+		foreach ($record as $name => $value) 
+		{
+			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
+		}
+
+		return $new_record;
+	}
+/**
+*/
+	private function generate_feed_index($new_programme, $path)
+	{
+		$index_file = $path.'index.json';
+
+		$title_field = Programme::get_title_field();
+		$slug_field = Programme::get_slug_field();
+		$withdrawn_field = Programme::get_withdrawn_field();
+		$suspended_field = Programme::get_suspended_field();
+		$subject_to_approval_field = Programme::get_subject_to_approval_field();
+		$new_programme_field = Programme::get_new_programme_field();
+		$mode_of_study_field = Programme::get_mode_of_study_field();
+		$ucas_code_field = Programme::get_ucas_code_field();
+		$index_data = array();
+		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
+						  ->where('status','=','live')
+						  ->where($withdrawn_field,'!=','true')
+						  ->where($suspended_field,'!=','true')
+						  ->get();
+
+		foreach($programmes as $programme)
+		{
+		  $index_data[$programme->programme_id] = array(
+			'id' => $programme->programme_id,
+			'name' => $programme->$title_field,
+			'slug' => $programme->$slug_field,
+			'award' => $programme->award->name,
+			'subject' => $programme->subject_area_1->name,
+			'main_school' => $programme->administrative_school->name,
+			'secondary_school' => $programme->additional_school->name,
+			'campus' => $programme->location->name,
+			'new_programme' => $programme->$new_programme_field,
+			'subject_to_approval' => $programme->$subject_to_approval_field,
+			'mode_of_study' => $programme->$mode_of_study_field,
+			'ucas_code' => $programme->$ucas_code_field
+			);
+		}
+	
+		file_put_contents($index_file, json_encode($index_data));
+	}
+
+	/**
+	 * Generate all the necessary JSON files that are used in our API. These are:
+	 * GlobalSettings.json
+	 * ProgrammeSettings.json
+	 * Index.json -- this function calls $this->generate_feed_index() to generate this
+	 * {programme_id}.json
+	 * 
+	 * If we're saving a programme, we generate the programme's json file as well as update our index file to reflect the changes.
+	 * All other revisionables are 
+	 * 
+	 * @param $revision The revision to base our saving on
+	 */
+	public function generate_feed_file($revision)
+	{
+		// global, settings, programme
+		$data_type = get_called_class();
+		$cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
+
+		// if our $cache_location isnt available, create it
+		if (!is_dir($cache_location))
+		{
+		  mkdir($cache_location, 0755, true);
+		}
+
+		// if we're saving a programme
+		if($data_type == 'Programme')
+		{
+		  file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
+		  $this->generate_feed_index($revision,$cache_location);
+
+		}
+		else
+		{
+		  file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
+		}
+	}
 
 
 
@@ -294,104 +464,7 @@ class Revisionable extends SimpleData {
 		}
 	}
 
-	public static function getAttributesList($year = false)
-	{
-		$options = array();
 
-		$model = get_called_class();
-
-		$model .= 'Field';
-
-		if (!$year)
-		{
-			$data = $model::get();
-		} 
-		else 
-		{
-			$data = $model::where('year','=',$year)->get();
-		}
-
-		foreach ($data as $record) {$options[$record->colname] = $record->field_name;}
-
-		return $options;
-	}
-
-	private function generate_feed_index($new_programme, $path)
-	{
-		$index_file = $path.'index.json';
-
-		$title_field = Programme::get_title_field();
-		$slug_field = Programme::get_slug_field();
-		$withdrawn_field = Programme::get_withdrawn_field();
-		$suspended_field = Programme::get_suspended_field();
-		$subject_to_approval_field = Programme::get_subject_to_approval_field();
-		$new_programme_field = Programme::get_new_programme_field();
-		$mode_of_study_field = Programme::get_mode_of_study_field();
-		$ucas_code_field = Programme::get_ucas_code_field();
-		$index_data = array();
-		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						  ->where('status','=','live')
-						  ->where($withdrawn_field,'!=','true')
-						  ->where($suspended_field,'!=','true')
-						  ->get();
-
-		foreach($programmes as $programme)
-		{
-		  $index_data[$programme->programme_id] = array(
-			'id' => $programme->programme_id,
-			'name' => $programme->$title_field,
-			'slug' => $programme->$slug_field,
-			'award' => $programme->award->name,
-			'subject' => $programme->subject_area_1->name,
-			'main_school' => $programme->administrative_school->name,
-			'secondary_school' => $programme->additional_school->name,
-			'campus' => $programme->location->name,
-			'new_programme' => $programme->$new_programme_field,
-			'subject_to_approval' => $programme->$subject_to_approval_field,
-			'mode_of_study' => $programme->$mode_of_study_field,
-			'ucas_code' => $programme->$ucas_code_field
-			);
-		}
-	
-		file_put_contents($index_file, json_encode($index_data));
-	}
-
-	
-	 * Generate all the necessary JSON files that are used in our API. These are:
-	 * GlobalSettings.json
-	 * ProgrammeSettings.json
-	 * Index.json -- this function calls $this->generate_feed_index() to generate this
-	 * {programme_id}.json
-	 * 
-	 * If we're saving a programme, we generate the programme's json file as well as update our index file to reflect the changes.
-	 * All other revisionables are 
-	 * 
-	 * @param $revision The revision to base our saving on
-	
-	public function generate_feed_file($revision)
-	{
-		// global, settings, programme
-		$data_type = get_called_class();
-		$cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
-
-		// if our $cache_location isnt available, create it
-		if (!is_dir($cache_location))
-		{
-		  mkdir($cache_location, 0755, true);
-		}
-
-		// if we're saving a programme
-		if($data_type == 'Programme')
-		{
-		  file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
-		  $this->generate_feed_index($revision,$cache_location);
-
-		}
-		else
-		{
-		  file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
-		}
-	}
 
 	
 	 * This function makes the specified revision live
