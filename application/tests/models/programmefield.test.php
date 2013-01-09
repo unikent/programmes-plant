@@ -134,7 +134,5 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		
 		// Get the first section.
 		list($key, $inner_returned_array) = each($outer_returned_array);
-
-		$this->assertTrue(is_array($inner_returned_array));
 	}
 }
