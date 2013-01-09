@@ -94,6 +94,32 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+	public function testprogramme_fields_by_sectionReturnedArrayHasNumericKeys()
+	{
+		$outer_returned_array = ProgrammeField::programme_fields_by_section();
+		
+		// Get the first section.
+		list($key, $inner_returned_array) = each($outer_returned_array);
+
+		foreach ($inner_returned_array as $key => $value)
+		{
+			$this->assertTrue(is_numeric($key), "$key is not numeric but a " . gettype($key) . ". Field is named $value->field_name");
+		}
+	}
+
+	public function testprogramme_fields_by_sectionReturnedArrayHasNonBlankKeys()
+	{
+		$outer_returned_array = ProgrammeField::programme_fields_by_section();
+		
+		// Get the first section.
+		list($key, $inner_returned_array) = each($outer_returned_array);
+
+		foreach ($inner_returned_array as $key => $value)
+		{
+			$this->assertNotEquals('', $key, "\$key is a blank string - it shouldn't be");
+		}
+	}
+
 	/**
 	 * This bug is recorded at https://github.com/unikent/programmes-plant/issues/151
 	 * 
@@ -110,11 +136,5 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		list($key, $inner_returned_array) = each($outer_returned_array);
 
 		$this->assertTrue(is_array($inner_returned_array));
-		// The inner array should be not associative, but numeric - therefore 'keys' should be numeric.
-		foreach ($inner_returned_array as $key => $value)
-		{
-			$this->assertTrue(is_numeric($key), "$key is not numeric but a " . gettype($key) . ". Field is named $value->field_name");
-			$this->assertNotEquals('', $key, "\$key is a blank string - it shouldn't be");
-		}
 	}
 }
