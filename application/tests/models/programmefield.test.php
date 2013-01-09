@@ -146,15 +146,7 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		}
 	}
 
-	/**
-	 * The following tests enclose the bug recorded at:
-	 * https://github.com/unikent/programmes-plant/issues/151
-	 * 
-	 * If a section did not have the order of the programme fields set, then only one
-	 * field was ever extracted per section due to the way the looping used the $field->order
-	 * to map onto an array.
-	 */
-	public function testBugprogramme_fields_by_sectionReturnsArrayCorrectlyWhenFieldsHaveNoOrder()
+	public function populate_two_sections()
 	{
 		$this->wipe();
 		$this->wipe('ProgrammeSection');
@@ -216,13 +208,26 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 			'colname' => 'slug_3',
 			'section' => 2
 		));
+	}
 
-		$outer_returned_array = ProgrammeField::programme_fields_by_section();
+	/**
+	 * The following two tests enclose the bug recorded at:
+	 * https://github.com/unikent/programmes-plant/issues/151
+	 * 
+	 * If a section did not have the order of the programme fields set, then only one
+	 * field was ever extracted per section due to the way the looping used the $field->order
+	 * to map onto an array.
+	 */
+	public function testprogramme_fields_by_sectionReturnsArrayCorrectlyWhenFieldsHaveNoOrder()
+	{
+		$this->populate_two_sections();
+
+		$sections = ProgrammeField::programme_fields_by_section();
 
 		// These should fail in the presence of the bug.
 		// We don't get the fields we have put in, only the first in each case.
-		$this->assertCount(2, $outer_returned_array['Section 1'], "We should have got two programme fields back from Section 1, instead we got " . count($outer_returned_array['Section 1']));
-		$this->assertCount(2, $outer_returned_array['Section 2'], "We should have got two programme fields back from Section 2, instead we got " . count($outer_returned_array['Section 2']));
+		$this->assertCount(2, $sections['Section 1'], "We should have got two programme fields back from Section 1, instead we got " . count($sections['Section 1']));
+		$this->assertCount(2, $sections['Section 2'], "We should have got two programme fields back from Section 2, instead we got " . count($sections['Section 2']));
 	}
 
 	public function testBugprogramme_fields_by_sectionReturnArrayWhenFieldsHaveAMixOfOrderAndNoOrder()
