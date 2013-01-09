@@ -2,6 +2,8 @@
 
 class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
+	public $input = array();
+
 	/**
 	 * Set up the database.
 	 */
@@ -10,7 +12,34 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		Tests\Helper::migrate();
 	}
 
+	/**
+	 * @todo Abstract this - a lot of code repetition now.
+	 */
+	public function populate($input = false, $model = 'ProgrammeField')
+	{
+		if (! $input)
+		{
+			$input = $this->input;
+		}
 
+		$object = $model::create($input)->save();
+	}
+
+	/**
+	 * Blanks the ProgrammeField table in the database.
+	 * 
+	 * @todo Abstract this to some model test class.
+	 * @return void
+	 */
+	public function wipe($model = 'ProgrammeField')
+	{
+		$items = $model::all();
+
+		foreach($items as $item)
+		{
+			$item->delete();
+		}
+	}
 
 	/**
 	 * Tests Reorder fields
