@@ -96,10 +96,8 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
 	public function testprogramme_fields_by_sectionReturnedArrayHasNumericKeys()
 	{
-		$outer_returned_array = ProgrammeField::programme_fields_by_section();
-		
-		// Get the first section.
-		list($key, $inner_returned_array) = each($outer_returned_array);
+		// Get only inner array here.
+		list($key, $inner_returned_array) = each(ProgrammeField::programme_fields_by_section());
 
 		foreach ($inner_returned_array as $key => $value)
 		{
@@ -109,10 +107,8 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
 	public function testprogramme_fields_by_sectionReturnedArrayHasNonBlankKeys()
 	{
-		$outer_returned_array = ProgrammeField::programme_fields_by_section();
-		
-		// Get the first section.
-		list($key, $inner_returned_array) = each($outer_returned_array);
+		// Get only inner array here.
+		list($key, $inner_returned_array) = each(ProgrammeField::programme_fields_by_section());
 
 		foreach ($inner_returned_array as $key => $value)
 		{
@@ -128,11 +124,7 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBugWhereProgrammeFieldsAreNotInTheirSectionsByDefault()
 	{
-		// programme_fields_by_section returns a multidimensional array of the sections which has them ordered by the database order field.
-		// If this is never set - i.e. they have never been (re)ordered - then the output loop skips them.
 		$outer_returned_array = ProgrammeField::programme_fields_by_section();
-		
-		// Get the first section.
 		list($key, $inner_returned_array) = each($outer_returned_array);
 	}
 }
