@@ -110,9 +110,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		list($key, $inner_returned_array) = each($outer_returned_array);
 
 		$this->assertTrue(is_array($inner_returned_array));
-
-		print_r($inner_returned_array);
-
 		// The inner array should be not associative, but numeric - therefore 'keys' should be numeric.
 		foreach ($inner_returned_array as $key => $value)
 		{
