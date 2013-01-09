@@ -9,6 +9,7 @@ class Add_more_revision_data {
 	 */
 	public function up()
 	{
+
 	    Schema::table('programmes', function($table){
 			$table->drop_column('published_by');
 		});
@@ -23,27 +24,34 @@ class Add_more_revision_data {
 			$table->drop_column('created_by');
 			$table->drop_column('published_by');
 		});
+		Schema::table('programme_settings_revisions', function($table){
+			$table->drop_column('created_by');
+		});
+		Schema::table('global_settings_revisions', function($table){
+			$table->drop_column('created_by');
+		});
+
+
 		Schema::table('programmes_revisions', function($table){
 			$table->string('edits_by');
-			$table->string('published_by');
+			$table->string('made_live_by');
 			$table->date('published_at');
 		});
-		Schema::table('programme_settings_revisions', function($table){
-			$table->drop_column('created_by');
-		});
+		
 		Schema::table('programme_settings_revisions', function($table){
 			$table->string('edits_by');
-			$table->string('published_by');
+			$table->string('made_live_by');
 			$table->date('published_at');
 		});
-		Schema::table('global_settings_revisions', function($table){
-			$table->drop_column('created_by');
-		});
+		
 		Schema::table('global_settings_revisions', function($table){
 			$table->string('edits_by');
-			$table->string('published_by');
+			$table->string('made_live_by');
 			$table->date('published_at');
 		});
+
+
+		
 	}
 
 	/**
@@ -53,6 +61,28 @@ class Add_more_revision_data {
 	 */
 	public function down()
 	{
+
+		Schema::table('programmes_revisions', function($table){
+	
+			$table->drop_column('edits_by');
+			$table->drop_column('made_live_by');
+			$table->drop_column('published_at');
+		
+		});
+		Schema::table('programme_settings_revisions', function($table){
+
+			$table->drop_column('edits_by');
+			$table->drop_column('made_live_by');
+			$table->drop_column('published_at');
+		});
+		Schema::table('global_settings_revisions', function($table){
+
+			$table->drop_column('edits_by');
+			$table->drop_column('made_live_by');
+			$table->drop_column('published_at');
+		});
+
+
     	Schema::table('programmes', function($table){
 			$table->string('published_by');
 		});
@@ -65,25 +95,14 @@ class Add_more_revision_data {
 
 		Schema::table('programmes_revisions', function($table){
 			$table->string('created_by');
-			$table->drop_column('edits_by');
-			$table->drop_column('published_by');
-			$table->drop_column('published_at');
+			$table->integer('published_by');
 		
-		});
-		Schema::table('programmes_revisions', function($table){
-				$table->integer('published_by');
 		});
 		Schema::table('programme_settings_revisions', function($table){
 			$table->string('created_by');
-			$table->drop_column('edits_by');
-			$table->drop_column('published_by');
-			$table->drop_column('published_at');
 		});
 		Schema::table('global_settings_revisions', function($table){
 			$table->string('created_by');
-			$table->drop_column('edits_by');
-			$table->drop_column('published_by');
-			$table->drop_column('published_at');
 		});
 
 	}
