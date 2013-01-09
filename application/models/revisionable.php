@@ -317,7 +317,7 @@ class Revisionable extends SimpleData {
 		$r = $model::find($revision->id);
 		$r->status = 'live';
 		$r->published_at = date('Y-m-d H:i:s');
-		$r->published_by = Auth::user();
+		$r->made_live_by = Auth::user();
 		$r->save();
 
 		return $r;

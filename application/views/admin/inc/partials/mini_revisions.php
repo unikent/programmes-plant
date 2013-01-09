@@ -9,7 +9,7 @@
    <span class="label label-success" >Published</span>
    <?php echo $revision->created_at;?> by <?php echo $revision->edits_by ?><br/>
 
-   Published at <?php echo $revision->published_at; ?> by <?php echo $revision->published_by; ?>
+   Published at <?php echo $revision->published_at; ?> by <?php echo $revision->made_live_by; ?>
   </div>
 
   <?php break?>
@@ -76,7 +76,7 @@ foreach ($revisions as $revision) :
 ?>
 
 
-    <div style='padding:5px;height:30px;' class='alert alert-danger alert-block'>
+    <div style='padding:5px;height:30px; <?php if($revision->status !='prior_live'){echo "margin-left:20px;";} ?>' class='alert alert-danger alert-block'>
 
        <div style='float:right'><a class="popup_toggler btn btn-danger" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $subject->id . '@make_live', array($revision->id)) ?>">Roll live back to revision</a> </div>
 
