@@ -230,8 +230,117 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		$this->assertCount(2, $sections['Section 2'], "We should have got two programme fields back from Section 2, instead we got " . count($sections['Section 2']));
 	}
 
-	public function testBugprogramme_fields_by_sectionReturnArrayWhenFieldsHaveAMixOfOrderAndNoOrder()
+	public function testprogramme_fields_by_sectionReturnsArrayInRationalOrderWhenFieldsHaveNoOrder()
 	{
+		$this->populate_two_sections();
+
+		// We now have one field with an order (ID = 1) and another without (ID = 2).
+		$sections = ProgrammeField::programme_fields_by_section();
+
+		$count = 1;
+
+		// Check for a rational ordering.
+		foreach ($sections['Section 1'] as $key => $field)
+		{
+			$this->assertEquals($count, $key, "$field->field_name is wrong - location in the array is $key and should be $count");
+			$count++;
+		}
+	}
+
+	public function testprogramme_fields_by_sectionReturnsAllItemsWhenYouHaveANoOrder()
+	{
+		$this->populate_two_sections();
+
+		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
+		$sections = ProgrammeField::programme_fields_by_section();
 		
+		$this->assertCount(2, $sections['Section 1']);
+	}
+
+	public function testprogramme_fields_by_sectionReturnsAllItemsWhenYouHaveAMixOfOrderAndNoOrder()
+	{
+		$this->populate_two_sections();
+
+		// Set the order on one, but not on another in Section 1.
+		$first_field = ProgrammeField::find(1);
+		$first_field->order = 1;
+		$first_field->save();
+
+		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
+		$sections = ProgrammeField::programme_fields_by_section();
+		
+		$this->assertCount(2, $sections['Section 1']);
+	}
+
+	public function testprogramme_fields_by_sectionReturnsAllItemsWhenYouHaveAllFieldsWithOrder()
+	{
+		$this->populate_two_sections();
+
+		// Set the order for both in Section 1.
+		$first_field = ProgrammeField::find(1);
+		$first_field->order = 1;
+		$first_field->save();
+
+		$second_field = ProgrammeField::find(2);
+		$second_field->order = 2;
+		$second_field->save();
+
+		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
+		$sections = ProgrammeField::programme_fields_by_section();
+		
+		$this->assertCount(2, $sections['Section 1']);
+	}
+
+	public function testprogramme_fields_by_sectionReturnsArrayInRationalOrderWhenFieldsHaveAMixOfOrderAndNoOrder()
+	{
+		$this->populate_two_sections();
+
+		// Set the order on one, but not on another in Section 1.
+		$first_field = ProgrammeField::find(1);
+		$first_field->order = 1;
+		$first_field->save();
+
+		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
+		$sections = ProgrammeField::programme_fields_by_section();
+
+		$count = 1;
+		// Check for a rational ordering.
+		foreach ($sections['Section 1'] as $key => $value)
+		{
+			$this->assertEquals($count, $key);
+			$count++;
+		}
+
+		// Add another two, one with order and one without - meaning we have two with order and two without in A/B/A/B fashion we want to render smoothly.
+		$this->populate(array(
+			'id' => 5,
+			'field_name' => 'Programme title', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'programme_title_1',
+			'section' => 1,
+			'order' => 2
+		));
+
+		$this->populate(array(
+			'id' => 6,
+			'field_name' => 'Programme title', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'programme_title_1',
+			'section' => 1
+		));
+
+		$sections = ProgrammeField::programme_fields_by_section();
+
+		$count = 1;
+
+		foreach ($sections['Section 1'] as $key => $value)
+		{
+			$this->assertEquals($count, $key);
+			$count++;
+		}
 	}
 }
