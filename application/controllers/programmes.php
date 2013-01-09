@@ -21,8 +21,8 @@ class Programmes_Controller extends Revisionable_Controller
         $suspended_field = Programme::get_suspended_field();
         $subject_to_approval_field = Programme::get_subject_to_approval_field();
         $model = $this->model;
-        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field));
-       
+        $programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live'));
+        
         $this->data[$this->views] = $programmes;
 
         $this->data['title_field'] = $title_field;

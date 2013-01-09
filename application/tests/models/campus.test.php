@@ -199,15 +199,6 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('address_3', 'Address 3'));
 	}
 
-	public function testAddress_3IsRequired() 
-	{
-		unset($this->input['address_3']);
-
-		Request::foundation()->request->add($this->input);
-
-		$this->assertFalse(Campus::is_valid());
-	}
-
 	public function testAddTown() 
 	{
 		$campus = Campus::create(array('town' => 'Wolverhampton'));
@@ -254,7 +245,7 @@ class TestCampus extends ModelTestCase
 	}
 
 	/**
-	 * For our purposes a valid phone number contains numbers and spaces.
+	 * For our purposes a valid phone number contains numbers, brackers pluses, hyphens and spaces.
 	 */
 	public function testPhoneFailsOnInvalidPhoneNumber() 
 	{
@@ -265,13 +256,39 @@ class TestCampus extends ModelTestCase
 		$this->assertFalse(Campus::is_valid());
 	}
 
-	public function testPhoneNumberIsRequired() 
+	/**
+	 * Feeds data into testPhonePassesOnValidPhoneNumber.
+	 */
+	public function phone_number_provider()
 	{
-		unset($this->input['phone']);
+		return array(
+			// Numbers only.
+			array('056723329999'),
+
+			// Numbers and spaces.
+			array('014555 456939393'),
+
+			// Numbers and brackets.
+			array('(01345)45238'),
+
+			// Numbers and hyphens.
+			array('556-34556'),
+
+			// Everything all the time.
+			array('+44 (01345) 4599-2999')
+		);
+	}
+
+	/**
+	 * @dataProvider phone_number_provider
+	 */
+	public function testPhonePassesOnValidPhoneNumber($phone)
+	{
+		$this->input['phone'] = $phone;
 
 		Request::foundation()->request->add($this->input);
 
-		$this->assertFalse(Campus::is_valid());
+		$this->assertTrue(Campus::is_valid());
 	}
 
 	public function testAddPostcode() 

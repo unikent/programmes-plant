@@ -106,7 +106,7 @@ class Fields_Controller extends Admin_Controller
 
         //add relevant table columns
         foreach ($tables_to_update as $table_to_update) {
-            $this->update_schema($field->colname, $field->field_initval, $field->type, $table_to_update);
+            $this->update_schema($field->colname, $field->field_initval, $field->field_type, $table_to_update);
         }
 
         Messages::add('success','Row added to schema');
@@ -119,10 +119,10 @@ class Fields_Controller extends Admin_Controller
         $model = $this->model;
         $name = $this->name;
 
-        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help')))
+        if (! $model::is_valid(null, array('title'  => 'required|max:255', 'id' => 'required', 'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect')))
         {
             Messages::add('error', $model::$validation->errors->all());
-            return Redirect::to($this->views . '/' . $this->view .'/add')->with_input();
+            return Redirect::to('/' . $type . '/' . $this->views . '/' . $this->view .'/edit/' . Input::get('id'))->with_input();
         }
 
         $field = $model::find(Input::get('id'));
@@ -152,7 +152,7 @@ class Fields_Controller extends Admin_Controller
         {
             $type_str = 'varchar(255)';
             if($field->field_type=='textarea') $type_str = 'TEXT';
-
+            
             DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
             DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
         }

@@ -1,9 +1,19 @@
 body {
-    background:url(/img/admin/snow_@2X.png) repeat top left;
+    background:url(img/snow_@2X.png) repeat top left;
 }
 
 h1 {
     padding-bottom: 20px;
+}
+
+.icon-link {
+    background: url(img/icon-link.png) no-repeat center center;
+}
+
+textarea { 
+    width:500px !important;
+    height: 300px !important;
+    overflow: scroll;
 }
 
 .sortable_fields {
@@ -27,6 +37,10 @@ h1 {
 
 }
 
+.checkbox {
+	width: 300px;
+}
+
 .container.loginwindow { width:500px; margin:0 auto; text-align:center; }
 .container.loginwindow h1 { margin-bottom:20px; }
 .crud textarea,
@@ -35,6 +49,9 @@ h1 {
 .right { float:right; }
 .crud label { font-weight:700; }
 .crud .controls label { font-weight:400; }
+.crud .ui-multiselect input.search {
+    width: 120px !important;
+}
 div.alert { margin-top:10px; margin-bottom:10px; }
 div.alert p { margin:0; }
 .gallery_images .caption { text-align:center; }
