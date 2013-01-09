@@ -96,7 +96,7 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
 	public function testprogramme_fields_by_sectionReturnedArrayHasNumericKeys()
 	{
-		// Get only inner array here.
+		// Get first item from outer array here to get an inner array.
 		list($key, $inner_returned_array) = each(ProgrammeField::programme_fields_by_section());
 
 		foreach ($inner_returned_array as $key => $value)
@@ -107,7 +107,7 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
 	public function testprogramme_fields_by_sectionReturnedArrayHasNonBlankKeys()
 	{
-		// Get only inner array here.
+		// Get first item from outer array here to get an inner array.
 		list($key, $inner_returned_array) = each(ProgrammeField::programme_fields_by_section());
 
 		foreach ($inner_returned_array as $key => $value)
