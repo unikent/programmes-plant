@@ -93,10 +93,6 @@ class Revisionable extends SimpleData {
 		$model = $this->revision_model;
 		return $model::find($revision_id);
 	}
-	public function use_revision(){
-
-
-	}
 
 	//revision Revision|id
 	public function make_revision_live($revision){
@@ -131,6 +127,53 @@ class Revisionable extends SimpleData {
 
 		//Return result
 		return $revision;
+	}
+	
+	public function revert_to_previous_revision($revision)
+	{	
+		//Get previous revision
+		$model = $this->revision_model;
+		$rev = $model::where($this->data_type.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
+		
+		if(sizeof($rev) == 0){
+			return false;
+		}
+
+		$this->use_revision($rev[0]);
+
+	}
+
+	public function use_revision($revision)
+	{
+		//if its an id, convert to actual revision
+		$model = $this->data_type;
+		if(is_int($revision)){
+			$revision = $model::find($revision);
+		}
+
+		//Mark all later revisions as unused if we are reverting back
+		$model = $this->revision_model;
+		$model::where($this->data_type.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
+
+		//get revision data and copy it back in to "current" object
+		$revision_values = $revision->attributes;
+		unset($revision_values['id']);
+		unset($revision_values['created_at']);
+		unset($revision_values['published_at']);
+		unset($revision_values['edits_by']);
+		unset($revision_values['made_live_by']);
+		unset($revision_values['status']);
+		unset($revision_values[strtolower($this->data_type).'_id']);
+
+		//Save this revision as the new current
+		$this->fill($revision_values);
+		parent::save();
+		//Update revisions status to selected (assuming its not a live one)
+		if($revision->status != 'live'){
+			$revision->status = 'selected';
+			$revision->save();
+		}
+		
 	}
 
 

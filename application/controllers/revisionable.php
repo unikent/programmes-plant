@@ -35,6 +35,23 @@ class Revisionable_Controller extends Admin_Controller {
 
 	}
 
+	public function get_revert_to_previous($year, $type, $revisionable_item_id = false, $revision_id = false)
+	{
+		
+		// Check to see we have what is required.
+		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
+		//If somthing went wrong
+		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		//Get data & revert to revision
+		list($item, $revision) = $data;
+		$item->revert_to_previous_revision($revision);
+
+		//Redirect to point of origin
+		Messages::add('success', "Reverted to previous revision.");
+		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+	}
+
 	/**
 	 * Routing for GET /$year/$type/$object_id/revert_to_revision/$revision_id
 	 * Routing for GET /$year/$type/revert_to_revision/$revision_id
@@ -88,8 +105,6 @@ class Revisionable_Controller extends Admin_Controller {
 		list($item, $revision) = $data;
 		$modified_revision = $item->make_revision_live($revision);
 		
-
-
 		//Redirect to point of origin
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
