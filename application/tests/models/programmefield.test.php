@@ -147,12 +147,14 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * This bug is recorded at https://github.com/unikent/programmes-plant/issues/151
+	 * The following tests enclose the bug recorded at:
+	 * https://github.com/unikent/programmes-plant/issues/151
 	 * 
-	 * In the case where the order of a section has never been changed (i.e they have not been dragged and dropped around)
-	 * then the section does not appear on the programme entry form. See test for further explaination.
+	 * If a section did not have the order of the programme fields set, then only one
+	 * field was ever extracted per section due to the way the looping used the $field->order
+	 * to map onto an array.
 	 */
-	public function testBugWhereProgrammeFieldsAreNotInTheirSectionsByDefault()
+	public function testBugprogramme_fields_by_sectionReturnsArrayCorrectlyWhenFieldsHaveNoOrder()
 	{
 		$this->wipe();
 		$this->wipe('ProgrammeSection');
@@ -221,5 +223,10 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		// We don't get the fields we have put in, only the first in each case.
 		$this->assertCount(2, $outer_returned_array['Section 1'], "We should have got two programme fields back from Section 1, instead we got " . count($outer_returned_array['Section 1']));
 		$this->assertCount(2, $outer_returned_array['Section 2'], "We should have got two programme fields back from Section 2, instead we got " . count($outer_returned_array['Section 2']));
+	}
+
+	public function testBugprogramme_fields_by_sectionReturnArrayWhenFieldsHaveAMixOfOrderAndNoOrder()
+	{
+		
 	}
 }
