@@ -39,7 +39,7 @@ class ProgrammeField extends Field
         foreach ($sections as $section)
         {
             $last_order = 1;
-            
+
             foreach ($section->programmefields as $programmefield)
             {
                 // Make sure the section is active.
@@ -48,8 +48,8 @@ class ProgrammeField extends Field
                     // Build up the final array indexed by section name and programme field order.
                     if ($programmefield->order == 0)
                     {
-                        $last_order++;
                         $order = $last_order;
+                        $last_order++;
                     }
                     else
                     {
