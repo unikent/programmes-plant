@@ -217,7 +217,9 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 
 		$outer_returned_array = ProgrammeField::programme_fields_by_section();
 
-		$this->assertCount(2, $outer_returned_array['Section 1']);
-		$this->assertCount(2, $outer_returned_array['Section 2']);
+		// These should fail in the presence of the bug.
+		// We don't get the fields we have put in, only the first in each case.
+		$this->assertCount(2, $outer_returned_array['Section 1'], "We should have got two programme fields back from Section 1, instead we got " . count($outer_returned_array['Section 1']));
+		$this->assertCount(2, $outer_returned_array['Section 2'], "We should have got two programme fields back from Section 2, instead we got " . count($outer_returned_array['Section 2']));
 	}
 }
