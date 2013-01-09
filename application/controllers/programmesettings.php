@@ -1,223 +1,224 @@
 <?php
 
-class ProgrammeSettings_Controller extends Revisionable_Controller
-{
-    public $restful = true;
-    public $views = 'programmesettings';
-    protected $model = 'ProgrammeSetting';
+class ProgrammeSettings_Controller extends Revisionable_Controller {
 
-    /**
-     * Routing for /$year/$type/programmesettings
-     *
-     * @param int    $year The year.
-     * @param string $type Undergraduate or postgraduate.
-     */
-    public function get_index($year, $type)
-    {
-        $model = $this->model;
-        $data = $model::where('year', '=', $year)->first();
+	public $restful = true;
+	public $views = 'programmesettings';
+	protected $model = 'ProgrammeSetting';
 
-        if ($data == null)
-        {
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'/create');
-        } 
-        else
-        {
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
-        }
+	/**
+	 * Routing for /$year/$type/programmesettings
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_index($year, $type)
+	{
+		$model = $this->model;
+		$data = $model::where('year', '=', $year)->first();
 
-    }
+		if ($data == null)
+		{
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/create');
+		} 
+		else
+		{
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
+		}
 
-    /**
-     * Our subject create function
-     *
-     */
-    public function get_create($year, $type)
-    {
-        $this->data['fields'] = $this->get_fields();
-        $this->data['create'] = true;
-        $this->data['year'] = $year;
+	}
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
-    }
+	/**
+	 * Our subject create function
+	 *
+	 */
+	public function get_create($year, $type)
+	{
+		$this->data['fields'] = $this->get_fields();
+		$this->data['create'] = true;
+		$this->data['year'] = $year;
 
-    /**
-     * Routing for GET /$year/$type/edit/$subject_id
-     *
-     * @param int    $year       The year of the subject
-     * @param string $type       The type of the subject undergraduate/postgraduate
-     * @param int    $subject_id The ID of the subject to edit.
-     */
-    public function get_edit($year, $type)
-    {
+		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+	}
 
-        $model = $this->model;
-        $programmesetting = $model::where('year', '=', $year)->first();
+	/**
+	 * Routing for GET /$year/$type/edit/$subject_id
+	 *
+	 * @param int    $year       The year of the subject
+	 * @param string $type       The type of the subject undergraduate/postgraduate
+	 * @param int    $subject_id The ID of the subject to edit.
+	 */
+	public function get_edit($year, $type)
+	{
 
-        if(!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$model = $this->model;
+		$programmesetting = $model::where('year', '=', $year)->first();
 
-        $this->data[$this->views] = $programmesetting ;
+		if(!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        if ($revisions = $programmesetting->get_revisions()) {
-            $this->data['revisions'] =  $revisions;
-        }
+		$this->data[$this->views] = $programmesetting ;
 
-        $this->data['fields'] = $this->get_fields();
-        $this->data['year'] = $year;
+		if ($revisions = $programmesetting->get_revisions()) {
+			$this->data['revisions'] =  $revisions;
+		}
 
-        $this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
-    }
+		$this->data['fields'] = $this->get_fields();
+		$this->data['year'] = $year;
 
-    /**
-     * Routing for POST /$year/$type/create
-     *
-     * The change request page.
-     *
-     * @param int    $year The year of the created subject.
-     * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
-     */
-    public function post_create($year, $type)
-    {
+		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+	}
 
-            $subject = new ProgrammeSetting;
-            $subject->year = Input::get('year');
+	/**
+	 * Routing for POST /$year/$type/create
+	 *
+	 * The change request page.
+	 *
+	 * @param int    $year The year of the created subject.
+	 * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
+	 */
+	public function post_create($year, $type)
+	{
 
-             //Save varible fields
-            $f = $this->get_fields();
-            foreach ($f as $c) {
-                $col = $c->colname;
-                if(Input::get($col) != null)  $subject->$col = Input::get($col);
-            }
+			$subject = new ProgrammeSetting;
+			$subject->year = Input::get('year');
 
-            $subject->save();
+			 //Save varible fields
+			$f = $this->get_fields();
+			foreach ($f as $c) {
+				$col = $c->colname;
+				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+			}
 
-            Messages::add('success','Subject added');
+			$subject->save();
 
-            return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+			Messages::add('success','Subject added');
 
-    }
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
 
-    /**
-     * Routing for POST /$year/$type/edit
-     *
-     * Make a change.
-     *
-     * @param int    $year The year of the created subject.
-     * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
-     */
-    public function post_edit($year, $type)
-    {
+	}
 
-            $subject = ProgrammeSetting::where('year', '=', $year)->first();
+	/**
+	 * Routing for POST /$year/$type/edit
+	 *
+	 * Make a change.
+	 *
+	 * @param int    $year The year of the created subject.
+	 * @param string $type The type, either ug (undergraduate) or pg (postgraduate)
+	 */
+	public function post_edit($year, $type)
+	{
 
-            $subject->year = Input::get('year');
+			$subject = ProgrammeSetting::where('year', '=', $year)->first();
 
-            //Save varible fields
-            $f = $this->get_fields();
-            foreach ($f as $c) {
-                $col = $c->colname;
-                if(Input::get($col) != null)  $subject->$col = Input::get($col);
-            }
+			$subject->year = Input::get('year');
 
-            $subject->save();
+			//Save varible fields
+			$f = $this->get_fields();
+			foreach ($f as $c) {
+				$col = $c->colname;
+				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+			}
 
-            return Redirect::to($year.'/'. $type.'/'. $this->views);
+			$subject->save();
 
-    }
+			return Redirect::to($year.'/'. $type.'/'. $this->views);
 
-    private function get_fields()
-    {
-        $model = 'ProgrammeField';
+	}
 
-        return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
-    }
+	private function get_fields()
+	{
+		$model = 'ProgrammeField';
 
-    /**
-     * Routing for GET /$year/$type/subjects/$subject_id/promote/$revision_id
-     *
-     * @param int    $year        The year of the subject (not used, but to keep routing happy).
-     * @param string $type        The type, either undegrad/postgrade (not used, but to keep routing happy)
-     * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
-     * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
-     */
-    public function get_promote($year, $type, $revision_id = false)
-    {
+		return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
+	}
 
-        // Get revision specified
-        $programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
+	/**
+	 * Routing for GET /$year/$type/subjects/$subject_id/promote/$revision_id
+	 *
+	 * @param int    $year        The year of the subject (not used, but to keep routing happy).
+	 * @param string $type        The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
+	 * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
+	 */
+	public function get_promote($year, $type, $revision_id = false)
+	{
 
-        if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// Get revision specified
+		$programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
 
-        $revision = $programmesetting->find_revision($revision_id);
+		if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$revision = $programmesetting->find_revision($revision_id);
 
-        $programmesetting->useRevision($revision);
-        
-        Messages::add('success', "Promoted revision created at $revision->updated_at to live version.");
+		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-    }
+		$programmesetting->useRevision($revision);
+		
+		Messages::add('success', "Promoted revision created at $revision->updated_at to live version.");
 
-    /**
-     * Routing for GET /$year/$type/subjects/$subject_id/difference/$revision_id
-     *
-     * @param int    $year        The year of the subject (not used, but to keep routing happy).
-     * @param string $type        The type, either undegrad/postgrade (not used, but to keep routing happy)
-     * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
-     * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
-     */
-    public function get_difference($year, $type, $revision_id = false)
-    {
+		return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+	}
 
-        // Get revision specified
-        $programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
+	/**
+	 * Routing for GET /$year/$type/subjects/$subject_id/difference/$revision_id
+	 *
+	 * @param int    $year        The year of the subject (not used, but to keep routing happy).
+	 * @param string $type        The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
+	 * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
+	 */
+	public function get_difference($year, $type, $revision_id = false)
+	{
 
-        if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// Get revision specified
+		$programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
 
-        $revision = $programmesetting->find_revision($revision_id);
-        
-        if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        $revision_attributes = $programmesetting->attributes;
-        $revision_for_diff = (array) $revision;
+		$revision = $programmesetting->find_revision($revision_id);
+		
+		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-        // Ignore these fields which will always change
-        foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
-            unset($revision_for_diff[$ignore]);
-            unset($revision_attributes[$ignore]);
-        }
+		$revision_attributes = $programmesetting->attributes;
+		$revision_for_diff = (array) $revision;
 
-        $differences = array_diff_assoc($revision_attributes, $revision_for_diff);
+		// Ignore these fields which will always change
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
+			unset($revision_for_diff[$ignore]);
+			unset($revision_attributes[$ignore]);
+		}
 
-        $diff = array();
+		$differences = array_diff_assoc($revision_attributes, $revision_for_diff);
 
-        foreach ($differences as $field => $value) {
-            $diff[$field] = SimpleDiff::htmlDiff($revision_attributes[$field], $revision_for_diff[$field]);
-        }
+		$diff = array();
 
-        $this->data['diff'] = $diff;
-        $this->data['new'] = $revision_for_diff;
-        $this->data['old'] = $revision_attributes;
-        $this->data['attributes'] = ProgrammeSetting::getAttributesList();
+		foreach ($differences as $field => $value) {
+			$diff[$field] = SimpleDiff::htmlDiff($revision_attributes[$field], $revision_for_diff[$field]);
+		}
 
-        $this->data['revision'] = $revision;
-        $this->data['programmesetting'] = $programmesetting;
+		$this->data['diff'] = $diff;
+		$this->data['new'] = $revision_for_diff;
+		$this->data['old'] = $revision_attributes;
+		$this->data['attributes'] = ProgrammeSetting::getAttributesList();
 
-        return View::make('admin.'.$this->views.'.difference',$this->data);
-    }
+		$this->data['revision'] = $revision;
+		$this->data['programmesetting'] = $programmesetting;
 
-    /**
-     * Routing for GET /changes
-     *
-     * The change request page.
-     */
-    public function get_changes()
-    {
-       $this->data['revisions'] = DB::table('subjects_revisions')
-            ->where('status', '=', 'pending')
-            ->get();
+		return View::make('admin.'.$this->views.'.difference',$this->data);
+	}
 
-        return View::make('admin.changes.index', $this->data);
-    }
+	/**
+	 * Routing for GET /changes
+	 *
+	 * The change request page.
+	 */
+	public function get_changes()
+	{
+	   $this->data['revisions'] = DB::table('subjects_revisions')
+			->where('status', '=', 'pending')
+			->get();
+
+		return View::make('admin.changes.index', $this->data);
+	}
+
 }
