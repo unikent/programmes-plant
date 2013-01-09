@@ -33,16 +33,18 @@ class TestRevisionable extends ModelTestCase {
 
 	public function populate($model = 'Programme', $input = false)
 	{
+
 		if (! $input)
 		{
 			$input = $this->input;
 		}
-
-		$object = $model::create($input)->save();
+		$model::create($input);
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
+
+		
 		$this->assertCount(0, Programme::all_as_list());
 	}
 
@@ -58,6 +60,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
 	{
+
 		$this->populate();
 
 		// Warm up the cache.
@@ -131,6 +134,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
 	{
+
 		$this->populate();
 
 		// Warm cache, presumably also the in memory cache.
@@ -312,10 +316,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$revisionable_item = Programme::find(1);
-        $revision = $revisionable_item->find_revision(1);
+        $revision = $revisionable_item->get_revision(1);
         
         // make the revision live
-        $revisionable_item->makeRevisionLive($revision);
+        $revisionable_item->make_revision_live($revision);
         
         // find programme #1 and check its 'live' value is 2
         $programme = Programme::find(1);
@@ -327,7 +331,7 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
         $programme->useRevision($revision);
@@ -344,7 +348,7 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // make the revision live
         $programme->makeRevisionLive($revision);
@@ -366,7 +370,7 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
         $programme->revertToRevision($revision);

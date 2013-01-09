@@ -7,6 +7,10 @@ class Revisionable extends SimpleData {
 	//Data Type (Programme, Global, etc)
 	private $data_type = false;
 
+
+	// Does this model seperate items by year? (false by default, although true for (all|most) revisionble types)
+	public static $data_by_year = true;
+
 	/**
 	 * Create new instance of a revisionble object
 	 *
@@ -28,14 +32,15 @@ class Revisionable extends SimpleData {
 
 		if (!$this->dirty()) return true;
 
-		// Save a revision
-		$this->save_revision();
-
 		//Toggle live status (0=unpublished, if has been published set to 1 = changes)
 		if ($this->live != 0)  $this->live = 1;
 
 		//Save self.
-		parent::save();
+		$success = parent::save();
+		//if save succeeds, save revision and return status
+		if($success) return $this->save_revision();
+
+		return false;
 	}
 
 	/**
@@ -46,6 +51,9 @@ class Revisionable extends SimpleData {
 		
 		$revision_model = $this->revision_model;
 
+
+
+		
 		//Get new revision instance
 		$revision = new $revision_model;
 
@@ -72,7 +80,7 @@ class Revisionable extends SimpleData {
 		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
 
 		//Save revision
-		$revision->save();
+		return $revision->save();
 	
 	}
 
@@ -287,10 +295,7 @@ class Revisionable extends SimpleData {
 	//protected $revision_type = false;
 
 
-	/**
-	 * Does this model seperate items by year? (by default this is false.)
-	 */
-	//public static $data_by_year = true;
+	
 
 	/**
 	 * This is an in memory cache used by the all_as_list method for additional speed.
