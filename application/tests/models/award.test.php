@@ -3,16 +3,14 @@
 class TestAward extends ModelTestCase 
 {
 
+	public $run = false;
+	
 	/**
 	 * Set up the database.
 	 */
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
-
-		// Remove all elements in the awards table.
-		// These are added by the Create_Intial_Awards migration.
-		TestAward::tearDown();
 	}
 
 	public function tearDown()
@@ -27,6 +25,13 @@ class TestAward extends ModelTestCase
 		parent::tearDown();
 	}
 
+	public function setUp()
+	{
+		if (! $this->run)
+		{
+			$this->tearDown();
+		}
+	}
 	/**
 	 * Populates the database with inputted array.
 	 * 
