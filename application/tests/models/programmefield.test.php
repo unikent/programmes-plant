@@ -154,7 +154,70 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBugWhereProgrammeFieldsAreNotInTheirSectionsByDefault()
 	{
+		$this->wipe();
+		$this->wipe('ProgrammeSection');
+
+		// Add two sections
+		$this->populate(array(
+			'id' => 1,
+			'name' => 'Section 1',
+			'order' => 0
+		), 'ProgrammeSection');
+
+		$this->populate(array(
+			'id' => 2,
+			'name' => 'Section 2',
+			'order' => 0
+		), 'ProgrammeSection');
+
+		
+		// Note the following two populations of the database lack an order.
+
+		// Add two items to section 1
+		$this->populate(array(
+			'id' => 1,
+			'field_name' => 'Programme title', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'programme_title_1',
+			'section' => 1
+		));
+
+		$this->populate(array(
+			'id' => 2,
+			'field_name' => 'Slug', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'slug_2',
+			'section' => 1
+		));
+
+		// Add two items to section 2
+		$this->populate(array(
+			'id' => 3,
+			'field_name' => 'Programme title', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'programme_title_2',
+			'section' => 2
+		));
+
+		$this->populate(array(
+			'id' => 4,
+			'field_name' => 'Slug', 
+			'field_type' => 'text', 
+			'active' => true, 
+			'view' => true, 
+			'colname' => 'slug_3',
+			'section' => 2
+		));
+
 		$outer_returned_array = ProgrammeField::programme_fields_by_section();
-		list($key, $inner_returned_array) = each($outer_returned_array);
+
+		$this->assertCount(2, $outer_returned_array['Section 1']);
+		$this->assertCount(2, $outer_returned_array['Section 2']);
 	}
 }
