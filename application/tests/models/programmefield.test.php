@@ -234,7 +234,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	{
 		$this->populate_two_sections();
 
-		// We now have one field with an order (ID = 1) and another without (ID = 2).
 		$sections = ProgrammeField::programme_fields_by_section();
 
 		$count = 1;
@@ -251,7 +250,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 	{
 		$this->populate_two_sections();
 
-		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
 		$sections = ProgrammeField::programme_fields_by_section();
 		
 		$this->assertCount(2, $sections['Section 1']);
@@ -266,7 +264,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		$first_field->order = 1;
 		$first_field->save();
 
-		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
 		$sections = ProgrammeField::programme_fields_by_section();
 		
 		$this->assertCount(2, $sections['Section 1']);
@@ -285,7 +282,6 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 		$second_field->order = 2;
 		$second_field->save();
 
-		// We now have one field with an order (ID = 1) and another without (ID = 2) in Section 1.
 		$sections = ProgrammeField::programme_fields_by_section();
 		
 		$this->assertCount(2, $sections['Section 1']);
