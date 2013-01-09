@@ -394,4 +394,48 @@ class TestRevisionable extends ModelTestCase {
         $programme_modified = Programme::find(1);
         $this->assertEquals(0, $programme_modified->live);
 	}
+	
+	public function testMakeRevisionLiveGlobalSetting()
+	{
+    	// set up some data
+    	$input =  array('institution_name_1' => 'University of Kent');
+    	$this->populate('GlobalSetting', $input);
+    	$revisionable_item = GlobalSetting::find(1);
+    	
+    	// make a new revision
+        $new = GlobalSetting::find(1);
+        $new->institution_name_1 = 'UniKent';
+        $new->save();
+        
+        $revision = $new->find_revision(1);
+        
+        // make the revision live
+        $new->makeRevisionLive($revision);
+        
+        // find programme #1 and check its institution name is now 'UniKent'
+        $global_setting = GlobalSetting::find(1);
+        $this->assertEquals('UniKent', $global_setting->institution_name_1);
+	}
+	
+	public function testMakeRevisionLiveProgrammeSetting()
+	{
+    	// set up some data
+    	$input =  array('programme_title_1' => 'Test programme title');
+    	$this->populate('ProgrammeSetting', $input);
+    	$revisionable_item = ProgrammeSetting::find(1);
+    	
+    	// make a new revision
+        $new = ProgrammeSetting::find(1);
+        $new->programme_title_1 = 'The Music Programme';
+        $new->save();
+        
+        $revision = $new->find_revision(1);
+        
+        // make the revision live
+        $new->makeRevisionLive($revision);
+        
+        // find programme #1 and check its institution name is now 'UniKent'
+        $programme_setting = ProgrammeSetting::find(1);
+        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1);
+	}
 }
