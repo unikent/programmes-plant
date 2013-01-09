@@ -1,64 +1,180 @@
 <?php
 class Revisionable extends SimpleData {
 
-	public static $timestamps = true;
 
 	/**
-	 * Sets the table that revisions are saved into.
+	 * Revision model
 	 */
-	protected $revision_table = false;
+	protected $revision_model = false;
+
+	//Data Type (Programme, Global, etc)
+	private $data_type = false;
+
+	public function __construct($attributes = array(), $exists = false){
+		//Use called class to deterime datatype
+		$this->data_type = get_called_class();
+		parent::__construct($attributes, $exists);
+	}
+
+
+	public function save(){
+
+		if (!$this->dirty()) return true;
+
+		// Save a revision
+		$this->save_revision();
+
+		//Toggle live status (0=unpublished, if has been published set to 1 = changes)
+		if ($this->live != 0)  $this->live = 1;
+
+		//Save self.
+		parent::save();
+	}
+
+	private function save_revision(){
+		
+		$revision_model = $this->revision_model;
+
+		//Get new revision instance
+		$revision = new $revision_model;
+
+		//Get attributes
+		$revision_values = $this->attributes;
+		unset($revision_values['id']);
+		unset($revision_values['created_by']);
+		unset($revision_values['live']);
+		//Timestamp revision & set editor etc.
+		$revision_values['created_at'] = $this->updated_at;
+		$revision_values['updated_at'] = $revision_values['created_at'];
+		$revision_values['edits_by'] = Auth::user();
+
+		//Status = selected
+		$revision_values['status'] = 'selected';
+
+		//Set Programme ID so we know which programme this revision belongs to.
+		$revision_values[$this->data_type.'_id'] = $this->id;
+
+		//Set the data in to the revision
+		$revision->fill($revision_values);
+
+		//Save revision
+		$revision->save();
+
+		//Set previous revision back to draft
+		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+	}
+
+
+
+
+
+
+
+
+
+
+
+	/*
+ 	 * Returns the revisions of a given subject as an array.
+	 *
+	 * @return array|bool $results Either return an array of revisions or false.
+	
+	public function get_revisions()
+	{
+		if (! $this->exists)
+		{
+			return false;
+		}
+
+		$results = DB::table($this->revision_table)
+		->where($this->revision_type.'_id', '=', $this->get_key())
+		->order_by('created_at', 'desc')
+		->get();
+
+		if ($results)
+		{
+			return $results;
+		} 
+		else
+		{
+			return false;
+		}
+	}*/
+
+
+
+
+
+
+
+
 
 	/**
 	 * The name of the the revisionable data object.
 	 * 
 	 * For example the model Programme might have a revision type of programmes.
 	 */
-	protected $revision_type = false;
+	//protected $revision_type = false;
 
-	/**
-	 * The model that represents the revision of the object.
-	 * 
-	 * For example, a model Thing may have a model called ThingRevision.
-	 */
-	protected $revision_model = false;
 
 	/**
 	 * Does this model seperate items by year? (by default this is false.)
 	 */
-	public static $data_by_year = true;
+	//public static $data_by_year = true;
 
 	/**
 	 * This is an in memory cache used by the all_as_list method for additional speed.
 	 */
-	public static $list_cache = false;
+	//public static $list_cache = false;
 
-	public $revision = false;
+	//public $revision = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
 
 	public function user() 
 	{
 		return $this->belongs_to('User','user_id');
 	}
 
-	/**
+	
 	 * Overwrite Eloquent save function with our own version that allows for revisions.
 	 *
 	 * @return $result The result of this save.
-	 */
+	
 	public function save()
 	{
 		if ( ! $this->dirty()) return true;
 
+	
 		// Time stamp the entry
 		$this->timestamp();
 
 		// If the programme exists we want to create a new version of it in our revision table.
 		if ($this->exists) 
-		{
+		{	
+	
 			// If we have $this->revision then we loaded up a revision of this class and we don't save a
 			// revision.
 			// @todo Abstract this.
 			if (! $this->revision) 
 			{
+
 				$query = DB::table($this->revision_table);
 
 				// Establish the next ID in the revisions table.
@@ -84,22 +200,25 @@ class Revisionable extends SimpleData {
 				// Deactivate any previosuly selected drafts
 				$r_model = $this->revision_model;
 				$r_model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
-
+				
 				// Add new revision
 				$revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
-
+				
 				// Update selected item
 				if ($this->live != 0)  $this->live = 1;
+
+				
 				if (sizeof($this->get_dirty())>0)
 				{
 					$query = $this->query()->where(static::$key, '=', $this->get_key());
 					$result = $query->update($this->get_dirty()) === 1;
 				}
-
+	
 				$this->exists = $result = is_numeric($this->get_key());
 			} 
 			else
 			{
+
 				$query = DB::table($this->revision_table)
 				->where('id', '=', $this->revision->id)
 				->update((array) $this->revision);
@@ -108,6 +227,7 @@ class Revisionable extends SimpleData {
 		// The programme does not exist, so we create it.
 		else 
 		{
+
 			// By Default this programme is inactive!
 			$this->live = 0;
 
@@ -148,39 +268,15 @@ class Revisionable extends SimpleData {
 		return $result;
 	}
 
-	/**
-	 * Returns the revisions of a given subject as an array.
-	 *
-	 * @return array|bool $results Either return an array of revisions or false.
-	 */
-	public function get_revisions()
-	{
-		if (! $this->exists)
-		{
-			return false;
-		}
 
-		$results = DB::table($this->revision_table)
-		->where($this->revision_type.'_id', '=', $this->get_key())
-		->order_by('created_at', 'desc')
-		->get();
+	
 
-		if ($results)
-		{
-			return $results;
-		} 
-		else
-		{
-			return false;
-		}
-	}
-
-	/**
+	
 	 * Find a revision of this subject.
 	 *
 	 * @param int $id The ID of the revision to pull.
 	 * @return object|bool Either the revision object or false if the revision is not found.
-	 */
+	
 	public function find_revision($id)
 	{
 		$revision = DB::table($this->revision_table)
@@ -260,7 +356,7 @@ class Revisionable extends SimpleData {
 		file_put_contents($index_file, json_encode($index_data));
 	}
 
-	/**
+	
 	 * Generate all the necessary JSON files that are used in our API. These are:
 	 * GlobalSettings.json
 	 * ProgrammeSettings.json
@@ -271,7 +367,7 @@ class Revisionable extends SimpleData {
 	 * All other revisionables are 
 	 * 
 	 * @param $revision The revision to base our saving on
-	 */
+	
 	public function generate_feed_file($revision)
 	{
 		// global, settings, programme
@@ -297,12 +393,12 @@ class Revisionable extends SimpleData {
 		}
 	}
 
-	/**
+	
 	 * This function makes the specified revision live
 	 * 
 	 * @param $revision The revision to make live
 	 * @return $r the (modified) revision object
-	 */
+	 
 	public function makeRevisionLive($revision)
 	{
     	// update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
@@ -382,12 +478,12 @@ class Revisionable extends SimpleData {
 		$r->save();
 	 }
 
-	/**
+	
 	 * Removes the automatically generated field ids from our field names.
 	 * 
 	 * @param $record Record to remove field ids from.
 	 * @return $new_record Record with field ids removed.
-	 */
+	
 	public static function remove_ids_from_field_names($record)
 	{
 		$new_record = array();
@@ -400,4 +496,5 @@ class Revisionable extends SimpleData {
 		return $new_record;
 	}
 
+ */
 }
