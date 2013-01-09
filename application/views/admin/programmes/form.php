@@ -24,7 +24,7 @@
 <?php echo Form::actions('programmes')?>
 
 <?php if (isset($revisions)) : ?>
-  <?php echo View::make('admin.programmes.partials.revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
+  <?php echo View::make('admin.inc.partials.mini_revisions', array('revisions' => $revisions, 'subject' => $programme, 'title_field' => $title_field))->render(); ?>
 <?php endif; ?>
 
 
