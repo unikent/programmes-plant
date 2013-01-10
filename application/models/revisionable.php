@@ -221,7 +221,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values[strtolower($this->data_type).'_id']);
 
 		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
-		
+
 		//Save this revision as the new current
 		$this->fill($revision_values);
 		parent::save();
@@ -236,14 +236,17 @@ class Revisionable extends SimpleData {
 		
 	}
 
-	//@todo find out what this is used for.
+	/**
+	 * Get list of attributes used in revisionable object
+	 *
+	 * @param year Year to return results for
+	 * @return array of attributes
+	 */
 	public static function get_attributes_list($year = false)
 	{
 		$options = array();
 
-		$model = get_called_class();
-
-		$model .= 'Field';
+		$model = get_called_class().'Field';
 
 		if (!$year)
 		{

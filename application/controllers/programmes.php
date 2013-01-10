@@ -228,12 +228,12 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$revision = $programme->find_revision($revision_id);
+		$revision = $programme->get_revision($revision_id);
 
 		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$programme_attributes = $programme->attributes;
-		$revision_for_diff = (array) $revision;
+		$revision_for_diff = $revision->attributes;
 
 		// Ignore these fields which will always change
 		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
@@ -245,11 +245,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$sub = Programme::all_as_list();
 		$pro = Programme::all_as_list();
 
-		$revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
-		$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
-		$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
-		$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
-		$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
+		//$revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
+		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
+		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
+		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
+		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
 
 		$differences = array_diff_assoc($programme_attributes, $revision_for_diff);
 
@@ -263,7 +263,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['new'] = $revision_for_diff;
 		$this->data['old'] = $programme_attributes;
 
-		$this->data['attributes'] = Programme::getAttributesList();
+		$this->data['attributes'] = Programme::get_attributes_list();
 
 		$this->data['revision'] = $revision;
 		$this->data['programme'] = $programme;
