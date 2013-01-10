@@ -10,6 +10,7 @@ class Revisionable extends SimpleData {
 
 	//Data Type (Programme, Global, etc)
 	protected $data_type = false;
+	
 	//Id used to link items of datatype (optional)
 	protected $data_type_id = false;
 
