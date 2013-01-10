@@ -90,6 +90,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
+		$this->data['active_revision'] = $course->get_active_revision();
 
 		//Get lists data
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);

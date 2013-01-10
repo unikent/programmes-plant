@@ -1,12 +1,10 @@
+<?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'programme' => $programme))->render();?>
+
 <h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
-<style>
-  .nav-tabs li {float:right;}
-</style>
-<ul class="nav nav-tabs nav-tabs-right" >
-  <li ><a href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@revisions', array($programme->id))?>">Revisions</a></li>
-  <li class="active"> <a href="#">Main form</a></li>
-</ul>
+
+
+
 
 
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>

@@ -109,12 +109,27 @@ class Revisionable extends SimpleData {
 	 * Get a particular revision
 	 *
 	 * @param $id of revision
-	 * @param revision instance
+	 * @return revision instance
 	 */
 	public function get_revision($revision_id){
 		$model = $this->revision_model;
 		return $model::find($revision_id);
 	}
+	/**
+	 * Get currently active revision
+	 * @return active revision instance
+	 */
+	public function get_active_revision(){
+
+		//If all is up to date (live=2) return live/selected item
+		//else get item marked as selected
+		$model = $this->revision_model;
+		if($this->live == 2){
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
+		}else{
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
+		}
+	}	
 
 	/**
 	 * make a revision of this item live.
@@ -205,6 +220,8 @@ class Revisionable extends SimpleData {
 		unset($revision_values['status']);
 		unset($revision_values[strtolower($this->data_type).'_id']);
 
+		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
+		
 		//Save this revision as the new current
 		$this->fill($revision_values);
 		parent::save();
