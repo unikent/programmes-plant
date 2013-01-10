@@ -12,7 +12,8 @@
 		<span class="label label-info" >Current revision</span> 
 	<?php endif;?>
     
-    <?php echo $revision->created_at;?> by <?php echo $revision->edits_by ?>
+    <?php echo $revision->get_identifier_string() ?> 
+
 </div>
 <div class="modal hide fade" id="make_revision_live">
 	<div class="modal-header">

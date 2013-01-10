@@ -8,10 +8,9 @@
 	    <div style='float:right'>
 	    	<a class="popup_toggler btn btn-danger" href="#make_revision_live" rel="<?php echo $live_link?>">Roll live back to revision</a> 
 	    </div>
-	  	<span class="label label-important" >R</span> <?php echo $revision->created_at;?>
-	  	From <?php echo $revision->edits_by ?>
+	  	<span class="label label-important" >R</span> <?php echo $revision->get_identifier_string() ?>
 	 
-	    <br/> Was live from <?php echo $revision->published_at;?>
+	    <br/> Was live from <?php echo $revision->get_published_time();?>
 	</div>
 
 <?php elseif($revision->status == 'unused'):?>
@@ -20,8 +19,7 @@
 	    <div style='float:right'>
 	    	<a class="popup_toggler" href="#make_revision_live" rel="<?php echo $live_link?>">Roll live back to revision</a> 
 	    </div>
-	  	<span class="label label-warning" >unused</span> <?php echo $revision->created_at;?>
-	  	From <?php echo $revision->edits_by ?>
+	  	<span class="label label-warning" >unused</span>  <?php echo $revision->get_identifier_string() ?>
 	 
 	</div>
 
@@ -31,8 +29,7 @@
 	    <div style='float:right'>
 	    	<a class="popup_toggler" href="#make_revision_live" rel="<?php echo $live_link?>">Roll live back to revision</a> 
 	    </div>
-	  	<span class="label label-important" >R</span> <?php echo $revision->created_at;?>
-	  	From <?php echo $revision->edits_by ?>
+	  	<span class="label label-important" >R</span>  <?php echo $revision->get_identifier_string() ?>
 	 
 	</div>
 

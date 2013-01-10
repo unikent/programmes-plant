@@ -53,4 +53,20 @@ class ProgrammeRevision extends Eloquent
       return $this->belongs_to('Campus', Programme::get_location_field());
     }
 
+    public function get_identifier(){
+        return "R{$this->programme_id}-{$this->id}";
+    }
+
+    public function get_identifier_string(){
+        return '<strong>'.$this->get_identifier().'</strong> created '.$this->get_created_time().' by '.$this->edits_by ;
+    }
+
+    public function get_published_time(){
+        return Date("jS F Y \a\\t H:i:s" ,strtotime($this->published_at));
+    }
+    public function get_created_time(){
+        return Date("jS F Y \a\\t H:i:s", strtotime($this->created_at));
+    }
+
+   
 }

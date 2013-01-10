@@ -8,8 +8,8 @@
 
 	<div style='padding:10px;' class='alert alert-success alert-block'>
 		<span class="label label-success" >Published</span>
-		<?php echo $revision->created_at;?> by <?php echo $revision->edits_by ?><br/>
-		Published at <?php echo $revision->published_at; ?> by <?php echo $revision->made_live_by; ?>
+		<?php echo $revision->get_identifier_string() ?> <br/>
+		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
 	</div>
 
 <?php elseif($revision->status =='selected'):?>
@@ -21,20 +21,22 @@
   			<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>">Use previous</a>
   		</div>
 		  <span class="label label-info" >Current revision</span>
-		  <?php echo $revision->created_at;?> by <?php echo $revision->edits_by ?><br/>&nbsp;
+		  <?php echo $revision->get_identifier_string() ?><br/>&nbsp;
 		</div>
 
 <?php elseif($revision->status == 'unused'):?>
 
 			<div style='padding:5px;margin-left:25px;' class='alert alert-warning'>
-				<span class="label label-warning" >unused</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
+				<span class="label label-warning" >unused</span>
+				 <?php echo $revision->get_identifier_string() ?> 
 				<div style='float:right;'><a class="popup_toggler" href='#use_revision' rel="<?php echo $use_link;?>">Use revision</a> </div>
 			</div>
 
 <?php else:?>
 
 			<div style='padding:5px;margin-left:25px;' class='alert alert-info'>
-				<span class="label label-info" >R</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
+				<span class="label label-info" >R</span> 
+				<?php echo $revision->get_identifier_string() ?> 
 				<div style='float:right;'><a class="popup_toggler" href='#use_revision' rel="<?php echo $use_link;?>">Use revision</a> | <a class="popup_toggler" href='#make_revision_live' rel="<?php echo $live_link;?>" >Make live</a></div>
 			</div>
 
