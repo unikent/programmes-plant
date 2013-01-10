@@ -129,31 +129,6 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 		return  $model::where('active','=','1')->order_by('field_name','asc')->get();
 	}
 
-	/**
-	 * Routing for GET /$year/$type/subjects/$subject_id/promote/$revision_id
-	 *
-	 * @param int    $year        The year of the subject (not used, but to keep routing happy).
-	 * @param string $type        The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
-	 * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
-	 */
-	public function get_promote($year, $type, $revision_id = false)
-	{
-		// Get revision specified
-		$globalsetting = GlobalSetting::where('year', '=', $year)->first();
-
-		if (!$globalsetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$revision = $globalsetting->find_revision($revision_id);
-
-		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$globalsetting->useRevision($revision);
-		
-		Messages::add('success', "Promoted revision created at $revision->updated_at to live version.");
-
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-	}
 
 	/**
 	 * Routing for GET /$year/$type/subjects/$subject_id/difference/$revision_id

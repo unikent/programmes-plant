@@ -181,37 +181,6 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * TODO: fully depricate this item
-	 * Routing for GET /$year/$type/programmes/$programme_id/promote/$revision_id
-	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
-	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
-	 */
-	public function get_promote($year, $type, $programme_id = false, $revision_id = false)
-	{
-		// Check to see we have what is required.
-		if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		// Get revision specified
-		$programme = Programme::find($programme_id);
-
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$revision = $programme->find_revision($revision_id);
-
-		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$programme->useRevision($revision);
-		
-		$title_field = Programme::get_title_field();
-		Messages::add('success', "Promoted revision of {$programme->$title_field} created at $revision->updated_at to live version.");
-
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-	}
-
-	/**
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
@@ -297,47 +266,6 @@ class Programmes_Controller extends Revisionable_Controller {
 			->get();
 
 		return View::make('admin.changes.index', $this->data);
-	}
-
-	public function post_deactivate($year, $type)
-	{
-		$rules = array(
-				'id'  => 'required|exists:programmes',
-		);
-
-		$validation = Validator::make(Input::all(), $rules);
-		
-		if ($validation->fails()) {
-				Messages::add('error','You tried to deactivate a post that doesn\'t exist.');
-
-				return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-		} else {
-
-				$programme = Programme::find(Input::get('id'));
-				$programme->deactivate();
-				Messages::add('success','Programme deactivated');
-
-				return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-		}
-	}
-
-	public function post_activate($year, $type)
-	{
-		$rules = array(
-				'id'  => 'required|exists:programmes',
-		);
-		$validation = Validator::make(Input::all(), $rules);
-		if ($validation->fails()) {
-			Messages::add('error','You tried to activate a post that doesn\'t exist.');
-
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-		} else {
-			$programme = Programme::find(Input::get('id'));
-			$programme->activate();
-			Messages::add('success','Programme activated');
-
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
-		}
 	}
 
 }
