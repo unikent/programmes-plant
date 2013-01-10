@@ -58,9 +58,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 		$this->data[$this->views] = $programmesetting ;
 
-		if ($revisions = $programmesetting->get_revisions()) {
-			$this->data['revisions'] =  $revisions;
-		}
+		$this->data['active_revision'] = $programmesetting->get_active_revision();
 
 		$this->data['fields'] = $this->get_fields();
 		$this->data['year'] = $year;
