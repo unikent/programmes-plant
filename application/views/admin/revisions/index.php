@@ -87,12 +87,14 @@ foreach ($revisions as $revision) :
 
      if($revision->status =='live'){
         $displaying=true;
-     }else{
-        continue;
+
      }
+        continue;
 
   }
 
+  $live_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id));
+   
 ?>
 
 
@@ -110,7 +112,7 @@ foreach ($revisions as $revision) :
       >
 
        <div style='float:right'>
-        <a class="popup_toggler<?php if($revision->status == 'prior_live'):?> btn btn-danger<?php endif;?>" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id)) ?>">Roll live back to revision</a> </div>
+        <a class="popup_toggler<?php if($revision->status == 'prior_live'):?> btn btn-danger<?php endif;?>" href="#make_revision_live" rel="<?php echo $live_link?>">Roll live back to revision</a> </div>
 
 
       <span class="label label-important" >R</span> <?php echo $revision->created_at;?>
@@ -174,7 +176,7 @@ foreach ($revisions as $revision) :
   </div>
   <div class="modal-footer">
       <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
-      <a class="btn btn-danger yes_action">Revert</a>
+      <a class="btn btn-danger yes_action">Use</a>
   </div>
 </div>
 
