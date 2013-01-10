@@ -1,4 +1,8 @@
 <?php
+/**
+ * Revisionable.
+ * A model for datatypes that need to maintain revisions of itself.
+ */
 class Revisionable extends SimpleData {
 
 	//Revision model (name of model for revisions of this type)
@@ -27,6 +31,9 @@ class Revisionable extends SimpleData {
 
 		//Pass to real constructor
 		parent::__construct($attributes, $exists);
+
+		//Ensure default status is 0
+		$this->status = 0;
 	}
 
 	/**
@@ -271,7 +278,7 @@ class Revisionable extends SimpleData {
 		$ucas_code_field = Programme::get_ucas_code_field();
 		$index_data = array();
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						  ->where('status','=','live')
+						  ->where('status','!=','0')
 						  ->where($withdrawn_field,'!=','true')
 						  ->where($suspended_field,'!=','true')
 						  ->get();
