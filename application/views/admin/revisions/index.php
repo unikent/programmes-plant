@@ -58,7 +58,7 @@
 
     <div style='padding:5px;margin-left:25px;' class='alert alert-info'>
       <span class="label label-info" >R</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
-      <div style='float:right;'><a href='#'>Use revision</a> | <a href='#'>Make live</a></div>
+      <div style='float:right;'><a href='#'>Use revision</a> | <a href='#' >Make live</a></div>
     </div>
 
 
@@ -91,16 +91,19 @@ foreach ($revisions as $revision) :
 ?>
 
 
-    <div style='padding:5px;height:30px; <?php if($revision->status !='prior_live'){echo "margin-left:20px;";} ?>' class='alert alert-danger alert-block'>
+    <div style='padding:5px; <?php if($revision->status != 'prior_live'):?>margin-left:30px;<?php endif;?>' class='alert alert-danger alert-block'>
 
-       <div style='float:right'><a class="popup_toggler btn btn-danger" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id)) ?>">Roll live back to revision</a> </div>
+       <div style='float:right'>
+        <a class="popup_toggler<?php if($revision->status == 'prior_live'):?> btn btn-danger<?php endif;?>" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id)) ?>">Roll live back to revision</a> </div>
 
 
       <span class="label label-important" >R</span> <?php echo $revision->created_at;?>
-
-
-
       From <?php echo $revision->edits_by ?>
+      <?php if($revision->status == 'prior_live'){
+        echo "<br/>Was live from ".$revision->published_at;
+      } 
+      
+        ?>
 
 
      
