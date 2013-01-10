@@ -192,7 +192,9 @@ class Revisionable extends SimpleData {
 		//Mark all later revisions as unused if we are reverting back
 		$model = $this->revision_model;
 		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
-
+		//Remove the previously selected item if it is not "later" (and thus caught by the above code) and set to unused.
+		$model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
+		
 		//get revision data and copy it back in to "current" object
 		$revision_values = $revision->attributes;
 		unset($revision_values['id']);
@@ -282,9 +284,6 @@ class Revisionable extends SimpleData {
 						  ->where($withdrawn_field,'!=','true')
 						  ->where($suspended_field,'!=','true')
 						  ->get();
-
-
-
 
 		foreach($programmes as $programme)
 		{

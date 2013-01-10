@@ -55,12 +55,12 @@
     <?php if($revision->status == 'unused'):?>
       <div style='padding:5px;margin-left:25px;' class='alert alert-warning'>
         <span class="label label-warning" >unused</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
-        <div style='float:right;'><a href='#'>Use revision</a> | <a href='#' >Make live</a></div>
+        <div style='float:right;'><a class="popup_toggler" href='#use_revision' rel="<?php echo $use_link;?>">Use revision</a> </div>
       </div>
     <?php else:?>
       <div style='padding:5px;margin-left:25px;' class='alert alert-info>'>
         <span class="label label-info" >R</span> <?php echo $revision->created_at;?> From <?php echo $revision->edits_by ?>
-        <div style='float:right;'><a href='#'>Use revision</a> | <a href='#' >Make live</a></div>
+        <div style='float:right;'><a class="popup_toggler" href='#use_revision' rel="<?php echo $use_link;?>">Use revision</a> | <a class="popup_toggler" href='#make_revision_live' rel="<?php echo $live_link;?>" >Make live</a></div>
       </div>
     <?php endif;?>
 
@@ -96,7 +96,18 @@ foreach ($revisions as $revision) :
 ?>
 
 
-    <div style='padding:5px; <?php if($revision->status != 'prior_live'):?>margin-left:30px;<?php endif;?>' class='alert alert-danger alert-block'>
+    <div style='padding:5px; <?php if($revision->status != 'prior_live'):?>margin-left:30px;<?php endif;?>' 
+
+      <?php 
+      if($revision->status == 'unused'):
+
+        ?>
+      class='alert alert-warning alert-block'
+    <?php else:?>
+      class='alert alert-danger alert-block'
+    <?php endif;?>
+
+      >
 
        <div style='float:right'>
         <a class="popup_toggler<?php if($revision->status == 'prior_live'):?> btn btn-danger<?php endif;?>" href="#make_revision_live" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id)) ?>">Roll live back to revision</a> </div>
