@@ -47,13 +47,13 @@ class API_Controller extends Base_Controller
         
         // try to get json files for global and programme settings, as well as the programme data itself
         // 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-        if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') )
+        if (! file_exists($path . 'GlobalSetting.json') or ! file_exists($path . 'ProgrammeSetting.json') or ! file_exists($path . $programme_id . '.json') )
         {
             return Response::error('204');
         }
         // if the cache files do exist for global/programme settings and the programme data, put them into objects
-        $global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
-        $programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
+        $global_settings = json_decode(file_get_contents($path . 'GlobalSetting.json'));
+        $programme_settings = json_decode(file_get_contents($path . 'ProgrammeSetting.json'));
         $programme = json_decode(file_get_contents($path . $programme_id . '.json'));
         
         // in local and test environments we're using a faked json file rather than one generated from the sds web service

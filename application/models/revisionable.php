@@ -308,7 +308,8 @@ class Revisionable extends SimpleData {
     	// update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
     	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
     	$model = get_class($this);
-		$model::where('id','=',$revision->programme_id)->update(array('live'=>2));
+    	$revision_type_id = $this->revision_type.'_id';
+		$model::where('id','=',$revision->$revision_type_id)->update(array('live'=>2));
 
 		$model = $this->revision_model;
 		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
