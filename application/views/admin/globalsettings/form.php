@@ -1,3 +1,5 @@
+<?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
+
 <h1><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?></h1>
 
 <?php echo Messages::get_html()?>

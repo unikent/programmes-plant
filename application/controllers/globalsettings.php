@@ -54,9 +54,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 
 		$this->data[$this->views] = $globalsetting ;
 
-		if ($revisions = $globalsetting->get_revisions()) {
-			$this->data['revisions'] =  $revisions;
-		}
+		$this->data['active_revision'] = $globalsetting->get_active_revision();
 
 		$this->data['fields'] = $this->get_fields();
 

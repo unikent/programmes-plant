@@ -1,12 +1,12 @@
-<div style='padding:10px;height:30px;' class='alert <?php if($programme->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
+<div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
-		<?php if($programme->live !='2'):?>
-		<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id));?>">Make live</a>
+		<?php if($instance->live !='2'):?>
+		<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
 		<?php endif;?>
-		<a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@revisions', array($programme->id))?>" >Manage revisions</a>
+		<a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'@revisions', array($instance->id))?>" >Manage revisions</a>
 	</div>
 
-	<?php if($programme->live=='2'):?>
+	<?php if($instance->live=='2'):?>
 		<span class="label label-success" >Published</span> 
 	<?php else:?>
 		<span class="label label-info" >Current revision</span> 

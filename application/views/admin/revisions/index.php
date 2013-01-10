@@ -1,15 +1,12 @@
+<div style='padding:10px;height:30px;' class='alert <?php if($programme->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>    
+  <div style='float:right;'>
+    <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>" >Return to edit form</a>
+  </div>
+</div>
+
 <h1><?php echo $programme->{Programme::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
-<style>
-  .nav-tabs li {float:right;}
-</style>
-
-<ul class="nav nav-tabs nav-tabs-right" >
-  <li class="active"><a href="#">Revisions</a></li>
-  <li>    <a href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>">Main form</a></li>
-</ul>
-
-<h2>Active revisions</h2>
+<h3>Active revisions</h3>
 
 <?php
 //Loop through revisions (display modes for active & previous are differnt)
@@ -20,7 +17,7 @@ foreach ($revisions as $revision){
       //After live switch mode to "non-active"
       if($revision->status =='live'){
         $active_r=false;
-        echo "<p>&nbsp;</p><h2>Previous revisions</h2>";
+        echo "<p>&nbsp;</p><h3>Previous revisions</h3>";
       }
   }else{
      echo View::make('admin.revisions.partials.previous_revision', array('revision' => $revision, 'programme' => $programme))->render();
