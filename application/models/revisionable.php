@@ -6,6 +6,8 @@ class Revisionable extends SimpleData {
 
 	//Data Type (Programme, Global, etc)
 	protected $data_type = false;
+	//Id used to link items of datatype (optional)
+	protected $data_type_id = false;
 
 	// Does this model seperate items by year? (false by default, although true for (all|most) revisionble types)
 	public static $data_by_year = true;
@@ -21,6 +23,8 @@ class Revisionable extends SimpleData {
 		$this->data_type = get_called_class();
 		//if not set in parent, just assume modelRevision as name
 		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
+		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
+
 		//Pass to real constructor
 		parent::__construct($attributes, $exists);
 	}
@@ -72,13 +76,13 @@ class Revisionable extends SimpleData {
 		$revision_values['status'] = 'selected';
 
 		//Set Programme ID so we know which programme this revision belongs to.
-		$revision_values[$this->data_type.'_id'] = $this->id;
+		$revision_values[$this->data_type_id.'_id'] = $this->id;
 
 		//Set the data in to the revision
 		$revision->fill($revision_values);
 
 		//Set previous revision back to draft
-		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
 
 		//Save revision
 		return $revision->save();
@@ -91,7 +95,7 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_revisions(){
 		$model = $this->revision_model;
-		return $model::where($this->data_type.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
 	}
 
 	/**
@@ -126,7 +130,7 @@ class Revisionable extends SimpleData {
 		$revision_model = $this->revision_model;
 
 		//Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
-		$revision_model::where($this->data_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 		
 		//Update and save this revision 
 		$revision->status = 'live';
@@ -155,7 +159,7 @@ class Revisionable extends SimpleData {
 		}
 		//Get previous revision
 		$model = $this->revision_model;
-		$rev = $model::where($this->data_type.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
+		$rev = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
 		//return false if no viable results are found to revert to
 		if(sizeof($rev) == 0){
 			return false;
@@ -180,7 +184,7 @@ class Revisionable extends SimpleData {
 
 		//Mark all later revisions as unused if we are reverting back
 		$model = $this->revision_model;
-		$model::where($this->data_type.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
+		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
 
 		//get revision data and copy it back in to "current" object
 		$revision_values = $revision->attributes;
