@@ -33,7 +33,7 @@ class Revisionable extends SimpleData {
 		parent::__construct($attributes, $exists);
 
 		//Ensure default status is 0
-		$this->status = 0;
+		$this->live = 0;
 	}
 
 	/**
