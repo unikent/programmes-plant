@@ -64,7 +64,7 @@ class Revisionable_Controller extends Admin_Controller {
 	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
 	 *	the revision id instead. (Object assumed to have id 1 in this case)
 	 */
-	public function get_revert_to_revision($year, $type, $revisionable_item_id = false, $revision_id = false)
+	public function get_use_revision($year, $type, $revisionable_item_id = false, $revision_id = false)
 	{
 		
 		// Check to see we have what is required.
@@ -74,10 +74,10 @@ class Revisionable_Controller extends Admin_Controller {
 
 		//Get data & revert to revision
 		list($item, $revision) = $data;
-		$item->revertToRevision($revision);
+		$item->use_revision($revision);
 
 		//Redirect to point of origin
-		Messages::add('success', "Reverted to previous revision.");
+		Messages::add('success', "using revision.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
 
@@ -122,8 +122,6 @@ class Revisionable_Controller extends Admin_Controller {
 		if ($revisions = $course->get_revisions()) {
 				$this->data['revisions'] =  $revisions;
 		}
-
-
 
 
 		$this->layout->nest('content', 'admin.revisions.index', $this->data);

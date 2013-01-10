@@ -283,17 +283,21 @@ class Revisionable extends SimpleData {
 						  ->where($suspended_field,'!=','true')
 						  ->get();
 
+
+
+
 		foreach($programmes as $programme)
 		{
+
 		  $index_data[$programme->programme_id] = array(
 			'id' => $programme->programme_id,
 			'name' => $programme->$title_field,
 			'slug' => $programme->$slug_field,
-			'award' => $programme->award->name,
-			'subject' => $programme->subject_area_1->name,
-			'main_school' => $programme->administrative_school->name,
-			'secondary_school' => $programme->additional_school->name,
-			'campus' => $programme->location->name,
+			'award' => ($programme->award != null) ? $programme->award->name : '',
+			'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+			'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
+			'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
+			'campus' =>  ($programme->location != null) ? $programme->location->name : '',
 			'new_programme' => $programme->$new_programme_field,
 			'subject_to_approval' => $programme->$subject_to_approval_field,
 			'mode_of_study' => $programme->$mode_of_study_field,
