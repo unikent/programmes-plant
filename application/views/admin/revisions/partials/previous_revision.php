@@ -1,5 +1,5 @@
 <?php
-  $live_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id));
+  $live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
 ?>
 
 <?php if($revision->status == 'prior_live'):?>

@@ -1,8 +1,8 @@
 <?php
-	$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@difference', array($revision->id));
-	$live_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@make_live', array($revision->id));
-	$use_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@use_revision', array($revision->id));
-	$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@revert_to_previous', array($revision->id));
+	$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));
+	$live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
+	$use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
+	$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
 ?>
 <?php if($revision->status =='live'):?>
 

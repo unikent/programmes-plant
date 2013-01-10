@@ -13,7 +13,7 @@ class Revisionable_Controller extends Admin_Controller {
 	private function get_revision_data($revisionable_item_id, $revision_id)
 	{
 		//Handle global settings & programesettings not having a revisionable_item_id (is always 1)
-		if($this->views =='globalsettings' || $this->views =='programmesettings'){
+		if(($this->views =='globalsettings' || $this->views =='programmesettings') && $revision_id == false){
 			$revision_id = $revisionable_item_id;
 			$revisionable_item_id = 1;
 		}
@@ -115,6 +115,7 @@ class Revisionable_Controller extends Admin_Controller {
 	public function get_revisions($year, $type, $itm_id = false){
 
 		$model = $this->model;
+
 		$course = $model::find($itm_id);
 		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
