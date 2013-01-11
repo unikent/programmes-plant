@@ -80,7 +80,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 			$subject = new ProgrammeSetting;
 			$subject->year = Input::get('year');
 
-			 //Save varible fields
+			// Save varible fields
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;

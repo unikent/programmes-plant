@@ -9,7 +9,7 @@
 <h3>Active revisions</h3>
 
 <?php
-//Loop through revisions (display modes for active & previous are differnt)
+// Loop through revisions (display modes for active & previous are differnt)
 $active_r = true;
 foreach ($revisions as $revision){
   if($active_r){

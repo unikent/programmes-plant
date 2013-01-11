@@ -18,17 +18,17 @@ class Revisionable_Controller extends Admin_Controller {
 			$revisionable_item_id = 1;
 		}
 
-		//Get model
+		// Get model
 		$model = $this->model;
 
-		//Ensure item & revision id are supplied
+		// Ensure item & revision id are supplied
 		if(!$revisionable_item_id || !$revision_id) return false;
 
-		//Ensure object exists
+		// Ensure object exists
 		$revisionable_item = $model::find($revisionable_item_id);
 		if (!$revisionable_item) return false;
 
-		//Ensure Revision exists
+		// Ensure Revision exists
 		$revision = $revisionable_item->get_revision($revision_id);
 		if (!$revision) return false;
 		return array($revisionable_item,$revision);
@@ -40,14 +40,14 @@ class Revisionable_Controller extends Admin_Controller {
 		
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
-		//If somthing went wrong
+		// If somthing went wrong
 		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		//Get data & revert to revision
+		// Get data & revert to revision
 		list($item, $revision) = $data;
 		$item->revert_to_previous_revision($revision);
 
-		//Redirect to point of origin
+		// Redirect to point of origin
 		Messages::add('success', "Reverted to previous revision.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
@@ -69,14 +69,14 @@ class Revisionable_Controller extends Admin_Controller {
 		
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
-		//If somthing went wrong
+		// If somthing went wrong
 		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		//Get data & revert to revision
+		// Get data & revert to revision
 		list($item, $revision) = $data;
 		$item->use_revision($revision);
 
-		//Redirect to point of origin
+		// Redirect to point of origin
 		Messages::add('success', "using revision.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
@@ -98,33 +98,38 @@ class Revisionable_Controller extends Admin_Controller {
 
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
-		//If somthing went wrong
+		// If somthing went wrong
 		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		//Get data & make revision live
+		// Get data & make revision live
 		list($item, $revision) = $data;
 		$modified_revision = $item->make_revision_live($revision);
 		
-		//Redirect to point of origin
+		// Redirect to point of origin
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
 
-
-
+	/**
+	 * Routing for GET /$year/$type/{data_type}/revisions
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param string $itm_id       The id of the item to show revisions for
+	*/
 	public function get_revisions($year, $type, $itm_id = false){
 
 		$model = $this->model;
 
+		// Ensure item exists (Redirect if it does not)
 		$course = $model::find($itm_id);
 		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
+		// load revisions for item.
 		$this->data['programme'] = $course ;
 		if ($revisions = $course->get_revisions()) {
 				$this->data['revisions'] =  $revisions;
 		}
-
-
+		// Display view
 		$this->layout->nest('content', 'admin.revisions.index', $this->data);
 	}
 
