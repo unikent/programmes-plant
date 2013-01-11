@@ -12,7 +12,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript" charset="utf8" ></script>
 
 <!-- Additional js to make datatables & wysihtml5 work with bootstrap -->
-<script src="<?php echo asset('js/bootstrap-wysihtml5.js')?>" type="text/javascript" charset="utf8"></script>
 <script src="<?php echo asset('js/bootstrap-wysihtml5-kent.js')?>" type="text/javascript" charset="utf8"></script>
 <script src="<?php echo asset('js/dataTables_bootstrap.js')?>" type="text/javascript" charset="utf8"></script>
 
