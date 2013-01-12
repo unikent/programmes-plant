@@ -318,29 +318,30 @@ class Revisionable extends SimpleData {
 		$index_data = array();
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						  ->where('status','!=','0')
-						  ->where($withdrawn_field,'!=','true')
-						  ->where($suspended_field,'!=','true')
-						  ->get();
+						->where('status','!=','0')
+						->where($withdrawn_field,'!=','true')
+						->where($suspended_field,'!=','true')
+						->get();
+
 		// Build array
 		foreach($programmes as $programme)
 		{
-
-		  $index_data[$programme->programme_id] = array(
-			'id' => $programme->programme_id,
-			'name' => $programme->$title_field,
-			'slug' => $programme->$slug_field,
-			'award' => ($programme->award != null) ? $programme->award->name : '',
-			'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
-			'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
-			'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
-			'campus' =>  ($programme->location != null) ? $programme->location->name : '',
-			'new_programme' => $programme->$new_programme_field,
-			'subject_to_approval' => $programme->$subject_to_approval_field,
-			'mode_of_study' => $programme->$mode_of_study_field,
-			'ucas_code' => $programme->$ucas_code_field
+			$index_data[$programme->programme_id] = array(
+				'id' => $programme->programme_id,
+				'name' => $programme->$title_field,
+				'slug' => $programme->$slug_field,
+				'award' => ($programme->award != null) ? $programme->award->name : '',
+				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
+				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
+				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
+				'new_programme' => $programme->$new_programme_field,
+				'subject_to_approval' => $programme->$subject_to_approval_field,
+				'mode_of_study' => $programme->$mode_of_study_field,
+				'ucas_code' => $programme->$ucas_code_field
 			);
 		}
+
 		// Save as json
 		file_put_contents($index_file, json_encode($index_data));
 	}
@@ -366,18 +367,18 @@ class Revisionable extends SimpleData {
 		// if our $cache_location isnt available, create it
 		if (!is_dir($cache_location))
 		{
-		  mkdir($cache_location, 0755, true);
+			mkdir($cache_location, 0755, true);
 		}
 
 		// if we're saving a programme
 		if($data_type == 'Programme')
 		{
-		  file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
-		  $this->generate_feed_index($revision,$cache_location);
+			file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
+			$this->generate_feed_index($revision,$cache_location);
 		}
 		else
 		{
-		  file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
+			file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
 		}
 	}
 }
