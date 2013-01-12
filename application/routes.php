@@ -92,6 +92,9 @@ Route::group(array('before' => ''), function(){
 	// API
 	Route::any('/api/([0-9]{4})/(ug|pg)/programmes', 'api@index');
 	Route::get('/api/([0-9]{4})/(ug|pg)/programmes/(:num?)', 'api@programme');
+
+	// XCRI-CAP Feeds
+	Route::any('/xcri/(undergraduate|postgraduate)/([0-9]{4})', 'xcri@index');
 });
 
 // Login/out
