@@ -1,6 +1,7 @@
 <?php
 /**
  * Revisionable.
+ * 
  * A model for datatypes that need to maintain revisions of itself.
  */
 class Revisionable extends SimpleData {
@@ -31,10 +32,10 @@ class Revisionable extends SimpleData {
 		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
 		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
 
-		//Pass to real constructor
+		// Pass to real constructor
 		parent::__construct($attributes, $exists);
 
-		//Ensure default status is 0
+		// Ensure default status is 0
 		$this->live = 0;
 	}
 
@@ -316,6 +317,7 @@ class Revisionable extends SimpleData {
 		$ucas_code_field = Programme::get_ucas_code_field();
 
 		$index_data = array();
+
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
 						->where('status','!=','0')
@@ -342,7 +344,7 @@ class Revisionable extends SimpleData {
 			);
 		}
 
-		// Save as json
+		// Save as JSON
 		file_put_contents($index_file, json_encode($index_data));
 	}
 
