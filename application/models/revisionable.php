@@ -194,16 +194,16 @@ class Revisionable extends SimpleData {
 
 		// Get previous revision
 		$model = $this->revision_model;
-		$rev = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
+		$previous_revision = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
 
 		// return false if no viable results are found to revert to
-		if (sizeof($rev) == 0)
+		if (sizeof($previous_revision) == 0)
 		{
 			return false;
 		}
 
 		// Switch revision to found result
-		return $this->use_revision($rev[0]);
+		return $this->use_revision($previous_revision[0]);
 	}
 
 	/**
