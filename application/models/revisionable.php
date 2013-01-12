@@ -26,9 +26,9 @@ class Revisionable extends SimpleData {
 	 */
 	public function __construct($attributes = array(), $exists = false)
 	{
-		//Use called class to deterime datatype
+		// Use called class to deterime datatype
 		$this->data_type = get_called_class();
-		//if not set in parent, just assume modelRevision as name
+		// If not set in parent, just assume modelRevision as name
 		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
 		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
 
