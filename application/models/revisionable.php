@@ -23,7 +23,8 @@ class Revisionable extends SimpleData {
 	 * @param $attributes Attributes to be added to new instance of this model
 	 * @param $exists Does this object already exist in the DB
 	 */
-	public function __construct($attributes = array(), $exists = false){
+	public function __construct($attributes = array(), $exists = false)
+	{
 		//Use called class to deterime datatype
 		$this->data_type = get_called_class();
 		//if not set in parent, just assume modelRevision as name
@@ -42,8 +43,8 @@ class Revisionable extends SimpleData {
 	 *
 	 * @return true|false success
 	 */
-	public function save(){
-
+	public function save()
+	{
 		if (!$this->dirty()) return true;
 
 		// Toggle live status (0=unpublished, if has been published set to 1 = changes)
@@ -63,8 +64,8 @@ class Revisionable extends SimpleData {
 	 *
 	 * @return true|false success
 	 */
-	private function save_revision(){
-		
+	private function save_revision()
+	{
 		$revision_model = $this->revision_model;
 
 		// Get new revision instance
@@ -95,14 +96,14 @@ class Revisionable extends SimpleData {
 
 		// Save revision
 		return $revision->save();
-	
 	}
 
 	/**
 	 * Get all revisions for this item
 	 * @param array of revisions
 	 */
-	public function get_revisions(){
+	public function get_revisions()
+	{
 		$model = $this->revision_model;
 		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
 	}
@@ -113,7 +114,8 @@ class Revisionable extends SimpleData {
 	 * @param $id of revision
 	 * @return revision instance
 	 */
-	public function get_revision($revision_id){
+	public function get_revision($revision_id)
+	{
 		$model = $this->revision_model;
 		return $model::find($revision_id);
 	}
@@ -122,8 +124,8 @@ class Revisionable extends SimpleData {
 	 * Get currently active revision
 	 * @return active revision instance
 	 */
-	public function get_active_revision(){
-
+	public function get_active_revision()
+	{
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
 		$model = $this->revision_model;
@@ -140,8 +142,8 @@ class Revisionable extends SimpleData {
 	 * @param $revision Object|id
 	 * @return $revision
 	 */
-	public function make_revision_live($revision){
-
+	public function make_revision_live($revision)
+	{
 		// If its an id, convert to actual revision
 		if(is_int($revision)){
 			$revision = $this->get_revision($revision);
@@ -236,7 +238,6 @@ class Revisionable extends SimpleData {
 		}
 
 		return $revision;
-		
 	}
 
 	/**
