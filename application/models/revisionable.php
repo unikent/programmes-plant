@@ -194,6 +194,7 @@ class Revisionable extends SimpleData {
 		// Swicth revision to found result
 		return $this->use_revision($rev[0]);
 
+		// Switch revision to found result
 	}
 
 	/**
