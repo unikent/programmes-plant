@@ -383,4 +383,5 @@ class Revisionable extends SimpleData {
 			file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
 		}
 	}
+
 }
