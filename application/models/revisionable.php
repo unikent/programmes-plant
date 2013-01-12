@@ -129,9 +129,13 @@ class Revisionable extends SimpleData {
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
 		$model = $this->revision_model;
-		if($this->live == 2){
+
+		if ($this->live == 2)
+		{
 			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
-		}else{
+		}
+		else
+		{
 			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
 		}
 	}	
@@ -145,7 +149,8 @@ class Revisionable extends SimpleData {
 	public function make_revision_live($revision)
 	{
 		// If its an id, convert to actual revision
-		if(is_int($revision)){
+		if (is_int($revision))
+		{
 			$revision = $this->get_revision($revision);
 		}
 
@@ -181,20 +186,23 @@ class Revisionable extends SimpleData {
 	public function revert_to_previous_revision($revision)
 	{	
 		// if its an id, convert to actual revision
-		if(is_int($revision)){
+		if (is_int($revision))
+		{
 			$revision = $this->get_revision($revision);
 		}
+
 		// Get previous revision
 		$model = $this->revision_model;
 		$rev = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
+
 		// return false if no viable results are found to revert to
-		if(sizeof($rev) == 0){
+		if (sizeof($rev) == 0)
+		{
 			return false;
 		}
-		// Swicth revision to found result
-		return $this->use_revision($rev[0]);
 
 		// Switch revision to found result
+		return $this->use_revision($rev[0]);
 	}
 
 	/**
@@ -213,6 +221,7 @@ class Revisionable extends SimpleData {
 		// Mark all later revisions as unused if we are reverting back
 		$model = $this->revision_model;
 		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
+
 		// Remove the previously selected item if it is not "later" (and thus caught by the above code) and set to unused.
 		$model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
 		
@@ -233,7 +242,8 @@ class Revisionable extends SimpleData {
 		parent::save();
 
 		// Update revisions status to selected (assuming its not a live one)
-		if($revision->status != 'live'){
+		if ($revision->status != 'live')
+		{
 			$revision->status = 'selected';
 			$revision->save();
 		}
