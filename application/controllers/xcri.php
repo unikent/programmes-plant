@@ -18,7 +18,7 @@ class XCRI_Controller extends Base_Controller {
 	 */
 	public function get_index($level, $year)
 	{
-		// Get only live programmes
+		// Get only live programmes.
 		$data['programmes'] = Programme::where('year', '=', $year)->where('live', '=', true)->get();
 
 		// We need some additional data to fill the XCRI-CAP feed entirely.
