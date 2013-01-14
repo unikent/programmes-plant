@@ -1,210 +1,283 @@
 <?php
+/**
+ * Revisionable.
+ * 
+ * A model for datatypes that need to maintain revisions of itself.
+ */
 class Revisionable extends SimpleData {
 
-	public static $timestamps = true;
-
-	/**
-	 * Sets the table that revisions are saved into.
-	 */
-	protected $revision_table = false;
-
-	/**
-	 * The name of the the revisionable data object.
-	 * 
-	 * For example the model Programme might have a revision type of programmes.
-	 */
-	protected $revision_type = false;
-
-	/**
-	 * The model that represents the revision of the object.
-	 * 
-	 * For example, a model Thing may have a model called ThingRevision.
-	 */
+	// Revision model (name of model for revisions of this type)
 	protected $revision_model = false;
 
-	/**
-	 * Does this model seperate items by year? (by default this is false.)
-	 */
+	// Data Type (Programme, Global, etc)
+	protected $data_type = false;
+	
+	// Id used to link items of datatype (optional)
+	protected $data_type_id = false;
+
+	// Does this model seperate items by year? (false by default, although true for (all|most) revisionble types)
 	public static $data_by_year = true;
 
 	/**
-	 * This is an in memory cache used by the all_as_list method for additional speed.
+	 * Create new instance of a revisionble object
+	 *
+	 * @param $attributes Attributes to be added to new instance of this model
+	 * @param $exists Does this object already exist in the DB
 	 */
-	public static $list_cache = false;
-
-	public $revision = false;
-
-	public function user() 
+	public function __construct($attributes = array(), $exists = false)
 	{
-		return $this->belongs_to('User','user_id');
+		// Use called class to deterime datatype
+		$this->data_type = get_called_class();
+		// If not set in parent, just assume modelRevision as name
+		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
+		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
+
+		// Pass to real constructor
+		parent::__construct($attributes, $exists);
+
+		// Ensure default status is 0
+		$this->live = 0;
 	}
 
 	/**
-	 * Overwrite Eloquent save function with our own version that allows for revisions.
+	 * Save instance of this object along with a revision.
 	 *
-	 * @return $result The result of this save.
+	 * @return true|false success
 	 */
 	public function save()
 	{
-		if ( ! $this->dirty()) return true;
+		if (!$this->dirty()) return true;
 
-		// Time stamp the entry
-		$this->timestamp();
+		// Toggle live status (0=unpublished, if has been published set to 1 = changes)
+		if ($this->live != 0)  $this->live = 1;
 
-		// If the programme exists we want to create a new version of it in our revision table.
-		if ($this->exists) 
-		{
-			// If we have $this->revision then we loaded up a revision of this class and we don't save a
-			// revision.
-			// @todo Abstract this.
-			if (! $this->revision) 
-			{
-				$query = DB::table($this->revision_table);
+		// Save self.
+		$success = parent::save();
+		// If the save succeeds, save a new revision and return its status 
+		// (so the return from this save() is means both the revision & save itself were successful.)
+		if($success) return $this->save_revision();
 
-				// Establish the next ID in the revisions table.
-				$revision_attributes = $this->attributes;
-				$revision_attributes[$this->revision_type.'_id'] = $this->id;
-
-				// We don't have published by in revisions
-				unset($revision_attributes['id']);
-				unset($revision_attributes['published_by']);
-				unset($revision_attributes['live']);
-
-				// Timestamp revision - the time stamp of the newly created revision should be
-				// the same as the update of the main table.
-				$revision_attributes['created_at'] = $this->updated_at;
-				$revision_attributes['updated_at'] = $revision_attributes['created_at'];
-				$revision_attributes['status'] = 'selected';
-
-				if ($revision_attributes['created_by'] == null)
-				{
-					$revision_attributes['created_by'] = Auth::user();
-				}
-
-				// Deactivate any previosuly selected drafts
-				$r_model = $this->revision_model;
-				$r_model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
-
-				// Add new revision
-				$revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
-
-				// Update selected item
-				if ($this->live != 0)  $this->live = 1;
-				if (sizeof($this->get_dirty())>0)
-				{
-					$query = $this->query()->where(static::$key, '=', $this->get_key());
-					$result = $query->update($this->get_dirty()) === 1;
-				}
-
-				$this->exists = $result = is_numeric($this->get_key());
-			} 
-			else
-			{
-				$query = DB::table($this->revision_table)
-				->where('id', '=', $this->revision->id)
-				->update((array) $this->revision);
-			}
-		}
-		// The programme does not exist, so we create it.
-		else 
-		{
-			// By Default this programme is inactive!
-			$this->live = 0;
-
-			$id = $this->query()->insert_get_id($this->attributes, $this->sequence());
-
-			$this->set_key($id);
-
-			$this->exists = $result = is_numeric($this->get_key());
-
-			// Save a revision  of this
-			$query = DB::table($this->revision_table);
-
-			// Establish the next ID in the revisions table.
-			$revision_attributes = $this->attributes;
-			$revision_attributes[$this->revision_type.'_id'] = $this->id;
-
-			// We don't have published by in revisions
-			unset($revision_attributes['id']);
-			unset($revision_attributes['published_by']);
-			unset($revision_attributes['live']);
-
-			// Timestamp revision - the time stamp of the newly created revision should be
-			// the same as the update of the main table.
-			$revision_attributes['created_at'] = $this->updated_at;
-			$revision_attributes['updated_at'] = $revision_attributes['created_at'];
-			$revision_attributes['status'] = 'selected';
-
-			// Add a revision
-			$revision_id = $query->insert_get_id($revision_attributes, $this->sequence());
-		}
-
-		// Set the original attributes to match the current attributes so the model will not be viewed
-		// as being dirty and subsequent calls won't hit the database.
-		$this->original = $this->attributes;
-
-		static::clear_all_as_list_cache($this->year);
-
-		return $result;
+		return false;
 	}
 
 	/**
-	 * Returns the revisions of a given subject as an array.
+	 * Save revision of current item
 	 *
-	 * @return array|bool $results Either return an array of revisions or false.
+	 * @return true|false success
+	 */
+	private function save_revision()
+	{
+		$revision_model = $this->revision_model;
+
+		// Get new revision instance
+		$revision = new $revision_model;
+
+		// Get attributes
+		$revision_values = $this->attributes;
+		unset($revision_values['id']);
+		unset($revision_values['created_by']);
+		unset($revision_values['live']);
+
+		// @todo @workaround for revisionble tests.
+		//
+		// The case for using mocking. 
+		//
+		// SQLite doesn't supporting dropping columns once they are created, meaning 
+		// that although "published_by" doesnt exist anymore, in the test enviroment 
+		// it lingers on. This then causes errors when a revisionble item is saved 
+		// from a test as eloquent picks up the now non-existent published_by column 
+		// from SQLite and attempts to add it to the still none existent column of 
+		// the same name in the revision item, which (by virtue of not existing) 
+		// causes an SQL error and the test to fail. 
+		//
+		// This extra unset fixes this bug but is not an ideal fix for the long term.
+		unset($revision_values['published_by']);
+
+		// Timestamp revision & set editor etc.
+		$revision_values['created_at'] = $this->updated_at;
+		$revision_values['updated_at'] = $revision_values['created_at'];
+		$revision_values['edits_by'] = Auth::user();
+
+		// Status = selected
+		$revision_values['status'] = 'selected';
+
+		// Set Programme ID so we know which programme this revision belongs to.
+		$revision_values[$this->data_type_id.'_id'] = $this->id;
+
+		// Set the data in to the revision
+		$revision->fill($revision_values);
+
+		// Set previous revision back to draft
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+
+		// Save revision
+		return $revision->save();
+	}
+
+	/**
+	 * Get all revisions for this item
+	 * @param array of revisions
 	 */
 	public function get_revisions()
 	{
-		if (! $this->exists)
-		{
-			return false;
-		}
-
-		$results = DB::table($this->revision_table)
-		->where($this->revision_type.'_id', '=', $this->get_key())
-		->order_by('created_at', 'desc')
-		->get();
-
-		if ($results)
-		{
-			return $results;
-		} 
-		else
-		{
-			return false;
-		}
+		$model = $this->revision_model;
+		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
 	}
 
 	/**
-	 * Find a revision of this subject.
+	 * Get a particular revision
 	 *
-	 * @param int $id The ID of the revision to pull.
-	 * @return object|bool Either the revision object or false if the revision is not found.
+	 * @param $id of revision
+	 * @return revision instance
 	 */
-	public function find_revision($id)
+	public function get_revision($revision_id)
 	{
-		$revision = DB::table($this->revision_table)
-			->where('id', '=', $id)
-			->first();
+		$model = $this->revision_model;
+		return $model::find($revision_id);
+	}
 
-		if ($revision) 
+	/**
+	 * Get currently active revision
+	 * @return active revision instance
+	 */
+	public function get_active_revision()
+	{
+		// If all is up to date (live=2) return live/selected item
+		// else get item marked as selected
+		$model = $this->revision_model;
+
+		if ($this->live == 2)
 		{
-			$this->revision = $revision;
-			return $revision;
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
 		}
 		else
 		{
-			return false;
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
 		}
+	}	
+
+	/**
+	 * make a revision of this item live.
+	 * 
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function make_revision_live($revision)
+	{
+		// If its an id, convert to actual revision
+		if (is_int($revision))
+		{
+			$revision = $this->get_revision($revision);
+		}
+
+		// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+		$this->live = '2';
+		parent::save();
+
+		// Get revision model.
+		$revision_model = $this->revision_model;
+
+		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+		
+		// Update and save this revision 
+		$revision->status = 'live';
+		$revision->published_at = date('Y-m-d H:i:s');
+		$revision->made_live_by = Auth::user();
+		$revision->save();
+
+		// Update feed file
+		$this->generate_feed_file($revision);
+
+		// Return result
+		return $revision;
 	}
 
-	public static function getAttributesList($year = false)
+	/**
+	 * revert "current" revision to the previous one
+	 * 
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function revert_to_previous_revision($revision)
+	{	
+		// if its an id, convert to actual revision
+		if (is_int($revision))
+		{
+			$revision = $this->get_revision($revision);
+		}
+
+		// Get previous revision
+		$model = $this->revision_model;
+		$previous_revision = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
+
+		// return false if no viable results are found to revert to
+		if (sizeof($previous_revision) == 0)
+		{
+			return false;
+		}
+
+		// Switch revision to found result
+		return $this->use_revision($previous_revision[0]);
+	}
+
+	/**
+	 * use a particular revision as the new "current"
+	 * 
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function use_revision($revision)
+	{
+		// If its an id, convert to actual revision
+		if(is_int($revision)){
+			$revision = $this->get_revision($revision);
+		}
+
+		// Mark all later revisions as unused if we are reverting back
+		$model = $this->revision_model;
+		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
+
+		// Remove the previously selected item if it is not "later" (and thus caught by the above code) and set to unused.
+		$model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));
+		
+		// Get revision data and copy it back in to "current" object
+		$revision_values = $revision->attributes;
+		unset($revision_values['id']);
+		unset($revision_values['created_at']);
+		unset($revision_values['published_at']);
+		unset($revision_values['edits_by']);
+		unset($revision_values['made_live_by']);
+		unset($revision_values['status']);
+		unset($revision_values[strtolower($this->data_type).'_id']);
+
+		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
+
+		// Save this revision as the new current
+		$this->fill($revision_values);
+		parent::save();
+
+		// Update revisions status to selected (assuming its not a live one)
+		if ($revision->status != 'live')
+		{
+			$revision->status = 'selected';
+			$revision->save();
+		}
+
+		return $revision;
+	}
+
+	/**
+	 * Get list of attributes used in revisionable object
+	 *
+	 * @param year Year to return results for
+	 * @return array of attributes
+	 */
+	public static function get_attributes_list($year = false)
 	{
 		$options = array();
 
-		$model = get_called_class();
-
-		$model .= 'Field';
+		$model = get_called_class().'Field';
 
 		if (!$year)
 		{
@@ -220,10 +293,35 @@ class Revisionable extends SimpleData {
 		return $options;
 	}
 
+	/**
+	 * Removes the automatically generated field ids from our field names.
+	 * 
+	 * @param $record Record to remove field ids from.
+	 * @return $new_record Record with field ids removed.
+	 */
+	public static function remove_ids_from_field_names($record)
+	{
+		$new_record = array();
+		
+		foreach ($record as $name => $value) 
+		{
+			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
+		}
+
+		return $new_record;
+	}
+
+	/**
+	* Generate the feed index.json
+	*
+	* @param $programme thats been added
+	* @param $path path to cache location
+	*/
 	private function generate_feed_index($new_programme, $path)
 	{
 		$index_file = $path.'index.json';
 
+		// Obtain names for required fields
 		$title_field = Programme::get_title_field();
 		$slug_field = Programme::get_slug_field();
 		$withdrawn_field = Programme::get_withdrawn_field();
@@ -232,31 +330,36 @@ class Revisionable extends SimpleData {
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
 		$ucas_code_field = Programme::get_ucas_code_field();
-		$index_data = array();
-		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						  ->where('status','=','live')
-						  ->where($withdrawn_field,'!=','true')
-						  ->where($suspended_field,'!=','true')
-						  ->get();
 
+		$index_data = array();
+
+		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
+		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
+						->where('status','!=','0')
+						->where($withdrawn_field,'!=','true')
+						->where($suspended_field,'!=','true')
+						->get();
+
+		// Build array
 		foreach($programmes as $programme)
 		{
-		  $index_data[$programme->programme_id] = array(
-			'id' => $programme->programme_id,
-			'name' => $programme->$title_field,
-			'slug' => $programme->$slug_field,
-			'award' => $programme->award->name,
-			'subject' => $programme->subject_area_1->name,
-			'main_school' => $programme->administrative_school->name,
-			'secondary_school' => $programme->additional_school->name,
-			'campus' => $programme->location->name,
-			'new_programme' => $programme->$new_programme_field,
-			'subject_to_approval' => $programme->$subject_to_approval_field,
-			'mode_of_study' => $programme->$mode_of_study_field,
-			'ucas_code' => $programme->$ucas_code_field
+			$index_data[$programme->programme_id] = array(
+				'id' => $programme->programme_id,
+				'name' => $programme->$title_field,
+				'slug' => $programme->$slug_field,
+				'award' => ($programme->award != null) ? $programme->award->name : '',
+				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
+				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
+				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
+				'new_programme' => $programme->$new_programme_field,
+				'subject_to_approval' => $programme->$subject_to_approval_field,
+				'mode_of_study' => $programme->$mode_of_study_field,
+				'ucas_code' => $programme->$ucas_code_field
 			);
 		}
-	
+
+		// Save as JSON
 		file_put_contents($index_file, json_encode($index_data));
 	}
 
@@ -281,156 +384,19 @@ class Revisionable extends SimpleData {
 		// if our $cache_location isnt available, create it
 		if (!is_dir($cache_location))
 		{
-		  mkdir($cache_location, 0755, true);
+			mkdir($cache_location, 0755, true);
 		}
 
 		// if we're saving a programme
 		if($data_type == 'Programme')
 		{
-		  file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
-		  $this->generate_feed_index($revision,$cache_location);
-
+			file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
+			$this->generate_feed_index($revision,$cache_location);
 		}
 		else
 		{
-		  file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
+			file_put_contents($cache_location.strtolower($data_type).'.json', json_encode($revision->to_array()));
 		}
-	}
-
-	/**
-	 * This function makes the specified revision live
-	 * 
-	 * @param $revision The revision to make live
-	 * @return $r the (modified) revision object
-	 */
-	public function makeRevisionLive($revision)
-	{
-    	// update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
-    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
-    	$model = get_class($this);
-    	$revision_type_id = $this->revision_type.'_id';
-		$model::where('id','=',$revision->$revision_type_id)->update(array('live'=>2));
-
-		$model = $this->revision_model;
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'draft'));
-
-		// Make new item "live"
-		$r = $model::find($revision->id);
-		$r->status = 'live';
-		$r->save();
-
-		return $r;
-	}
-
-	// Needs urgent refactoring
-	public function revertToRevision($revision)
-	{
-		// update the 'live' setting in the main item (not the revision) so it's marked as version published is not the latest version (ie 1)
-    	// this should only happen if 'live' is not 0 ie the programme has at some stage been published
-    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
-		if ($this->live != 0)
-		{
-		  $model = get_class($this);
-		  $model::where('id','=',$revision->programme_id)->update(array('live'=>1));
-        }
-
-		// Save
-		if (sizeof($this->get_dirty())>0) {
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-		// reject later revisions
-		$model::where($this->revision_type.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'rejected'));
-
-		// Make new Revsion Live!
-		$r = $model::find($revision->id);
-		if($r->status != 'live')$r->status = 'selected';
-		
-		$r->save();
-	}
-
-
-	public function useRevision($revision)
-	{
-    	// update the 'live' setting in the main item (not the revision) so it's marked as version published is not the latest version (ie 1)
-    	// this should only happen if 'live' is not 0 ie the programme has at some stage been published
-    	// note that we don't want to use save() because this will call Revisionable::save() and will wrongly create a new revision
-		if ($this->live != 0)
-		{
-		  $model = get_class($this);
-		  $model::where('id','=',$revision->programme_id)->update(array('live'=>1));
-        }
-
-		// Save
-		if (sizeof($this->get_dirty())>0)
-		{
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-
-		// Unlive previous revsion
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','!=','draft')->update(array('status'=>'draft'));
-
-		// Make new Revsion Live!
-		$r = $model::find($revision->id);
-		$r->status = 'live';
-		$r->save();
-	 }
-
-	public function deactivate()
-	{
-		// Remove live option
-		$this->live = 0;
-
-		if (sizeof($this->get_dirty()) > 0)
-		{
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-
-		// Make current live draft "selected"
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'selected'));
-	}
-
-	public function activate()
-	{
-		// Add live option
-		$this->live = 1;
-		
-		if (sizeof($this->get_dirty())>0)
-		{
-			$query = $this->query()->where(static::$key, '=', $this->get_key());
-			$result = $query->update($this->get_dirty()) === 1;
-		}
-
-		$model = $this->revision_model;
-
-		// Make current live draft "selected"
-		$model::where($this->revision_type.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'live'));
-	}
-
-	/**
-	 * Removes the automatically generated field ids from our field names.
-	 * 
-	 * @param $record Record to remove field ids from.
-	 * @return $new_record Record with field ids removed.
-	 */
-	public static function remove_ids_from_field_names($record)
-	{
-		$new_record = array();
-		
-		foreach ($record as $name => $value) 
-		{
-			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
-		}
-
-		return $new_record;
 	}
 
 }

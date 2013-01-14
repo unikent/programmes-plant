@@ -69,9 +69,9 @@ class SimpleData extends Eloquent {
 	 * This is done for application performance.
 	 * 
 	 * @param string $year The year from which to get the array.
-	 
+	 *
 	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
-	 
+	 *
 	 * @return array $options List of items in the format id => item_title.
 	 */
 	public static function all_as_list($year = false, $empty_default_value = 0)
@@ -179,7 +179,7 @@ class SimpleData extends Eloquent {
 	private static function generate_json()
 	{
 		$cache_location = path('storage') .'api/';
-		$cache_file = $cache_location.get_called_class().'.json';
+		$cache_file = $cache_location.strtolower(get_called_class()).'.json';
 		$data = array();
 
 		foreach (static::all() as $record) {

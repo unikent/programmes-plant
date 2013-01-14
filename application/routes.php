@@ -31,11 +31,13 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings', 'globalsettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)', 'globalsettings@(:3)');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)/(:num)', 'globalsettings@(:3)');
+	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:4)');
 
 	// Do global settings
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings', 'programmesettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings/(:any)', 'programmesettings@(:3)');
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings/(:any)/(:num)', 'programmesettings@(:3)');
+	Route::get('([0-9]{4})/(ug|pg)/programmesettings/(:num)/(:any)/(:num)', 'programmesettings@(:4)');
 
 	// Do Programmes
 	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
@@ -48,9 +50,11 @@ Route::group(array('before' => ''), function(){
 	Route::any('(ug|pg)/fields/programmes/(:any?)', 'programmefields@(:2)');
 	Route::any('(ug|pg)/fields/programmes/(:any?)/(:num?)', 'programmefields@(:2)');
 
+
 	Route::any('(ug|pg)/fields/globalsettings', 'globalsettingfields@index');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)', 'globalsettingfields@(:2)');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:2)');
+
 
 	Route::any('(ug|pg)/fields/programmesettings', 'programmesettingfields@index');
 	Route::any('(ug|pg)/fields/programmesettings/(:any?)', 'programmesettingfields@(:2)');

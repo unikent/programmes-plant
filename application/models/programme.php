@@ -2,11 +2,8 @@
 class Programme extends Revisionable
 {
 	public static $table = 'programmes';
-    public static $timestamps = true;
-    public $revision = false;
     protected $revision_model = 'ProgrammeRevision';
-    protected $revision_type = 'programme';
-    protected $revision_table = 'programmes_revisions';
+
     
     /**
      * Get the name of the title field/column in the database.
@@ -198,7 +195,7 @@ class Programme extends Revisionable
     public static function pull_external_data($record)
     {
         $path = path('storage') . 'api/';
-        $programme_fields_path = $path . 'ProgrammeField.json';
+        $programme_fields_path = $path . 'programmefield.json';
 
         //if we dont have a json file, return the $record as it was
         if (!file_exists($programme_fields_path))

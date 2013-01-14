@@ -11,7 +11,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 			'year' => '2014',
 			'live' => '1',
 			'created_by' => 'aa',
-			'published_by' => 'aa',
 			'programme_title_1' => 'Test'
 		);
 
@@ -33,6 +32,8 @@ class TestProgrammes_Controller extends ControllerTestCase
 
 	public function testRemainOnTheSamePageWhenSavingProgrammes()
 	{
+		//Add a programme to the system.
+		Programme::create(array('programme_title_1' => 'A programme', 'year'=> '2014', 'id' => 1));
 
 		$edit_page = $this->get('programmes@edit', array('2014', 'ug', '1'));
 
@@ -42,7 +43,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 			'year' => '2014',
 			'live' => '1',
 			'created_by' => 'aa',
-			'published_by' => 'aa',
 			'programme_title_1' => 'Test Change'
 		);
 

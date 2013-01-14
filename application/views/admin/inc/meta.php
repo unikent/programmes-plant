@@ -21,7 +21,6 @@
     <link rel="stylesheet" type="text/css" href="<?php echo asset('css/datatable_bootstrap.css')?>">
     <!-- wysiwyg editor css -->
     <link rel="stylesheet" type="text/css" href="<?php echo asset('css/prettify.css')?>"></link>
-    <link rel="stylesheet" type="text/css" href="<?php echo asset('css/bootstrap-wysihtml5.css')?>"></link>
 
     <!-- Call our own stylesheets -->
     <link href="<?php echo asset('css/style.css')?>" rel="stylesheet">

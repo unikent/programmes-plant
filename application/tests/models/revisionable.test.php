@@ -33,16 +33,18 @@ class TestRevisionable extends ModelTestCase {
 
 	public function populate($model = 'Programme', $input = false)
 	{
+
 		if (! $input)
 		{
 			$input = $this->input;
 		}
-
-		$object = $model::create($input)->save();
+		$model::create($input);
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
+
+		
 		$this->assertCount(0, Programme::all_as_list());
 	}
 
@@ -58,6 +60,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
 	{
+
 		$this->populate();
 
 		// Warm up the cache.
@@ -131,6 +134,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
 	{
+
 		$this->populate();
 
 		// Warm cache, presumably also the in memory cache.
@@ -312,10 +316,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$revisionable_item = Programme::find(1);
-        $revision = $revisionable_item->find_revision(1);
+        $revision = $revisionable_item->get_revision(1);
         
         // make the revision live
-        $revisionable_item->makeRevisionLive($revision);
+        $revisionable_item->make_revision_live($revision);
         
         // find programme #1 and check its 'live' value is 2
         $programme = Programme::find(1);
@@ -327,10 +331,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->useRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
@@ -344,10 +348,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // make the revision live
-        $programme->makeRevisionLive($revision);
+        $programme->make_revision_live($revision);
         
         // make a new revision
         $programme_new = Programme::find(1);
@@ -366,10 +370,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->revertToRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
@@ -383,10 +387,10 @@ class TestRevisionable extends ModelTestCase {
     	// set up some data
     	$this->populate();
     	$programme = Programme::find(1);
-        $revision = $programme->find_revision(1);
+        $revision = $programme->get_revision(1);
         
         // use a revision
-        $programme->revertToRevision($revision);
+        $programme->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
@@ -397,6 +401,8 @@ class TestRevisionable extends ModelTestCase {
 	
 	public function testMakeRevisionLiveGlobalSetting()
 	{
+		 //TEST ISSUE: see "@todo @workaround" in revisionble model
+
     	// set up some data
     	$input =  array('institution_name_1' => 'University of Kent');
     	$this->populate('GlobalSetting', $input);
@@ -407,10 +413,10 @@ class TestRevisionable extends ModelTestCase {
         $new->institution_name_1 = 'UniKent';
         $new->save();
         
-        $revision = $new->find_revision(1);
+        $revision = $new->get_revision(1);
         
         // make the revision live
-        $new->makeRevisionLive($revision);
+        $new->make_revision_live($revision);
         
         // find programme #1 and check its institution name is now 'UniKent'
         $global_setting = GlobalSetting::find(1);
@@ -419,23 +425,26 @@ class TestRevisionable extends ModelTestCase {
 	
 	public function testMakeRevisionLiveProgrammeSetting()
 	{
+		//TEST ISSUE: see "@todo @workaround" in revisionble model
+
     	// set up some data
     	$input =  array('programme_title_1' => 'Test programme title');
     	$this->populate('ProgrammeSetting', $input);
-    	$revisionable_item = ProgrammeSetting::find(1);
     	
+    	$revisionable_item = ProgrammeSetting::find(1);
+
     	// make a new revision
         $new = ProgrammeSetting::find(1);
         $new->programme_title_1 = 'The Music Programme';
         $new->save();
-        
-        $revision = $new->find_revision(1);
+   
+        $revision = $new->get_revision(1);
         
         // make the revision live
-        $new->makeRevisionLive($revision);
+        $new->make_revision_live($revision);
         
         // find programme #1 and check its institution name is now 'UniKent'
         $programme_setting = ProgrammeSetting::find(1);
-        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1);
+        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
 }
