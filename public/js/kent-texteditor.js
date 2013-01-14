@@ -12,6 +12,7 @@
 			removePlugins : 'elementspath',
 			resize_enabled : false,
 		    customConfig: '',
+			language: 'en-gb'
 		};
 
  $('textarea').each( function(){
