@@ -114,3 +114,23 @@ display: none;
 .sortableUI .sortable_fields.dropzone-large {
   height:120px;
 }
+
+/* Css for floating save bar in programmes / other long forms */
+.floating_save{
+    right:0px; 
+    margin-right:0px;
+    width:140px; 
+    padding:10px; 
+    background-color: #f5f5f5; 
+    border-radius: 6px; 
+    border-top-right-radius:0px;
+    border-bottom-right-radius:0px;
+    border: 1px solid #e3e3e3
+}
+.floating_save.affix-top {
+    position:absolute;
+    top:150px;
+}
+.floating_save.affix {
+    :50px;
+}
