@@ -1,3 +1,5 @@
+<?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
+
 <h1><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?></h1>
 
 <?php echo Messages::get_html()?>
@@ -20,9 +22,6 @@
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
-<?php if (isset($revisions)) : ?>
-  <?php echo View::make('admin.globalsettings.partials.revisions', array('revisions' => $revisions, 'subject' => $globalsettings))->render(); ?>
-<?php endif; ?>
 
 
   

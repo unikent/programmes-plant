@@ -1,7 +1,8 @@
 <?php
-class ProgrammeRevision extends Eloquent
+class ProgrammeRevision extends Revision
 {
     public static $table = 'programmes_revisions';
+    protected $data_type_id = 'programme_id';
 
     /**
      * Get this programme's award.
@@ -53,4 +54,7 @@ class ProgrammeRevision extends Eloquent
       return $this->belongs_to('Campus', Programme::get_location_field());
     }
 
+    
+
+   
 }
