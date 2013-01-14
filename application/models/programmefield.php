@@ -122,7 +122,7 @@ class ProgrammeField extends Field
      */
     private static function generate_json(){
         $cache_location = path('storage') .'api/';
-        $cache_file = $cache_location . get_called_class() . '.json';
+        $cache_file = $cache_location . strtolower(get_called_class()) . '.json';
         $data = array();
         
         foreach (static::where_in('field_type', array('table_select', 'table_multiselect'))
