@@ -1,6 +1,6 @@
 <?php
 
-class XCRI_Controller extends Base_Controller {
+class XCRI_CAP_Controller extends Base_Controller {
 
 	public $restful = true;
 
