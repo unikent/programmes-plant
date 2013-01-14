@@ -10,6 +10,7 @@ function show_options(selectbox) {
 //onLoad setup JS listeners
 $(document).ready(function (){
 
+
     //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
     $(".popup_toggler").click(function(){  
       $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
@@ -220,6 +221,66 @@ $(document).ready(function (){
       // Invoke the plugin
       $('input, textarea').placeholder();
       $("[rel=tooltip]").tooltip();
+    });
+
+
+
+    // Word Limit system!
+    $('input[data-limit]').each(function(x){
+
+      var self = {};
+      // Get word limit from item
+      self.limit = $(this).attr("data-limit");
+      self.limiting_on_words = false;
+      self.dom = document.createElement('span');
+      self.dom.className = 'text_limits';
+
+      // Work out if limit should be word or char based
+      if(self.limit.substring(self.limit.length-1) == 'w'){
+        self.limiting_on_words = true;
+        self.limit = parseInt(self.limit.substring(0, self.limit.length-1));
+      }else{
+        self.limit = parseInt(self.limit);
+      }
+
+      // Add display span
+      $(self.dom).insertAfter($(this));
+
+      // Find how much of word/char limit is left
+      var limit_left = function(field){
+        if(self.limiting_on_words){
+          //word limits
+          //See http://stackoverflow.com/questions/6543917/count-number-of-word-from-given-string-using-javascript
+          return self.limit - field.val().split(/\s+\b/).length;
+        }else{
+          //chars left
+          return self.limit - field.val().length;
+        }
+      }
+
+      // check length of input and show result
+      var checkLength = function(field){
+        // How much if left
+        var left = limit_left(field);
+
+        // If less than 5, display in Red
+        if(left < 5){
+          self.dom.style.color = 'red';
+        }else{
+          self.dom.style.color = '';
+        }
+
+        //show message to user
+        if(self.limiting_on_words){
+          self.dom.innerHTML = left+' words left';
+        }else{
+          self.dom.innerHTML =  left+' characters left';
+        }
+      }
+      //Attach listeners
+      $(this).keydown(function(){ checkLength($(this)); });
+      $(this).focus(function(){ checkLength($(this)); });
+      checkLength($(this)); // so there is data initally.
     });
 
 });

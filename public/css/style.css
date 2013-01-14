@@ -114,3 +114,5 @@ display: none;
 .sortableUI .sortable_fields.dropzone-large {
   height:120px;
 }
+
+.text_limits {padding:4px;}

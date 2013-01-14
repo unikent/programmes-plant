@@ -76,7 +76,15 @@ foreach($sections as $section_name => $section)
       else
       {
         if($current_value == '' && $field->prefill == 1) $current_value = $field->field_initval;
-        $form_element = Form::$type($column_name, $current_value, array('placeholder'=>$field->placeholder));
+        
+        $field_config = array('placeholder'=>$field->placeholder);
+        //If a limit is found, add it to field.
+        if(trim($field->limit) != ''){
+           $field_config['data-limit'] = $field->limit;
+        }
+        $form_element = Form::$type($column_name, $current_value, $field_config);
+        
+
       }
 ?>
   <?php if ($type != 'help') : ?> 
