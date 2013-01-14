@@ -186,39 +186,44 @@ class Programme extends Revisionable {
 	}
 	
 	/**
-	 * look through the passed in record and substitute any ids with data from their correct table
-	 * primarily for our json api
+	 * look through the passed in record and substitute any IDs with data from their correct table.
+	 * Primarily for our JSON API.
 	 * 
-	 * @param $record The record
-	 * @return $new_record A new record with ids substituted
+	 * For example, subsitutions the award field with the name for the award.
+	 * 
+	 * @param Programme $record The record.
+	 * @return Programme $new_record A new record with IDs substituted for their values.
 	 */
 	public static function pull_external_data($record)
 	{
 		$path = path('storage') . 'api/';
 		$programme_fields_path = $path . 'programmefield.json';
 
-		//if we dont have a json file, return the $record as it was
+		// If we dont have a json file, return the $record as it was.
 		if (!file_exists($programme_fields_path))
 		{
 			return $record;
 		}
 
-		//get programme fields
+		// Get programme fields.
 		$programme_fields = json_decode(file_get_contents($programme_fields_path));
 		
-		//make neater programme fields array
+		// Make neater programme fields array.
 		$fields_array = array();
 		foreach ($programme_fields as $field) {
 			$fields_array[$field->colname] = $field->field_meta;
 		}
 		
-		//substitute the concerned ids with actual data
+		// Substitute the IDs with actual data.
 		$new_record = array();
-		foreach ($record as $field_name => $field_value) {
-			if(isset($fields_array[$field_name])){
+		foreach ($record as $field_name => $field_value)
+		{
+			if(isset($fields_array[$field_name]))
+			{
 				$model = $fields_array[$field_name];
 				$field_value = $model::replace_ids_with_values($field_value);
 			}
+
 			$new_record[$field_name] = $field_value;
 		}
 
@@ -226,21 +231,27 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * This function replaces the passed-in ids with their actual record
-	 * Limiting the record to its name and id
+	 * Replaces the passed-in ids with their actual record
+	 * limiting the record to its name and ID.
+	 * 
+	 * @param string $ids A list of IDs separated by commas.
+	 * @return array $values Values mapped ID => value.
 	 */
-	public static function replace_ids_with_values($ids){
-
+	public static function replace_ids_with_values($ids)
+	{
 		$ds_fields = static::where_in('id', explode(',', $ids))->get();
 		$values = array();
-		foreach ($ds_fields as $ds_field) {
+
+		foreach ($ds_fields as $ds_field)
+		{
 			$title_field = static::get_title_field();
 			$slug_field = static::get_slug_field();
+
 			$values[$ds_field->id] = static::remove_ids_from_field_names(array(
-					'id' => $ds_field->id,
-					$title_field => $ds_field->$title_field,
-					$slug_field => $ds_field->$slug_field
-				));
+				'id' => $ds_field->id,
+				$title_field => $ds_field->$title_field,
+				$slug_field => $ds_field->$slug_field
+			));
 		}
 
 		return $values;
