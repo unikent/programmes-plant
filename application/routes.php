@@ -15,7 +15,7 @@ else {
 Route::group(array('before' => ''), function(){
 	// Any page without a root goes to index
 	Route::any('/',function(){
-	       return Redirect::to(date('Y').'/ug/');   
+	       return Redirect::to('2014/ug/');
 	});
 
 	// Index
@@ -31,11 +31,13 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings', 'globalsettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)', 'globalsettings@(:3)');
 	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:any)/(:num)', 'globalsettings@(:3)');
+	Route::any('([0-9]{4})/(ug|pg)/globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:4)');
 
 	// Do global settings
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings', 'programmesettings@index');
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings/(:any)', 'programmesettings@(:3)');
 	Route::any('([0-9]{4})/(ug|pg)/programmesettings/(:any)/(:num)', 'programmesettings@(:3)');
+	Route::get('([0-9]{4})/(ug|pg)/programmesettings/(:num)/(:any)/(:num)', 'programmesettings@(:4)');
 
 	// Do Programmes
 	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
@@ -48,9 +50,11 @@ Route::group(array('before' => ''), function(){
 	Route::any('(ug|pg)/fields/programmes/(:any?)', 'programmefields@(:2)');
 	Route::any('(ug|pg)/fields/programmes/(:any?)/(:num?)', 'programmefields@(:2)');
 
+
 	Route::any('(ug|pg)/fields/globalsettings', 'globalsettingfields@index');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)', 'globalsettingfields@(:2)');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:2)');
+
 
 	Route::any('(ug|pg)/fields/programmesettings', 'programmesettingfields@index');
 	Route::any('(ug|pg)/fields/programmesettings/(:any?)', 'programmesettingfields@(:2)');
@@ -88,6 +92,10 @@ Route::group(array('before' => ''), function(){
 	// Customised routing for subject categories
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
+
+	// API
+	Route::any('/api/([0-9]{4})/(ug|pg)/programmes', 'api@index');
+	Route::get('/api/([0-9]{4})/(ug|pg)/programmes/(:num?)', 'api@programme');
 });
 
 // Login/out
@@ -107,6 +115,12 @@ Event::listen('500', function()
 Route::filter('csrf', function()
 {
 	if (Request::forged()) return Response::error('500');
+});
+
+Route::filter('before', function()
+{
+	// Push IE to max avaliable.
+	header('X-UA-Compatible: IE=Edge,chrome=1');
 });
 
 Route::filter('auth', function()

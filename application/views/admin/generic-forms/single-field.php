@@ -12,8 +12,7 @@
       <?php echo Form::text('name',  ( Input::old('uname') || $create ? Input::old('name') : $item->name ),array('placeholder'=>__($type . '.name_placeholder')))?>
     </div>
   </div>
-<div class="form-actions">
-  <input type="submit" class="btn btn-warning" value="<?php echo __($type . '.save'); ?>" />
-  <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/'.$type )?>"><?php echo __($type . '.back'); ?></a>
-</div>
+
+<?php echo Form::actions($type)?>
+
 <?php echo Form::close()?>

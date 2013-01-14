@@ -1,11 +1,14 @@
+<?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programmesettings, 'type'=>'programmesettings'))->render();?>
 
-<h1>Programme settings - <?php echo URI::segment(1)?></h1>
+
+<h1><?php echo __('fields.programmesettings') ?> - <?php echo URI::segment(1)?></h1>
 
 <?php echo Messages::get_html()?>
+<?php echo __('fields.programmesettings_intro') ?>
+<?php echo __('fields.programmesettings_note') ?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmesettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
-  <legend>Basic information</legend>
 
   <div class="control-group">
     <?php echo Form::label('year', "Year",array('class'=>'control-label'))?>
@@ -14,18 +17,13 @@
       <?php echo  Form::hidden('year', ( $create ? URI::segment(1) : $programmesettings->year ), array('class'=>'uneditable-input'))?>
     </div>
   </div>
-</fieldset>
 
-<fieldset>
-   <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'sections' => array('Programme settings' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings'))->render(); ?>
+   <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'sections' => array('' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings'))->render(); ?>
 </fieldset>
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
-<?php if (isset($revisions)) : ?>
-  <?php echo View::make('admin.programmesettings.partials.revisions', array('revisions' => $revisions, 'programme' => $programmesettings))->render(); ?>
-<?php endif; ?>
 
 
 
