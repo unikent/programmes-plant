@@ -1,10 +1,11 @@
-<h1>Global settings - <?php echo URI::segment(1)?></h1>
+<?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
+
+<h1><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?></h1>
 
 <?php echo Messages::get_html()?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
-  <legend>Basic information</legend>
 
   <div class="control-group">
     <?php echo Form::label('year', "Year",array('class'=>'control-label'))?>
@@ -14,23 +15,13 @@
     </div>
   </div>
 
-  <div class="control-group">
-    <?php echo Form::label('Institution',"Institution",array('class'=>'control-label'))?>
-    <div class="controls">
-      <?php echo Form::text('institution',  ( Input::old('institution') || $create ? Input::old('institution') : $globalsettings->institution ),array('placeholder'=>'Enter Subject Title...'))?>
-    </div>
-  </div>
-</fieldset>
-<fieldset>
-   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array('Global Settings'=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
+
+   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array(''=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
 </fieldset>
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
-<?php if (isset($revisions)) : ?>
-  <?php echo View::make('admin.globalsettings.partials.revisions', array('revisions' => $revisions, 'subject' => $globalsettings))->render(); ?>
-<?php endif; ?>
 
 
   

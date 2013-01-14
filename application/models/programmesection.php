@@ -23,8 +23,6 @@ class ProgrammeSection extends Eloquent {
 
     public static function reorder($order_string)
     {
-
-        //print_r($order_string);print_r($section);die();
         // break up the string to get the list of ids
         $order_array = explode(",", $order_string);
         

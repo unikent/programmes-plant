@@ -14,7 +14,6 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors',1);
-
 /*
 |--------------------------------------------------------------------------
 | Laravel Configuration Loader
@@ -83,6 +82,8 @@ Autoloader::directories(array(
 	path('app').'models',
 	path('app').'libraries',
 ));
+
+include(path('app').'libraries/macros.php');
 
 /*
 |--------------------------------------------------------------------------

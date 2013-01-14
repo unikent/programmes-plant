@@ -1,0 +1,73 @@
+{
+  "response": {
+    "rubric": {
+      "compulsory_modules": {
+        "-size": "90",
+        "-required": "90",
+        "-maximum_required": "90",
+        "module": [
+        {
+          "-code": "AC300",
+          "-title": "Financial Accounting I",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Financial Accounting II",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Principles of Finance",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Management Accounting 1",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Computing for Business and Accounting",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Principles of Economics",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Statistics for Economics and Business",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC300",
+          "-title": "Mathematics for Economics and Business Mode A",
+          "-credits": "30"
+        }]
+      },
+      "optional_modules": {
+        "-size": "90",
+        "-required": "30",
+        "-maximum_required": "30",
+        "module": [
+        {
+          "-code": "AC506",
+          "-title": "Mathematics for Economics and Business Mode B",
+          "-credits": "30"
+        },
+        {
+          "-code": "AC506",
+          "-title": "Mathematics for Economics and Business Mode C",
+          "-credits": "30"
+        }]
+      },
+      "wildcard": {
+        "-size": "60",
+        "-required": "60",
+        "-maximum_required": "90"
+      }
+    }
+  }
+}

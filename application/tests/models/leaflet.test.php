@@ -56,29 +56,6 @@ class TestLeaflet extends ModelTestCase
 		$campus->save();
 	}
 
-	public function testInputPopulatesLeafletObjectSuccessfully()
-	{
-		$input = array(
-			'name' => 'Some Leaflet',
-			// This needs to be changed to synchronise.
-			// At the moment with get $_POST['campus'] 
-			// and put it into $leaflet->campuses_id - this seems over complicated.
-			'campus' => 1,
-			'tracking_code' => 'http://example.com/tracking'
-		);
-
-		Request::foundation()->request->add($input);
-
-		$leaflet = new Leaflet;
-		$leaflet->input();
-
-		// See above complication.
-		$input['campuses_id'] = $input['campus'];
-		unset($input['campus']);
-
-		$this->assertEquals($input, $leaflet->attributes);
-	}
-
 	public function testCreateNewLeaflet()
 	{
 		$input = array(
@@ -86,9 +63,6 @@ class TestLeaflet extends ModelTestCase
 			'campuses_id' => 1,
 			'tracking_code' => 'http://example.com/tracking'
 		);
-
-		// Handle closure
-		$GLOBALS['input'] = $input;
 
 		$leaflet = new Leaflet;
 
@@ -99,10 +73,8 @@ class TestLeaflet extends ModelTestCase
 		$leaflet->save();
 
 		$return = DB::table('leaflets')
-				  ->where(function($query)
+				  ->where(function($query) use ($input)
 				  {
-				  	$input = $GLOBALS['input'];
-
 				  	$query->where('name', '=', $input['name']);
 				  	$query->where('campuses_id', '=', $input['campuses_id']);
 				  	$query->where('tracking_code', '=', $input['tracking_code']);

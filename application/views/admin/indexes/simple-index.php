@@ -19,8 +19,9 @@
     <tr>
       <td><?php echo $item->name ?></td>
         <td>
-          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a> <a class="delete_toggler btn btn-danger" rel="<?php echo $item->id; ?>"><?php echo __($type . '.delete') ?></a>
-        </td>
+          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
+           <a href="#remove" class="popup_toggler btn btn-danger" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@delete', array($item->id)); ?>"><?php echo __($type . '.delete') ?></a>
+         </td>
     </tr>
   <?php endforeach; ?>
   </tbody>
@@ -31,7 +32,7 @@
 </div>
 <?php endif; ?>
 
-<div class="modal hide fade" id="delete_single_field">
+<div class="modal hide fade" id="remove">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
     <h3><?php echo __($type . '.modal_header') ?></h3>
@@ -40,11 +41,8 @@
     <p><?php echo __($type . '.modal_body') ?></p>
   </div>
   <div class="modal-footer">
-    <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/'. $type . '/delete', 'POST')?>
-    <a data-toggle="modal" href="#delete_single_field" class="btn"><?php echo __($type . '.modal_keep') ?></a>
-    <input type="hidden" name="id" id="postvalue" value="" />
-    <input type="submit" class="btn btn-danger" value="<?php echo __($type . '.modal_delete'); ?>" />
-    <?php echo Form::close()?>
+      <a data-dismiss="modal" href="#" class="btn"><?php echo __($type . '.modal_keep') ?></a>
+      <a class="btn btn-danger yes_action"><?php echo __($type . '.modal_delete'); ?></a>
   </div>
 </div>
 
