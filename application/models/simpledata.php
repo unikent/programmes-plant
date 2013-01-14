@@ -179,7 +179,7 @@ class SimpleData extends Eloquent {
 	private static function generate_json()
 	{
 		$cache_location = path('storage') .'api/';
-		$cache_file = $cache_location.get_called_class().'.json';
+		$cache_file = $cache_location.strtolower(get_called_class()).'.json';
 		$data = array();
 
 		foreach (static::all() as $record) {
