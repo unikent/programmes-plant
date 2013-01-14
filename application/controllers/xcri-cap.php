@@ -13,7 +13,7 @@ class XCRI_CAP_Controller extends Base_Controller {
 	/**
 	 * Return an XCRI-CAP feed for all programmes in a given year.
 	 * 
-	 * @param string $level Either ug (undergraduate) or pg (postgraduate)
+	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
 	 */
 	public function get_index($level, $year)
