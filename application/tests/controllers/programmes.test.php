@@ -11,7 +11,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 			'year' => '2014',
 			'live' => '1',
 			'created_by' => 'aa',
-			'published_by' => 'aa',
 			'programme_title_1' => 'Test'
 		);
 
@@ -44,7 +43,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 			'year' => '2014',
 			'live' => '1',
 			'created_by' => 'aa',
-			'published_by' => 'aa',
 			'programme_title_1' => 'Test Change'
 		);
 

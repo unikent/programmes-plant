@@ -78,6 +78,21 @@ class Revisionable extends SimpleData {
 		unset($revision_values['created_by']);
 		unset($revision_values['live']);
 
+		// @todo @workaround for revisionble tests.
+		//
+		// The case for using mocking. 
+		//
+		// SQLite doesn't supporting dropping columns once they are created, meaning 
+		// that although "published_by" doesnt exist anymore, in the test enviroment 
+		// it lingers on. This then causes errors when a revisionble item is saved 
+		// from a test as eloquent picks up the now non-existent published_by column 
+		// from SQLite and attempts to add it to the still none existent column of 
+		// the same name in the revision item, which (by virtue of not existing) 
+		// causes an SQL error and the test to fail. 
+		//
+		// This extra unset fixes this bug but is not an ideal fix for the long term.
+		unset($revision_values['published_by']);
+
 		// Timestamp revision & set editor etc.
 		$revision_values['created_at'] = $this->updated_at;
 		$revision_values['updated_at'] = $revision_values['created_at'];

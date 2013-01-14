@@ -401,6 +401,8 @@ class TestRevisionable extends ModelTestCase {
 	
 	public function testMakeRevisionLiveGlobalSetting()
 	{
+		 //TEST ISSUE: see "@todo @workaround" in revisionble model
+
     	// set up some data
     	$input =  array('institution_name_1' => 'University of Kent');
     	$this->populate('GlobalSetting', $input);
@@ -411,10 +413,10 @@ class TestRevisionable extends ModelTestCase {
         $new->institution_name_1 = 'UniKent';
         $new->save();
         
-        $revision = $new->find_revision(1);
+        $revision = $new->get_revision(1);
         
         // make the revision live
-        $new->makeRevisionLive($revision);
+        $new->make_revision_live($revision);
         
         // find programme #1 and check its institution name is now 'UniKent'
         $global_setting = GlobalSetting::find(1);
@@ -423,23 +425,26 @@ class TestRevisionable extends ModelTestCase {
 	
 	public function testMakeRevisionLiveProgrammeSetting()
 	{
+		//TEST ISSUE: see "@todo @workaround" in revisionble model
+
     	// set up some data
     	$input =  array('programme_title_1' => 'Test programme title');
     	$this->populate('ProgrammeSetting', $input);
-    	$revisionable_item = ProgrammeSetting::find(1);
     	
+    	$revisionable_item = ProgrammeSetting::find(1);
+
     	// make a new revision
         $new = ProgrammeSetting::find(1);
         $new->programme_title_1 = 'The Music Programme';
         $new->save();
-        
-        $revision = $new->find_revision(1);
+   
+        $revision = $new->get_revision(1);
         
         // make the revision live
-        $new->makeRevisionLive($revision);
+        $new->make_revision_live($revision);
         
         // find programme #1 and check its institution name is now 'UniKent'
         $programme_setting = ProgrammeSetting::find(1);
-        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1);
+        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
 }
