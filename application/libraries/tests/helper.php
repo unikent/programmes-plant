@@ -29,10 +29,12 @@ class Helper {
 				echo PHP_EOL . 'Migration table already installed.';
 			}
 
-			Command::run(array('migrate'));
-
 			// Declare that migrations have been run.
 			$GLOBALS['migrated_test_database'] = true;
+
+			Command::run(array('migrate'));
+
+			
 		}
 	}
 
