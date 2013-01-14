@@ -23,8 +23,7 @@
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
 
-
-  
-
-
- 
+<div class="floating_save" data-spy="affix" data-offset-top="130">
+	<input type="submit" class="btn btn-warning" value="Save">
+	<a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/globalsettings')?>">Cancel</a>
+</div>
