@@ -1,7 +1,6 @@
 <?php
 
-class API_Controller extends Base_Controller 
-{
+class API_Controller extends Base_Controller {
 
 	public $restful = true;
 	
@@ -51,6 +50,7 @@ class API_Controller extends Base_Controller
 		{
 			return Response::error('204');
 		}
+
 		// if the cache files do exist for global/programme settings and the programme data, put them into objects
 		$global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
 		$programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
@@ -76,10 +76,12 @@ class API_Controller extends Base_Controller
 		// modules
 		// note that the web service contains two levels we won't need: response and rubric. This may need fixing once we get the finished web service
 		if(!empty($modules))
+		{
 			$final->modules = $modules->response->rubric;
-
+		}
+			
 		// now add programme settings to the $final object
-		// no inhertence needed so just loop through the settings, adding them to the object
+		// no inheritance needed so just loop through the settings, adding them to the object
 		foreach($programme_settings as $key => $value)
 		{
 			$final->{$key} = $value;
@@ -94,7 +96,6 @@ class API_Controller extends Base_Controller
 			if(!empty($value) ){
 				$final->{$key} = $value;
 			}
-				
 		}
 		
 		
@@ -108,7 +109,7 @@ class API_Controller extends Base_Controller
 		// eg 'programme_title_1' simply becomes 'programme_title'
 		$final = Programme::remove_ids_from_field_names($final);
 		
-		// return a json version of the newly-created $final object
+		// return a JSON version of the newly-created $final object
 		return Response::json($final);
 	}
 
