@@ -89,9 +89,9 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 			$subject->save();
 
-			Messages::add('success','Subject added');
+			Messages::add('success','Programme settings created.');
 
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
 
 	}
 
@@ -119,7 +119,9 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 			$subject->save();
 
-			return Redirect::to($year.'/'. $type.'/'. $this->views);
+			Messages::add('success','Programme settings updated.');
+
+			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit');
 
 	}
 

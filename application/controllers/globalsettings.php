@@ -86,7 +86,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 
 			Messages::add('success','Global settings have been saved');
 
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
 
 	}
 
@@ -118,7 +118,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 
 			Messages::add('success', "Saved {$global_settings->$institution_name_field}.");
 
-			return Redirect::to($year.'/'. $type.'/'. $this->views);
+			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit');
 
 	}
 
