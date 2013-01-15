@@ -170,16 +170,30 @@ class Revisionable extends SimpleData {
 			$revision = $this->get_revision($revision);
 		}
 
-		// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
-		$this->live = '2';
+		// Get the currently "active/selected" revision.
+		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
+		// If the active revision is already current, leave it be
+		$active_revision = $this->get_active_revision();
+		if($active_revision->status == 'live'){
+			$active_revision->status = 'selected';
+			$active_revision->save();
+		}
+
+		//If revision being made live us cyrrent, set item status to say there are no later versions
+		if($revision->status == 'selected'){
+			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+			$this->live = '2';
+		}else{
+			// If the revision going live isn't the current, ensure system knows
+			// there are still later revisions
+			$this->live = '1';
+		}
 		parent::save();
-
-		// Get revision model.
-		$revision_model = $this->revision_model;
-
-		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 		
+		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
+		$revision_model = $this->revision_model;
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+
 		// Update and save this revision 
 		$revision->status = 'live';
 		$revision->published_at = date('Y-m-d H:i:s');
