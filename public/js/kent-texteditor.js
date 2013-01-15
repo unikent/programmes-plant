@@ -19,5 +19,75 @@ var ck_config = {
 };
 
 $('textarea').each( function(){
-	CKEDITOR.replace( $(this)[0], ck_config);
+	//Add ckeditor
+	var ckedit = CKEDITOR.replace( $(this)[0], ck_config);
+ 
+ 	if($(this).attr('data-limit')){
+		//Add word limiting logic
+		var self = {};
+		// Get word limit from item
+	    self.limit = $(this).attr("data-limit");
+	    self.limiting_on_words = false;
+	    self.dom = document.createElement('span');
+	    self.dom.className = 'text_limits';
+
+	    //remove html /formatting so length is based on only words
+	    self.stripHTML = function(html){
+	    	//strip html, new lines & nbsp;'s
+			return html.replace( /<[^<|>]+?>/gi,'' ).replace(/(\r\n|\n|\r)/gm,'').replace(/(&nbsp;)*/g,'');
+		}
+		//How much of word limit is left
+		self.limit_left = function(field){
+	        if(self.limiting_on_words){
+	          //word limits
+	          //See http://stackoverflow.com/questions/6543917/count-number-of-word-from-given-string-using-javascript
+	          return self.limit - field.split(/\s+\b/).length;
+	        }else{
+	          //chars left
+	          return self.limit - field.length;
+	        }
+	    }
+	    //check the length
+	    self.checkLength = function(field){
+	        // How much if left
+	        var left = self.limit_left(self.stripHTML(field));
+
+	        // If less than 5, display in Red
+	        if(left < 5){
+	          self.dom.style.color = 'red';
+	        }else{
+	          self.dom.style.color = '';
+	        }
+
+	        //show message to user
+	        if(self.limiting_on_words){
+	          self.dom.innerHTML = left+' words left';
+	        }else{
+	          self.dom.innerHTML =  left+' characters left';
+	        }
+	    }
+
+	    // Work out if limit should be word or char based
+	    if(self.limit.substring(self.limit.length-1) == 'w'){
+	        self.limiting_on_words = true;
+	        self.limit = parseInt(self.limit.substring(0, self.limit.length-1));
+	    }else{
+	        self.limit = parseInt(self.limit);
+	    }
+
+	    // Add display span
+	    $(self.dom).insertAfter($(this));
+
+	    //Attach listeners.
+	    ckedit.on( 'key', function( evt ){ 
+	    	self.checkLength(evt.editor.getData());
+	    },ckedit.element.$ );
+	    ckedit.on( 'focus', function( evt ){ 
+	    	self.checkLength(evt.editor.getData());
+	    },ckedit.element.$ );
+
+	    self.checkLength(ckedit.getData());
+
+	}
+
 });

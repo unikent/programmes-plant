@@ -224,7 +224,6 @@ $(document).ready(function (){
     });
 
 
-
     // Word Limit system!
     $('input[data-limit]').each(function(x){
 
