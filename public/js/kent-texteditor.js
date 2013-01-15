@@ -34,7 +34,7 @@ $('textarea').each( function(){
 	    //remove html /formatting so length is based on only words
 	    self.stripHTML = function(html){
 	    	//strip html, new lines & nbsp;'s
-			return html.replace( /<[^<|>]+?>/gi,'' ).replace(/(\r\n|\n|\r)/gm,'').replace(/(&nbsp;)*/g,'');
+			return html.replace( /<[^<|>]+?>/gi,'' ).replace(/(\r\n|\n|\r)/gm,' ').replace(/(&nbsp;)*/g,'');
 		}
 		//How much of word limit is left
 		self.limit_left = function(field){
