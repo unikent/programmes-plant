@@ -54,12 +54,21 @@
       <?php echo  Form::text('placeholder', (isset($values)) ? $values->placeholder : '' )?>
     </div>
   </div>
+
+  <div class="control-group">
+    <?php echo Form::label('limit', __('fields.form.label_limit'), array('class'=>'control-label'))?>
+    <div class="controls">
+
+      <?php echo  Form::text('limit', (isset($values)) ? $values->limit : '' )?>
+      <br><?php echo __('fields.form.label_limit_help_text'); ?>
+    </div>
+  </div>
+
   <?php if(strcmp($field_type, 'programmes') == 0): ?>
   <div class="control-group">
 
     <?php echo Form::label('programme_field_type', __('fields.form.label_programme_field_type'), array('class'=>'control-label'))?>
     <div class="controls">
-
       <?php echo  Form::checkbox('programme_field_type', ProgrammeField::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==ProgrammeField::$types['OVERRIDABLE_DEFAULT']) ? ProgrammeField::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
     </div>
   </div>
