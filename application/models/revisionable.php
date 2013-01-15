@@ -399,4 +399,23 @@ class Revisionable extends SimpleData {
 		}
 	}
 
+	/**
+     * Simplifies the object by IDs from field names.
+     * 
+     * @todo This duplicates functionality in revisionable. Refactor or remove.
+     * @return StdClass A simplified version of the object minus its field names.
+     */
+    public function trim_ids_from_field_names()
+    {
+    	$trimmed = new StdClass();
+
+    	foreach ($this->attributes as $name => $value) 
+		{
+			$name = preg_replace('/_\d{1,3}$/', '', $name);
+			$trimmed->$name = $value;
+		}
+
+		return $trimmed;
+    }
+
 }

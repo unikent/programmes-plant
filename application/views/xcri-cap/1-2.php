@@ -11,48 +11,49 @@
   xmlns:courseDataProgramme="http://xcri.co.uk"
   xsi:schemaLocation="http://xcri.org/profiles/1.2/catalog http://www.xcri.co.uk/bindings/xcri_cap_1_2.xsd http://xcri.org/profiles/1.2/catalog/terms  http://www.xcri.co.uk/bindings/xcri_cap_terms_1_2.xsd http://xcri.co.uk http://www.xcri.co.uk/bindings/coursedataprogramme.xsd"
   generated="<?php echo "2012-04-11T17:36:22.218Z"; ?>">
-  <?php if ($globalsettings->contributor_3): ?>
-    <dc:contributor><?php echo $globalsettings->contributor_3; ?></dc:contributor>
+  <?php if ($globalsettings->contributor): ?>
+    <dc:contributor><?php echo $globalsettings->contributor; ?></dc:contributor>
   <?php endif; ?>
-  <?php if ($globalsettings->catalog_description_4): ?>
+  <?php if ($globalsettings->catalog_description): ?>
     <dc:description>
       <div xmlns="http://www.w3.org/1999/xhtml">
-        <?php echo $globalsettings->catalog_description_4; ?>
+        <?php echo $globalsettings->catalog_description; ?>
       </div>
     </dc:description>
   <?php endif; ?>
     <provider>
-      <?php if ($globalsettings->provider_description_5): ?>
+      <?php if ($globalsettings->provider_description): ?>
         <dc:description>
           <div xmlns="http://www.w3.org/1999/xhtml">
-            <?php echo $globalsettings->provider_description_5; ?>
+            <?php echo $globalsettings->provider_description; ?>
           </div>
         </dc:description>
       <?php endif; ?>
-      <dc:identifier><?php echo $globalsettings->provider_url_6; ?></dc:identifier>
-      <dc:identifier xsi:type="courseDataProgramme:ukprn"><?php echo $globalsettings->ukprn_2; ?></dc:identifier>
-      <dc:title><?php echo $globalsettings->institution_name_1; ?></dc:title>
-      <mlo:url><?php echo $globalsettings->provider_url_6; ?></mlo:url>
-      <?php echo View::make('xcri-cap.partials.courses', array('programmes' => $programmes))->render(); ?>
+      <dc:identifier><?php echo $globalsettings->provider_url; ?></dc:identifier>
+      <dc:identifier xsi:type="courseDataProgramme:ukprn"><?php echo $globalsettings->ukprn; ?></dc:identifier>
+      <image src="<?php echo $globalsettings->image_source ?>" title="<?php echo $globalsettings->image_title ?>" alt="<?php echo $globalsettings->image_alt ?>"/>
+      <dc:title><?php echo $globalsettings->institution_name; ?></dc:title>
+      <mlo:url><?php echo $globalsettings->provider_url; ?></mlo:url>
+      <?php echo View::make('xcri-cap.partials.courses', array('programmes' => $programmes, 'globalsettings' => $globalsettings)); ?>
       <mlo:location>
-        <?php if ($globalsettings->town_10): ?>
-          <mlo:town><?php echo $globalsettings->town_10; ?></mlo:town>
+        <?php if ($globalsettings->town): ?>
+          <mlo:town><?php echo $globalsettings->town; ?></mlo:town>
         <?php endif; ?>
-        <?php if ($globalsettings->postcode_14): ?>
-          <mlo:postcode><?php echo $globalsettings->postcode_14; ?></mlo:postcode>
+        <?php if ($globalsettings->postcode): ?>
+          <mlo:postcode><?php echo $globalsettings->postcode; ?></mlo:postcode>
         <?php endif; ?>
-        <mlo:address><?php echo $globalsettings->address_line_1_7; ?></mlo:address>
-        <?php if ($globalsettings->phone_13): ?>
-          <mlo:phone><?php echo $globalsettings->phone_13; ?></mlo:phone>
+        <mlo:address><?php echo $globalsettings->address_line_1; ?></mlo:address>
+        <?php if ($globalsettings->phone): ?>
+          <mlo:phone><?php echo $globalsettings->phone; ?></mlo:phone>
         <?php endif; ?>
-        <?php if ($globalsettings->fax_12): ?>
-          <mlo:fax><?php echo $globalsettings->fax_12; ?></mlo:fax>
+        <?php if ($globalsettings->fax): ?>
+          <mlo:fax><?php echo $globalsettings->fax; ?></mlo:fax>
         <?php endif; ?>
-        <?php if ($globalsettings->email_11): ?>
-          <mlo:email><?php echo $globalsettings->email_11; ?></mlo:email>
+        <?php if ($globalsettings->email): ?>
+          <mlo:email><?php echo $globalsettings->email; ?></mlo:email>
         <?php endif; ?>
-        <?php if ($globalsettings->provider_url_6): ?>
-          <mlo:url><?php echo $globalsettings->provider_url_6; ?></mlo:url>
+        <?php if ($globalsettings->provider_url): ?>
+          <mlo:url><?php echo $globalsettings->provider_url; ?></mlo:url>
         <?php endif; ?>
       </mlo:location>
     </provider>

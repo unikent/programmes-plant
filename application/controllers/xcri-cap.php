@@ -18,12 +18,33 @@ class XCRI_CAP_Controller extends Base_Controller {
 	 */
 	public function get_index($level, $year)
 	{
+		$data = array();
+
 		// Get only live programmes.
-		$data['programmes'] = Programme::where('year', '=', $year)->where('live', '=', true)->get();
+		$programmes = Programme::with('award', 'campus', 'subject_area_1')->where('year', '=', $year)->where('live', '=', true)->get();
+
+		if (! $programmes)
+		{
+			Response::error(404);
+		}
+
+		$data['programmes'] = array();
+
+		foreach($programmes as $programme)
+		{
+			$data['programmes'][] = $programme->xcrify();
+		}
 
 		// We need some additional data to fill the XCRI-CAP feed entirely.
-		$data['globalsettings'] = GlobalSetting::where('year', '=', $year)->first();
-		
+		$globalsettings = GlobalSetting::where('year', '=', $year)->first();
+
+		if (! $globalsettings)
+		{
+			Response::error(404);
+		}
+
+		$data['globalsettings'] = $globalsettings->trim_ids_from_field_names();
+
 		$xcri = View::make('xcri-cap.1-2', $data);
 
 		$headers = array(
