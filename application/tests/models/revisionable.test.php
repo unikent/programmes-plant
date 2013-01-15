@@ -4,7 +4,7 @@ class RevisionableThing extends Revisionable {}
 
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'id' => 1);
+	public $input =  array('programme_title_1' => 'Thing', 'created_by' => "test user");
 
 	public static function setUpBeforeClass()
 	{
@@ -23,6 +23,15 @@ class TestRevisionable extends ModelTestCase {
 		{
 			$programme_setting->delete();
 		}
+
+		$programme_revisions = ProgrammeRevision::all();
+		foreach ($programme_revisions as $programme_revision)
+		{
+			$programme_revision->delete();
+		}
+		//Reset auto incriment sequences
+		DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+		DB::query('delete from sqlite_sequence where name="programmes"');
 
 		// Kill the list cache (just in case).
 		// This caches everything in memory.
@@ -310,14 +319,59 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
+
 	
+	// New revision tests
+	public function testRevisionCreatedOnSave(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+		$this->assertNotNull($revision);
+	}
+	public function testInitalRevisionForNewProgrammeIsSelected(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("selected", $revision->status);
+	}
+	public function testSecondSaveCreatesSecondRevision(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+        $revision = $revisionable_item->get_revision(2);
+
+		$this->assertNotNull($revision);
+	}
+	public function testSecondSaveSetsStatusOfFirstRevisionToDraft(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+    	$revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("draft", $revision->status);
+	}
+
+
+
 	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
 	{
     	// set up some data
     	$this->populate();
     	$revisionable_item = Programme::find(1);
         $revision = $revisionable_item->get_revision(1);
-        
+
         // make the revision live
         $revisionable_item->make_revision_live($revision);
         
