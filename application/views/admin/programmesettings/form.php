@@ -3,7 +3,7 @@
 <?php echo Messages::get_html()?>
 
 <h1><?php echo __('fields.programmesettings') ?> - <?php echo URI::segment(1)?></h1>
-
+<br/>
 <?php echo __('fields.programmesettings_intro') ?>
 <?php echo __('fields.programmesettings_note') ?>
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmesettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
