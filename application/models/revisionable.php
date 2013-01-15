@@ -249,7 +249,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['edits_by']);
 		unset($revision_values['made_live_by']);
 		unset($revision_values['status']);
-		unset($revision_values[strtolower($this->data_type).'_id']);
+		unset($revision_values[strtolower($this->data_type_id).'_id']);
 
 		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
 
