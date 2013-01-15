@@ -10,7 +10,6 @@ var ck_config = {
 		[ 'Undo', 'Redo' ],
 		{ name: 'document', items: ['Maximize'] },
 	],
-	resize_enabled : false,
 	customConfig: '',
 	language: 'en-gb',
 	width: "600px",
