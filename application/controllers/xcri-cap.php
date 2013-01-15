@@ -18,8 +18,6 @@ class XCRI_CAP_Controller extends Base_Controller {
 	 */
 	public function get_index($level, $year)
 	{
-		$data = array();
-
 		// Get only live programmes.
 		$programmes = Programme::with('award', 'campus', 'subject_area_1')->where('year', '=', $year)->where('live', '=', true)->get();
 
@@ -28,8 +26,8 @@ class XCRI_CAP_Controller extends Base_Controller {
 			Response::error(404);
 		}
 
-		$data['programmes'] = array();
-
+		$data = array('programmes' => array());
+		
 		foreach($programmes as $programme)
 		{
 			$data['programmes'][] = $programme->xcrify();
