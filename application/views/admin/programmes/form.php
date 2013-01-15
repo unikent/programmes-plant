@@ -1,11 +1,10 @@
 <?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programme, 'type'=>'programmes'))->render();?>
 
+<?php echo Messages::get_html()?>
+
 <h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
-
-
-<?php echo Messages::get_html()?>
 
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
@@ -29,6 +28,8 @@
 
 
 <div class="floating_save" data-spy="affix" data-offset-top="130">
+	<p><strong><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?></strong></p>
+	
 	<input type="submit" class="btn btn-warning" value="Save">
 	<a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
 </div>
