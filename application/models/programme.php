@@ -284,7 +284,7 @@ class Programme extends Revisionable {
 	 * @param int $programme_id The ID of the programme.
 	 * @return Object $final | false The object as an array with relevant data attached. or false if we had problems.
 	 */
-	public static function get_as_flattened()
+	public static function get_as_flattened($year, $level, $programme_id)
 	{
 		// Set up the path to the output/cache file.
 		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
