@@ -11,7 +11,7 @@ class TestXCRI_Controller extends ControllerTestCase {
 
 	public function testget_indexShouldReturnDataForUndergraduatesForAYear() {}
 
-	public function testget_indexShouldReturnDataForPostGraduateForAYear() {}
+	public function testget_indexShouldReturnA404WhenGlobalSettingsThatAreRequiredAreMissing() {}
 
 	public function testget_indexShouldReturnAValidXMLDocument() {}
 

@@ -447,4 +447,9 @@ class TestRevisionable extends ModelTestCase {
         $programme_setting = ProgrammeSetting::find(1);
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
+
+	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
+
+	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+
 }
