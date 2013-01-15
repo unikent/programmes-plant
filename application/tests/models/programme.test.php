@@ -1,7 +1,6 @@
 <?php
 
-class TestProgramme extends ModelTestCase
-{
+class TestProgramme extends ModelTestCase {
 
 	public function testXcrifyReturnsAStdClass() {}
 
