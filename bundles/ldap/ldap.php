@@ -119,7 +119,7 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 			$userObject->name = $user[0]['givenname'][0];
 			$userObject->fullname = $user[0]['unikentaddisplayname'][0];
 			$userObject->email = $user[0]['mail'][0];
-			$userObject->title = $user[0]['title'][0];
+			$userObject->title = isset($user[0]['title'][0]) ? $user[0]['title'][0] : '';
 
 			// Get role
 			$role = Role::where('username', '=', $username)->first();
@@ -132,7 +132,7 @@ class LDAP extends \Laravel\Auth\Drivers\Driver {
 		        $role->fullname = $userObject->fullname;
 		        $role->isadmin  = false;
 		        $role->isuser   = false;
-		        $role->department = $user[0]['unikentoddepartment'][0];
+		        $role->department = isset($user[0]['unikentoddepartment'][0]) ? $user[0]['unikentoddepartment'][0] : '';
 		        $role->save();		
 			}
 			
