@@ -119,6 +119,9 @@ display: none;
   height:120px;
 }
 
+
+.text_limits {padding:4px;}
+
 /* Css for floating save bar in programmes / other long forms */
 .floating_save{
     right:0px; 
@@ -141,3 +144,4 @@ display: none;
 
 .floating_save.save_only {width:100px;}
 .floating_save.save_only.affix-top {top:190px;}
+
