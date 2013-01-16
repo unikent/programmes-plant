@@ -457,8 +457,8 @@ class TestRevisionable extends ModelTestCase {
 	{
 		 //TEST ISSUE: see "@todo @workaround" in revisionble model
 
-    	// set up some data
-    	$input =  array('institution_name_1' => 'University of Kent');
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('institution_name_1' => 'University of Kent', 'id' => 1);
     	$this->populate('GlobalSetting', $input);
     	$revisionable_item = GlobalSetting::find(1);
     	
@@ -481,12 +481,12 @@ class TestRevisionable extends ModelTestCase {
 	{
 		//TEST ISSUE: see "@todo @workaround" in revisionble model
 
-    	// set up some data
-    	$input =  array('programme_title_1' => 'Test programme title');
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('programme_title_1' => 'Test programme title', 'id' => 1);
     	$this->populate('ProgrammeSetting', $input);
     	
     	$revisionable_item = ProgrammeSetting::find(1);
-
+	
     	// make a new revision
         $new = ProgrammeSetting::find(1);
         $new->programme_title_1 = 'The Music Programme';

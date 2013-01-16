@@ -115,13 +115,19 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Get all revisions for this item
-	 * @param array of revisions
+	 * Get all revisions for this item (or revisions in a particular status if status is passed)
+	 * @param $status status of revisions to return
+	 * @return array of revisions
 	 */
-	public function get_revisions()
+	public function get_revisions($status = false)
 	{
 		$model = $this->revision_model;
-		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+		// store query obj
+		$query = $model::where($this->data_type_id.'_id','=',$this->id);
+		// if status is set add filter
+		if($status)$query = $query->where('status', '=', $status);
+		// return data
+		return $query->order_by('created_at', 'desc')->get();
 	}
 
 	/**
@@ -344,12 +350,13 @@ class Revisionable extends SimpleData {
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
 		$ucas_code_field = Programme::get_ucas_code_field();
+		$search_keywords_field = Programme::get_search_keywords_field();
 
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						->where('status','!=','0')
+						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
 						->get();
@@ -369,7 +376,8 @@ class Revisionable extends SimpleData {
 				'new_programme' => $programme->$new_programme_field,
 				'subject_to_approval' => $programme->$subject_to_approval_field,
 				'mode_of_study' => $programme->$mode_of_study_field,
-				'ucas_code' => $programme->$ucas_code_field
+				'ucas_code' => $programme->$ucas_code_field,
+				'search_keywords' => $programme->$search_keywords_field,
 			);
 		}
 

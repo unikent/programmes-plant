@@ -136,6 +136,19 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Get the name of the 'search_keywords' field/column in the database.
+	 * 
+	 * @return The name of the 'search_keywords' field.
+	 */
+	public static function get_search_keywords_field()
+	{
+		return 'search_keywords_46';
+	}
+
+
+
+
+	/**
 	 * Get this programme's award.
 	 * 
 	 * @return Award The award for this programme.
