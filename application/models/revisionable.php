@@ -350,12 +350,13 @@ class Revisionable extends SimpleData {
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
 		$ucas_code_field = Programme::get_ucas_code_field();
+		$search_keywords_field = Programme::get_search_keywords_field();
 
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						->where('status','!=','0')
+						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
 						->get();
@@ -375,7 +376,8 @@ class Revisionable extends SimpleData {
 				'new_programme' => $programme->$new_programme_field,
 				'subject_to_approval' => $programme->$subject_to_approval_field,
 				'mode_of_study' => $programme->$mode_of_study_field,
-				'ucas_code' => $programme->$ucas_code_field
+				'ucas_code' => $programme->$ucas_code_field,
+				'search_keywords' => $programme->$search_keywords_field,
 			);
 		}
 
