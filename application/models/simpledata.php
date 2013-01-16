@@ -205,7 +205,7 @@ class SimpleData extends Eloquent {
 
 		foreach ($ds_fields as $ds_field) 
 		{
-			$values[$ds_field->id] = $ds_field->to_array();
+			$values[] = $ds_field->to_array();
 		}
 
 		return $values;
