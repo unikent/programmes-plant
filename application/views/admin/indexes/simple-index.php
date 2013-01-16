@@ -45,5 +45,3 @@
       <a class="btn btn-danger yes_action"><?php echo __($type . '.modal_delete'); ?></a>
   </div>
 </div>
-
-

@@ -3,6 +3,7 @@
 class Programme extends Revisionable {
 
 	public static $table = 'programmes';
+	
 	protected $revision_model = 'ProgrammeRevision';
 
 	/**
@@ -197,46 +198,41 @@ class Programme extends Revisionable {
 	{
 	  return $this->belongs_to('Campus', static::get_location_field());
 	}
-	
+
 	/**
-	 * look through the passed in record and substitute any IDs with data from their correct table.
-	 * Primarily for our JSON API.
+	 * look through the passed in record and substitute any ids with data from their correct table
+	 * primarily for our json api
 	 * 
-	 * For example, subsitutions the award field with the name for the award.
-	 * 
-	 * @param Programme $record The record.
-	 * @return Programme $new_record A new record with IDs substituted for their values.
+	 * @param $record The record
+	 * @return $new_record A new record with ids substituted
 	 */
 	public static function pull_external_data($record)
 	{
 		$path = path('storage') . 'api/';
 		$programme_fields_path = $path . 'programmefield.json';
 
-		// If we dont have a json file, return the $record as it was.
+		//if we dont have a json file, return the $record as it was
 		if (!file_exists($programme_fields_path))
 		{
 			return $record;
 		}
 
-		// Get programme fields.
+		//get programme fields
 		$programme_fields = json_decode(file_get_contents($programme_fields_path));
 		
-		// Make neater programme fields array.
+		//make neater programme fields array
 		$fields_array = array();
 		foreach ($programme_fields as $field) {
 			$fields_array[$field->colname] = $field->field_meta;
 		}
 		
-		// Substitute the IDs with actual data.
+		//substitute the concerned ids with actual data
 		$new_record = array();
-		foreach ($record as $field_name => $field_value)
-		{
-			if(isset($fields_array[$field_name]))
-			{
+		foreach ($record as $field_name => $field_value) {
+			if(isset($fields_array[$field_name])){
 				$model = $fields_array[$field_name];
 				$field_value = $model::replace_ids_with_values($field_value);
 			}
-
 			$new_record[$field_name] = $field_value;
 		}
 
@@ -244,30 +240,64 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * Replaces the passed-in ids with their actual record
-	 * limiting the record to its name and ID.
-	 * 
-	 * @param string $ids A list of IDs separated by commas.
-	 * @return array $values Values mapped ID => value.
+	 * This function replaces the passed-in ids with their actual record
+	 * Limiting the record to its name and id
 	 */
-	public static function replace_ids_with_values($ids)
-	{
+	public static function replace_ids_with_values($ids){
+
 		$ds_fields = static::where_in('id', explode(',', $ids))->get();
 		$values = array();
-
-		foreach ($ds_fields as $ds_field)
-		{
+		foreach ($ds_fields as $ds_field) {
 			$title_field = static::get_title_field();
 			$slug_field = static::get_slug_field();
-
 			$values[$ds_field->id] = static::remove_ids_from_field_names(array(
-				'id' => $ds_field->id,
-				$title_field => $ds_field->$title_field,
-				$slug_field => $ds_field->$slug_field
-			));
+					'id' => $ds_field->id,
+					$title_field => $ds_field->$title_field,
+					$slug_field => $ds_field->$slug_field
+				));
 		}
 
 		return $values;
+	}
+
+	/**
+	 * Creates a flat representation of the object for use in XCRI.
+	 * 
+	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
+	 */
+	public function xcrify()
+	{
+		$clean_programme = $this->trim_ids_from_field_names();
+		$clean_programme->url = 'http://www.kent.ac.uk/courses/undergraduate/' . $this->id . '/' . $this->slug;
+
+		// Pull in award as eager loading doesn't appear to be working.
+		$clean_programme->award = Award::find($this->award_3);
+
+		// Set campus as default while we are making a dummy.
+		$clean_programme->attendance_mode_id = 'CM';
+		$clean_programme->attendance_mode = 'Campus';
+
+		// Also dummy attendence_pattern_id for now. Set to daytime.
+		$clean_programme->attendance_pattern = 'Daytime';
+		$clean_programme->attendance_pattern_id = 'DT';
+
+		$clean_programme->campus = Campus::find($this->location_11);
+
+		// Deal with subjects in an ugly way.
+		$clean_programme->subjects = array();
+		$clean_programme->subjects[] = $this->jacs_code_subject_1_42;
+		$clean_programme->subjects[] = $this->jacs_code_subject_2_43;
+
+		$subject  = Subject::find($this->subject_area_1_8);
+		$clean_programme->subjects[] = $subject->name;
+
+		$subject  = Subject::find($this->subject_area_2_9);
+		$clean_programme->subjects[] = $subject->name;
+
+		// Leave as is for the moment.
+		$clean_programme->cost = $this->tuition_fees;
+
+		return $clean_programme;
 	}
 
 	/**
@@ -371,4 +401,5 @@ class Programme extends Revisionable {
 		// e.g. 'programme_title_1' simply becomes 'programme_title'.
 		return Programme::remove_ids_from_field_names($final);
 	}
+
 }
