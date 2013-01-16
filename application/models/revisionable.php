@@ -115,13 +115,19 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Get all revisions for this item
-	 * @param array of revisions
+	 * Get all revisions for this item (or revisions in a particular status if status is passed)
+	 * @param $status status of revisions to return
+	 * @return array of revisions
 	 */
-	public function get_revisions()
+	public function get_revisions($status = false)
 	{
 		$model = $this->revision_model;
-		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+		// store query obj
+		$query = $model::where($this->data_type_id.'_id','=',$this->id);
+		// if status is set add filter
+		if($status)$query = $query->where('status', '=', $status);
+		// return data
+		return $query->order_by('created_at', 'desc')->get();
 	}
 
 	/**
