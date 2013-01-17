@@ -53,6 +53,7 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+		
 		// If the save succeeds, save a new revision and return its status 
 		// (so the return from this save() is means both the revision & save itself were successful.)
 		if($success) return $this->save_revision();
