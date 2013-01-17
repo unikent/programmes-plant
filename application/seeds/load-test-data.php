@@ -436,7 +436,7 @@ class Load_Test_Data {
 				case 'checkbox':
 					$options = explode(',', $field->field_meta);
 					shuffle($options);
-					$programme->{$field->colname} = $options[0];
+					$programme->{$field->colname} = trim($options[0]);
 				break;
 
 				case 'table_multiselect':
