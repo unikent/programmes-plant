@@ -23,7 +23,8 @@ class Revision extends Eloquent {
 	 * @return string decribing revision
 	 */
     public function get_identifier_string(){
-        return '<strong>'.$this->get_identifier().'</strong> created '.$this->get_created_time().' by '.$this->edits_by ;
+    	$link =  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'/'.$this->{$this->data_type_id}.'@view_revision', array($this->id));
+        return '<strong><a href="'.$link.'" target="_blank">'.$this->get_identifier().'</a></strong> created '.$this->get_created_time().' by '.$this->edits_by ;
     }
 
     /**
