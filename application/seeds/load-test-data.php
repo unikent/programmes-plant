@@ -365,128 +365,159 @@ class Load_Test_Data {
 			array('slug'=>'wildlife-conservation', 'title'=>'Wildlife Conservation'),
 	);
 
-	public static $input_data_source = array(
-		'programme_title_1'=>'',
-		'slug_2'=>'',
-		'award_3'=>'1',
-		'awarding_institute_or_body_4'=>'University of Kent',
-		'honours_type_5'=>'Single honours',
-		'administrative_school_6'=>'1',
-		'additional_school_7'=>'1',
-		'subject_area_1_8'=>'1',
-		'subject_area_2_9'=>'1',
-		'ucas_code_10'=>'1234',
-		'location_11'=>'1',
-		'mode_of_study_12'=>'Full-time only',
-		'attendance_mode_13'=>'false',
-		'attendance_pattern_14'=>'false',
-		'duration_15'=>'',
-		'accredited_by_16'=>'',
-		'programme_type_17'=>'',
-		'total_kent_credits_awarded_on_completion_18'=>'',
-		'total_ects_credits_awarded_on_completion_19'=>'',
-		'programme_abstract_20'=>'',
-		'programme_overview_text_21'=>'',
-		'foundation_year_22'=>'',
-		'year_in_industry_23'=>'',
-		'year_abroad_24'=>'',
-		'teaching_and_assessment_25'=>'',
-		'programme_aims_26'=>'',
-		'learning_outcomes_27'=>'',
-		'careers_overview_28'=>'',
-		'professional_recognition_29'=>'',
-		'entry_profile_30'=>'',
-		'homeeu_students_intro_text_31'=>'',
-		'a_level_32'=>'',
-		'cgse_33'=>'',
-		'cambridge_preu_34'=>'',
-		'international_baccalaureate_35'=>'',
-		'access_to_he_diploma_36'=>'',
-		'btec_level_5_hnd_37'=>'',
-		'btec_level_3_extended_diploma_formerly_btec_national_diploma_38'=>'',
-		'scottish_qualifications_39'=>'',
-		'irish_leaving_certificate_40'=>'',
-		'international_students_intro_textarea_41'=>'',
-		'kent_international_foundation_programme_42'=>'',
-		'english_language_requirements_43'=>'',
-		'entry_requirements_overriding_text_44'=>'',
-		'tuition_fees_45'=>'',
-		'subject_leaflet_46'=>'',
-		'subject_leaflet_2_47'=>'',
-		'student_profile_48'=>'',
-		'student_profile_2_49'=>'',
-		'kiscourseid_50'=>'',
-		'kistype_51'=>'',
-		'kis_explanatory_text_52'=>'',
-		'jacs_code_subject_1_53'=>'',
-		'jacs_code_subject_2_54'=>'',
-		'pos_code_55'=>'',
-		'programme_url_56'=>'',
-		'search_keywords_57'=>'',
-		'subject_categories_58'=>'',
-		'related_courses_59'=>'',
-		'holding_message_60'=>'',
-		'new_programme_61'=>'',
-		'prorgamme_specification_url_62'=>'',
-		'subject_to_approval_63'=>'',
-		'programme_suspended_64'=>'',
-		'programme_withdrawn_65'=>'',
-		'start_93'=>'',
-		'funding_94'=>'',
-		'how_to_apply_95'=>'',
-		'enquiries_96'=>'',
-	);
+	public static $lorem_ipsum = array(
+		'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vestibulum pulvinar tellus, id venenatis quam malesuada quis. Etiam quis velit ante.Integer eget elit vitae eros venenatis laoreet. Nam interdum, dolor sed elementum varius, justo nibh varius arcu, et posuere neque lorem non eros. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eu tortor nulla, nec facilisis nisi. Etiam consequat, est ac lobortis pretium, quam lorem tempor dui, at fermentum erat tellus eget felis. Sed consectetur est nec ante tristique egestas. Maecenas sagittis elementum neque, sit amet faucibus nulla bibendum vel. Aliquam erat volutpat. Sed quis ipsum odio. Donec tincidunt sapien at lectus aliquam tincidunt. Mauris tincidunt volutpat enim malesuada fermentum.',
+		'Fusce pellentesque adipiscing diam fermentum iaculis. Ut fringilla sapien sed nisl condimentum adipiscing fermentum eget nibh. Nam eget lorem neque, nec vestibulum eros. Nulla elementum nunc in augue volutpat suscipit. Proin a purus justo. Nunc hendrerit gravida quam. In consectetur sapien nec massa consectetur dapibus. Suspendisse vitae ipsum a lectus iaculis scelerisque fermentum a ipsum. Vivamus ac dolor ut massa condimentum aliquam at vitae odio. Vestibulum sit amet libero est, ac tristique enim. Donec tristique, ligula sit amet vulputate consectetur, quam diam lobortis felis, aliquam sodales turpis quam ac purus. Mauris non felis vel leo gravida rutrum sed ac ante. Pellentesque odio lorem, ultricies vitae tristique sit amet, suscipit et velit. Sed a luctus erat. Suspendisse eget commodo enim. In tortor ligula, hendrerit nec convallis vitae, rhoncus a dolor.',
 
+		'Nunc id sem a dolor pretium sollicitudin id vel tellus. Maecenas congue sollicitudin pharetra. Morbi in erat ipsum, non facilisis leo. Duis eget est libero. Curabitur metus odio, sollicitudin non molestie id, aliquet ac dolor. Ut sem sapien, ultricies sed scelerisque quis, dapibus vel justo. Sed orci magna, volutpat vel aliquam ac, lobortis sed arcu. Quisque lectus lectus, aliquet quis rutrum a, convallis in nulla.',
+
+		'Mauris id risus et quam tincidunt condimentum. Etiam vitae lectus ut purus egestas iaculis. Donec eu risus tellus, id congue leo. Maecenas in est velit, non tincidunt nunc. Morbi sed massa nisl. Duis nec nibh vitae nisi sagittis eleifend. Nunc vel ligula quam, eget consequat mi. Aliquam vel eros mi. Nunc molestie tincidunt mauris, vitae placerat lectus vehicula et. Integer sem arcu, elementum nec fermentum vel, accumsan nec massa. Aenean vel blandit nulla. Quisque quis velit diam, id pellentesque purus. Aliquam erat volutpat.',
+
+		'Praesent massa libero, egestas ac fringilla vitae, imperdiet nec mauris. Vestibulum fermentum pellentesque auctor. Pellentesque diam libero, aliquet ut iaculis sit amet, imperdiet non purus. Cras non fringilla dolor. Nulla ac est at nisi tincidunt luctus at ac mauris. Proin a lacinia metus. Sed at metus odio. Duis ut dui neque, ut tincidunt ipsum. Phasellus tortor erat, rhoncus varius tempor vel, iaculis in est.'
+	);
+	
+	/**
+	 * Run load test data.
+	 */
 	function run()
 	{
-		$programme_fields = ProgrammeField::programme_fields();
+		ini_set('memory_limit', '700M');
 
-		// Assign values to the fields based on our data source, and save each one
-		foreach (self::$title_list as $title_data)
-		{
-			// set up the new programme
-			$programme = new Programme;
-			$programme->year = '2012';
-			$programme->created_by = 'at369';
-			$programme->live = 1;
-
-			self::$input_data_source['programme_title_1'] = $title_data['title'];
-			self::$input_data_source['slug_2'] = $title_data['slug'];
-
-			// Let's get randomised.
-			$this->generate_dummy_programme();
-
-			$programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, self::$input_data_source);
-			$programme_modified->save();
+		// Populate three years worth of data.
+		for ($year = 2014; $year <= 2016; $year ++)
+		{ 
+			// Populate each year for all the programmes.
+			foreach (self::$title_list as $title_data)
+			{
+				$programme = $this->generate_dummy_programme($year, $title_data['title']);
+			}
 		}
 	}
 
-	function generate_dummy_programme()
+	/**
+	 * Generate a dummy programme and save it.
+	 * 
+	 * @param string $title The title of the programme, if named.
+	 * @return bool The success or otherwise of saving the dummy programme.
+	 */
+	function generate_dummy_programme($year = 2014, $title = null)
 	{
-		// Seed randomiser.
-		list($usec, $sec) = explode(' ', microtime());
-		$seed = (float) $sec + ((float) $usec * 100000);
+		// If no title is specified grab a random one.
+		if (! $title)
+		{
+			shuffle($this->title_list);
+			$title = $this->title_list[0]['title'];
+		}
 
-		mt_srand($seed);
+		// Set up the new programme.
+		$programme = new Programme;
+		$programme->year = $year;
+		$programme->created_by = 'at369';
+		$programme->live = 1;
 
-		$schools = array('University of Kent', 'Medway School of Pharmacy', 'University of Kent', 'Canterbury Christ Church University');
-		shuffle($schools);
-		self::$input_data_source['awarding_institute_or_body_4'] = $schools[0];
+		$programme->programme_title_1 = $title;
+		$programme->slug_2 = Str::slug($title);
 
-		$mode_of_study = array('Full-time only', 'Part-time only', 'Full-time or part-time');
-		shuffle($mode_of_study);
-		self::$input_data_source['mode_of_study_12'] = $mode_of_study[0];
+		$fields = ProgrammeField::all();
 
-		$attendence_mode = array('Campus', 'Distance with attendance', 'Distance without attendance', 'Mixed');
-		shuffle($attendence_mode);
-		self::$input_data_source['attendance_mode_13'] = $attendence_mode[0];
+		// Provide dummy data for each field in turn.
+		foreach ($fields as $field)
+		{
+			// Ignore dummy data already inserted.
+			if ($field->colname == 'programme_title_1' or $field->colname == 'slug_2')
+			{
+				continue;
+			}
 
-		self::$input_data_source['administrative_school_6'] = mt_rand(1, 5);
-		self::$input_data_source['honours_type_5'] = mt_rand(1, 6);
-		self::$input_data_source['location_11'] = mt_rand(1, 5);
-		self::$input_data_source['duration_15'] = mt_rand(3, 7) . ' years';
-		
-		
-		self::$input_data_source['accredited_by_16'] = 'The University of Kent';
+			// Use the appropriate form of dummy data for the field type.
+			switch ($field->field_type) 
+			{
+				case 'select':
+				case 'checkbox':
+					$options = explode(',', $field->field_meta);
+					shuffle($options);
+					$programme->{$field->colname} = $options[0];
+				break;
+
+				case 'table_multiselect':
+					$model = $field->field_meta;
+					$options = $model::all_as_list();
+					
+					// If there is nothing in table this select normally draws from then
+					// skip over this field.
+					if (count($options) == 0)
+					{
+						continue;
+					}
+
+					// Give a random number of multi-selected items.
+					$number = rand(1, 5);
+					$selected = array();
+
+					for ($i = 0; $i <= $number; $i++)
+					{
+						$random = array_rand($options);
+						$selected[] = $random;
+						unset($options[$random]);
+
+						if (count($options) == 0)
+						{
+							break;
+						}
+					}
+
+					$programme->{$field->colname} = implode(',', $options);
+				break;
+
+				case 'table_select':
+					$model = $field->field_meta;
+					$options = $model::all_as_list();
+					$programme->{$field->colname} = array_rand($options);
+				break;
+
+				case 'text':
+					$programme->{$field->colname} = $this->random_characters(rand(1, 20));
+				break;
+
+				case 'textarea':
+					$programme->{$field->colname} = $this->generate_lorem_ipsum(2);
+				break;
+			}
+
+			unset($model, $options, $random, $selected, $number);
+		}
+
+		return $programme->save();
+	}
+
+	/**
+	 * Return a number of paragraphs of Lorem Ipsum text.
+	 * 
+	 * @param int $number The number of paragraphs of Lorem Ipsum.
+	 * @return string Paragraphs of Lorem Ipsum.
+	 */
+	public function generate_lorem_ipsum($number = 1)
+	{
+		shuffle(self::$lorem_ipsum);
+
+		$lorem_ipsum = array();
+
+		for ($i = 0; $i <= $number ; $i++) 
+		{ 
+			$lorem_ipsum[] = self::$lorem_ipsum[$i];
+		}
+
+		return implode("\n", $lorem_ipsum);
+	}
+
+	/**
+	 * Generate some random characters.
+	 * 
+	 * @param int $number The number of characters to return.
+	 * @return string The random characters.
+	 */
+	public function random_characters($number = 5)
+	{
+		return substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", $number + 1)), 0, $number + 1);
 	}
 }
