@@ -381,7 +381,8 @@ class Load_Test_Data {
 	 */
 	function run()
 	{
-		ini_set('memory_limit', '700M');
+		// Increase PHP memory limit a great deal.
+		ini_set('memory_limit', '256M');
 
 		// Populate three years worth of data.
 		for ($year = 2014; $year <= 2016; $year ++)
