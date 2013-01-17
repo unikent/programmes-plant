@@ -126,22 +126,22 @@ display: none;
 .floating_save{
     right:0px; 
     margin-right:0px;
-    width:200px; 
     padding:10px; 
     background-color: #f5f5f5; 
     border-radius: 6px; 
-    border-top-right-radius:0px;
-    border-bottom-right-radius:0px;
-    border: 1px solid #e3e3e3
+    border: 1px solid #e3e3e3;
+    text-align:right;
 }
-.floating_save.affix-top {
-    position:absolute;
-    top:190px;
-}
-.floating_save.affix {
-    top:50px;
+.floating_save .pull-right{
+    padding-left:20px;
 }
 
-.floating_save.save_only {width:100px;}
-.floating_save.save_only.affix-top {top:190px;}
+.floating_save .btn {margin-top:-5px;}
+
+.floating_save.affix {
+    top:40px;
+    width:100%;
+    height:22px;
+    border-radius:0px;
+}
 
