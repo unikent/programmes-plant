@@ -1,8 +1,15 @@
 //methods
 function show_options(selectbox) {
     if ($(selectbox).val() == 'select' || $(selectbox).val() == 'checkbox' || $(selectbox).val() == 'table_select' || $(selectbox).val() == 'table_multiselect') {
-        $('#ext_opt').show();
+        //Show all fields
+        $('#ext_opt, #form_extra_controls').show();
+
+    }else if($(selectbox).val() == 'help'){
+        //Only show top fields.
+         $('#ext_opt, #form_extra_controls').hide();
     }else {
+      //Show all fields except options
+        $('#form_extra_controls').show();
         $('#ext_opt').hide();
     }
 }
