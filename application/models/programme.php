@@ -402,4 +402,87 @@ class Programme extends Revisionable {
 		return Programme::remove_ids_from_field_names($final);
 	}
 
+
+
+
+
+
+	public static function get_api_programme($id, $year){
+		$cache_key = "api-programme-ug-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($year);
+	}
+
+	public static function generate_api_programme($id, $year, $revision = false){
+		$cache_key = "api-programme-ug-$year-$id";
+
+		$model = get_called_class();
+		$cache_key = 'api-'.$model.'-'.$year;
+
+		// If revision not passed, get data
+		if(!$revision){
+			$revision = $model::where('programme_id', '=', $id)->where('status', '=', 'live')->where('year', '=', $year)->get();
+		} 
+		// Store data in to cache
+		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+		// return
+		return $revision_data;
+	}
+
+	// Get api index (attempt to use cache)
+	public static function get_api_index($year){
+		$cache_key = 'api-index';
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
+	}
+	// Generate API index from live database
+	public static function generate_api_index($year){
+		// Set cache key
+		$cache_key = "api-index";
+
+		// Obtain names for required fields
+		$title_field = Programme::get_title_field();
+		$slug_field = Programme::get_slug_field();
+		$withdrawn_field = Programme::get_withdrawn_field();
+		$suspended_field = Programme::get_suspended_field();
+		$subject_to_approval_field = Programme::get_subject_to_approval_field();
+		$new_programme_field = Programme::get_new_programme_field();
+		$mode_of_study_field = Programme::get_mode_of_study_field();
+		$ucas_code_field = Programme::get_ucas_code_field();
+		$search_keywords_field = Programme::get_search_keywords_field();
+
+		$index_data = array();
+
+		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
+		$programmes = ProgrammeRevision::where('year','=', $year)
+						->where('status','=','live')
+						->where($withdrawn_field,'!=','true')
+						->where($suspended_field,'!=','true')
+						->get();
+
+		// Build array
+		foreach($programmes as $programme)
+		{
+			$index_data[$programme->programme_id] = array(
+				'id' => $programme->programme_id,
+				'name' => $programme->$title_field,
+				'slug' => $programme->$slug_field,
+				'award' => ($programme->award != null) ? $programme->award->name : '',
+				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
+				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
+				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
+				'new_programme' => $programme->$new_programme_field,
+				'subject_to_approval' => $programme->$subject_to_approval_field,
+				'mode_of_study' => $programme->$mode_of_study_field,
+				'ucas_code' => $programme->$ucas_code_field,
+				'search_keywords' => $programme->$search_keywords_field,
+			);
+		}
+
+		// Store data in to cache
+		Cache::put($cache_key, $index_data, 2628000);
+
+		// return
+		return $index_data;
+	}
+
 }
