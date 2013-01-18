@@ -167,33 +167,48 @@ class SimpleData extends Eloquent {
 		if ($saved)
 		{	
 			static::clear_all_as_list_cache($this->year);
-			static::generate_json();
+			static::refresh_api_data();
 		}
 
 		return $saved;
 	}
 
+
 	/**
-	 * Generate a json file that represents the records in this model
+	 * get API Data
+	 * Return cached data from data type
+	 *
+	 * @return data Object
 	 */
-	private static function generate_json()
-	{
-		$cache_location = path('storage') .'api/';
-		$cache_file = $cache_location.strtolower(get_called_class()).'.json';
-		$data = array();
-
-		foreach (static::all() as $record) {
-			$data[$record->id] = $record->to_array();
-		}
-
-		// if our $cache_location isnt available, create it
-		if (!is_dir($cache_location)) 
-		{
-			mkdir($cache_location, 0755, true);
-		}
-
-		file_put_contents($cache_file, json_encode($data));
+	public static function get_api_data(){
+		// generate keys
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model;
+		// Cache this data when possible
+		return Cache::remember($cache_key, function() use ($model)
+		{	
+			// Generate data
+			$data = array();
+			foreach ($model::all() as $record) {
+				$data[$record->id] = $record->to_array();
+			}
+			return $data;
+		}, 2628000);
 	}
+
+	/**
+	 * refresh API data
+	 * Clear currently stored API data and load in new set.
+	 */
+	public static function refresh_api_data(){
+		// create key and empty cache
+		$type = strtolower(get_called_class());
+		$cache_key = 'api-'.$type;
+		Cache::forget($cache_key);
+		// re generate data cache
+		static::get_api_data();
+	}
+
 
 	/**
 	 * This function replaces the passed-in ids with their actual record
