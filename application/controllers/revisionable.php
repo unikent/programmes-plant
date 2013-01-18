@@ -111,7 +111,7 @@ class Revisionable_Controller extends Admin_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/$type/{data_type}/revisions
+	 * Routing for GET /$year/$type/{data_type}/revisions/{$itm_id}
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
@@ -131,6 +131,57 @@ class Revisionable_Controller extends Admin_Controller {
 		}
 		// Display view
 		$this->layout->nest('content', 'admin.revisions.index', $this->data);
+	}
+
+	/**
+	 * Routing for GET /$year/$type/{data_type}/rollback/{$itm_id}
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param string $itm_id       The id of the item to show revisions for
+	*/
+	public function get_view_revision($year, $type, $itm_id = false, $revision_id = false){
+
+		$model = $this->model;
+
+		// Ensure item exists (Redirect if it does not)
+		$course = $model::find($itm_id);
+		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// load revisions for item.
+		$revision = $course ->get_revision($revision_id);
+		if(!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$data = array();
+		$data['attributes'] = Programme::get_attributes_list();
+		$data['revision'] = $revision;
+		$data['programme'] = $course;
+
+		// Display view
+		$this->layout->nest('content', 'admin.revisions.view', $data);
+	}
+
+
+	/**
+	 * Routing for GET /$year/$type/{data_type}/rollback/{$itm_id}
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param string $itm_id       The id of the item to show revisions for
+	*/
+	public function get_rollback($year, $type, $itm_id = false){
+
+		$model = $this->model;
+
+		// Ensure item exists (Redirect if it does not)
+		$course = $model::find($itm_id);
+		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// load revisions for item.
+		$this->data['programme'] = $course ;
+		if ($revisions = $course->get_revisions()) {
+				$this->data['revisions'] =  $revisions;
+		}
+		// Display view
+		$this->layout->nest('content', 'admin.revisions.rollback', $this->data);
 	}
 
 }
