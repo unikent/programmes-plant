@@ -437,7 +437,7 @@ class Load_Test_Data {
 			{
 				continue;
 			}
-
+			
 			// Use the appropriate form of dummy data for the field type.
 			switch ($field->field_type) 
 			{
@@ -451,7 +451,7 @@ class Load_Test_Data {
 				case 'table_multiselect':
 					$model = $field->field_meta;
 					$options = $model::all_as_list();
-					
+
 					// If there is nothing in table this select normally draws from then
 					// skip over this field.
 					if (count($options) == 0)
