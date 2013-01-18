@@ -8,10 +8,11 @@ class Move_To_Myisam {
 	 * @return void
 	 */
 	public function up()
-	{
+	{	
 		if (Request::env() == 'test')
 		{
 			echo "Migration not run - environment is test".PHP_EOL;
+			return;
 		}
 
 		foreach(array('programmes', 'programmes_revisions') as $table)
@@ -32,6 +33,7 @@ class Move_To_Myisam {
 		if (Request::env() == 'test')
 		{
 			echo "Migration not run - environment is test".PHP_EOL;
+			return;
 		}
 
 		foreach(array('programmes', 'programmes_revisions') as $table)
