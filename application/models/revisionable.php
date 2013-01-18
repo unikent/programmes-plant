@@ -207,7 +207,7 @@ class Revisionable extends SimpleData {
 		$revision->save();
 
 		// Update feed file
-		static::refresh_api_data($revision->year, $revision);
+		static::generate_api_data($revision->year, $revision);
 
 		// Return result
 		return $revision;
@@ -346,9 +346,8 @@ class Revisionable extends SimpleData {
 		$cache_key = 'api-'.$model.'-'.$year;
 
 		// Get data from cache (or generate it)
-		return Cache::remember($cache_key, function() use ($model, $year) {
-			return $model::generate_api_data($year);
-		}, 2628000);
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+
 	}
 
 	/**
@@ -359,36 +358,20 @@ class Revisionable extends SimpleData {
 	 * @return $revision Object
 	 */
 	public static function generate_api_data($year = false, $revision = false){
-		//If revision not passed, 
-		if(!$revision){
-			$model = get_called_class();
-			$revision = $model::where('status', '=', 'live')->where('year', '=', $year)->get();
-		} 
-		return $revision->to_array();
-	}
 
-	/**
-	 * refresh API data
-	 * Clear currently stored API data
-	 *
-	 * @param year Year to store cache for
-	 * @param $revision Data to place in to cache (save requerying)
-	 */
-	public static function refresh_api_data($year = false, $revision = false){
-		$model = strtolower(get_called_class());
+		// Get model and key
+		$model = get_called_class();
 		$cache_key = 'api-'.$model.'-'.$year;
 
-		// Refresh data in cache
-		if($revision){
-			//Manually replace cache with new data if provided
-			Cache::put($cache_key, static::generate_api_data($year, $revision), 2628000);
-		}else{
-			// Else just forget data & wait for it to regenerate on hit
-			Cache::forget($cache_key);
-		}
+		// If revision not passed, get data
+		if(!$revision){
+			$revision = $model::where('status', '=', 'live')->where('year', '=', $year)->get();
+		} 
+		// Store data in to cache
+		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+		// return
+		return $revision_data;
 	}
-
-
 
 
 	/**

@@ -171,7 +171,7 @@ class SimpleData extends Eloquent {
 			// Only store / refresh cache if this is NOT a revisionble item
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
-				static::refresh_api_data();
+				static::generate_api_data();
 			}
 			
 		}
@@ -191,34 +191,32 @@ class SimpleData extends Eloquent {
 		// generate keys
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
-		// Cache this data when possible
-		return Cache::remember($cache_key, function() use ($model)
-		{	
-			// Generate data
-			$data = array();
-			foreach ($model::all() as $record) {
-				$data[$record->id] = $record->to_array();
-			}
-			return $data;
-		}, 2628000);
+
+		// Get data from cache (or generate it)
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**
-	 * refresh API data
-	 * Clear currently stored API data and load in new set.
+	 * generate API data
+	 * Get live version of API data from database
 	 *
 	 * @param year (Unused - PHP requires signature not to change)
 	 * @param data (Unused - PHP requires signature not to change)
 	 */
-	public static function refresh_api_data($year = false, $data = false){
-		// create key and empty cache
-		$type = strtolower(get_called_class());
-		$cache_key = 'api-'.$type;
-		Cache::forget($cache_key);
-		// re generate data cache
-		static::get_api_data();
+	public static function generate_api_data($year = false, $data = false){
+		// keys
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model;
+		// make data
+		$data = array();
+		foreach (static::all() as $record) {
+			$data[$record->id] = $record->to_array();
+		}
+		// Store data in to cache
+		Cache::put($cache_key, $data, 2628000);
+		// return
+		return $data;
 	}
-
 
 	/**
 	 * This function replaces the passed-in ids with their actual record
