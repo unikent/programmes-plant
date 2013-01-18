@@ -207,7 +207,7 @@ class Revisionable extends SimpleData {
 		$revision->save();
 
 		// Update feed file
-		$this->generate_feed_file($revision);
+		static::refresh_api_data($revision->year, $revision);
 
 		// Return result
 		return $revision;
@@ -330,6 +330,66 @@ class Revisionable extends SimpleData {
 
 		return $new_record;
 	}
+
+
+	/**
+	 * get API Data
+	 * Return cached data from data type
+	 *
+	 * @param year Year to get data for
+	 * @return data Object
+	 */
+	public static function get_api_data($year = false){
+
+		// generate keys
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model.'-'.$year;
+
+		// Get data from cache (or generate it)
+		return Cache::remember($cache_key, function() use ($model, $year) {
+			return $model::generate_api_data($year);
+		}, 2628000);
+	}
+
+	/**
+	 * generate API data
+	 * Get live version of API data from database
+	 *
+	 * @param year Year to get data for
+	 * @return $revision Object
+	 */
+	public static function generate_api_data($year = false, $revision = false){
+		//If revision not passed, 
+		if(!$revision){
+			$model = get_called_class();
+			$revision = $model::where('status', '=', 'live')->where('year', '=', $year)->get();
+		} 
+		return $revision->to_array();
+	}
+
+	/**
+	 * refresh API data
+	 * Clear currently stored API data
+	 *
+	 * @param year Year to store cache for
+	 * @param $revision Data to place in to cache (save requerying)
+	 */
+	public static function refresh_api_data($year = false, $revision = false){
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model.'-'.$year;
+
+		// Refresh data in cache
+		if($revision){
+			//Manually replace cache with new data if provided
+			Cache::put($cache_key, static::generate_api_data($year, $revision), 2628000);
+		}else{
+			// Else just forget data & wait for it to regenerate on hit
+			Cache::forget($cache_key);
+		}
+	}
+
+
+
 
 	/**
 	* Generate the feed index.json

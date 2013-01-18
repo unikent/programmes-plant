@@ -167,7 +167,7 @@ class SimpleData extends Eloquent {
 		if ($saved)
 		{	
 			static::clear_all_as_list_cache($this->year);
-			
+
 			// Only store / refresh cache if this is NOT a revisionble item
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
@@ -184,9 +184,10 @@ class SimpleData extends Eloquent {
 	 * get API Data
 	 * Return cached data from data type
 	 *
+	 * @param year (Unused - PHP requires signature not to change)
 	 * @return data Object
 	 */
-	public static function get_api_data(){
+	public static function get_api_data($year = false){
 		// generate keys
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
@@ -205,8 +206,11 @@ class SimpleData extends Eloquent {
 	/**
 	 * refresh API data
 	 * Clear currently stored API data and load in new set.
+	 *
+	 * @param year (Unused - PHP requires signature not to change)
+	 * @param data (Unused - PHP requires signature not to change)
 	 */
-	public static function refresh_api_data(){
+	public static function refresh_api_data($year = false, $data = false){
 		// create key and empty cache
 		$type = strtolower(get_called_class());
 		$cache_key = 'api-'.$type;
