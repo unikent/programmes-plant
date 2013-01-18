@@ -106,7 +106,7 @@ class Revisionable extends SimpleData {
 		}
 		else 
 		{
-			$revision_values['edits_by'] = 'aa554';
+			$revision_values['edits_by'] = 'seed';
 		}
 
 		// Status = selected
