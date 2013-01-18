@@ -1,5 +1,7 @@
 <?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
 
+<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+
 <div class="floating_save" data-spy="affix" data-offset-top="100">
   <div class='pull-right'>
     <input type="submit" class="btn btn-warning" value="Save">
@@ -11,7 +13,6 @@
 
 <h1><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?></h1>
 
-<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
 
@@ -31,3 +32,4 @@
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
 </div>
 
+<?php echo Form::close(); ?>
