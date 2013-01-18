@@ -467,7 +467,7 @@ class Load_Test_Data {
 						}
 					}
 
-					$programme->{$field->colname} = implode(',', $options);
+					$programme->{$field->colname} = implode(',', $selected);
 				break;
 
 				case 'table_select':
