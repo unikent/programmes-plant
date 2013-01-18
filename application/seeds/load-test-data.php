@@ -384,12 +384,11 @@ class Load_Test_Data {
 		// Increase PHP memory limit a great deal.
 		ini_set('memory_limit', '256M');
 
-		// @todo Populate some subjects.
-		
-		// Create some subject categories.
-		foreach (array('subject_category_1', 'subject_category_2', 'subject_category_3') as $category)
+		// Create some subjects and subject categories.
+		for ($i = 0; $i <= 30; $i++)
 		{
-			SubjectCategory::create(array('name' => $category))->save();
+			Subject::create(array('name' => "subject_$i"))->save();
+			SubjectCategory::create(array('name' => "subject_category_$i"))->save();
 		}
 
 		// Populate three years worth of data.
