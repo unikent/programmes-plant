@@ -57,4 +57,10 @@ class API_Controller extends Base_Controller {
 		return Response::json($programme);
 	}
 
+	// XML output method
+	public static function xml($data){
+		return Response::make(API::array_to_xml($data), 200, array('Content-Type' => 'text/xml'));
+	}
+	
+
 }

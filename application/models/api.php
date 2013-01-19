@@ -80,6 +80,31 @@ class API {
 		return $new_record;
 	}
 
+	// Function to convert feed to XML (in case we ever need to)
+	public static function array_to_xml($data, $xml = false){
+
+		if ($xml === false)
+		{
+			$xml  = new SimpleXMLElement('<?xml version="1.0" encoding="'.Config::get('application.encoding').'"?><response/>');
+		}
+
+		foreach($data as $key => $value)
+		{
+			if(is_int($key)) $key = 'item';
+
+			if (is_array($value))
+			{
+				static::array_to_xml($value, $xml->addChild($key));
+			}
+			else
+			{	
+				$xml->addChild($key, $value);
+			}
+		}
+
+		return $xml->asXML();
+	}
+
 
 
 
