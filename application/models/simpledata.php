@@ -220,15 +220,21 @@ class SimpleData extends Eloquent {
 
 	/**
 	 * This function replaces the passed-in ids with their actual record
+	 * @param $ids List of ids to lookup
+	 * @return array of objects matching id's
 	 */
 	public static function replace_ids_with_values($ids)
 	{
-		$ds_fields = static::where_in('id', explode(',',$ids))->get();
+		// If nothing is set, return an empty array
+		if(trim($ids) == '') return array();
+		// Get list of ids to swap out & grab api data from cache
+		$id_array = explode(',', $ids);
+		$cached_data = static::get_api_data();
+		// Create new array of actual values matching the ids from the cache
 		$values = array();
-
-		foreach ($ds_fields as $ds_field) 
+		foreach ($id_array as $id) 
 		{
-			$values[] = $ds_field->to_array();
+			$values[] = $cached_data[$id];
 		}
 
 		return $values;
