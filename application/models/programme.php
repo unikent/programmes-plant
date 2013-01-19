@@ -314,6 +314,7 @@ class Programme extends Revisionable {
 
 		// Store data in to cache
 		// @todo re-add cache functionalty - Find method of segmenting / part flushing caches
+		$revision_data = $revision->to_array();
 		// Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
 
 		// return
