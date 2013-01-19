@@ -39,7 +39,7 @@ class API {
 
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
 		// Loop through them, adding them to the $final object.
-		$programme = Programme::pull_external_data($programme);
+		$programme = API::load_external_data($programme);
 
 		// Add in all values from main programme
 		// Only overwrite values previously added from "settings" when they are not blank
@@ -78,6 +78,25 @@ class API {
 		}
 
 		return $new_record;
+	}
+
+	/**
+	 * look through the passed in record and substitute any ids with data from the correct table
+	 * 
+	 * @param $record The record
+	 * @return $new_record A new record with ids substituted
+	 */
+	public static function load_external_data($record)
+	{
+		// get programme fields (mapping of columns to their datatypes)
+		$programme_fields =  ProgrammeField::get_api_data();
+
+		// For each column with a special data type, update its value in the record;
+		foreach($programme_fields as $field_name => $data_type){
+			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name]);
+		}
+
+		return $record;
 	}
 
 	// Function to convert feed to XML (in case we ever need to)

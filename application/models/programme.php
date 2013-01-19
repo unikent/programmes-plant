@@ -200,46 +200,6 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * look through the passed in record and substitute any ids with data from their correct table
-	 * primarily for our json api
-	 * 
-	 * @param $record The record
-	 * @return $new_record A new record with ids substituted
-	 */
-	public static function pull_external_data($record)
-	{
-		$path = path('storage') . 'api/';
-		$programme_fields_path = $path . 'programmefield.json';
-
-		//if we dont have a json file, return the $record as it was
-		if (!file_exists($programme_fields_path))
-		{
-			return $record;
-		}
-
-		//get programme fields
-		$programme_fields = json_decode(file_get_contents($programme_fields_path));
-		
-		//make neater programme fields array
-		$fields_array = array();
-		foreach ($programme_fields as $field) {
-			$fields_array[$field->colname] = $field->field_meta;
-		}
-		
-		//substitute the concerned ids with actual data
-		$new_record = array();
-		foreach ($record as $field_name => $field_value) {
-			if(isset($fields_array[$field_name])){
-				$model = $fields_array[$field_name];
-				$field_value = $model::replace_ids_with_values($field_value);
-			}
-			$new_record[$field_name] = $field_value;
-		}
-
-		return $new_record;
-	}
-
-	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
 	 */

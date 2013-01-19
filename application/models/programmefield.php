@@ -102,43 +102,55 @@ class ProgrammeField extends Field
 
 
     /**
-     * Override Eloquent's save so that we jenerate a new json file for our API
-     * 
+     * Override Eloquent's save so that we generate a new json file for our API 
      */
     public function save()
     {
         $saved = parent::save();
 
         if($saved){
-            static::generate_json();
+            static::generate_api_data();
         }
         
         return $saved;
     }
 
+
     /**
-     * Generate a json file that represents the records in this model
-     * We're however only interested in fields that have other models as their type
+     * get API Data
+     * Return cached data from data type
+     *
+     * @param year (Unused - PHP requires signature not to change)
+     * @return data Object
      */
-    private static function generate_json(){
-        $cache_location = path('storage') .'api/';
-        $cache_file = $cache_location . strtolower(get_called_class()) . '.json';
+    public static function get_api_data(){
+        // generate keys
+        $model = strtolower(get_called_class());
+        $cache_key = 'api-'.$model;
+
+        // Get data from cache (or generate it)
+        return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
+    }
+
+    /**
+     * generate API data
+     * Get live version of API data from database
+     *
+     */
+    public static function generate_api_data(){
+        // keys
+        $model = strtolower(get_called_class());
+        $cache_key = 'api-'.$model;
+
         $data = array();
         
-        foreach (static::where_in('field_type', array('table_select', 'table_multiselect'))
-                        ->get(array('colname', 'field_meta')) as $record) {
-            $data[$record->colname] = array(
-                    'colname' => $record->colname,
-                    'field_meta' => $record->field_meta
-                );
+        $fields = static::where_in('field_type', array('table_select', 'table_multiselect'))->get(array('colname', 'field_meta'));
+        foreach ($fields as $record) {   
+                $data[$record->colname] =  $record->field_meta;
         }
-
-        // if our $cache_location isnt available, create it
-        if (!is_dir($cache_location)) 
-        {
-            mkdir($cache_location, 0755, true);
-        }
-
-        file_put_contents($cache_file, json_encode($data));
+        // Store data in to cache
+        Cache::put($cache_key, $data, 2628000);
+        // return
+        return $data;
     }
 }
