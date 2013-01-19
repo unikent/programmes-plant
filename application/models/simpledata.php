@@ -167,13 +167,11 @@ class SimpleData extends Eloquent {
 		if ($saved)
 		{	
 			static::clear_all_as_list_cache($this->year);
-
-			// Method required to flush only api-output-caches
-
 			// Only store / refresh cache if this is NOT a revisionble item
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
 				static::generate_api_data();
+				API::purge_output_cache();
 			}
 			
 		}

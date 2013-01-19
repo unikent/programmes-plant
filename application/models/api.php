@@ -23,7 +23,7 @@ class API {
 	 * @return combined programme data array
 	 */
 	public static function get_programme($id, $year){
-		$cache_key = "api-output-ug-programme-$year-$id";
+		$cache_key = "api-output-ug.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
 
@@ -36,7 +36,7 @@ class API {
 	 * @return combined programme data array
 	 */
 	public static function generate_programme_data($id, $year){
-		$cache_key = "api-output-ug-programme-$year-$id";
+		$cache_key = "api-output-ug.programme-$year-$id";
 
 		// Get basic data set
 		$globals 				= GlobalSetting::get_api_data($year);	
@@ -130,6 +130,16 @@ class API {
 		}
 
 		return $record;
+	}
+
+	/**
+	 * Purge output cache. Clears final output caches when data is changed.
+	 * 
+	 * @param $data Data to show as XML
+	 * @return Raw XML
+	 */ 
+	public static function purge_output_cache(){
+		Cache::purge('api-output-ug');
 	}
 
 	/**
