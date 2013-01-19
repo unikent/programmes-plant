@@ -27,13 +27,11 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $programme->delete();
         }
-
         $programme_revisions = ProgrammeRevision::all();
         foreach ($programme_revisions as $revision)
         {
             $revision->delete();
         }
-
         $global_settings = GlobalSetting::all();
         foreach ($global_settings as $setting)
         {
@@ -44,7 +42,6 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $revision->delete();
         }
-
         $programme_settings = ProgrammeSetting::all();
         foreach ($programme_settings as $setting)
         {
@@ -55,7 +52,13 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $revision->delete();
         }
-
+        //Reset auto incriment sequences
+        DB::query('delete from sqlite_sequence where name="programmes"');
+        DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+        DB::query('delete from sqlite_sequence where name="global_settings"');
+        DB::query('delete from sqlite_sequence where name="global_settings_revisions"');
+        DB::query('delete from sqlite_sequence where name="programme_settings"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_revisions"');
         // Since we now use the normal cache, we can just flush it
         Cache::flush();
 
@@ -118,8 +121,8 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
         $ps = ProgrammeSetting::find(1);
-        $revisions = $ps->get_revisions('selected');
-        $ps->make_revision_live($revisions[0]);
+        $revision = $ps->get_revision(1);
+        $ps->make_revision_live($revision);
 
         GlobalSetting::create(
                 array(
@@ -128,8 +131,8 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
         $gs = GlobalSetting::find(1);
-        $revisions = $gs->get_revisions('selected');
-        $gs->make_revision_live($revisions[0]);
+        $revision = $gs->get_revision(1);
+        $gs->make_revision_live($revision);
     }
 
     public function create_programme($input = false)
@@ -139,7 +142,9 @@ class TestAPI_Controller extends ControllerTestCase
             $input = array(
                 'id' => 1, 
                 Programme::get_title_field() => 'Programme 1',
-                'year' => '2014'
+                'year' => '2014',
+                'programme_suspended_53' => '',
+                'programme_withdrawn_54' => '',
             );
         }
 
@@ -155,10 +160,11 @@ class TestAPI_Controller extends ControllerTestCase
         
         if(!empty($course))
         {
-            $revisions = $course->get_revisions('selected');
 
-            if (isset($revisions[0])) {
-                $course->make_revision_live($revisions[0]);
+            $revision = $course->get_revision(1);
+
+            if (isset($revision)) {
+                $course->make_revision_live($revision);
             }
             return $course;
         }
@@ -177,7 +183,7 @@ class TestAPI_Controller extends ControllerTestCase
         $this->generate_programme_dependancies();
 
         $course = $this->create_programme();
-        $course = $this->make_programme_live($course->id);
+        $course = $this->make_programme_live();
     
         $response = $this->get('api@index', array($course->year, 'ug'));
         $this->assertEquals('200', $response->status());
@@ -196,6 +202,7 @@ class TestAPI_Controller extends ControllerTestCase
             );
 
         $course = $this->create_programme($input);
+
         $course = $this->make_programme_live($input['id']);
 
         $response = $this->get('api@index', array($input['year'], 'ug'));
