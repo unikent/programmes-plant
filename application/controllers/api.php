@@ -19,16 +19,16 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_index($year, $level)
 	{
-		$json_index = Programme::json_index($year, $level);
+		$index_data = API::get_index($year, $level);
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		if (! $json_index)
+		if (! $index_data)
 		{
 			return Response::error('204');
 		}
 
 		// Return the cached index file with the correct headers.
-		return Response::make($json_index, '200', array('Content-Type' => 'application/json'));
+		return Response::json($index_data, '200', array('Content-Type' => 'application/json'));
 	}
 	
 	/**
@@ -41,7 +41,8 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id)
 	{
-		$programme = Programme::get_as_flattened($year, $level, $programme_id);
+		$programme = API::get_programme($programme_id, $year);
+		//Programme::get_as_flattened($year, $level, $programme_id);
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
 		// This is the case if certain aspects are not in place for our JSON.

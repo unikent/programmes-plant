@@ -7,7 +7,7 @@
 class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
-	protected $revision_model = false;
+	public static $revision_model = false;
 
 	// Data Type (Programme, Global, etc)
 	protected $data_type = false;
@@ -29,7 +29,7 @@ class Revisionable extends SimpleData {
 		// Use called class to deterime datatype
 		$this->data_type = get_called_class();
 		// If not set in parent, just assume modelRevision as name
-		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
+		if(!static::$revision_model)  static::$revision_model = $this->data_type .'Revision';
 		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
 
 		// Pass to real constructor
@@ -67,7 +67,7 @@ class Revisionable extends SimpleData {
 	 */
 	private function save_revision()
 	{
-		$revision_model = $this->revision_model;
+		$revision_model = static::$revision_model;
 
 		// Get new revision instance
 		$revision = new $revision_model;
@@ -121,7 +121,7 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_revisions($status = false)
 	{
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		// store query obj
 		$query = $model::where($this->data_type_id.'_id','=',$this->id);
 		// if status is set add filter
@@ -138,7 +138,7 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_revision($revision_id)
 	{
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		return $model::find($revision_id);
 	}
 
@@ -150,8 +150,7 @@ class Revisionable extends SimpleData {
 	{
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
-		$model = $this->revision_model;
-
+		$model = static::$revision_model;
 		if ($this->live == 2)
 		{
 			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
@@ -197,7 +196,7 @@ class Revisionable extends SimpleData {
 		parent::save();
 		
 		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
-		$revision_model = $this->revision_model;
+		$revision_model = static::$revision_model;
 		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 
 		// Update and save this revision 
@@ -228,7 +227,7 @@ class Revisionable extends SimpleData {
 		}
 
 		// Get previous revision
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		$previous_revision = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
 
 		// return false if no viable results are found to revert to
@@ -255,7 +254,7 @@ class Revisionable extends SimpleData {
 		}
 
 		// Mark all later revisions as unused if we are reverting back
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
 
 		// Remove the previously selected item if it is not "later" (and thus caught by the above code) and set to unused.
@@ -313,24 +312,6 @@ class Revisionable extends SimpleData {
 		return $options;
 	}
 
-	/**
-	 * Removes the automatically generated field ids from our field names.
-	 * 
-	 * @param $record Record to remove field ids from.
-	 * @return $new_record Record with field ids removed.
-	 */
-	public static function remove_ids_from_field_names($record)
-	{
-		$new_record = array();
-		
-		foreach ($record as $name => $value) 
-		{
-			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
-		}
-
-		return $new_record;
-	}
-
 
 	/**
 	 * get API Data
@@ -365,8 +346,15 @@ class Revisionable extends SimpleData {
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $model::where('status', '=', 'live')->where('year', '=', $year)->get();
+			$revisionModel = $model::$revision_model;
+			$revision = $revisionModel::where('status', '=', 'live')->where('year', '=', $year)->first();
 		} 
+
+		// Return false if there is no live revision
+		if(sizeof($revision) === 0 || $revision === null){
+			return false;
+		} 
+
 		// Store data in to cache
 		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
 		// return

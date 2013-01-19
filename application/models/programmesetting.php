@@ -3,7 +3,7 @@
 class ProgrammeSetting extends Revisionable
 {
     public static $table = 'programme_settings';
-    protected $revision_model = 'ProgrammeSettingRevision';
+    public static $revision_model = 'ProgrammeSettingRevision';
     protected $data_type_id = 'programme_setting';
     
     /**

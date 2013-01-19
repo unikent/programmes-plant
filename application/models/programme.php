@@ -4,7 +4,7 @@ class Programme extends Revisionable {
 
 	public static $table = 'programmes';
 	
-	protected $revision_model = 'ProgrammeRevision';
+	public static $revision_model = 'ProgrammeRevision';
 
 	/**
 	 * Get the name of the title field/column in the database.
@@ -402,14 +402,18 @@ class Programme extends Revisionable {
 		return Programme::remove_ids_from_field_names($final);
 	}
 
+	//Override generate api function to call local methods
+	public static function generate_api_data($year = false, $revision = false){
 
-
-
-
+		print_r($revision);
+		die();
+		static::generate_api_programme($revision->programme_id, $year, $revision);
+		static::generate_api_index($year);
+	}
 
 	public static function get_api_programme($id, $year){
 		$cache_key = "api-programme-ug-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($year);
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
 
 	public static function generate_api_programme($id, $year, $revision = false){
@@ -420,8 +424,14 @@ class Programme extends Revisionable {
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $model::where('programme_id', '=', $id)->where('status', '=', 'live')->where('year', '=', $year)->get();
+			$revision = ProgrammeRevision::where('programme_id', '=', $id)->where('status', '=', 'live')->where('year', '=', $year)->first();
+		}
+
+		// Return false if there is no live revision
+		if(sizeof($revision) === 0 || $revision === null){
+			return false;
 		} 
+
 		// Store data in to cache
 		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
 		// return
