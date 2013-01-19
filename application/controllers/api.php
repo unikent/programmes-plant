@@ -24,7 +24,9 @@ class API_Controller extends Base_Controller {
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
 		if (! $index_data)
 		{
-			return Response::error('204');
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::error('501');
 		}
 
 		// Return the cached index file with the correct headers.
@@ -48,7 +50,7 @@ class API_Controller extends Base_Controller {
 		// This is the case if certain aspects are not in place for our JSON.
 		if (! $programme)
 		{
-			return Response::error('204');
+			return Response::error('501');
 		}
 		
 		// return a JSON version of the newly-created $final object
