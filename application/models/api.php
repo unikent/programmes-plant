@@ -34,7 +34,7 @@ class API {
 		// Then add in values from settings
 		foreach($programme_settings as $key => $value)
 		{
-			$final->{$key} = $value;
+			$final[$key] = $value;
 		}
 
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
@@ -47,14 +47,14 @@ class API {
 		{
 			// Make sure any existing key in the $final object gets updated with the new $value.
 			if(!empty($value) ){
-				$final->{$key} = $value;
+				$final[$key] = $value;
 			}
 		}
 
 		// Remove unwanted attributes
 		foreach(array('id','global_setting_id') as $key)
 		{
-			unset($final->{$key});
+			unset($final[$key]);
 		}
 		
 		// Now remove IDs from our field names, they're not necessary and return.
