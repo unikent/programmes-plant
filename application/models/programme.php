@@ -202,19 +202,23 @@ class Programme extends Revisionable {
 	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
+     * @param $ids List of ids to lookup
+	 * @param $year Year course should be returned from.
+	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids){
+	public static function replace_ids_with_values($ids, $year = false){
 
-		$ds_fields = static::where_in('id', explode(',', $ids))->get();
+		// If nothing is set, return an empty array
+		if(trim($ids) == '') return array();
+		// Get list of ids to swap out & grab api data from cache
+		$id_array = explode(',', $ids);
+		$cached_data = static::get_api_index($year);
+		// Create new array of actual values matching the ids from the cache
 		$values = array();
-		foreach ($ds_fields as $ds_field) {
-			$title_field = static::get_title_field();
-			$slug_field = static::get_slug_field();
-			$values[$ds_field->id] = static::remove_ids_from_field_names(array(
-					'id' => $ds_field->id,
-					$title_field => $ds_field->$title_field,
-					$slug_field => $ds_field->$slug_field
-				));
+		foreach ($id_array as $id) 
+		{
+			// Only display relation IF programme is published
+			if(isset($cached_data[$id])) $values[] = $cached_data[$id];
 		}
 
 		return $values;

@@ -220,9 +220,10 @@ class SimpleData extends Eloquent {
 	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * @param $ids List of ids to lookup
+	 * @param $year Unused, but needed for method signature in programme (they have to be the same)
 	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids)
+	public static function replace_ids_with_values($ids, $year = false)
 	{
 		// If nothing is set, return an empty array
 		if(trim($ids) == '') return array();
