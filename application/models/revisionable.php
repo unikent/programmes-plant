@@ -53,6 +53,7 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+
 		// If the save succeeds, save a new revision and return its status 
 		// (so the return from this save() is means both the revision & save itself were successful.)
 		if($success) return $this->save_revision();
@@ -96,7 +97,17 @@ class Revisionable extends SimpleData {
 		// Timestamp revision & set editor etc.
 		$revision_values['created_at'] = $this->updated_at;
 		$revision_values['updated_at'] = $revision_values['created_at'];
-		$revision_values['edits_by'] = Auth::user();
+
+		// If we are on the command line, no user will be logged in, use a dummy instead.
+		// This will be used mostly when seeding the database.
+		if (! Request::cli())
+		{
+			$revision_values['edits_by'] = Auth::user();
+		}
+		else 
+		{
+			$revision_values['edits_by'] = 'seed';
+		}
 
 		// Status = selected
 		$revision_values['status'] = 'selected';
