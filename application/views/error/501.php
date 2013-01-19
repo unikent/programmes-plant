@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Error 500 - Internal Server Error</title>
+		<title>Error 501 - Unable to fulfill the request</title>
 
 		<style>
 			@import url(http://fonts.googleapis.com/css?family=Ubuntu);
@@ -81,8 +81,7 @@
 	</head>
 	<body>
 		<div id="main">
-			
-
+		
 			<h1>Whoops</h1>
 
 			<h2>Server Error: 501 (Unable to fulfill the request)</h2>

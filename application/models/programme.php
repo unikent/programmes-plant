@@ -261,118 +261,36 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * Returns the JSONified index of programmes for a given year.
-	 * 
-	 * @param string $year The year of the programmes.
-	 * @param string $level The level of the programmes, ug (undergraduate) or pg (postgraduate)
-	 * @return string The JSON index directly from disc cache.
+	 * Generate fresh copy of data, triggered on save.
+	 * @param $year year data is for
+	 * @param $revision data set saved with
 	 */
-	public static function json_index($year, $level)
-	{
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
-
-		if (! file_exists($path . 'index.json'))
-		{
-			return false;
-		}
-
-		return file_get_contents($path . 'index.json');
-	}
-
-	/**
-	 * Get flattened data for a programme from the JSON disc cache.
-	 * 
-	 * @param string $year The year of the programme.
-	 * @param string $level The level of the programme, ug (undergraduate) or pg (postgraduate).
-	 * @param int $programme_id The ID of the programme.
-	 * @return Object $final | false The object as an array with relevant data attached. or false if we had problems.
-	 */
-	public static function get_as_flattened($year, $level, $programme_id)
-	{
-		// Set up the path to the output/cache file.
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
-		
-		// Try to get JSON files for global and programme settings, as well as the programme data itself.
-		// If 
-		if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') )
-		{
-			return false;
-		}
-
-		// If the cache files do exist for global/programme settings and the programme data, put them into objects.
-		$global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
-		$programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
-		$programme = json_decode(file_get_contents($path . $programme_id . '.json'));
-		
-		// In local and test environments we're using a faked JSON file rather than one generated from the sds web service.
-		$modules = '';
-		if (Request::env() == 'test' or Request::env() == 'local')
-		{
-			if(file_exists($path . $programme_id . '_modules_test.json'))
-			{
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules_test.json'));
-			}
-		}
-		else
-		{
-			if(file_exists($path . $programme_id . '_modules.json'))
-			{
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
-			}
-		}
-		
-		// Build up $final which will be an object with all the data in we need.
-		// Start with the global settings.
-		$final = $global_settings;
-		
-		// Modules
-		// Note that the web service contains two levels we won't need: response and rubric. This may need fixing once we get the finished web service.
-		if(!empty($modules))
-		{
-			$final->modules = $modules->response->rubric;
-		}
-			
-		// Add programme settings to the $final object
-		// No inheritance needed so just loop through the settings, adding them to the object.
-		foreach($programme_settings as $key => $value)
-		{
-			$final->{$key} = $value;
-		}
-
-		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
-		// Loop through them, adding them to the $final object.
-		$programme = Programme::pull_external_data($programme);
-
-		foreach($programme as $key => $value)
-		{
-			// Make sure any existing key in the $final object gets updated with the new $value.
-			if(!empty($value) ){
-				$final->{$key} = $value;
-			}
-		}
-		
-		// Tidy up.
-		foreach(array('id','global_setting_id') as $key)
-		{
-			unset($final->{$key});
-		}
-		
-		// Now remove IDs from our field names, they're not necessary and return.
-		// e.g. 'programme_title_1' simply becomes 'programme_title'.
-		return Programme::remove_ids_from_field_names($final);
-	}
-
-	//Override generate api function to call local methods
 	public static function generate_api_data($year = false, $revision = false){
+		// Regenerate data to store in caches
 		static::generate_api_programme($revision->programme_id, $year, $revision);
 		static::generate_api_index($year);
 	}
 
+	/**
+	 * get a copy of a programme (from cache if possible)
+	 *
+	 * @param id of programme
+	 * @param year  of programme
+	 * @return programmes index
+	 */
 	public static function get_api_programme($id, $year){
 		$cache_key = "api-programme-ug-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
 
+	/**
+	 * generate copy of programme data from live DB
+	 *
+	 * @param id of programme
+	 * @param year  of programme
+	 * @param revsion data - store this to save reloading dbs when generating
+	 * @return programmes index
+	 */
 	public static function generate_api_programme($id, $year, $revision = false){
 		$cache_key = "api-programme-ug-$year-$id";
 
@@ -395,12 +313,23 @@ class Programme extends Revisionable {
 		return $revision_data;
 	}
 
-	// Get api index (attempt to use cache)
+	/**
+	 * get a copy of the programmes listing data (from cache if possible)
+	 *
+	 * @param $year year to get index for
+	 * @return programmes index
+	 */
 	public static function get_api_index($year){
 		$cache_key = 'api-index';
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
-	// Generate API index from live database
+
+	/**
+	 * generate new copy of programmes listing data from live DB
+	 *
+	 * @param $year year to get index for
+	 * @return programmes index
+	 */
 	public static function generate_api_index($year){
 		// Set cache key
 		$cache_key = "api-index";

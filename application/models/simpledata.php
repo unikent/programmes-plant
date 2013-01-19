@@ -179,7 +179,6 @@ class SimpleData extends Eloquent {
 		return $saved;
 	}
 
-
 	/**
 	 * get API Data
 	 * Return cached data from data type

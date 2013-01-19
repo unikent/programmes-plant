@@ -90,7 +90,6 @@ class ProgrammeField extends Field
         return $programme_obj;
     }
 
-
     /**
      * Extract input into model.
      */
@@ -99,7 +98,6 @@ class ProgrammeField extends Field
         parent::get_input();
         $this->programme_field_type =  Input::get('programme_field_type');
     }
-
 
     /**
      * Override Eloquent's save so that we generate a new json file for our API 
@@ -114,7 +112,6 @@ class ProgrammeField extends Field
         
         return $saved;
     }
-
 
     /**
      * get API Data

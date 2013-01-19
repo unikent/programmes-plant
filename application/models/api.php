@@ -2,12 +2,26 @@
 
 class API {
 	
-	// Get index (for search)
+	/**
+	 * Return the programmes index
+	 *
+	 * @param year year to get index for
+	 * @param level ug|pg
+	 * @return array Index of programmes
+	 */
 	public static function get_index($year, $level = 'ug'){
 		// Get index of programmes
 		return Programme::get_api_index($year);
 	}
 
+	/**
+	 * Return the programmes item from the API
+	 *
+	 * @param id ID of programme
+	 * @param year year to get index for
+	 * 
+	 * @return programme data array
+	 */
 	// Get a fully combined programme 
 	public static function get_programme($id, $year){
 
@@ -99,7 +113,12 @@ class API {
 		return $record;
 	}
 
-	// Function to convert feed to XML (in case we ever need to)
+	/**
+	 * Function to convert feed to XML (in case we ever need to)
+	 * 
+	 * @param $data Data to show as XML
+	 * @return Raw XML
+	 */ 
 	public static function array_to_xml($data, $xml = false){
 
 		if ($xml === false)
@@ -109,7 +128,7 @@ class API {
 
 		foreach($data as $key => $value)
 		{
-			if(is_int($key)) $key = 'item';
+			if(is_int($key)) $key = 'item'; //Else will use 1/2/3/etc which is invalid xml
 
 			if (is_array($value))
 			{
