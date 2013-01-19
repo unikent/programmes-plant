@@ -16,7 +16,7 @@ class API {
 		$programme_settings 	= ProgrammeSetting::get_api_data($year);
 		$programme 				= Programme::get_api_programme($id, $year);
 
-		if($globals===false || $programme_settings===false){
+		if($globals === false || $programme_settings === false){
 			// Error A: No live versions of globals or settings
 			// Maybe throw exception here, or return status code?
 			return false;

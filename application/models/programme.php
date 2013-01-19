@@ -364,9 +364,6 @@ class Programme extends Revisionable {
 
 	//Override generate api function to call local methods
 	public static function generate_api_data($year = false, $revision = false){
-
-		print_r($revision);
-		die();
 		static::generate_api_programme($revision->programme_id, $year, $revision);
 		static::generate_api_index($year);
 	}

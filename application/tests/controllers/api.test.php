@@ -5,25 +5,6 @@ class TestAPI_Controller extends ControllerTestCase
 {
     public $input = false;
 
-    public function recursively_delete_directory($dir) 
-    {
-        $files = array_diff(scandir($dir), array('.','..'));
-
-        foreach ($files as $file) {
-            if ( is_dir("$dir/$file") )
-            {
-                static::recursively_delete_directory("$dir/$file");
-            }
-            // don't delete the dummy module json files if they're there
-            elseif ( ! strstr($file, '_modules_test.json') )
-            {
-                unlink("$dir/$file");
-            }
-        }
-
-        return true;
-    }
-
     public function populate($input)
     {
         Programme::create($input)->save();
@@ -36,47 +17,47 @@ class TestAPI_Controller extends ControllerTestCase
 
     public static function tearDownAfterClass()
     {
-        // Ugly way to get our .gitignore back.
-        // Travis CI will likely hate this.
-        exec("git checkout storage/api/.gitignore");
+
     }
 
     public function tearDown()
     {
         $programmes = Programme::all();
-
         foreach ($programmes as $programme)
         {
             $programme->delete();
         }
 
         $programme_revisions = ProgrammeRevision::all();
-
         foreach ($programme_revisions as $revision)
         {
             $revision->delete();
         }
 
         $global_settings = GlobalSetting::all();
-
         foreach ($global_settings as $setting)
         {
             $setting->delete();
         }
+        $global_revisions = GlobalSettingRevision::all();
+        foreach ($global_revisions as $revision)
+        {
+            $revision->delete();
+        }
 
         $programme_settings = ProgrammeSetting::all();
-
         foreach ($programme_settings as $setting)
         {
             $setting->delete();
         }
-
-        // We need to reset our API cache somehow.
-        // This also deletes our .gitignore, which we restore after the tests are done.
-        if (file_exists(path('storage') . 'api/') && is_dir(path('storage') . 'api/'))
+        $programme_settings_revisions = ProgrammeSettingRevision::all();
+        foreach ($programme_settings_revisions as $revision)
         {
-            static::recursively_delete_directory(path('storage') . 'api/');
+            $revision->delete();
         }
+
+        // Since we now use the normal cache, we can just flush it
+        Cache::flush();
 
         parent::tearDown();
     }
@@ -188,7 +169,7 @@ class TestAPI_Controller extends ControllerTestCase
     public function testget_indexReturnsHTTPCode204WithNoDataCached()
     {
         $response = $this->get('api@index', array('2014', 'ug'));
-        $this->assertEquals('204', $response->status());
+        $this->assertEquals('501', $response->status());
     }
 
     public function testget_indexReturnsHTTPCode200WithDataCached()
@@ -263,7 +244,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 
-        $this->assertEquals('204', $response->status());
+        $this->assertEquals('501', $response->status());
     }
 
     public function testget_programmeReturns200WhenCachePresent()
