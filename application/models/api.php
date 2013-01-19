@@ -15,15 +15,28 @@ class API {
 	}
 
 	/**
-	 * Return the programmes item from the API
+	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
 	 * @param year year to get index for
 	 * 
-	 * @return programme data array
+	 * @return combined programme data array
 	 */
-	// Get a fully combined programme 
 	public static function get_programme($id, $year){
+		$cache_key = "api-output-ug-programme-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
+	}
+
+	/**
+	 * generate fully combined programme item from caches
+	 *
+	 * @param id ID of programme
+	 * @param year year to get index for
+	 * 
+	 * @return combined programme data array
+	 */
+	public static function generate_programme_data($id, $year){
+		$cache_key = "api-output-ug-programme-$year-$id";
 
 		// Get basic data set
 		$globals 				= GlobalSetting::get_api_data($year);	
@@ -73,8 +86,14 @@ class API {
 		
 		// Now remove IDs from our field names, they're not necessary and return.
 		// e.g. 'programme_title_1' simply becomes 'programme_title'.
-		return static::remove_ids_from_field_names($final);;
+		$finalised = static::remove_ids_from_field_names($final);
+
+		// Store data in to cache
+		Cache::put($cache_key, $finalised, 2628000);
+
+		return $finalised;
 	}
+
 
 	/**
 	 * Removes the automatically generated field ids from our field names.

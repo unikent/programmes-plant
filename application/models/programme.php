@@ -279,8 +279,13 @@ class Programme extends Revisionable {
 	 * @return programmes index
 	 */
 	public static function get_api_programme($id, $year){
-		$cache_key = "api-programme-ug-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
+
+		// @todo re-add cache functionalty - Find method of segmenting / part flushing caches
+		// Needed on simpleData save (for none revisionble) + (on all make_live for revsionble)
+		return static::generate_api_programme($id, $year);
+
+		// $cache_key = "api-programme-ug-$year-$id";
+		// return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
 
 	/**
@@ -308,7 +313,9 @@ class Programme extends Revisionable {
 		} 
 
 		// Store data in to cache
-		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+		// @todo re-add cache functionalty - Find method of segmenting / part flushing caches
+		// Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+
 		// return
 		return $revision_data;
 	}
