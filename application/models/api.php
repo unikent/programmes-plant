@@ -139,7 +139,12 @@ class API {
 	 * @return Raw XML
 	 */ 
 	public static function purge_output_cache(){
-		Cache::purge('api-output-ug');
+		// @todo work out a way of purging this data in tests
+		// so we can test logic creates/removes the correct files
+		if(Request::env() != 'test'){
+			Cache::purge('api-output-ug');
+		}
+		
 	}
 
 	/**
