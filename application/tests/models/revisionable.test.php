@@ -16,25 +16,8 @@ class TestRevisionable extends ModelTestCase {
 		// Flush the cache.
 		Cache::flush();
 
-		// Delete from the database.
-		$programme_settings = Programme::all();
+		static::clear_models();
 
-		foreach ($programme_settings as $programme_setting)
-		{
-			$programme_setting->delete();
-		}
-
-		$programme_revisions = ProgrammeRevision::all();
-		foreach ($programme_revisions as $programme_revision)
-		{
-			$programme_revision->delete();
-		}
-		//Reset auto incriment sequences
-		DB::query('delete from sqlite_sequence where name="programmes_revisions"');
-		DB::query('delete from sqlite_sequence where name="programmes"');
-
-		// Kill the list cache (just in case).
-		// This caches everything in memory.
 		Programme::$list_cache = false;
 		
 		parent::tearDown();
