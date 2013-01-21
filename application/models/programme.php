@@ -145,8 +145,16 @@ class Programme extends Revisionable {
 	{
 		return 'search_keywords_46';
 	}
-
-
+	
+	/**
+	 * Get the name of the 'pos_code' field/column in the database.
+	 * 
+	 * @return The name of the 'pos_code' field.
+	 */
+	public static function get_pos_code_field()
+	{
+		return 'pos_code_44';
+	}
 
 
 	/**
@@ -368,7 +376,8 @@ class Programme extends Revisionable {
 		$mode_of_study_field = Programme::get_mode_of_study_field();
 		$ucas_code_field = Programme::get_ucas_code_field();
 		$search_keywords_field = Programme::get_search_keywords_field();
-
+		$pos_code_field = Programme::get_pos_code_field();
+		
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
@@ -396,6 +405,8 @@ class Programme extends Revisionable {
 				'mode_of_study' => $programme->$mode_of_study_field,
 				'ucas_code' => $programme->$ucas_code_field,
 				'search_keywords' => $programme->$search_keywords_field,
+				'campus_id' => ($programme->location != null) ? $programme->location->identifier : '',
+				'pos_code' => ($pos_code_field != null) ? $pos_code_field : '',
 			);
 		}
 
