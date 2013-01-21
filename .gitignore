@@ -6,3 +6,4 @@ vendor/composer
 vendor/phpunit/
 vendor/programmes-plant-modules
 composer.phar
+composer.lock

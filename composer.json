@@ -1,7 +1,14 @@
 {
     "require": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "programmes-plant-modules": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url":  "git@github.com:gnozu/programmes-plant-modules.git"
+        }
+    ],
 
     "minimum-stability": "dev",
     
