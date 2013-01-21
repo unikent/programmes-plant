@@ -268,8 +268,8 @@ class API {
 				$xml->addChild($key, $value);
 			}
 		}
-
-		return $xml->asXML();
+		// Decode &chars; in XMl to ensure its valid.
+		return str_replace('&','&amp;',$xml->asXML());
 	}
 
 
