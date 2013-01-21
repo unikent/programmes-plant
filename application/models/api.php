@@ -14,6 +14,49 @@ class API {
 		return Programme::get_api_index($year);
 	}
 
+
+	/**
+	* get subjects index (hopefully from cache)
+	*
+	* @param $year
+	* @param $level - ug or pg
+	* @return array of subjects with couses attached.
+	*/
+	public static function get_subjects_index($year, $level = 'ug'){
+		// api-output-ug gets wiped on every action.
+		$cache_key = "api-output-ug.subjects_index-$year";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_subjects_index($year, $level);
+	}
+
+	/**
+	* get subjects index from live(ish) data. Hopefully will hit internal caches for most of it.
+	*
+	* @param $year
+	* @param $level - ug or pg
+	* @return array of subjects with couses attached.
+	*/
+	public static function generate_subjects_index($year, $level = 'ug'){
+		// api-output-ug gets wiped on every action.
+		$cache_key = "api-output-ug.subjects_index-$year";
+
+		// Get subjects and course mappings
+		$subjects = Subject::get_api_data($year);
+		$subjects_map = Programme::get_api_related_programmes_map($year);
+		// Generate feed array
+		$subjects_array = array();
+		foreach($subjects as $subject){
+			$subject_item = $subject;
+			$subject_item['courses'] = $subjects_map[$subject['id']];
+			$subjects_array[] = $subject_item;
+		}
+
+		// cache data
+		Cache::put($cache_key, $subjects_array, 2628000);
+
+		return $subjects_array;
+	}
+
+
 	/**
 	 * Return fully combined programme item from the API
 	 *
@@ -133,7 +176,7 @@ class API {
 		}else{
 			$related_courses_array = $mapping[$subject_1];
 		}
-		
+
 		// Remove self from list as theres no point it being related to itself
 		if($self_id) unset($related_courses_array[$self_id]);
 		 

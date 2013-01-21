@@ -94,8 +94,10 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 
 	// API
+	Route::any('/api/([0-9]{4})/(ug|pg)', 'api@index');
 	Route::any('/api/([0-9]{4})/(ug|pg)/programmes', 'api@index');
 	Route::get('/api/([0-9]{4})/(ug|pg)/programmes/(:num?)', 'api@programme');
+	Route::any('/api/([0-9]{4})/(ug|pg)/subjects', 'api@subject_index');
 
 	// XCRI-CAP Feeds
 	Route::any('/xcri-cap/(undergraduate|postgraduate)/([0-9]{4})', 'xcri-cap@index');

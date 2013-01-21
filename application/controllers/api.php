@@ -32,6 +32,23 @@ class API_Controller extends Base_Controller {
 		// Return the cached index file with the correct headers.
 		return Response::json($index_data, '200', array('Content-Type' => 'application/json'));
 	}
+
+	/**
+	* get subjects index
+	*
+	* @param $year
+	* @param $level - ug or pg
+	* @return json data as a string or HTTP response
+	*/
+	public function get_subject_index($year, $level){
+		//Get subjects
+		$subjects = API::get_subjects_index($year, $level);
+
+		if (! $subjects) return Response::error('501');
+
+		// output
+		return Response::json($subjects, '200', array('Content-Type' => 'application/json'));
+	}
 	
 	/**
 	* Get data for the programme as JSON.
