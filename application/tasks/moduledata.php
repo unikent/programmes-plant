@@ -2,9 +2,6 @@
 
 require_once path('base') . 'vendor/autoload.php';
 
-// included this hack for now till we get this working properly with composer
-require_once path('base') . 'vendor/programmes-plant-modules/src/ProgrammesPlant/moduledata.php';
-
 class ModuleData_Task {
 
 	/**
@@ -20,15 +17,23 @@ class ModuleData_Task {
 		
 		$type = 'ug';
 		
-		$programmes = array(1 => 'XYZ123');
+		// get the list of programmes for this session from our own API call
+		$programmes = \API::get_index('2014', 'ug');	
 		
-		foreach ($programmes as $programme_id => $programme_code)
+		foreach ($programmes as $id => $programme)
 		{
+			$programme_id = $programme['id'];
+			$programme_code = $programme['pos_code'];
+			$campus_id = $programme['campus_id'];
+			
 			// set things up in test mode
-			$module_data_obj->api_target = path('base') . 'vendor/programmes-plant-modules/tests/data/programme_modules.json';
+			// this will eventually be the web service call so we'll comment out both lines below
+			$module_data_obj->api_target = path('base') . 'vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
 			$module_data_obj->test_mode = true;
 			
 			$programme_modules = $module_data_obj->get_programme_modules($programme_code, $session);
+			
+			$module_data_obj->api_target = '';
 			
 			// loop through each of the modules and get its synopsis, adding it to the object for output
 			foreach ($programme_modules->response->rubric->compulsory_modules->module as $index => $module)
