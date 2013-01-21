@@ -179,7 +179,7 @@ class SimpleData extends Eloquent {
 	private static function generate_json()
 	{
 		$cache_location = path('storage') .'api/';
-		$cache_file = $cache_location.get_called_class().'.json';
+		$cache_file = $cache_location.strtolower(get_called_class()).'.json';
 		$data = array();
 
 		foreach (static::all() as $record) {
@@ -205,7 +205,7 @@ class SimpleData extends Eloquent {
 
 		foreach ($ds_fields as $ds_field) 
 		{
-			$values[$ds_field->id] = $ds_field->to_array();
+			$values[] = $ds_field->to_array();
 		}
 
 		return $values;

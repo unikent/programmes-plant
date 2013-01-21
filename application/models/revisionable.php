@@ -53,6 +53,7 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+
 		// If the save succeeds, save a new revision and return its status 
 		// (so the return from this save() is means both the revision & save itself were successful.)
 		if($success) return $this->save_revision();
@@ -96,7 +97,17 @@ class Revisionable extends SimpleData {
 		// Timestamp revision & set editor etc.
 		$revision_values['created_at'] = $this->updated_at;
 		$revision_values['updated_at'] = $revision_values['created_at'];
-		$revision_values['edits_by'] = Auth::user();
+
+		// If we are on the command line, no user will be logged in, use a dummy instead.
+		// This will be used mostly when seeding the database.
+		if (! Request::cli())
+		{
+			$revision_values['edits_by'] = Auth::user();
+		}
+		else 
+		{
+			$revision_values['edits_by'] = 'seed';
+		}
 
 		// Status = selected
 		$revision_values['status'] = 'selected';
@@ -115,13 +126,19 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Get all revisions for this item
-	 * @param array of revisions
+	 * Get all revisions for this item (or revisions in a particular status if status is passed)
+	 * @param $status status of revisions to return
+	 * @return array of revisions
 	 */
-	public function get_revisions()
+	public function get_revisions($status = false)
 	{
 		$model = $this->revision_model;
-		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+		// store query obj
+		$query = $model::where($this->data_type_id.'_id','=',$this->id);
+		// if status is set add filter
+		if($status)$query = $query->where('status', '=', $status);
+		// return data
+		return $query->order_by('created_at', 'desc')->get();
 	}
 
 	/**
@@ -170,16 +187,30 @@ class Revisionable extends SimpleData {
 			$revision = $this->get_revision($revision);
 		}
 
-		// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
-		$this->live = '2';
+		// Get the currently "active/selected" revision.
+		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
+		// If the active revision is already current, leave it be
+		$active_revision = $this->get_active_revision();
+		if($active_revision->status == 'live'){
+			$active_revision->status = 'selected';
+			$active_revision->save();
+		}
+
+		//If revision being made live us cyrrent, set item status to say there are no later versions
+		if($revision->status == 'selected'){
+			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+			$this->live = '2';
+		}else{
+			// If the revision going live isn't the current, ensure system knows
+			// there are still later revisions
+			$this->live = '1';
+		}
 		parent::save();
-
-		// Get revision model.
-		$revision_model = $this->revision_model;
-
-		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 		
+		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
+		$revision_model = $this->revision_model;
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+
 		// Update and save this revision 
 		$revision->status = 'live';
 		$revision->published_at = date('Y-m-d H:i:s');
@@ -249,7 +280,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['edits_by']);
 		unset($revision_values['made_live_by']);
 		unset($revision_values['status']);
-		unset($revision_values[strtolower($this->data_type).'_id']);
+		unset($revision_values[strtolower($this->data_type_id).'_id']);
 
 		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
 
@@ -330,12 +361,13 @@ class Revisionable extends SimpleData {
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
 		$ucas_code_field = Programme::get_ucas_code_field();
+		$search_keywords_field = Programme::get_search_keywords_field();
 
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						->where('status','!=','0')
+						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
 						->get();
@@ -355,7 +387,8 @@ class Revisionable extends SimpleData {
 				'new_programme' => $programme->$new_programme_field,
 				'subject_to_approval' => $programme->$subject_to_approval_field,
 				'mode_of_study' => $programme->$mode_of_study_field,
-				'ucas_code' => $programme->$ucas_code_field
+				'ucas_code' => $programme->$ucas_code_field,
+				'search_keywords' => $programme->$search_keywords_field,
 			);
 		}
 
@@ -395,8 +428,27 @@ class Revisionable extends SimpleData {
 		}
 		else
 		{
-			file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
+			file_put_contents($cache_location.strtolower($data_type).'.json', json_encode($revision->to_array()));
 		}
 	}
+
+	/**
+     * Simplifies the object by IDs from field names.
+     * 
+     * @todo This duplicates functionality in revisionable. Refactor or remove.
+     * @return StdClass A simplified version of the object minus its field names.
+     */
+    public function trim_ids_from_field_names()
+    {
+    	$trimmed = new StdClass();
+
+    	foreach ($this->attributes as $name => $value) 
+		{
+			$name = preg_replace('/_\d{1,3}$/', '', $name);
+			$trimmed->$name = $value;
+		}
+
+		return $trimmed;
+    }
 
 }

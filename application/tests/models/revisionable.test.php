@@ -4,7 +4,7 @@ class RevisionableThing extends Revisionable {}
 
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'id' => 1);
+	public $input =  array('programme_title_1' => 'Thing', 'created_by' => "test user");
 
 	public static function setUpBeforeClass()
 	{
@@ -23,6 +23,15 @@ class TestRevisionable extends ModelTestCase {
 		{
 			$programme_setting->delete();
 		}
+
+		$programme_revisions = ProgrammeRevision::all();
+		foreach ($programme_revisions as $programme_revision)
+		{
+			$programme_revision->delete();
+		}
+		//Reset auto incriment sequences
+		DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+		DB::query('delete from sqlite_sequence where name="programmes"');
 
 		// Kill the list cache (just in case).
 		// This caches everything in memory.
@@ -310,14 +319,59 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
+
 	
+	// New revision tests
+	public function testRevisionCreatedOnSave(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+		$this->assertNotNull($revision);
+	}
+	public function testInitalRevisionForNewProgrammeIsSelected(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("selected", $revision->status);
+	}
+	public function testSecondSaveCreatesSecondRevision(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+        $revision = $revisionable_item->get_revision(2);
+
+		$this->assertNotNull($revision);
+	}
+	public function testSecondSaveSetsStatusOfFirstRevisionToDraft(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+    	$revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("draft", $revision->status);
+	}
+
+
+
 	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
 	{
     	// set up some data
     	$this->populate();
     	$revisionable_item = Programme::find(1);
         $revision = $revisionable_item->get_revision(1);
-        
+
         // make the revision live
         $revisionable_item->make_revision_live($revision);
         
@@ -403,8 +457,8 @@ class TestRevisionable extends ModelTestCase {
 	{
 		 //TEST ISSUE: see "@todo @workaround" in revisionble model
 
-    	// set up some data
-    	$input =  array('institution_name_1' => 'University of Kent');
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('institution_name_1' => 'University of Kent', 'id' => 1);
     	$this->populate('GlobalSetting', $input);
     	$revisionable_item = GlobalSetting::find(1);
     	
@@ -427,12 +481,12 @@ class TestRevisionable extends ModelTestCase {
 	{
 		//TEST ISSUE: see "@todo @workaround" in revisionble model
 
-    	// set up some data
-    	$input =  array('programme_title_1' => 'Test programme title');
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('programme_title_1' => 'Test programme title', 'id' => 1);
     	$this->populate('ProgrammeSetting', $input);
     	
     	$revisionable_item = ProgrammeSetting::find(1);
-
+	
     	// make a new revision
         $new = ProgrammeSetting::find(1);
         $new->programme_title_1 = 'The Music Programme';
@@ -447,4 +501,9 @@ class TestRevisionable extends ModelTestCase {
         $programme_setting = ProgrammeSetting::find(1);
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
+
+	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
+
+	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+
 }
