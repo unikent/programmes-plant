@@ -90,8 +90,8 @@ class API {
 
 		// Apply related courses
 		$related_courses = API::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $final['programme_id']);
-		// Re add user specified related courses
-		foreach($final['related_courses'] as $course){
+		// Re add user specified related courses (typecast array so empty value skips without error)
+		foreach((array)$final['related_courses'] as $course){
 			// If course doesnt exist in generated array, add it.
 			if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
 		}
@@ -122,12 +122,18 @@ class API {
 
 		$mapping = Programme::get_api_related_programmes_map($year);
 
+		// If subject isn't set, just return an empty array of relations.
+		if($subject_1 == null){
+			return array();
+		} 
+
 		// Get all related programmes.
 		if($subject_1 != $subject_2){
 			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
 		}else{
 			$related_courses_array = $mapping[$subject_1];
 		}
+		
 		// Remove self from list as theres no point it being related to itself
 		if($self_id) unset($related_courses_array[$self_id]);
 		 
