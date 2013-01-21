@@ -86,12 +86,52 @@ class API {
 		
 		// Now remove IDs from our field names, they're not necessary and return.
 		// e.g. 'programme_title_1' simply becomes 'programme_title'.
-		$finalised = static::remove_ids_from_field_names($final);
+		$final = static::remove_ids_from_field_names($final);
+
+		// Apply related courses
+		$related_courses = API::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $final['programme_id']);
+		// Re add user specified related courses
+		foreach($final['related_courses'] as $course){
+			// If course doesnt exist in generated array, add it.
+			if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
+		}
+		// Make alphabetical
+		usort($related_courses, function($a,$b){
+			 return strcmp($a["name"], $b["name"]);
+		});
+
+		// Set back in to object.
+		$final['related_courses'] = $related_courses;
 
 		// Store data in to cache
-		Cache::put($cache_key, $finalised, 2628000);
+		Cache::put($cache_key, $final, 2628000);
 
-		return $finalised;
+		return $final;
+	}
+
+	/**
+	 * Find related courses using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
+	 * 
+	 * @param $subject_1 is course part of subject 1
+	 * @param $subject_2 is course part of subject 2
+	 * @param $year is course in year
+	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
+	 * @return array of realted programmes
+	 */
+	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false){
+
+		$mapping = Programme::get_api_related_programmes_map($year);
+
+		// Get all related programmes.
+		if($subject_1 != $subject_2){
+			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
+		}else{
+			$related_courses_array = $mapping[$subject_1];
+		}
+		// Remove self from list as theres no point it being related to itself
+		if($self_id) unset($related_courses_array[$self_id]);
+		 
+		return $related_courses_array;
 	}
 
 
@@ -142,7 +182,13 @@ class API {
 		// @todo work out a way of purging this data in tests
 		// so we can test logic creates/removes the correct files
 		if(Request::env() != 'test'){
-			Cache::purge('api-output-ug');
+			// Pokémon expection handling, gotta catch em all.
+			try {
+				Cache::purge('api-output-ug');
+			}catch (Exception $e) {
+				// Do nothing, all this means if there was no directory (yet) to wipe
+			}
+			
 		}
 		
 	}
