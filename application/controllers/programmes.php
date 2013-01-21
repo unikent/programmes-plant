@@ -209,30 +209,31 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
-		if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get revision specified
 		$programme = Programme::find($programme_id);
 
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$revision = $programme->get_revision($revision_id);
 
-		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$programme_attributes = $programme->attributes;
 		$revision_for_diff = $revision->attributes;
 
-		// Ignore these fields which will always change
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
-				unset($revision_for_diff[$ignore]);
-				unset($programme_attributes[$ignore]);
+		// Ignore these fields which will always change.
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
+		{
+			unset($revision_for_diff[$ignore]);
+			unset($programme_attributes[$ignore]);
 		}
 
 		$schools = School::all_as_list();
@@ -249,8 +250,9 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$diff = array();
 
-		foreach ($differences as $field => $value) {
-				$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
+		foreach ($differences as $field => $value) 
+		{
+			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
 		}
 
 		$this->data['diff'] = $diff;
