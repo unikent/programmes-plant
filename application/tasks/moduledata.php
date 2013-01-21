@@ -31,7 +31,6 @@ class ModuleData_Task {
 			$programme_modules = $module_data_obj->get_programme_modules($programme_code, $session);
 			
 			// loop through each of the modules and get its synopsis, adding it to the object for output
-			$module_data_obj->api_target = path('base') . 'vendor/programmes-plant-modules/tests/data/';
 			foreach ($programme_modules->response->rubric->compulsory_modules->module as $index => $module)
 			{
 				// the synopsis
