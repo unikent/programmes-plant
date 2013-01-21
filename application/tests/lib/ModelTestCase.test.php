@@ -20,7 +20,7 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
         }
     }
 
-    protected static function clear_models($models = array("programme", "ProgrammeRevision")){
+    protected static function clear_models($models = array("programme", "ProgrammeRevision","programmeSetting", "ProgrammeSettingRevision", "GlobalSetting", "GlobalSettingRevision")){
 
 		foreach($models as $model){
 			// Clear data
