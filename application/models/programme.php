@@ -332,7 +332,7 @@ class Programme extends Revisionable {
 	 * get a copy of the subjects mapping data (from cache if possible)
 	 *
 	 * @param $year year to get index for
-	 * @return programmes index
+	 * @return programmes mapping
 	 */
 	public static function get_api_related_programmes_map($year){
 		$cache_key = "api-programmes-$year-subject-relations";
