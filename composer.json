@@ -1,7 +1,7 @@
 {
     "require": {
         "phpunit/phpunit": "*",
-        "programmes-plant-modules": "dev-master"
+        "unikent/programmes-plant-modules": "dev-master"
     },
     "repositories": [
         {
