@@ -19,4 +19,14 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
             $request->remove($key);
         }
     }
+
+    protected static function clear_models($models = array("programme", "ProgrammeRevision")){
+
+		foreach($models as $model){
+			// Clear data
+			foreach ($model::all() as $row) $row->delete();
+			// Reset index
+			DB::query('delete from sqlite_sequence where name= ?', array($model::$table));
+		}
+	}
 }
