@@ -324,8 +324,27 @@ class Programme extends Revisionable {
 	 * @return programmes index
 	 */
 	public static function get_api_index($year){
-		$cache_key = 'api-index';
+		$cache_key = "api-index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
+	}
+
+	/**
+	 * get a copy of the subjects mapping data (from cache if possible)
+	 *
+	 * @param $year year to get index for
+	 * @return programmes index
+	 */
+	public static function get_api_related_programmes_map($year){
+		$cache_key = "api-programmes-$year-subject-relations";
+
+		if(Cache::has($cache_key)){
+			return Cache::get($cache_key);
+		}else{
+			// Generate cache (this returns index, not mappings)
+			static::generate_api_index($year);
+			// get cache
+			return  Cache::get($cache_key);
+		}
 	}
 
 	/**
@@ -335,8 +354,9 @@ class Programme extends Revisionable {
 	 * @return programmes index
 	 */
 	public static function generate_api_index($year){
-		// Set cache key
-		$cache_key = "api-index";
+		// Set cache keys
+		$cache_key_index = "api-index-$year";
+		$cache_key_subject = "api-programmes-$year-subject-relations";
 
 		// Obtain names for required fields
 		$title_field = Programme::get_title_field();
@@ -352,13 +372,14 @@ class Programme extends Revisionable {
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
+		// @todo Use "with" to lazy load all related fields & speed this up a bit.
 		$programmes = ProgrammeRevision::where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
 						->get();
 
-		// Build array
+		// Build index array
 		foreach($programmes as $programme)
 		{
 			$index_data[$programme->programme_id] = array(
@@ -378,11 +399,31 @@ class Programme extends Revisionable {
 			);
 		}
 
-		// Store data in to cache
-		Cache::put($cache_key, $index_data, 2628000);
+		// Store index data in to cache
+		Cache::put($cache_key_index , $index_data, 2628000);
+
+		// Map relaated subjects.
+		$subject_relations = array();
+		// For each programme in output
+		foreach($programmes as $programme){
+
+			// Create arrays as needed.
+			if(!isset($subject_relations[$programme->subject_area_1_8])) $subject_relations[$programme->subject_area_1_8] = array();
+			if(!isset($subject_relations[$programme->subject_area_2_9])) $subject_relations[$programme->subject_area_2_9] = array();
+
+			// Add this programme to subject
+			$subject_relations[$programme->subject_area_1_8][$programme->programme_id] = $index_data[$programme->programme_id];
+			// If second subject isn't the same, add it to that also
+			if($programme->subject_area_1_8 != $programme->subject_area_2_9){
+				$subject_relations[$programme->subject_area_2_9][$programme->programme_id] = $index_data[$programme->programme_id];
+			}
+		}
+		// Store subject mapping data in to cache
+		Cache::put($cache_key_subject, $subject_relations, 2628000);
 
 		// return
 		return $index_data;
 	}
+
 
 }
