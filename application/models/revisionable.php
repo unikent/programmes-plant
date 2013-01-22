@@ -30,7 +30,7 @@ class Revisionable extends SimpleData {
 		$this->data_type = get_called_class();
 		// If not set in parent, just assume modelRevision as name
 		if(!static::$revision_model)  static::$revision_model = $this->data_type .'Revision';
-		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
+		if(!$this->data_type_id) $this->data_type_id = strtolower($this->data_type);
 
 		// Pass to real constructor
 		parent::__construct($attributes, $exists);
@@ -149,8 +149,18 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_revision($revision_id)
 	{
+		// Get revision
 		$model = static::$revision_model;
-		return $model::find($revision_id);
+		$revision = $model::find($revision_id);
+
+		// Ensure revision belongs to this item
+		$data_type_key = $this->data_type_id.'_id';	
+		if($revision->$data_type_key == $this->id){
+			return $revision;
+		}else{
+			// Exception ifn not.
+			throw new RevisioningException("Revision does not belong to this object.");
+		}
 	}
 
 	/**
@@ -393,3 +403,5 @@ class Revisionable extends SimpleData {
     }
 
 }
+
+class RevisioningException extends \Exception {}
