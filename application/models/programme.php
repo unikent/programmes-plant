@@ -406,7 +406,7 @@ class Programme extends Revisionable {
 				'ucas_code' => $programme->$ucas_code_field,
 				'search_keywords' => $programme->$search_keywords_field,
 				'campus_id' => ($programme->location != null) ? $programme->location->identifier : '',
-				'pos_code' => ($pos_code_field != null) ? $pos_code_field : '',
+				'pos_code' => ($programme->$pos_code_field != null) ? $programme->$pos_code_field : '',
 			);
 		}
 
