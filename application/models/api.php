@@ -146,6 +146,12 @@ class API {
 		// Set back in to object.
 		$final['related_courses'] = $related_courses;
 
+		// Finally, try and add some module data
+		$modules = API::get_module_data($id, $year);
+		if($modules !== false){
+			$final['modules'] = $modules ;
+		}
+
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
 
@@ -182,6 +188,21 @@ class API {
 		 
 		return $related_courses_array;
 	}
+
+	/**
+	 * Get Module Data
+	 *
+	 * @param id ID of programme to get module data for
+	 * @param year year of progamme
+	 * @param type of progamme ug|pg
+	 * 
+	 * @return Module data | false
+	 */
+	public static function get_module_data($id, $year, $level = 'ug'){
+		$cache_key = "programme-modules.$level-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
+	}
+
 
 
 	/**
@@ -257,9 +278,13 @@ class API {
 
 		foreach($data as $key => $value)
 		{
-			if(is_int($key)) $key = 'item'; //Else will use 1/2/3/etc which is invalid xml
+			if(is_int($key)){
+				$key = 'item'; //Else will use 1/2/3/etc which is invalid xml
+			}else{
+				$key = preg_replace("/[^a-zA-Z0-9]+/", "", $key);//Remove any funny chars from keys
+			} 
 
-			if (is_array($value))
+			if (is_array($value) || is_object($value))
 			{
 				static::array_to_xml($value, $xml->addChild($key));
 			}
@@ -268,8 +293,8 @@ class API {
 				$xml->addChild($key, $value);
 			}
 		}
-
-		return $xml->asXML();
+		// Decode &chars; in XMl to ensure its valid.
+		return str_replace('&','&amp;',$xml->asXML());
 	}
 
 

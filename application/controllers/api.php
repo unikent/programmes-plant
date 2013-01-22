@@ -15,9 +15,10 @@ class API_Controller extends Base_Controller {
 	*
 	* @param $year
 	* @param $level - ug or pg
-	* @return json data as a string or HTTP response
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response
 	*/
-	public function get_index($year, $level)
+	public function get_index($year, $level, $format = 'json')
 	{
 		$index_data = API::get_index($year, $level);
 
@@ -30,7 +31,7 @@ class API_Controller extends Base_Controller {
 		}
 
 		// Return the cached index file with the correct headers.
-		return Response::json($index_data, '200', array('Content-Type' => 'application/json'));
+		return ($format=='xml') ? static::xml($index_data) : static::json($index_data);
 	}
 
 	/**
@@ -38,16 +39,17 @@ class API_Controller extends Base_Controller {
 	*
 	* @param $year
 	* @param $level - ug or pg
-	* @return json data as a string or HTTP response
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response
 	*/
-	public function get_subject_index($year, $level){
+	public function get_subject_index($year, $level, $format = 'json'){
 		//Get subjects
 		$subjects = API::get_subjects_index($year, $level);
 
 		if (! $subjects) return Response::error('501');
 
 		// output
-		return Response::json($subjects, '200', array('Content-Type' => 'application/json'));
+		return ($format=='xml') ? static::xml($subjects) : static::json($subjects);
 	}
 	
 	/**
@@ -56,9 +58,10 @@ class API_Controller extends Base_Controller {
 	* @param string $year The Year.
 	* @param string $level The level - ug or pg.
 	* @param $programme_id The programme we're pulling data for.
-	* @return json data as a string or HTTP response.    
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response.    
 	*/
-	public function get_programme($year, $level, $programme_id)
+	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
 		$programme = API::get_programme($programme_id, $year);
 		//Programme::get_as_flattened($year, $level, $programme_id);
@@ -71,8 +74,10 @@ class API_Controller extends Base_Controller {
 		}
 		
 		// return a JSON version of the newly-created $final object
-		return Response::json($programme);
+		return ($format=='xml') ? static::xml($programme) : static::json($programme);
 	}
+
+
 
 	/**
 	* Output as XML
@@ -80,6 +85,13 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function xml($data){
 		return Response::make(API::array_to_xml($data), 200, array('Content-Type' => 'text/xml'));
+	}
+	/**
+	* Output as JSON
+	* @param $data to be shown as JSON
+	*/
+	public static function json($data){
+		return Response::json($data, '200', array('Content-Type' => 'application/json'));
 	}
 	
 
