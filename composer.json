@@ -6,7 +6,7 @@
     "repositories": [
         {
             "type": "git",
-            "url":  "git@github.com:unikent/programmes-plant-modules.git"
+            "url":  "git://github.com/unikent/programmes-plant-modules.git"
         }
     ],
 
