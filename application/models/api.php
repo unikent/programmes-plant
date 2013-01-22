@@ -149,7 +149,7 @@ class API {
 		// Finally, try and add some module data
 		$modules = API::get_module_data($id, $year);
 		if($modules !== false){
-			$final['modules'] = $modules ;
+			$final['modules'] = $modules;
 		}
 
 		// Store data in to cache

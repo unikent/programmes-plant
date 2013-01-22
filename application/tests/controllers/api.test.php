@@ -161,7 +161,7 @@ class TestAPI_Controller extends ControllerTestCase
         if(!empty($course))
         {
 
-            $revision = $course->get_revision(1);
+            $revision = $course->get_active_revision();
 
             if (isset($revision)) {
                 $course->make_revision_live($revision);
