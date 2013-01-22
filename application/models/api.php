@@ -101,14 +101,8 @@ class API {
 		}
 
 		// Start combining to create final super object for output
-		// Use globals as base
-		$final = $globals;
-		
-		// Then add in values from settings
-		foreach($programme_settings as $key => $value)
-		{
-			$final[$key] = $value;
-		}
+		// Use programme setttings as a base
+		$final = $programme_settings;
 
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
 		// Loop through them, adding them to the $final object.
@@ -152,6 +146,9 @@ class API {
 
 		// Set back in to object.
 		$final['related_courses'] = $related_courses;
+
+		// Add global object
+		$final['globals'] = static::remove_ids_from_field_names($globals);
 
 		// Finally, try and add some module data
 		$modules = API::get_module_data($id, $year);
@@ -288,9 +285,9 @@ class API {
 		foreach($data as $key => $value)
 		{
 			if(is_int($key)){
-				$key = 'item'; //Else will use 1/2/3/etc which is invalid xml
+				$key = 'item'; // Else will use 1/2/3/etc which is invalid xml
 			}else{
-				$key = preg_replace("/[^a-zA-Z0-9]+/", "", $key);//Remove any funny chars from keys
+				$key = preg_replace('~\W*~', "", $key);// Remove any funny chars from keys
 			} 
 
 			if (is_array($value) || is_object($value))
