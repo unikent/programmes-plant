@@ -186,7 +186,8 @@ class SimpleData extends Eloquent {
 	 * @param year (Unused - PHP requires signature not to change)
 	 * @return data Object
 	 */
-	public static function get_api_data($year = false){
+	public static function get_api_data($year = false)
+	{
 		// generate keys
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
@@ -202,7 +203,8 @@ class SimpleData extends Eloquent {
 	 * @param year (Unused - PHP requires signature not to change)
 	 * @param data (Unused - PHP requires signature not to change)
 	 */
-	public static function generate_api_data($year = false, $data = false){
+	public static function generate_api_data($year = false, $data = false)
+	{
 		// keys
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;

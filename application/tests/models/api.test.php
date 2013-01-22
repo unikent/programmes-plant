@@ -104,13 +104,19 @@ class TestAPI extends ModelTestCase
 	}
 
 	// Test we can get programme
+
+	/**
+	* @expectedException MissingDataException
+	*/
 	public function testget_programme_without_globals(){
 		$this->publish_programme_settings();
 		$this->publish_programme();
 
 		$result = API::get_programme(1, '2014');
-		$this->assertEquals(false, $result);
 	}
+	/**
+	* @expectedException MissingDataException
+	*/
 	public function testget_programme_without_programmesetting(){
 		$this->publish_globals();
 		$this->publish_programme();
@@ -135,6 +141,15 @@ class TestAPI extends ModelTestCase
 		$this->assertEquals('Thing',  $result['programme_title']);
 	}
 
+	/**
+	* @expectedException NotFoundException
+	*/
+	public function testget_programme_fake_programme(){
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$result = API::get_programme(7, '2014');
+	}
 
 	
 }

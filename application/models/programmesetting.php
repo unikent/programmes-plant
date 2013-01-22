@@ -14,7 +14,8 @@ class ProgrammeSetting extends Revisionable
      *
 	 * @return $setting The specified setting as a string, or null if none is found
      */
-    public static function get_setting($year, $colname){
+    public static function get_setting($year, $colname)
+    {
     	$settings = ProgrammeSettingRevision::where('year', '=', $year)->where('status', '=', 'live')->get($colname);
     	
     	if(!empty($settings[0])){
