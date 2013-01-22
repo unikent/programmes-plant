@@ -134,10 +134,14 @@ class API {
 		// Apply related courses
 		$related_courses = API::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $final['programme_id']);
 		// Re add user specified related courses (typecast array so empty value skips without error)
-		foreach((array)$final['related_courses'] as $course){
-			// If course doesnt exist in generated array, add it.
-			if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
+
+		if(is_array($final['related_courses'])){
+			foreach($final['related_courses'] as $course){
+				// If course doesnt exist in generated array, add it.
+				if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
+			}
 		}
+		
 		// Make alphabetical
 		usort($related_courses, function($a,$b){
 			 return strcmp($a["name"], $b["name"]);
