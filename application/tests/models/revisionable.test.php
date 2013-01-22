@@ -9,6 +9,7 @@ class TestRevisionable extends ModelTestCase {
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
+		static::clear_models();
 	}
 
 	public function tearDown() 
@@ -16,25 +17,8 @@ class TestRevisionable extends ModelTestCase {
 		// Flush the cache.
 		Cache::flush();
 
-		// Delete from the database.
-		$programme_settings = Programme::all();
+		static::clear_models();
 
-		foreach ($programme_settings as $programme_setting)
-		{
-			$programme_setting->delete();
-		}
-
-		$programme_revisions = ProgrammeRevision::all();
-		foreach ($programme_revisions as $programme_revision)
-		{
-			$programme_revision->delete();
-		}
-		//Reset auto incriment sequences
-		DB::query('delete from sqlite_sequence where name="programmes_revisions"');
-		DB::query('delete from sqlite_sequence where name="programmes"');
-
-		// Kill the list cache (just in case).
-		// This caches everything in memory.
 		Programme::$list_cache = false;
 		
 		parent::tearDown();
@@ -320,12 +304,24 @@ class TestRevisionable extends ModelTestCase {
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
 
+	/**
+	* @expectedException RevisioningException
+	*/
+	public function testget_revision_will_throw_exception_on_revision_it_doesnt_own(){
+		$this->populate_two_years();
+		$p1 = Programme::find(1);
+		// p2 = Programme::find(2)
+		//get p2's exception from p1
+		$p1->get_revision(2);
+	}
+
 	
 	// New revision tests
 	public function testRevisionCreatedOnSave(){
 		$this->populate();
 
     	$revisionable_item = Programme::find(1);
+
         $revision = $revisionable_item->get_revision(1);
 
 		$this->assertNotNull($revision);

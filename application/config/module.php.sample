@@ -1,0 +1,16 @@
+<?php
+
+return array(
+
+	'module_data_url' => '',
+	
+	'programme_module_user' => '',
+	'programme_module_pass' => '',
+	'programme_module_base_url' => '',
+	
+	'pos_code_param' => '',
+	'version_param' => '',
+	'instituation_param' => '',
+	'campus_param' => '',
+	'session_param' => '',
+);

@@ -1,7 +1,7 @@
 <?php
 return array(
-	'ug' => 'Undergraduate',
-	'pg' => 'Postgraduate',
+	'ug' => 'undergraduate',
+	'pg' => 'postgraduate',
 	'ug_introduction' => 'This is the listing for <strong>undergraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'pg_introduction' => 'This is the listing for <strong>postgraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'create_introduction' => 'This form lets you enter information for a new programme.',
@@ -21,8 +21,8 @@ return array(
 	'create_programme_title' => 'New programme',
 
 	// Fields
-	'year' => 'Year of Programme',
-	'title' => 'Programme Title',
+	'year' => 'Year of programme',
+	'title' => 'Programme title',
 	'slug' => 'Slug',
 	'slug_help' => 'The desired short URL, for example <code>/business-studies</code>',
 	'summary' => 'Summary of programme',
@@ -30,7 +30,7 @@ return array(
 	'school_id' => 'School ID',
 	'school_adm_id' => 'School Admin ID',
 	'campus_id' => 'Campus ID',
-	'programme_id' => 'programme ID',
+	'programme_id' => 'Programme ID',
 	'honours' => 'Honours type ID',
 
 	'related_school_ids' => 'Related Schools',

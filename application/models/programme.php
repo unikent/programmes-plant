@@ -4,7 +4,7 @@ class Programme extends Revisionable {
 
 	public static $table = 'programmes';
 	
-	protected $revision_model = 'ProgrammeRevision';
+	public static $revision_model = 'ProgrammeRevision';
 
 	/**
 	 * Get the name of the title field/column in the database.
@@ -145,8 +145,16 @@ class Programme extends Revisionable {
 	{
 		return 'search_keywords_46';
 	}
-
-
+	
+	/**
+	 * Get the name of the 'pos_code' field/column in the database.
+	 * 
+	 * @return The name of the 'pos_code' field.
+	 */
+	public static function get_pos_code_field()
+	{
+		return 'pos_code_44';
+	}
 
 
 	/**
@@ -200,61 +208,27 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * look through the passed in record and substitute any ids with data from their correct table
-	 * primarily for our json api
-	 * 
-	 * @param $record The record
-	 * @return $new_record A new record with ids substituted
-	 */
-	public static function pull_external_data($record)
-	{
-		$path = path('storage') . 'api/';
-		$programme_fields_path = $path . 'programmefield.json';
-
-		//if we dont have a json file, return the $record as it was
-		if (!file_exists($programme_fields_path))
-		{
-			return $record;
-		}
-
-		//get programme fields
-		$programme_fields = json_decode(file_get_contents($programme_fields_path));
-		
-		//make neater programme fields array
-		$fields_array = array();
-		foreach ($programme_fields as $field) {
-			$fields_array[$field->colname] = $field->field_meta;
-		}
-		
-		//substitute the concerned ids with actual data
-		$new_record = array();
-		foreach ($record as $field_name => $field_value) {
-			if(isset($fields_array[$field_name])){
-				$model = $fields_array[$field_name];
-				$field_value = $model::replace_ids_with_values($field_value);
-			}
-			$new_record[$field_name] = $field_value;
-		}
-
-		return $new_record;
-	}
-
-	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
+	 *
+     * @param $ids List of ids to lookup
+	 * @param $year Year course should be returned from.
+	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids){
+	public static function replace_ids_with_values($ids, $year = false)
+	{
 
-		$ds_fields = static::where_in('id', explode(',', $ids))->get();
+		// If nothing is set, return an empty array
+		if(trim($ids) == '') return array();
+		// Get list of ids to swap out & grab api data from cache
+		$id_array = explode(',', $ids);
+		$cached_data = static::get_api_index($year);
+		// Create new array of actual values matching the ids from the cache
 		$values = array();
-		foreach ($ds_fields as $ds_field) {
-			$title_field = static::get_title_field();
-			$slug_field = static::get_slug_field();
-			$values[$ds_field->id] = static::remove_ids_from_field_names(array(
-					'id' => $ds_field->id,
-					$title_field => $ds_field->$title_field,
-					$slug_field => $ds_field->$slug_field
-				));
+		foreach ($id_array as $id) 
+		{
+			// Only display relation IF programme is published
+			if(isset($cached_data[$id])) $values[] = $cached_data[$id];
 		}
 
 		return $values;
@@ -301,105 +275,175 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * Returns the JSONified index of programmes for a given year.
-	 * 
-	 * @param string $year The year of the programmes.
-	 * @param string $level The level of the programmes, ug (undergraduate) or pg (postgraduate)
-	 * @return string The JSON index directly from disc cache.
+	 * Generate fresh copy of data, triggered on save.
+	 *
+	 * @param $year year data is for
+	 * @param $revision data set saved with
 	 */
-	public static function json_index($year, $level)
+	public static function generate_api_data($year = false, $revision = false)
 	{
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
-
-		if (! file_exists($path . 'index.json'))
-		{
-			return false;
-		}
-
-		return file_get_contents($path . 'index.json');
+		// Regenerate data to store in caches
+		static::generate_api_programme($revision->programme_id, $year, $revision);
+		static::generate_api_index($year);
 	}
 
 	/**
-	 * Get flattened data for a programme from the JSON disc cache.
-	 * 
-	 * @param string $year The year of the programme.
-	 * @param string $level The level of the programme, ug (undergraduate) or pg (postgraduate).
-	 * @param int $programme_id The ID of the programme.
-	 * @return Object $final | false The object as an array with relevant data attached. or false if we had problems.
+	 * get a copy of a programme (from cache if possible)
+	 *
+	 * @param id of programme
+	 * @param year  of programme
+	 * @return programmes index
 	 */
-	public static function get_as_flattened($year, $level, $programme_id)
+	public static function get_api_programme($id, $year)
 	{
-		// Set up the path to the output/cache file.
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
-		
-		// Try to get JSON files for global and programme settings, as well as the programme data itself.
-		// If 
-		if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') )
-		{
-			return false;
-		}
-
-		// If the cache files do exist for global/programme settings and the programme data, put them into objects.
-		$global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
-		$programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
-		$programme = json_decode(file_get_contents($path . $programme_id . '.json'));
-		
-		// In local and test environments we're using a faked JSON file rather than one generated from the sds web service.
-		$modules = '';
-		if (Request::env() == 'test' or Request::env() == 'local')
-		{
-			if(file_exists($path . $programme_id . '_modules_test.json'))
-			{
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules_test.json'));
-			}
-		}
-		else
-		{
-			if(file_exists($path . $programme_id . '_modules.json'))
-			{
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
-			}
-		}
-		
-		// Build up $final which will be an object with all the data in we need.
-		// Start with the global settings.
-		$final = $global_settings;
-		
-		// Modules
-		// Note that the web service contains two levels we won't need: response and rubric. This may need fixing once we get the finished web service.
-		if(!empty($modules))
-		{
-			$final->modules = $modules->response->rubric;
-		}
-			
-		// Add programme settings to the $final object
-		// No inheritance needed so just loop through the settings, adding them to the object.
-		foreach($programme_settings as $key => $value)
-		{
-			$final->{$key} = $value;
-		}
-
-		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
-		// Loop through them, adding them to the $final object.
-		$programme = Programme::pull_external_data($programme);
-
-		foreach($programme as $key => $value)
-		{
-			// Make sure any existing key in the $final object gets updated with the new $value.
-			if(!empty($value) ){
-				$final->{$key} = $value;
-			}
-		}
-		
-		// Tidy up.
-		foreach(array('id','global_setting_id') as $key)
-		{
-			unset($final->{$key});
-		}
-		
-		// Now remove IDs from our field names, they're not necessary and return.
-		// e.g. 'programme_title_1' simply becomes 'programme_title'.
-		return Programme::remove_ids_from_field_names($final);
+		$cache_key = "api-programme-ug-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
+
+	/**
+	 * generate copy of programme data from live DB
+	 *
+	 * @param id of programme
+	 * @param year  of programme
+	 * @param revsion data - store this to save reloading dbs when generating
+	 * @return programmes index
+	 */
+	public static function generate_api_programme($id, $year, $revision = false)
+	{
+		$cache_key = "api-programme-ug-$year-$id";
+
+		$model = get_called_class();
+		$cache_key = 'api-'.$model.'-'.$year;
+
+		// If revision not passed, get data
+		if(!$revision){
+			$revision = ProgrammeRevision::where('programme_id', '=', $id)->where('status', '=', 'live')->where('year', '=', $year)->first();
+		}
+
+		// Return false if there is no live revision
+		if(sizeof($revision) === 0 || $revision === null){
+			return false;
+		} 
+
+		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+
+		// return
+		return $revision_data;
+	}
+
+	/**
+	 * get a copy of the programmes listing data (from cache if possible)
+	 *
+	 * @param $year year to get index for
+	 * @return programmes index
+	 */
+	public static function get_api_index($year)
+	{
+		$cache_key = "api-index-$year";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
+	}
+
+	/**
+	 * get a copy of the subjects mapping data (from cache if possible)
+	 *
+	 * @param $year year to get index for
+	 * @return programmes mapping
+	 */
+	public static function get_api_related_programmes_map($year)
+	{
+		$cache_key = "api-programmes-$year-subject-relations";
+
+		if(Cache::has($cache_key)){
+			return Cache::get($cache_key);
+		}else{
+			// Generate cache (this returns index, not mappings)
+			static::generate_api_index($year);
+			// get cache
+			return  Cache::get($cache_key);
+		}
+	}
+
+	/**
+	 * generate new copy of programmes listing data from live DB
+	 *
+	 * @param $year year to get index for
+	 * @return programmes index
+	 */
+	public static function generate_api_index($year)
+	{
+		// Set cache keys
+		$cache_key_index = "api-index-$year";
+		$cache_key_subject = "api-programmes-$year-subject-relations";
+
+		// Obtain names for required fields
+		$title_field = Programme::get_title_field();
+		$slug_field = Programme::get_slug_field();
+		$withdrawn_field = Programme::get_withdrawn_field();
+		$suspended_field = Programme::get_suspended_field();
+		$subject_to_approval_field = Programme::get_subject_to_approval_field();
+		$new_programme_field = Programme::get_new_programme_field();
+		$mode_of_study_field = Programme::get_mode_of_study_field();
+		$ucas_code_field = Programme::get_ucas_code_field();
+		$search_keywords_field = Programme::get_search_keywords_field();
+		$pos_code_field = Programme::get_pos_code_field();
+		
+		$index_data = array();
+
+		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
+		// @todo Use "with" to lazy load all related fields & speed this up a bit.
+		$programmes = ProgrammeRevision::where('year','=', $year)
+						->where('status','=','live')
+						->where($withdrawn_field,'!=','true')
+						->where($suspended_field,'!=','true')
+						->get();
+
+		// Build index array
+		foreach($programmes as $programme)
+		{
+			$index_data[$programme->programme_id] = array(
+				'id' => $programme->programme_id,
+				'name' => $programme->$title_field,
+				'slug' => $programme->$slug_field,
+				'award' => ($programme->award != null) ? $programme->award->name : '',
+				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
+				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
+				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
+				'new_programme' => $programme->$new_programme_field,
+				'subject_to_approval' => $programme->$subject_to_approval_field,
+				'mode_of_study' => $programme->$mode_of_study_field,
+				'ucas_code' => $programme->$ucas_code_field,
+				'search_keywords' => $programme->$search_keywords_field,
+				'campus_id' => ($programme->location != null) ? $programme->location->identifier : '',
+				'pos_code' => ($programme->$pos_code_field != null) ? $programme->$pos_code_field : '',
+			);
+		}
+
+		// Store index data in to cache
+		Cache::put($cache_key_index , $index_data, 2628000);
+
+		// Map relaated subjects.
+		$subject_relations = array();
+		// For each programme in output
+		foreach($programmes as $programme){
+
+			// Create arrays as needed.
+			if(!isset($subject_relations[$programme->subject_area_1_8])) $subject_relations[$programme->subject_area_1_8] = array();
+			if(!isset($subject_relations[$programme->subject_area_2_9])) $subject_relations[$programme->subject_area_2_9] = array();
+
+			// Add this programme to subject
+			$subject_relations[$programme->subject_area_1_8][$programme->programme_id] = $index_data[$programme->programme_id];
+			// If second subject isn't the same, add it to that also
+			if($programme->subject_area_1_8 != $programme->subject_area_2_9){
+				$subject_relations[$programme->subject_area_2_9][$programme->programme_id] = $index_data[$programme->programme_id];
+			}
+		}
+		// Store subject mapping data in to cache
+		Cache::put($cache_key_subject, $subject_relations, 2628000);
+
+		// return
+		return $index_data;
+	}
+
 
 }
