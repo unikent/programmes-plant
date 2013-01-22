@@ -210,11 +210,13 @@ class Programme extends Revisionable {
 	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
+	 *
      * @param $ids List of ids to lookup
 	 * @param $year Year course should be returned from.
 	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids, $year = false){
+	public static function replace_ids_with_values($ids, $year = false)
+	{
 
 		// If nothing is set, return an empty array
 		if(trim($ids) == '') return array();
@@ -274,10 +276,12 @@ class Programme extends Revisionable {
 
 	/**
 	 * Generate fresh copy of data, triggered on save.
+	 *
 	 * @param $year year data is for
 	 * @param $revision data set saved with
 	 */
-	public static function generate_api_data($year = false, $revision = false){
+	public static function generate_api_data($year = false, $revision = false)
+	{
 		// Regenerate data to store in caches
 		static::generate_api_programme($revision->programme_id, $year, $revision);
 		static::generate_api_index($year);
@@ -290,7 +294,8 @@ class Programme extends Revisionable {
 	 * @param year  of programme
 	 * @return programmes index
 	 */
-	public static function get_api_programme($id, $year){
+	public static function get_api_programme($id, $year)
+	{
 		$cache_key = "api-programme-ug-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
@@ -303,7 +308,8 @@ class Programme extends Revisionable {
 	 * @param revsion data - store this to save reloading dbs when generating
 	 * @return programmes index
 	 */
-	public static function generate_api_programme($id, $year, $revision = false){
+	public static function generate_api_programme($id, $year, $revision = false)
+	{
 		$cache_key = "api-programme-ug-$year-$id";
 
 		$model = get_called_class();
@@ -331,7 +337,8 @@ class Programme extends Revisionable {
 	 * @param $year year to get index for
 	 * @return programmes index
 	 */
-	public static function get_api_index($year){
+	public static function get_api_index($year)
+	{
 		$cache_key = "api-index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
@@ -342,7 +349,8 @@ class Programme extends Revisionable {
 	 * @param $year year to get index for
 	 * @return programmes mapping
 	 */
-	public static function get_api_related_programmes_map($year){
+	public static function get_api_related_programmes_map($year)
+	{
 		$cache_key = "api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
@@ -361,7 +369,8 @@ class Programme extends Revisionable {
 	 * @param $year year to get index for
 	 * @return programmes index
 	 */
-	public static function generate_api_index($year){
+	public static function generate_api_index($year)
+	{
 		// Set cache keys
 		$cache_key_index = "api-index-$year";
 		$cache_key_subject = "api-programmes-$year-subject-relations";

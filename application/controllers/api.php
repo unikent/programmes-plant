@@ -63,11 +63,22 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
-		$programme = API::get_programme($programme_id, $year);
-		//Programme::get_as_flattened($year, $level, $programme_id);
 
-		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		// This is the case if certain aspects are not in place for our JSON.
+		try {
+			$programme = API::get_programme($programme_id, $year);
+		}
+		catch(MissingDataException $e)
+		{
+			// Required data is missing?
+			return Response::error('501');
+		}
+		catch(NotFoundException $e)
+		{
+			// Page does not exist / isn't published
+			return Response::error('404');
+		}
+		
+		// Unknown issue with data.
 		if (! $programme)
 		{
 			return Response::error('501');

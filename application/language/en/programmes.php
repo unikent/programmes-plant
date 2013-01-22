@@ -1,7 +1,7 @@
 <?php
 return array(
 	'ug' => 'undergraduate',
-	'pg' => 'gostgraduate',
+	'pg' => 'postgraduate',
 	'ug_introduction' => 'This is the listing for <strong>undergraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'pg_introduction' => 'This is the listing for <strong>postgraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'create_introduction' => 'This form lets you enter information for a new programme.',

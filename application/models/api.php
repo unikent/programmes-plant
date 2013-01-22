@@ -9,11 +9,11 @@ class API {
 	 * @param level ug|pg
 	 * @return array Index of programmes
 	 */
-	public static function get_index($year, $level = 'ug'){
+	public static function get_index($year, $level = 'ug')
+	{
 		// Get index of programmes
 		return Programme::get_api_index($year);
 	}
-
 
 	/**
 	* get subjects index (hopefully from cache)
@@ -22,7 +22,8 @@ class API {
 	* @param $level - ug or pg
 	* @return array of subjects with couses attached.
 	*/
-	public static function get_subjects_index($year, $level = 'ug'){
+	public static function get_subjects_index($year, $level = 'ug')
+	{
 		// api-output-ug gets wiped on every action.
 		$cache_key = "api-output-ug.subjects_index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_subjects_index($year, $level);
@@ -35,7 +36,8 @@ class API {
 	* @param $level - ug or pg
 	* @return array of subjects with couses attached.
 	*/
-	public static function generate_subjects_index($year, $level = 'ug'){
+	public static function generate_subjects_index($year, $level = 'ug')
+	{
 		// api-output-ug gets wiped on every action.
 		$cache_key = "api-output-ug.subjects_index-$year";
 
@@ -56,16 +58,15 @@ class API {
 		return $subjects_array;
 	}
 
-
 	/**
 	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
 	 * @param year year to get index for
-	 * 
 	 * @return combined programme data array
 	 */
-	public static function get_programme($id, $year){
+	public static function get_programme($id, $year)
+	{
 		$cache_key = "api-output-ug.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
@@ -75,29 +76,31 @@ class API {
 	 *
 	 * @param id ID of programme
 	 * @param year year to get index for
-	 * 
 	 * @return combined programme data array
 	 */
-	public static function generate_programme_data($id, $year){
+	public static function generate_programme_data($id, $year)
+	{
 		$cache_key = "api-output-ug.programme-$year-$id";
 
 		// Get basic data set
-		$globals 				= GlobalSetting::get_api_data($year);	
-		$programme_settings 	= ProgrammeSetting::get_api_data($year);
-		$programme 				= Programme::get_api_programme($id, $year);
-
+		$globals 			= GlobalSetting::get_api_data($year);	
+		$programme_settings = ProgrammeSetting::get_api_data($year);
+		
+		// Do we have the required data to show a programme?
 		if($globals === false || $programme_settings === false){
-			// Error A: No live versions of globals or settings
-			// Maybe throw exception here, or return status code?
-			return false;
-		}
-		if($programme === false){
-			// Error B: Programme not published.
-			// Maybe throw exception here, or return status code?
-			return false;
+			// Required data is missing.
+			throw new MissingDataException("No published copy of programme/global data published for this year.");
 		}
 
-		// Start combineing to create final super object for output
+		// Get programme itself
+		$programme 	= Programme::get_api_programme($id, $year);
+
+		// If programe does not exist/is not published.
+		if($programme === false){
+			throw new NotFoundException("Programme either does not exist or has not been published.");
+		}
+
+		// Start combining to create final super object for output
 		// Use globals as base
 		$final = $globals;
 		
@@ -171,8 +174,8 @@ class API {
 	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
 	 * @return array of realted programmes
 	 */
-	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false){
-
+	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false)
+	{
 		$mapping = Programme::get_api_related_programmes_map($year);
 
 		// If subject isn't set, just return an empty array of relations.
@@ -202,11 +205,11 @@ class API {
 	 * 
 	 * @return Module data | false
 	 */
-	public static function get_module_data($id, $year, $level = 'ug'){
+	public static function get_module_data($id, $year, $level = 'ug')
+	{
 		$cache_key = "programme-modules.$level-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
 	}
-
 
 
 	/**
@@ -252,7 +255,8 @@ class API {
 	 * @param $data Data to show as XML
 	 * @return Raw XML
 	 */ 
-	public static function purge_output_cache(){
+	public static function purge_output_cache()
+	{
 		// @todo work out a way of purging this data in tests
 		// so we can test logic creates/removes the correct files
 		if(Request::env() != 'test'){
@@ -268,12 +272,13 @@ class API {
 	}
 
 	/**
-	 * Function to convert feed to XML (in case we ever need to)
+	 * Function to convert feed to XML
 	 * 
 	 * @param $data Data to show as XML
 	 * @return Raw XML
 	 */ 
-	public static function array_to_xml($data, $xml = false){
+	public static function array_to_xml($data, $xml = false)
+	{
 
 		if ($xml === false)
 		{
@@ -301,7 +306,7 @@ class API {
 		return str_replace('&','&amp;',$xml->asXML());
 	}
 
-
-
-
 }
+
+class MissingDataException extends \Exception {}
+class NotFoundException extends \Exception {}
