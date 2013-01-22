@@ -177,3 +177,13 @@ if (Config::get('session.driver') !== '')
 {
 	Session::load();
 }
+
+// load the filch caching bundle so it's usable on the cli
+Autoloader::map(array(
+	'Filch\\Cache' => Bundle::path('filch').'cache.php',
+));
+
+Cache::extend('filch', function(){
+	return new Filch\Cache(path('storage').'cache'.DS);
+});
+

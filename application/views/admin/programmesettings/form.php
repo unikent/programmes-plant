@@ -6,6 +6,7 @@
 <div class="floating_save" data-spy="affix" data-offset-top="100"> 
   <div class='pull-right'>
     <input type="submit" class="btn btn-warning" value="Save">
+    <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
   </div>
    <strong><?php echo __('fields.programmesettings') ?> </strong>
 </div>

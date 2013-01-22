@@ -5,25 +5,6 @@ class TestAPI_Controller extends ControllerTestCase
 {
     public $input = false;
 
-    public function recursively_delete_directory($dir) 
-    {
-        $files = array_diff(scandir($dir), array('.','..'));
-
-        foreach ($files as $file) {
-            if ( is_dir("$dir/$file") )
-            {
-                static::recursively_delete_directory("$dir/$file");
-            }
-            // don't delete the dummy module json files if they're there
-            elseif ( ! strstr($file, '_modules_test.json') )
-            {
-                unlink("$dir/$file");
-            }
-        }
-
-        return true;
-    }
-
     public function populate($input)
     {
         Programme::create($input)->save();
@@ -36,47 +17,50 @@ class TestAPI_Controller extends ControllerTestCase
 
     public static function tearDownAfterClass()
     {
-        // Ugly way to get our .gitignore back.
-        // Travis CI will likely hate this.
-        exec("git checkout storage/api/.gitignore");
+
     }
 
     public function tearDown()
     {
         $programmes = Programme::all();
-
         foreach ($programmes as $programme)
         {
             $programme->delete();
         }
-
         $programme_revisions = ProgrammeRevision::all();
-
         foreach ($programme_revisions as $revision)
         {
             $revision->delete();
         }
-
         $global_settings = GlobalSetting::all();
-
         foreach ($global_settings as $setting)
         {
             $setting->delete();
         }
-
+        $global_revisions = GlobalSettingRevision::all();
+        foreach ($global_revisions as $revision)
+        {
+            $revision->delete();
+        }
         $programme_settings = ProgrammeSetting::all();
-
         foreach ($programme_settings as $setting)
         {
             $setting->delete();
         }
-
-        // We need to reset our API cache somehow.
-        // This also deletes our .gitignore, which we restore after the tests are done.
-        if (file_exists(path('storage') . 'api/') && is_dir(path('storage') . 'api/'))
+        $programme_settings_revisions = ProgrammeSettingRevision::all();
+        foreach ($programme_settings_revisions as $revision)
         {
-            static::recursively_delete_directory(path('storage') . 'api/');
+            $revision->delete();
         }
+        //Reset auto incriment sequences
+        DB::query('delete from sqlite_sequence where name="programmes"');
+        DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+        DB::query('delete from sqlite_sequence where name="global_settings"');
+        DB::query('delete from sqlite_sequence where name="global_settings_revisions"');
+        DB::query('delete from sqlite_sequence where name="programme_settings"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_revisions"');
+        // Since we now use the normal cache, we can just flush it
+        Cache::flush();
 
         parent::tearDown();
     }
@@ -137,8 +121,8 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
         $ps = ProgrammeSetting::find(1);
-        $revisions = $ps->get_revisions('selected');
-        $ps->make_revision_live($revisions[0]);
+        $revision = $ps->get_revision(1);
+        $ps->make_revision_live($revision);
 
         GlobalSetting::create(
                 array(
@@ -147,8 +131,8 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
         $gs = GlobalSetting::find(1);
-        $revisions = $gs->get_revisions('selected');
-        $gs->make_revision_live($revisions[0]);
+        $revision = $gs->get_revision(1);
+        $gs->make_revision_live($revision);
     }
 
     public function create_programme($input = false)
@@ -158,7 +142,9 @@ class TestAPI_Controller extends ControllerTestCase
             $input = array(
                 'id' => 1, 
                 Programme::get_title_field() => 'Programme 1',
-                'year' => '2014'
+                'year' => '2014',
+                'programme_suspended_53' => '',
+                'programme_withdrawn_54' => '',
             );
         }
 
@@ -174,10 +160,11 @@ class TestAPI_Controller extends ControllerTestCase
         
         if(!empty($course))
         {
-            $revisions = $course->get_revisions('selected');
 
-            if (isset($revisions[0])) {
-                $course->make_revision_live($revisions[0]);
+            $revision = $course->get_active_revision();
+
+            if (isset($revision)) {
+                $course->make_revision_live($revision);
             }
             return $course;
         }
@@ -188,7 +175,7 @@ class TestAPI_Controller extends ControllerTestCase
     public function testget_indexReturnsHTTPCode204WithNoDataCached()
     {
         $response = $this->get('api@index', array('2014', 'ug'));
-        $this->assertEquals('204', $response->status());
+        $this->assertEquals('501', $response->status());
     }
 
     public function testget_indexReturnsHTTPCode200WithDataCached()
@@ -196,7 +183,7 @@ class TestAPI_Controller extends ControllerTestCase
         $this->generate_programme_dependancies();
 
         $course = $this->create_programme();
-        $course = $this->make_programme_live($course->id);
+        $course = $this->make_programme_live();
     
         $response = $this->get('api@index', array($course->year, 'ug'));
         $this->assertEquals('200', $response->status());
@@ -215,6 +202,7 @@ class TestAPI_Controller extends ControllerTestCase
             );
 
         $course = $this->create_programme($input);
+
         $course = $this->make_programme_live($input['id']);
 
         $response = $this->get('api@index', array($input['year'], 'ug'));
@@ -263,7 +251,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
 
-        $this->assertEquals('204', $response->status());
+        $this->assertEquals('501', $response->status());
     }
 
     public function testget_programmeReturns200WhenCachePresent()

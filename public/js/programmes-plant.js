@@ -206,19 +206,9 @@ $(document).ready(function (){
     * data tables for programme index page
     *
     */
-    $('#programme-list').dataTable( {
-        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
-        "sPaginationType": "bootstrap",
-        "iDisplayLength": 20,
-        "oLanguage": {
-            "sSearch": ""
-        },
-        "aoColumns": [ 
-          { "bSortable": false, 'iDataSort': false },
-          { "bSortable": false, 'iDataSort': true },
-          { "bSortable": false }
-          ]
-    });
+
+     init_dataTable();
+    
     $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
     
     /*
@@ -290,3 +280,28 @@ $(document).ready(function (){
     });
 
 });
+
+function init_dataTable(){
+
+  try{
+
+    $('#programme-list').dataTable( {
+        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 20,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "aoColumns": [ 
+            { "bSortable": false, 'iDataSort': false },
+            { "bSortable": false, 'iDataSort': true },
+            { "bSortable": false }
+          ]
+    });
+
+  }catch(e){
+    // Dont kill the page on error...
+  }
+}
+    
+
