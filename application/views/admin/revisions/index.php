@@ -1,12 +1,12 @@
 <div style='padding:10px;height:30px;' class='alert <?php if($programme->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>    
   <div style='float:right;'>
-    <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@edit', array($programme->id))?>" >Return to edit form</a>
+    <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
   </div>
 </div>
 
 <h1><?php echo $programme->{Programme::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
-<h3>Active revisions</h3>
+<h3><?php echo __("revisions.active_revisions"); ?></h3>
 
 <?php
 // Loop through revisions (display modes for active & previous are differnt)
@@ -22,7 +22,7 @@ foreach ($revisions as $revision){
 }
 ?>
 
-<a class="btn btn-danger" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@rollback', array($programme->id))?>" >Emergency rollback options</a>
+<a class="btn btn-danger" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@rollback', array($programme->id))?>" ><?php echo __("revisions.rollback_form"); ?></a>
 <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 
 <div class="modal hide fade" id="make_revision_live">
@@ -35,8 +35,8 @@ foreach ($revisions as $revision){
   <p>Are you sure you want to do this?</p>
 </div>
 <div class="modal-footer">
-    <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
-    <a class="btn btn-danger yes_action">Make Live</a>
+    <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
+    <a class="btn btn-danger yes_action"><?php echo __("revisions.make_live"); ?></a>
 </div>
 </div>
 
@@ -50,8 +50,8 @@ foreach ($revisions as $revision){
     <p>Are you sure you want to do this?</p>
   </div>
   <div class="modal-footer">
-      <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
-      <a class="btn btn-danger yes_action">Revert</a>
+      <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
+      <a class="btn btn-danger yes_action"><?php echo __("revisions.use_previous"); ?></a>
   </div>
 </div>
 
@@ -65,8 +65,8 @@ foreach ($revisions as $revision){
     <p>Are you sure you want to do this?</p>
   </div>
   <div class="modal-footer">
-      <a data-dismiss="modal" href="#" class="btn">Not Right Now</a>
-      <a class="btn btn-danger yes_action">Use revision</a>
+      <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
+      <a class="btn btn-danger yes_action"><?php echo __("revisions.use_revision"); ?></a>
   </div>
 </div>
 
