@@ -2,7 +2,7 @@
 
 return array(
 
-	'title' => ' Subject Categories',
+	'title' => ' Subject categories',
 	/**
 	 * Buttons
 	 */
