@@ -313,7 +313,6 @@ class Programme extends Revisionable {
 		$cache_key = "api-programme-ug-$year-$id";
 
 		$model = get_called_class();
-		$cache_key = 'api-'.$model.'-'.$year;
 
 		// If revision not passed, get data
 		if(!$revision){
@@ -443,6 +442,42 @@ class Programme extends Revisionable {
 
 		// return
 		return $index_data;
+	}
+	
+	
+	/**
+	 * unpublishes a given revision
+	 * 
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function unpublish_revision($revision)
+	{
+		
+		// Get the currently "active/selected" revision.
+		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
+		// If the active revision is already current, leave it be
+		$active_revision = $this->get_active_revision();
+		if ($active_revision->status == 'live')
+		{
+			$active_revision->status = 'selected';
+			$active_revision->save();
+		}
+		else
+		{
+			$revision->status = 'prior_live';
+			$revision->save();
+		}
+		
+		$this->live = 0;
+		parent::save();
+		
+		// Update feed file & kill output caches
+		static::generate_api_index($revision->year);
+		API::purge_output_cache();
+		Cache::forget('api-programme-ug'. '-'. $revision->year . '-'. $revision->programme_id);
+		
+		return $revision;
 	}
 
 

@@ -497,6 +497,47 @@ class TestRevisionable extends ModelTestCase {
         $programme_setting = ProgrammeSetting::find(1);
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
+	
+	public function testUnpublishRevisionSetsStatusToPriorLive()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+        
+        $programme->programme_title_1 = 'Testtest';
+        $programme->save();
+        
+        // now unpublish the new live revision
+        $programme->unpublish_revision($revision);
+        
+        // get the new revision and test if it's prior_live
+        $revision_new = $programme->get_revision(1);
+        
+        $this->assertEquals('prior_live', $revision_new->status); 
+	}
+	
+	public function testUnpublishRevisionSetsStatusToSelectedWhenLive()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+        
+        // now unpublish the new live revision
+        $programme->unpublish_revision($revision);
+        
+        // get the new revision and test if it's prior_live
+        $revision_new = $programme->get_revision(1);
+        
+        $this->assertEquals('selected', $revision_new->status); 
+	}
 
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
