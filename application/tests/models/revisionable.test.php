@@ -520,7 +520,7 @@ class TestRevisionable extends ModelTestCase {
         $this->assertEquals('prior_live', $revision_new->status); 
 	}
 	
-	public function testUnpublishRevisionSetsStatusToSelectedWhenLive()
+	public function testUnpublishRevisionSetsActiveRevisionStatusToSelectedWhenLive()
 	{
 		// set up some data
     	$this->populate();
@@ -530,13 +530,13 @@ class TestRevisionable extends ModelTestCase {
         // make the revision live
         $programme->make_revision_live($revision);
         
-        // now unpublish the new live revision
+        // now unpublish the live revision
         $programme->unpublish_revision($revision);
         
-        // get the new revision and test if it's prior_live
-        $revision_new = $programme->get_revision(1);
+        // get the active revision and test if it's set to 'selected'
+        $active_revision = $programme->get_active_revision();
         
-        $this->assertEquals('selected', $revision_new->status); 
+        $this->assertEquals('selected', $active_revision->status); 
 	}
 
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
