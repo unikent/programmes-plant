@@ -140,6 +140,33 @@ class Revisionable_Controller extends Admin_Controller {
 	}
 
 	/**
+	 * Routing for GET /$year/$type/delete/$programme_id
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
+	 *
+	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
+	 *	the revision id instead. (Object assumed to have id 1 in this case)
+	 */
+	public function get_delete($year, $type, $revisionable_item_id = false)
+	{
+
+		// Check to see we have what is required.
+		$model = $this->model;
+		$data = $model::find($revisionable_item_id);
+		// If somthing went wrong
+		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// do the delete
+		$data->delete();
+		
+		// Redirect to point of origin
+		Messages::add('success', "The specified programme has been deleted.");
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
+
+	/**
 	 * Routing for GET /$year/$type/{data_type}/revisions/{$itm_id}
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).

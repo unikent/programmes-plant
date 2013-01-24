@@ -539,6 +539,52 @@ class TestRevisionable extends ModelTestCase {
         $this->assertEquals('selected', $active_revision->status); 
 	}
 
+	public function testDeleteProgrammeDoesntDeleteProgramme()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+
+    	//delete the programme
+        $programme->delete();
+        
+        $programme = Programme::find(1);
+        
+        $this->assertNotNull($programme);
+	}
+
+	public function testDeleteProgrammeSetsHiddenFieldInProgramme()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+
+    	//delete the programme
+        $programme->delete();
+        
+        $programme = Programme::find(1);
+        
+        $this->assertEquals(true, $programme->hidden);
+	}
+
+	public function testDeleteProgrammeUnpublishesLiveRevisions()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+    	$revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+
+    	//delete the programme
+        $programme->delete();
+
+        $revision = $programme->get_revision(1);
+        
+        $this->assertNotEquals('live', $revision->status);
+	}
+
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}

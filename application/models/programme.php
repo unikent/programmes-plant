@@ -480,5 +480,25 @@ class Programme extends Revisionable {
 		return $revision;
 	}
 
+	/**
+	 * Delete this programme by hiding it and unpublishing any of its published revisions
+	 * 
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function delete()
+	{
+		// SimpleData already hides this
+		parent::delete();
 
+		// Now unpublish any live revisions
+		$revision_model = static::$revision_model;
+		$live_revision = $revision_model::where('programme_id', '=', $this->id)->where('status', '=', 'live')->get();
+		if(count($live_revision) > 0)
+		{
+			foreach ($live_revision as $revision) {
+				$this->unpublish_revision($revision);
+			}
+		}
+	}
 }
