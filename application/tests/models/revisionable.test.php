@@ -65,8 +65,6 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
-
-		
 		$this->assertCount(0, Programme::all_as_list());
 	}
 
@@ -82,7 +80,6 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
 	{
-
 		$this->populate();
 
 		// Warm up the cache.
