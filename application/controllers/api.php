@@ -88,17 +88,18 @@ class API_Controller extends Base_Controller {
 		return ($format=='xml') ? static::xml($programme) : static::json($programme);
 	}
 
-
-
 	/**
 	* Output as XML
+	*
 	* @param $data to be shown as XML
 	*/
 	public static function xml($data){
 		return Response::make(API::array_to_xml($data), 200, array('Content-Type' => 'text/xml'));
 	}
+	
 	/**
 	* Output as JSON
+	*
 	* @param $data to be shown as JSON
 	*/
 	public static function json($data){
