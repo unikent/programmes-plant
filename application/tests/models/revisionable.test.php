@@ -34,7 +34,8 @@ class TestRevisionable extends ModelTestCase {
 		$model::create($input);
 	}
 
-	public function testget_active_revision_doesnt_return_null(){
+	public function testget_active_revision_doesnt_return_null()
+	{
 		$this->populate();
 		$programme = Programme::find(1);
 
@@ -42,14 +43,18 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertNotNull($revision);
 	}
-	public function testget_active_revision_for_new_programme_is_selected(){
+
+	public function testget_active_revision_for_new_programme_is_selected()
+	{
 		$this->populate();
 		$programme = Programme::find(1);
 		$revision = $programme->get_active_revision();
 
 		$this->assertEquals('selected', $revision->status);
 	}
-	public function testget_active_revision_for_new_programme_is_live_once_made_live(){
+
+	public function testget_active_revision_for_new_programme_is_live_once_made_live()
+	{
 		$this->populate();
 		$programme = Programme::find(1);
 		$revision = $programme->get_active_revision();
