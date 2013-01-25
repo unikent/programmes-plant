@@ -11,12 +11,32 @@ class ModuleData_Task {
      */
     public function run($arguments = array())
     {
+            
         $module_data_obj = new ProgrammesPlant\ModuleData();
         
-        $session = '2014';
+        // ug or pg
         $type = 'ug';
+        if (isset($arguments[0]) && substr($arguments[0], 0, 2) == '-l')
+        {
+        	$type = str_replace('-l', '', $arguments[0]) != '' ? str_replace('-l', '', $arguments[0]) : 'ug';
+        }
+        
+        // session
+        $session = '2014';
+        if (isset($arguments[1]) && substr($arguments[0], 0, 2) == '-s')
+        {
+        	$session = str_replace('-s', '', $arguments[0]) != '' ? str_replace('-s', '', $arguments[0]) : '2014';
+        }
+        
+        // sleep before the next iteration
+        $sleepytime = 5;
+        if (isset($arguments[2]) && substr($arguments[2], 0, 2) == '-t')
+        {
+        	$sleepytime = (int) str_replace('-t', '', $arguments[0]) != '' ? str_replace('-t', '', $arguments[0]) : 5;
+        }
+        
+        // institution is always 0122
         $institution = '0122';
-        $version = '1';
         
         // base url for the programme_module web service
         $url_programme_modules = Config::get('module.programme_module_base_url');
@@ -32,7 +52,6 @@ class ModuleData_Task {
         {
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
-                Config::get('module.version_param') . '=' . $version . '&' .
                 Config::get('module.instituation_param') . '=' . $institution . '&' .
                 Config::get('module.campus_param') . '=' . $programme['campus_id'] . '&' .
                 Config::get('module.session_param') . '=' . $session . '&' .
@@ -58,6 +77,7 @@ class ModuleData_Task {
             // loop through each of the modules and get its synopsis, adding it to the object for output
             foreach ($programme_modules->response->rubric->cluster as $cluster)
             {
+            	
             	// set the cluster type
             	$cluster_type = '';
             	if ($cluster->compulsory == 'Y')
@@ -74,7 +94,8 @@ class ModuleData_Task {
             	}
             	
             	// rebuild the structure of the programmes modules object to make things easier on the frontend
-            	$programme_modules_new->clusters[$cluster_type][] = $cluster;
+            	$programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
+            	$programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
             	
             	// set the synopsis for each module
 	            foreach ($cluster->modules->module as $module_index => $module)
@@ -90,6 +111,7 @@ class ModuleData_Task {
 	            }
             }
             
+            ksort($programme_modules_new->stages);
             // clear out the api output cache completely so we can regenerate the cache now including the new module data
             Cache::purge('api-output-'.$type);
             
@@ -98,9 +120,14 @@ class ModuleData_Task {
             Cache::put($cache_key, $programme_modules_new, 2628000);
             
             echo 'module data cache generated with key ' . $cache_key;
+            
+            sleep($sleepytime);
         
         }
+        
     }
+    
+    
 }
     
     
