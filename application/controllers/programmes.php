@@ -20,7 +20,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$suspended_field = Programme::get_suspended_field();
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
 		$model = $this->model;
-		$programmes = $model::with('award')->where('year', '=', $year)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live'));
+		$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live'));
 		
 		$this->data[$this->views] = $programmes;
 
@@ -90,7 +90,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
-		$this->data['active_revision'] = $course->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
+		$this->data['active_revision'] = $course->get_active_revision();
 
 		//Get lists data
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);

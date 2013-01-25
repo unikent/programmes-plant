@@ -25,7 +25,7 @@ class TestAwards_Controller extends ControllerTestCase
 
 		foreach ($awards as $award)
 		{
-			$award->delete();
+			$award->delete_for_test();
 		}
 	}
 
@@ -41,6 +41,7 @@ class TestAwards_Controller extends ControllerTestCase
 			$award = new Award;
 			$award->id = $position;
 			$award->name = $name;
+			$award->hidden = false;
 			$award->save();
 		}
 	}
