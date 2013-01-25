@@ -23,7 +23,7 @@ class TestSchool extends ModelTestCase
 
 		foreach ($schools as $school)
 		{
-			$school->delete();
+			$school->delete_for_test();
 		}
 
 		parent::tearDown();
