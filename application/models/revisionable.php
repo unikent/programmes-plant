@@ -172,6 +172,7 @@ class Revisionable extends SimpleData {
 
 	/**
 	 * Get currently active revision
+	 * @param $columns columns to return
 	 * @return active revision instance
 	 */
 	public function get_active_revision($columns = array('*'))
@@ -187,6 +188,22 @@ class Revisionable extends SimpleData {
 		{
 			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','selected')->first($columns);
 		}
+	}	
+
+	/**
+	 * Get published/live revision
+	 * @param $columns columns to return
+	 * @return live revision instance
+	 */
+	public function get_live_revision($columns = array('*'))
+	{
+		// If a revision is published
+		if($this->live != 0){
+			$model = static::$revision_model;
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first($columns);
+		}
+		// No published revision
+		return null;
 	}	
 
 	/**
