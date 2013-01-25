@@ -59,6 +59,7 @@ class Revisionable extends SimpleData {
 		$ref_id = $this->data_type_id.'_id';
 		if ($this->{$ref_id} === null || $this->{$ref_id} === 0){
 			$this->{$ref_id} = $this->id;
+			
 			parent::raw_save();
 		}
 
