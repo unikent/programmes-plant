@@ -22,6 +22,15 @@ class Add_Programme_id {
 			$table->integer('instance_id');
 			$table->index('instance_id');
 		});
+		Schema::table('programmes_revisions', function($table){
+			$table->integer('instance_id');
+		});
+		Schema::table('programme_settings_revisions', function($table){
+			$table->integer('instance_id');
+		});
+		Schema::table('global_settings_revisions', function($table){
+			$table->integer('instance_id');
+		});
 	}
 
 	/**
@@ -38,6 +47,15 @@ class Add_Programme_id {
 			$table->drop_column('instance_id');
 		});
 		Schema::table('programme_settings', function($table){
+			$table->drop_column('instance_id');
+		});
+		Schema::table('programmes_revisions', function($table){
+			$table->drop_column('instance_id');
+		});
+		Schema::table('programme_settings_revisions', function($table){
+			$table->drop_column('instance_id');
+		});
+		Schema::table('global_settings_revisions', function($table){
 			$table->drop_column('instance_id');
 		});
 	}
