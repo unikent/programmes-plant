@@ -54,13 +54,11 @@ class Revisionable extends SimpleData {
 		// Save self.
 		$success = parent::save();
 
-		// If data_type_id isn't set, set it to value of id.
+		// If instance_id  isn't set, set it to value of id.
 		// null for new records, 0 for created ones.
-		$ref_id = $this->data_type_id.'_id';
-		if ($this->{$ref_id} === null || $this->{$ref_id} === 0){
-			$this->{$ref_id} = $this->id;
-			
-			parent::raw_save();
+		if ($this->instance_id === null || $this->instance_id  === 0){
+			$this->instance_id = $this->id;
+			$this->raw_save();
 		}
 
 		// If the save succeeds, save a new revision and return its status 
