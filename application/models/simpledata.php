@@ -162,7 +162,7 @@ class SimpleData extends Eloquent {
 	 */
 	public function save()
 	{
-		$saved = parent::save();
+		$saved = $this->raw_save();
 
 		if ($saved)
 		{	
@@ -177,6 +177,15 @@ class SimpleData extends Eloquent {
 		}
 
 		return $saved;
+	}
+
+	/**
+	 * Raw_save: Call eloquents save method directly to save an item with no special logic.
+	 * 
+	 */
+	public function raw_save()
+	{
+		return parent::save();
 	}
 
 	/**
