@@ -206,6 +206,32 @@ class Revisionable extends SimpleData {
 		return null;
 	}	
 
+
+	public function roll_over_to_year($year)
+	{	
+		$model = $this->data_type;
+
+		// Check is not already rolled over
+		if($model::where("year", "=", $year)->where("instance_id", "=", $this->instance_id)->first(array('id')) != null){
+			// Fail since this has already been rolled over
+			return false;
+		}
+		// Get basic values to rollover
+		$rollover_values = $this->attributes;
+		// remove values we dont want to keep
+		foreach(array('id','live',) as $key){
+			unset($rollover_values[$key]);
+		} 
+		// Change year
+		$rollover_values->year = $year;
+
+		// Create new instance and set values
+		$new = new $model;
+		$new->fill($rollover_values);
+
+		return $new->save();
+	}
+
 	/**
 	 * make a revision of this item live.
 	 * 
