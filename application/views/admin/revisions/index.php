@@ -40,6 +40,22 @@ foreach ($revisions as $revision){
 </div>
 </div>
 
+
+<div class="modal hide fade" id="unpublish">
+<div class="modal-header">
+  <a class="close" data-dismiss="modal">×</a>
+  <h3>Are You Sure?</h3>
+</div>
+<div class="modal-body">
+  <p>This will unpublish the currenty selected revision, meaning it will be hidden on the course pages.</p>
+  <p>Are you sure you want to do this?</p>
+</div>
+<div class="modal-footer">
+    <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
+    <a class="btn btn-danger yes_action"><?php echo __("revisions.unpublish"); ?></a>
+</div>
+</div>
+
 <div class="modal hide fade" id="use_previous">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
