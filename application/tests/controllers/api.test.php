@@ -25,32 +25,32 @@ class TestAPI_Controller extends ControllerTestCase
         $programmes = Programme::all();
         foreach ($programmes as $programme)
         {
-            $programme->delete();
+            $programme->delete_for_test();
         }
         $programme_revisions = ProgrammeRevision::all();
         foreach ($programme_revisions as $revision)
         {
-            $revision->delete();
+            $revision->delete_for_test();
         }
         $global_settings = GlobalSetting::all();
         foreach ($global_settings as $setting)
         {
-            $setting->delete();
+            $setting->delete_for_test();
         }
         $global_revisions = GlobalSettingRevision::all();
         foreach ($global_revisions as $revision)
         {
-            $revision->delete();
+            $revision->delete_for_test();
         }
         $programme_settings = ProgrammeSetting::all();
         foreach ($programme_settings as $setting)
         {
-            $setting->delete();
+            $setting->delete_for_test();
         }
         $programme_settings_revisions = ProgrammeSettingRevision::all();
         foreach ($programme_settings_revisions as $revision)
         {
-            $revision->delete();
+            $revision->delete_for_test();
         }
         //Reset auto incriment sequences
         DB::query('delete from sqlite_sequence where name="programmes"');

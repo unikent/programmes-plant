@@ -3,6 +3,7 @@
 	$live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
 	$use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
 	$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
+	$unpublish_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@unpublish', array($revision->id));
 ?>
 <?php if($revision->status =='live'):?>
 
@@ -10,6 +11,7 @@
 		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span>
 		<?php echo $revision->get_identifier_string() ?> <br/>
 		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
+		<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
 	</div>
 
 <?php elseif($revision->status =='selected'):?>
