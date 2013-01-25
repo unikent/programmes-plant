@@ -4,7 +4,7 @@ class RevisionableThing extends Revisionable {}
 
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'created_by' => "test user");
+	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user");
 
 	public static function setUpBeforeClass()
 	{
@@ -454,7 +454,7 @@ class TestRevisionable extends ModelTestCase {
 		 //TEST ISSUE: see "@todo @workaround" in revisionble model
 
     	// set up some data (set one manually as this db table is not cleared in teardown)
-    	$input =  array('institution_name_1' => 'University of Kent', 'id' => 1);
+    	$input =  array('institution_name_1' => 'University of Kent', 'year' => '2014', 'id' => 1);
     	$this->populate('GlobalSetting', $input);
     	$revisionable_item = GlobalSetting::find(1);
     	
@@ -478,7 +478,7 @@ class TestRevisionable extends ModelTestCase {
 		//TEST ISSUE: see "@todo @workaround" in revisionble model
 
     	// set up some data (set one manually as this db table is not cleared in teardown)
-    	$input =  array('programme_title_1' => 'Test programme title', 'id' => 1);
+    	$input =  array('programme_title_1' => 'Test programme title', 'year' => '2014', 'id' => 1);
     	$this->populate('ProgrammeSetting', $input);
     	
     	$revisionable_item = ProgrammeSetting::find(1);
@@ -585,8 +585,89 @@ class TestRevisionable extends ModelTestCase {
         $this->assertNotEquals('live', $revision->status);
 	}
 
+	public function testGetActiveRevisionAfterCreateReturnsRevision(){
+		$this->populate();
+		$p = Programme::find(1);
+		$r = $p->get_active_revision();
+
+		$this->assertEquals(1, $r->id);
+	}
+	public function testGetActiveRevisionAfterMakeLiveReturnsRevision(){
+		$this->populate();
+		$p = Programme::find(1);
+		$r = $p->get_active_revision();
+		$p->make_revision_live($r);
+
+		$this->assertEquals(1, $r->id);
+	}
+
+	public function testget_active_revisionDoesntReturnNull() 	
+	{	  	
+		$this->populate();
+		$programme = Programme::find(1);
+		$revision = $programme->get_active_revision();
+		$this->assertNotNull($revision);
+	}
+	public function testget_active_revision_for_new_programme_is_selected()
+	{
+		$this->populate();
+		$programme = Programme::find(1);
+		$revision = $programme->get_active_revision();
+		$this->assertEquals('selected', $revision->status);
+	}
+	public function testget_active_revision_for_new_programme_is_live_once_made_live()
+	{
+		$this->populate();
+		$programme = Programme::find(1);
+		$revision = $programme->get_active_revision();
+		$programme->make_revision_live($revision);
+		$revision2 = $programme->get_active_revision();
+		$this->assertEquals('live', $revision2->status);
+	}
+
+
+	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies(){
+		$this->populate();
+		$p = Programme::find(1);
+		$r = $p->get_active_revision();
+		$p->make_revision_live($r);
+		$p->programme_title_1 = 'a';
+		$p->save();
+		$p->programme_title_1 = 'b';
+		$p->save();
+
+		$r = $p->get_active_revision();
+
+		$this->assertEquals(3, $r->id);
+	}
+	public function testGetLiveRevisionBeforePublishReturnsNull(){
+		$this->populate();
+		$p = Programme::find(1);
+		$r = $p->get_live_revision();
+		//$p->make_revision_live($r);
+
+		$this->assertEquals(null, $r);
+	}
+	public function testGetLiveRevisionAfterPublishExists(){
+		$this->populate();
+		$p = Programme::find(1);
+
+		$r2 = $p->get_active_revision();
+		$p->make_revision_live($r2);
+
+
+		$r = $p->get_live_revision();
+
+		$this->assertEquals(1, $r->id);
+	}
+
+
+
+
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+
+
 
 }

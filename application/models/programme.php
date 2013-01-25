@@ -283,7 +283,7 @@ class Programme extends Revisionable {
 	public static function generate_api_data($year = false, $revision = false)
 	{
 		// Regenerate data to store in caches
-		static::generate_api_programme($revision->programme_id, $year, $revision);
+		static::generate_api_programme($revision->instance_id, $year, $revision);
 		static::generate_api_index($year);
 	}
 
@@ -316,7 +316,7 @@ class Programme extends Revisionable {
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = ProgrammeRevision::where('programme_id', '=', $id)->where('status', '=', 'live')->where('year', '=', $year)->first();
+			$revision = ProgrammeRevision::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
 		}
 
 		// Return false if there is no live revision
@@ -390,7 +390,7 @@ class Programme extends Revisionable {
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
-		$programmes = ProgrammeRevision::where('year','=', $year)
+		$programmes = ProgrammeRevision::with(array('award','subject_area_1','administrative_school','additional_school','location'))->where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
@@ -399,8 +399,8 @@ class Programme extends Revisionable {
 		// Build index array
 		foreach($programmes as $programme)
 		{
-			$index_data[$programme->programme_id] = array(
-				'id' => $programme->programme_id,
+			$index_data[$programme->instance_id] = array(
+				'id' => $programme->instance_id,
 				'name' => $programme->$title_field,
 				'slug' => $programme->$slug_field,
 				'award' => ($programme->award != null) ? $programme->award->name : '',
@@ -431,10 +431,10 @@ class Programme extends Revisionable {
 			if(!isset($subject_relations[$programme->subject_area_2_9])) $subject_relations[$programme->subject_area_2_9] = array();
 
 			// Add this programme to subject
-			$subject_relations[$programme->subject_area_1_8][$programme->programme_id] = $index_data[$programme->programme_id];
+			$subject_relations[$programme->subject_area_1_8][$programme->instance_id] = $index_data[$programme->instance_id];
 			// If second subject isn't the same, add it to that also
 			if($programme->subject_area_1_8 != $programme->subject_area_2_9){
-				$subject_relations[$programme->subject_area_2_9][$programme->programme_id] = $index_data[$programme->programme_id];
+				$subject_relations[$programme->subject_area_2_9][$programme->instance_id] = $index_data[$programme->instance_id];
 			}
 		}
 		// Store subject mapping data in to cache
@@ -475,7 +475,7 @@ class Programme extends Revisionable {
 		// Update feed file & kill output caches
 		static::generate_api_index($revision->year);
 		API::purge_output_cache();
-		Cache::forget('api-programme-ug'. '-'. $revision->year . '-'. $revision->programme_id);
+		Cache::forget('api-programme-ug'. '-'. $revision->year . '-'. $revision->instance_id);
 		
 		return $revision;
 	}
@@ -493,6 +493,7 @@ class Programme extends Revisionable {
 
 		// Now unpublish any live revisions
 		$revision_model = static::$revision_model;
+		// Use programme id as is linked to revisions for this year directly
 		$live_revision = $revision_model::where('programme_id', '=', $this->id)->where('status', '=', 'live')->get();
 		if(count($live_revision) > 0)
 		{
