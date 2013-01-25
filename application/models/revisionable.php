@@ -175,18 +175,18 @@ class Revisionable extends SimpleData {
 	 * @param $columns columns to return
 	 * @return active revision instance
 	 */
-	public function get_active_revision()
+	public function get_active_revision($columns = array('*'))
 	{
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
 		$model = static::$revision_model;
 		if ($this->live == 2)
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first();
 		}
 		else
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','selected')->first();
 		}
 	}	
 
