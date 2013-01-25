@@ -21,7 +21,7 @@ class TestAward extends ModelTestCase
 
 		foreach ($awards as $award)
 		{
-			$award->delete_for_test();
+			$award->delete();
 		}
 
 		parent::tearDown();
@@ -51,7 +51,7 @@ class TestAward extends ModelTestCase
 
 		// Remove an award from the database
 		$a = Award::first();
-		$a->delete_for_test();
+		$a->delete();
 
 		//Wipe memory cache
 		Award::$list_cache = false;

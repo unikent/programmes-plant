@@ -22,7 +22,6 @@ return array(
 	'diff_live' 		=> 'Differences from live',
 	'rollback_live' 	=> 'Roll live back to revision',
 	'cancel' 			=> 'Not right now',
-	'unpublish'         => 'Unpublish',
 
 	//Links
 	'edit_form'	 		=> 'Return to edit form',

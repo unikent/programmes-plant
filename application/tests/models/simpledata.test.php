@@ -33,7 +33,6 @@ class TestSimpleData extends ModelTestCase {
 			$table->increments('id');
 			$table->string('name');
 			$table->string('year');
-			$table->boolean('hidden');
 			$table->timestamps();
 		});
 
@@ -458,44 +457,5 @@ class TestSimpleData extends ModelTestCase {
 		$thing->save();
 		$this->assertFalse(Cache::has('Thing-2014-defaulttonone-options-list'));
 	}
-	
-	public function testDeleteItemIsSetAsHiddenTrue()
-	{
-		$this->populate();
-		$thing = Thing::find(1);
-		$thing->delete();
-		$thing2 = Thing::find(1);
-		$this->assertEquals(true, $thing2->hidden);	
-	}
-	
-	public function testDeleteItemIsNotDeletedFromDatabase()
-	{
-		$this->populate();
-		$thing = Thing::find(1);
-		$thing->delete();
-		$thing2 = Thing::find(1);
-		$this->assertNotNull($thing2);
-	}
-	
-	public function testAllActiveReturnsOnlyActive()
-	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
-		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
-		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
-		$this->assertEquals(1, count($result));
-	}
-	
-	public function testAllActiveReturnsOnlyHiddenIsFalse()
-	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
-		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
-		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
-		$this->assertEquals('Thing2', $result[0]->name);
-	}
-	
 
 }

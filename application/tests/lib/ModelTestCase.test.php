@@ -24,7 +24,7 @@ abstract class ModelTestCase extends PHPUnit_Framework_TestCase
 
 		foreach($models as $model){
 			// Clear data
-			foreach ($model::all() as $row) $row->delete_for_test();
+			foreach ($model::all() as $row) $row->delete();
 			// Reset index
 			DB::query('delete from sqlite_sequence where name= ?', array($model::$table));
 		}

@@ -24,7 +24,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 
 		foreach ($programmes as $programme)
 		{
-			$programme->delete_for_test();
+			$programme->delete();
 		}
 
 		parent::tearDown();

@@ -241,25 +241,6 @@ class SimpleData extends Eloquent {
 
 		return $values;
 	}
-	
-	public static function all_active()
-	{
-		return static::where('hidden', '=', false)->get();
-	}
-	
-	public function delete()
-	{
-		$this->hidden = true;
-		$this->save();
-	}
-	
-	/**
-	*
-	*/
-	public function delete_for_test()
-	{
-		parent::delete();
-	}
 }
 
 class NoValidationException extends \Exception {}

@@ -109,62 +109,6 @@ class Revisionable_Controller extends Admin_Controller {
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
-	
-	/**
-	 * Routing for GET /$year/$type/$object_id/unpublish/$revision_id
-	 * Routing for GET /$year/$type/unpublish/$revision_id
-	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
-	 * @param int    $revision_id  The revision ID we are putting live.
-	 *
-	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
-	 *	the revision id instead. (Object assumed to have id 1 in this case)
-	 */
-	public function get_unpublish($year, $type, $revisionable_item_id = false, $revision_id = false)
-	{
-
-		// Check to see we have what is required.
-		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
-		// If somthing went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		// Get data & make revision live
-		list($item, $revision) = $data;
-		$modified_revision = $item->unpublish_revision($revision);
-		
-		// Redirect to point of origin
-		Messages::add('success', "The selected revision has been unpublished.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
-	}
-
-	/**
-	 * Routing for GET /$year/$type/delete/$programme_id
-	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
-	 *
-	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
-	 *	the revision id instead. (Object assumed to have id 1 in this case)
-	 */
-	public function get_delete($year, $type, $revisionable_item_id = false)
-	{
-
-		// Check to see we have what is required.
-		$model = $this->model;
-		$data = $model::find($revisionable_item_id);
-		// If somthing went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		// do the delete
-		$data->delete();
-		
-		// Redirect to point of origin
-		Messages::add('success', "The specified programme has been deleted.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views);
-	}
 
 	/**
 	 * Routing for GET /$year/$type/{data_type}/revisions/{$itm_id}

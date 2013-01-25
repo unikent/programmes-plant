@@ -48,14 +48,4 @@ class Revision extends Eloquent {
     {
         return Date("jS F Y \a\\t H:i:s", strtotime($this->created_at));
     }
-    
-    /**
-    * deletes items in tests - overrides eloquent's delete()
-    *
-    */
-    public function delete_for_test()
-    {
-	    parent::delete();
-    }
-    
 }

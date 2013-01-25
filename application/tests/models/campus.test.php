@@ -22,7 +22,7 @@ class TestCampus extends ModelTestCase
 
 		foreach ($campuses as $campus)
 		{
-			$campus->delete_for_test();
+			$campus->delete();
 		}
 		
 		parent::tearDown();
