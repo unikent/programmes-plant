@@ -192,6 +192,7 @@ class Revisionable extends SimpleData {
 
 	/**
 	 * Get published/live revision
+	 *
 	 * @param $columns columns to return
 	 * @return live revision instance
 	 */
@@ -206,7 +207,12 @@ class Revisionable extends SimpleData {
 		return null;
 	}	
 
-
+	/**
+	 * Roll over to year
+	 *
+	 * @param year to roll over to.
+	 * @return success true|false
+	 */
 	public function roll_over_to_year($year)
 	{	
 		$model = $this->data_type;
@@ -218,17 +224,20 @@ class Revisionable extends SimpleData {
 		}
 		// Get basic values to rollover
 		$rollover_values = $this->attributes;
+
 		// remove values we dont want to keep
 		foreach(array('id','live',) as $key){
 			unset($rollover_values[$key]);
 		} 
+
 		// Change year
 		$rollover_values->year = $year;
 
 		// Create new instance and set values
 		$new = new $model;
 		$new->fill($rollover_values);
-
+		
+		// Save to create revisions
 		return $new->save();
 	}
 
