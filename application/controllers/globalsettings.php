@@ -79,7 +79,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $global_settings->$col = Input::get($col);
+				$global_settings->$col = Input::get($col);
 			}
 
 			$global_settings->save();
@@ -109,7 +109,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $global_settings->$col = Input::get($col);
+				$global_settings->$col = Input::get($col);
 			}
 
 			$global_settings->save();
