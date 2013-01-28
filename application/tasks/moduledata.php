@@ -59,8 +59,6 @@ class ModuleData_Task {
                 
             // fake the url for now
             // this makes sure we can read from local files rather than using curl
-            //$module_data_obj->test_mode = true;
-            //$url_programme_modules_full = path('base') . 'vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
             
             // login details for the programme module web service
             $module_data_obj->login['username'] = Config::get('module.programme_module_user');
