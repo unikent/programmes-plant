@@ -7,26 +7,26 @@
 return array(
 
     // name given to global settings in the title
-    'globalsettings' => 'XCRI/KIS global settings',
+    'globalsettings' => 'Immutable fields',
 
     // name given to programme settings in the title
-    'programmesettings' => 'Programme global settings',
+    'programmesettings' => 'Overridable fields',
     
     'programmesettings_note' => '<div class="alert alert-info"><strong>Note</strong> Some global programme fields can be overridden by values entered in each programme. These types of fields are highlighted below as <span class="label label-info"><i class="icon-flag icon-white"></i> An overridable field</span> If the value is left blank in the programme, these fields will use the default value you enter below.</div>',
     
-    'programmesettings_intro' => 'This page lets you set up default values for globally applicable programme fields.',
+    'programmesettings_intro' => 'This page lets you set up default values for overridable programme fields.',
     
 
     // name given to programmes in the title
-    'programmes' => 'Programmes',
+    'programmes' => 'Programme',
 
     // full title combines the field type (above) with the remaining title
-    'title' => ':field_name field setup',
+    'title' => ':field_name setup',
 
     // introduction text
     'introduction' => array(
-        'globalsettings' => 'This is the listing of fields which apply to XCRI or KIS data. They may be displayed on programmes pages on the website, but they are not directly applicable to programmes.',
-        'programmesettings' => 'The fields below are fields which never appear on programme edit pages in the programmes plant. They will always appear for each programme in the data output, and can never be overridden at the programme level.',
+        'globalsettings' => 'This is the listing of immutable fields. They may be displayed on programmes pages on the website, but they are not directly applicable to specific programmes.',
+        'programmesettings' => 'The fields below are overridable. You can set the default values below.',
         'programmes' =>  '<p>This is the listing of fields which will appear on the programme create and edit pages.</p><p>You can drag fields around to change their ordering or to move them to a different section.</p><p>You can drag sections around to change their order too.</p><div class="alert alert-info"><p><strong>Note</strong> Empty sections will not show up on a programme edit page.</p></div>',
     ),
 
