@@ -100,6 +100,50 @@ class API {
 			throw new NotFoundException("Programme either does not exist or has not been published.");
 		}
 
+		$final = static::combine_programme($programme, $programme_settings, $globals);
+
+		// Store data in to cache
+		Cache::put($cache_key, $final, 2628000);
+
+		return $final;
+	}
+
+	public static function get_preview($hash){
+		return Cache::get("programme-previews.preview-{$hash}");
+	}
+
+	public static function create_preview($id, $revision_id){
+		$p = Programme::find($id);
+		$revision = $p->get_revision($revision_id);
+
+		if($revision !== false){
+
+			$globals 			= GlobalSetting::get_api_data($year);	
+			$programme_settings = ProgrammeSetting::get_api_data($year);
+
+			if($globals === false || $programme_settings === false) return false;
+
+			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+
+			$hash = sha1(implode('.',$final));
+			Cache::put("programme-previews.preview-{$hash}", $final, 604800);// 1 week
+
+		}
+
+		return $hash
+	}
+
+
+	/**
+	 * Create a combined programme output
+	 *
+	 * @param $programme - basic programme data
+	 * @param $programme_settings - basic programme setting data
+	 * @param $globals - basic global setting data
+	 * @return Combined programme data (fully linked)
+	 */
+	public static function combine_programme($programme, $programme_settings, $globals){
+
 		// Start combining to create final super object for output
 		// Use programme setttings as a base
 		$final = $programme_settings;
@@ -119,7 +163,7 @@ class API {
 		}
 
 		// Remove unwanted attributes
-		foreach(array('id','global_setting_id') as $key)
+		foreach(array('id','global_setting_id', 'programme_id', 'programme_setting_id') as $key)
 		{
 			unset($final[$key]);
 		}
@@ -129,7 +173,9 @@ class API {
 		$final = static::remove_ids_from_field_names($final);
 
 		// Apply related courses
-		$related_courses = Programme::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $id);
+		$subject_area_1 = $final['subject_area_1'][0]['id'];
+		$subject_area_2 = $final['subject_area_2'][0]['id'];
+		$related_courses = Programme::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
 		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
 		// Add global settings data
@@ -141,13 +187,17 @@ class API {
 			$final['modules'] = $modules;
 		}
 
-		// Store data in to cache
-		Cache::put($cache_key, $final, 2628000);
-
 		return $final;
 	}
 
-
+	/**
+	 * Merge related courses. Merges course arrays removing any duplicates and returns them in alphabetical order
+	 *
+	 * @param $related_courses, Inital array of courses
+	 * @param $additional_related_courses, Additional courses array of courses
+	 * 
+	 * @return (array) $related_courses
+	 */
 	public static function merge_related_courses($related_courses, $additional_related_courses){
 		// Merge arrays (copying over duplicates)
 		if(is_array($additional_related_courses)){

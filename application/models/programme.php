@@ -504,7 +504,7 @@ class Programme extends Revisionable {
 	}
 
 	/**
-	 * Find related courses using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
+	 * Find related programmes using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
 	 * 
 	 * @param $subject_1 is course part of subject 1
 	 * @param $subject_2 is course part of subject 2
@@ -512,7 +512,7 @@ class Programme extends Revisionable {
 	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
 	 * @return array of realted programmes
 	 */
-	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false)
+	public static function get_programmes_in($subject_1, $subject_2, $year, $self_id = false)
 	{
 		$mapping = Programme::get_api_related_programmes_map($year);
 
