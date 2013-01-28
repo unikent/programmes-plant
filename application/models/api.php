@@ -108,29 +108,57 @@ class API {
 		return $final;
 	}
 
-	public static function get_preview($hash){
-		return Cache::get("programme-previews.preview-{$hash}");
+	/**
+	 * get a "preview" programme from the API based on hash
+	 *
+	 * @param $hash of preview
+	 * @return preview from cache
+	 * @throws NoFoundException if preview does not exist (or has expired)
+	 */
+	public static function get_preview($hash)
+	{	
+		$key = "programme-previews.preview-{$hash}";
+		if(Cache::has($key)){
+			return Cache::get($key);
+		}else{
+			throw new NotFoundException("Preview data not found");
+		}	
+		
 	}
 
-	public static function create_preview($id, $revision_id){
+	/**
+	 * Create a new "preview" of a given revision
+	 *
+	 * @param $id of programme preview is for
+	 * @param $id of revision to create preview from
+	 * @return hash of preview.
+	 */
+	public static function create_preview($id, $revision_id)
+	{
 		$p = Programme::find($id);
 		$revision = $p->get_revision($revision_id);
-
+		
+		// If this revision exists
 		if($revision !== false){
-
-			$globals 			= GlobalSetting::get_api_data($year);	
-			$programme_settings = ProgrammeSetting::get_api_data($year);
-
-			if($globals === false || $programme_settings === false) return false;
-
+			// Grab additional data sets
+			$globals 			= GlobalSetting::get_api_data($revision->year);	
+			$programme_settings = ProgrammeSetting::get_api_data($revision->year);
+			// Fail if these arent set
+			if($globals === false || $programme_settings === false){
+				return false;	
+			} 
+			// Generate programme
 			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+			print_r($revision);
 
-			$hash = sha1(implode('.',$final));
+			// generate hash
+			$hash = sha1(implode('.', $final));
+			// Store it, & return hash
 			Cache::put("programme-previews.preview-{$hash}", $final, 604800);// 1 week
-
+			return $hash;
 		}
 
-		return $hash
+		return false;
 	}
 
 

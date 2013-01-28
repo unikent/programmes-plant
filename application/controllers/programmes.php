@@ -240,6 +240,23 @@ class Programmes_Controller extends Revisionable_Controller {
 		return View::make('admin.'.$this->views.'.difference',$this->data);
 	}
 
+
+	/**
+	 * Routing for GET /preview/$programme_id/preview/$revision_id
+	 *
+	 * @param int    $revisionable_item_id  The object ID we are reverting to a revision on.
+	 * @param int    $revision_id  The revision ID we are reverting to.
+	 *
+	 */
+	public function get_preview($year, $type, $programme_id, $revision_id)
+	{
+		// Create preview and grab hash
+		$hash = API::create_preview($programme_id, $revision_id);
+		if($hash === false){
+			return Redirect::to("http://of-course-url-from-config/".$hash);	
+		}
+	}
+
 	private function splitToText($list,$options)
 	{
 		if($list == '' || $list == null) return '';

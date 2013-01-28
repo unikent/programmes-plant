@@ -89,6 +89,25 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
+	 * Get preview
+	 *
+	 * 
+	 */
+	public function get_preview($hash){
+		try {
+			$programme = API::get_preview($hash);
+		}
+		catch(NotFoundException $e)
+		{
+			// Required data is missing?
+			return Response::error('404');
+		}
+
+		return ($format=='xml') ? static::xml($programme) : static::json($programme);
+	}
+
+
+	/**
 	* Output as XML
 	*
 	* @param $data to be shown as XML
