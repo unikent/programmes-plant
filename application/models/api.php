@@ -202,7 +202,11 @@ class API {
 
 		// Apply related courses
 		$subject_area_1 = $final['subject_area_1'][0]['id'];
-		$subject_area_2 = $final['subject_area_2'][0]['id'];
+		// Get subject area two if its set
+		$subject_area_2 = null;
+		if(empty($final['subject_area_2'])){
+			$subject_area_2 = $final['subject_area_2'][0]['id'];
+		}
 		$related_courses = Programme::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
 		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
@@ -210,7 +214,7 @@ class API {
 		$final['globals'] = static::remove_ids_from_field_names($globals);
 
 		// Finally, try and add some module data
-		$modules = API::get_module_data($id, $year);
+		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
 		if($modules !== false){
 			$final['modules'] = $modules;
 		}
