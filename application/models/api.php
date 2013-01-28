@@ -129,25 +129,10 @@ class API {
 		$final = static::remove_ids_from_field_names($final);
 
 		// Apply related courses
-		$related_courses = API::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $final['programme_id']);
-		// Re add user specified related courses (typecast array so empty value skips without error)
+		$related_courses = Programme::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $id);
+		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
-		if(is_array($final['related_courses'])){
-			foreach($final['related_courses'] as $course){
-				// If course doesnt exist in generated array, add it.
-				if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
-			}
-		}
-		
-		// Make alphabetical
-		usort($related_courses, function($a,$b){
-			 return strcmp($a["name"], $b["name"]);
-		});
-
-		// Set back in to object.
-		$final['related_courses'] = $related_courses;
-
-		// Add global object
+		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
 
 		// Finally, try and add some module data
@@ -162,36 +147,24 @@ class API {
 		return $final;
 	}
 
-	/**
-	 * Find related courses using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
-	 * 
-	 * @param $subject_1 is course part of subject 1
-	 * @param $subject_2 is course part of subject 2
-	 * @param $year is course in year
-	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
-	 * @return array of realted programmes
-	 */
-	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false)
-	{
-		$mapping = Programme::get_api_related_programmes_map($year);
 
-		// If subject isn't set, just return an empty array of relations.
-		if($subject_1 == null){
-			return array();
-		} 
-
-		// Get all related programmes.
-		if($subject_1 != $subject_2){
-			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
-		}else{
-			$related_courses_array = $mapping[$subject_1];
+	public static function merge_related_courses($related_courses, $additional_related_courses){
+		// Merge arrays (copying over duplicates)
+		if(is_array($additional_related_courses)){
+			foreach($additional_related_courses as $course){
+				// If course doesnt exist in generated array, add it.
+				if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
+			}
 		}
+		
+		// Make alphabetical
+		usort($related_courses, function($a,$b){
+			 return strcmp($a["name"], $b["name"]);
+		});
 
-		// Remove self from list as theres no point it being related to itself
-		if($self_id) unset($related_courses_array[$self_id]);
-		 
-		return $related_courses_array;
+		return $related_courses;
 	}
+
 
 	/**
 	 * Get Module Data

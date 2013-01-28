@@ -502,4 +502,42 @@ class Programme extends Revisionable {
 			}
 		}
 	}
+
+	/**
+	 * Find related courses using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
+	 * 
+	 * @param $subject_1 is course part of subject 1
+	 * @param $subject_2 is course part of subject 2
+	 * @param $year is course in year
+	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
+	 * @return array of realted programmes
+	 */
+	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false)
+	{
+		$mapping = Programme::get_api_related_programmes_map($year);
+
+		// If subject isn't set, just return an empty array of relations.
+		if($subject_1 == null){
+			return array();
+		} 
+		// If subject 2 is null, assume is duplicate of 1.
+		if($subject_2 == null){
+			$subject_2 = $subject_1;
+		} 
+
+		// Get all related programmes.
+		if($subject_1 != $subject_2){
+			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
+		}else{
+			$related_courses_array = $mapping[$subject_1];
+		}
+
+		// Remove self from list as theres no point it being related to itself
+		if($self_id) unset($related_courses_array[$self_id]);
+		 
+		return $related_courses_array;
+	}
+
+
+
 }
