@@ -54,6 +54,13 @@ class Revisionable extends SimpleData {
 		// Save self.
 		$success = parent::save();
 
+		// If instance_id  isn't set, set it to value of id.
+		// null for new records, 0 for created ones.
+		if ($this->instance_id === null || $this->instance_id  === 0){
+			$this->instance_id = $this->id;
+			$this->raw_save();
+		}
+
 		// If the save succeeds, save a new revision and return its status 
 		// (so the return from this save() is means both the revision & save itself were successful.)
 		if($success) return $this->save_revision();
@@ -165,22 +172,74 @@ class Revisionable extends SimpleData {
 
 	/**
 	 * Get currently active revision
+	 * @param $columns columns to return
 	 * @return active revision instance
 	 */
-	public function get_active_revision()
+	public function get_active_revision($columns = array('*'))
 	{
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
 		$model = static::$revision_model;
 		if ($this->live == 2)
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first();
 		}
 		else
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','selected')->first();
 		}
 	}	
+
+	/**
+	 * Get published/live revision
+	 *
+	 * @param $columns columns to return
+	 * @return live revision instance
+	 */
+	public function get_live_revision($columns = array('*'))
+	{
+		// If a revision is published
+		if($this->live != 0){
+			$model = static::$revision_model;
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first($columns);
+		}
+		// No published revision
+		return null;
+	}	
+
+	/**
+	 * Roll over to year
+	 *
+	 * @param year to roll over to.
+	 * @return success true|false
+	 */
+	public function roll_over_to_year($year)
+	{	
+		$model = $this->data_type;
+
+		// Check is not already rolled over
+		if($model::where("year", "=", $year)->where("instance_id", "=", $this->instance_id)->first(array('id')) != null){
+			// Fail since this has already been rolled over
+			return false;
+		}
+		// Get basic values to rollover
+		$rollover_values = $this->attributes;
+
+		// remove values we dont want to keep
+		foreach(array('id','live',) as $key){
+			unset($rollover_values[$key]);
+		} 
+
+		// Change year
+		$rollover_values->year = $year;
+
+		// Create new instance and set values
+		$new = new $model;
+		$new->fill($rollover_values);
+		
+		// Save to create revisions
+		return $new->save();
+	}
 
 	/**
 	 * make a revision of this item live.
