@@ -1,6 +1,8 @@
 <?php
 
-// Apply retroactivly using: UPDATE `programmes` SET programme_id = id;
+// Apply retroactivly using: 
+// UPDATE `programmes` SET instance_id = id;
+// UPDATE `programmes_revisions` SET instance_id = programme_id;
 class Add_Programme_id {
 
 	/**
