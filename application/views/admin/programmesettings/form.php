@@ -15,9 +15,7 @@
 <?php echo Messages::get_html()?>
 
 <h1><?php echo __('fields.programmesettings') ?> - <?php echo URI::segment(1)?></h1>
-<br/>
-<?php echo __('fields.programmesettings_intro') ?>
-<?php echo __('fields.programmesettings_note') ?>
+
 
 
 <fieldset>
