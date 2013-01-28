@@ -11,7 +11,9 @@
 		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span>
 		<?php echo $revision->get_identifier_string() ?> <br/>
 		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
-		<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
+		<?php if(get_class($programme) == 'Programme'):?>
+			<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
+		<?php endif?>
 	</div>
 
 <?php elseif($revision->status =='selected'):?>
