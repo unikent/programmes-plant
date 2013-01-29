@@ -529,7 +529,8 @@ class Programme extends Revisionable {
 		if($subject_1 != $subject_2){
 			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
 		}else{
-			$related_courses_array = $mapping[$subject_1];
+			// Empty array if subject 1 is empty
+			$related_courses_array = isset($mapping[$subject_1]) ? $mapping[$subject_1] : array();
 		}
 
 		// Remove self from list as theres no point it being related to itself

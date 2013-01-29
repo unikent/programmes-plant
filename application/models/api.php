@@ -48,7 +48,7 @@ class API {
 		$subjects_array = array();
 		foreach($subjects as $subject){
 			$subject_item = $subject;
-			$subject_item['courses'] = $subjects_map[$subject['id']];
+			$subject_item['courses'] = isset($subjects_map[$subject['id']]) ? $subjects_map[$subject['id']]  : array();
 			$subjects_array[] = $subject_item;
 		}
 
@@ -149,6 +149,8 @@ class API {
 			} 
 			// Generate programme
 			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+			// Log revision identity
+			$final['revision_id'] = $revision->get_identifier();
 
 			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
 			$hash = sha1(json_encode($final));
