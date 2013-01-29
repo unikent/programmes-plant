@@ -253,9 +253,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		// Create preview and grab hash
 		$hash = API::create_preview($programme_id, $revision_id);
 		if($hash === false){
-			return Redirect::to("http://of-course-url-from-config/".$hash);	
+			return Redirect::to(Config::get('application.front_end_url')."preview/".$hash);	
 		}
 	}
+
+
 
 	private function splitToText($list,$options)
 	{
