@@ -34,7 +34,7 @@
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
 
-<?php echo Form::actions('programmes', $programme); ?>
+<?php echo Form::actions('programmes', isset($programme) ? $programme : null) ?>
 
 <?php echo Form::close(); ?>
 
