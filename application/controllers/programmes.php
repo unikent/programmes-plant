@@ -56,11 +56,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-		$this->data['campuses'] = Campus::all_as_list();
-		$this->data['school'] = School::all_as_list();
-		$this->data['awards'] = Award::all_as_list();
-		$this->data['programme_list'] = Programme::all_as_list($year);
-		$this->data['leaflets'] = Leaflet::all_as_list();
 
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
