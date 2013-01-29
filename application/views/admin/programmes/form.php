@@ -1,10 +1,9 @@
 <?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programme, 'type'=>'programmes'))->render();?>
 
-
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <div class="floating_save" data-spy="affix" data-offset-top="100">
-  <div class='pull-right'>
+   <div class='pull-right'>
     <input type="submit" class="btn btn-warning" value="Save">
     <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
   </div>
@@ -34,7 +33,7 @@
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
 
-<?php echo Form::actions('programmes', $programme); ?>
+<?php echo Form::actions('programmes', isset($programme) ? $programme : null) ?>
 
 <?php echo Form::close(); ?>
 

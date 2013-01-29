@@ -1,4 +1,12 @@
- <h1>Revision: <?php echo $revision->get_identifier();?></h2>
+<?php if(get_class($programme) == 'Programme'):?>
+      <?php
+        $preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$programme->id.'@preview', array($revision->id));
+      ?>
+      <a class="btn btn-warning " style='margin-top:15px;margin-left:10px;' target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
+<?php endif; ?> 
+
+<h1 class='pull-left' style='margin-bottom:5px;'>Revision: <?php echo $revision->get_identifier();?></h1>
+<p>&nbsp;</p>
 <p>
 Programme created at <strong><?php echo $programme->created_at; ?> </strong> by  <strong><?php echo $programme->created_by; ?> </strong>.
 </p>

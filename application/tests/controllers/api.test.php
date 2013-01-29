@@ -209,6 +209,7 @@ class TestAPI_Controller extends ControllerTestCase
         $returned_data = json_decode($response->render());
         
         $returned_data = $returned_data->$input['id'];
+
         
         $this->assertEquals($input['id'], $returned_data->id);
         $this->assertEquals($input['programme_title_1'], $returned_data->name);
@@ -262,13 +263,15 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'programme_suspended_53' => '',
+            'programme_withdrawn_54' => ''
         );
 
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
-
+       
         $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
-
+       
         $this->assertEquals('200', $response->status());
     }
 
