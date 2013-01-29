@@ -247,7 +247,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		// Create preview and grab hash
 		$hash = API::create_preview($programme_id, $revision_id);
-		if($hash === false){
+		if($hash !== false){
 			return Redirect::to(Config::get('application.front_end_url')."preview/".$hash);	
 		}
 	}

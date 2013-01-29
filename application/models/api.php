@@ -149,10 +149,9 @@ class API {
 			} 
 			// Generate programme
 			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
-			print_r($revision);
 
-			// generate hash
-			$hash = sha1(implode('.', $final));
+			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
+			$hash = sha1(json_encode($final));
 			// Store it, & return hash
 			Cache::put("programme-previews.preview-{$hash}", $final, 604800);// 1 week
 			return $hash;

@@ -93,7 +93,7 @@ class API_Controller extends Base_Controller {
 	 *
 	 * 
 	 */
-	public function get_preview($hash){
+	public function get_preview($hash, $format='json'){
 		try {
 			$programme = API::get_preview($hash);
 		}
