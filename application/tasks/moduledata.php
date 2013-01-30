@@ -115,13 +115,16 @@ class ModuleData_Task {
             	// set the synopsis for each module
 	            foreach ($cluster->modules->module as $module_index => $module)
 	            {
-	            	$module->synopsis = '';
-	            	if (isset($module->module_code))
+	            	if ($module != null)
 	            	{
-			            // set the url for this web service call
-		                $url_synopsis_full = $url_synopsis . $module->module_code . '.xml';
-		                // get the synopsis and add it to the programme_modules object
-		                $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
+		            	$module->synopsis = '';
+		            	if (isset($module->module_code))
+		            	{
+				            // set the url for this web service call
+			                $url_synopsis_full = $url_synopsis . $module->module_code . '.xml';
+			                // get the synopsis and add it to the programme_modules object
+			                $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
+		                }
 	                }
 	            }
             }
@@ -140,8 +143,6 @@ class ModuleData_Task {
             // store complete dataset for this programme in our cache
             $cache_key = "programme-modules.$type-$session-" . $programme['id'];
             Cache::put($cache_key, $programme_modules_new, 2628000);
-            
-            echo 'module data cache generated with key ' . $cache_key;
             
             sleep($sleeptime);
         
