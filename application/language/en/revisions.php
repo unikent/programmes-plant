@@ -23,6 +23,7 @@ return array(
 	'rollback_live' 	=> 'Roll live back to revision',
 	'cancel' 			=> 'Not right now',
 	'unpublish'         => 'Unpublish',
+	'view_preview'		=> 'Preview',
 
 	//Links
 	'edit_form'	 		=> 'Return to edit form',

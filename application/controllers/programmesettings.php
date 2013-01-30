@@ -84,7 +84,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+				$subject->$col = Input::get($col);
 			}
 
 			$subject->save();
@@ -114,7 +114,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+				$subject->$col = Input::get($col);
 			}
 
 			$subject->save();
