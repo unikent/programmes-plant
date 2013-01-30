@@ -48,7 +48,7 @@ class API {
 		$subjects_array = array();
 		foreach($subjects as $subject){
 			$subject_item = $subject;
-			$subject_item['courses'] = $subjects_map[$subject['id']];
+			$subject_item['courses'] = isset($subjects_map[$subject['id']]) ? $subjects_map[$subject['id']]  : array();
 			$subjects_array[] = $subject_item;
 		}
 
@@ -100,6 +100,79 @@ class API {
 			throw new NotFoundException("Programme either does not exist or has not been published.");
 		}
 
+		$final = static::combine_programme($programme, $programme_settings, $globals);
+
+		// Store data in to cache
+		Cache::put($cache_key, $final, 2628000);
+
+		return $final;
+	}
+
+	/**
+	 * get a "preview" programme from the API based on hash
+	 *
+	 * @param $hash of preview
+	 * @return preview from cache
+	 * @throws NoFoundException if preview does not exist (or has expired)
+	 */
+	public static function get_preview($hash)
+	{	
+		$key = "programme-previews.preview-{$hash}";
+		if(Cache::has($key)){
+			return Cache::get($key);
+		}else{
+			throw new NotFoundException("Preview data not found");
+		}	
+		
+	}
+
+	/**
+	 * Create a new "preview" of a given revision
+	 *
+	 * @param $id of programme preview is for
+	 * @param $id of revision to create preview from
+	 * @return hash of preview.
+	 */
+	public static function create_preview($id, $revision_id)
+	{
+		$p = Programme::find($id);
+		$revision = $p->get_revision($revision_id);
+		
+		// If this revision exists
+		if($revision !== false){
+			// Grab additional data sets
+			$globals 			= GlobalSetting::get_api_data($revision->year);	
+			$programme_settings = ProgrammeSetting::get_api_data($revision->year);
+			// Fail if these arent set
+			if($globals === false || $programme_settings === false){
+				return false;	
+			} 
+			// Generate programme
+			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+			// Log revision identity
+			$final['revision_id'] = $revision->get_identifier();
+
+			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
+			$hash = sha1(json_encode($final));
+			// Store it, & return hash
+			Cache::put("programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
+			return $hash;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Create a combined programme output
+	 *
+	 * @param $programme - basic programme data
+	 * @param $programme_settings - basic programme setting data
+	 * @param $globals - basic global setting data
+	 * @return Combined programme data (fully linked)
+	 */
+	public static function combine_programme($programme, $programme_settings, $globals){
+
 		// Start combining to create final super object for output
 		// Use programme setttings as a base
 		$final = $programme_settings;
@@ -119,7 +192,7 @@ class API {
 		}
 
 		// Remove unwanted attributes
-		foreach(array('id','global_setting_id') as $key)
+		foreach(array('id','global_setting_id', 'programme_id', 'programme_setting_id') as $key)
 		{
 			unset($final[$key]);
 		}
@@ -129,11 +202,39 @@ class API {
 		$final = static::remove_ids_from_field_names($final);
 
 		// Apply related courses
-		$related_courses = API::get_courses_in($final['subject_area_1'][0]['id'], $final['subject_area_2'][0]['id'], $year, $final['programme_id']);
-		// Re add user specified related courses (typecast array so empty value skips without error)
+		$subject_area_1 = $final['subject_area_1'][0]['id'];
+		// Get subject area two if its set
+		$subject_area_2 = null;
+		if(empty($final['subject_area_2'])){
+			$subject_area_2 = $final['subject_area_2'][0]['id'];
+		}
+		$related_courses = Programme::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
+		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
-		if(is_array($final['related_courses'])){
-			foreach($final['related_courses'] as $course){
+		// Add global settings data
+		$final['globals'] = static::remove_ids_from_field_names($globals);
+
+		// Finally, try and add some module data
+		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
+		if($modules !== false){
+			$final['modules'] = $modules;
+		}
+
+		return $final;
+	}
+
+	/**
+	 * Merge related courses. Merges course arrays removing any duplicates and returns them in alphabetical order
+	 *
+	 * @param $related_courses, Inital array of courses
+	 * @param $additional_related_courses, Additional courses array of courses
+	 * 
+	 * @return (array) $related_courses
+	 */
+	public static function merge_related_courses($related_courses, $additional_related_courses){
+		// Merge arrays (copying over duplicates)
+		if(is_array($additional_related_courses)){
+			foreach($additional_related_courses as $course){
 				// If course doesnt exist in generated array, add it.
 				if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
 			}
@@ -144,54 +245,9 @@ class API {
 			 return strcmp($a["name"], $b["name"]);
 		});
 
-		// Set back in to object.
-		$final['related_courses'] = $related_courses;
-
-		// Add global object
-		$final['globals'] = static::remove_ids_from_field_names($globals);
-
-		// Finally, try and add some module data
-		$modules = API::get_module_data($id, $year);
-		if($modules !== false){
-			$final['modules'] = $modules;
-		}
-
-		// Store data in to cache
-		Cache::put($cache_key, $final, 2628000);
-
-		return $final;
+		return $related_courses;
 	}
 
-	/**
-	 * Find related courses using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
-	 * 
-	 * @param $subject_1 is course part of subject 1
-	 * @param $subject_2 is course part of subject 2
-	 * @param $year is course in year
-	 * @param $self_id Id of record this is called from (So programmes are not related to themselves)
-	 * @return array of realted programmes
-	 */
-	public static function get_courses_in($subject_1, $subject_2, $year, $self_id = false)
-	{
-		$mapping = Programme::get_api_related_programmes_map($year);
-
-		// If subject isn't set, just return an empty array of relations.
-		if($subject_1 == null){
-			return array();
-		} 
-
-		// Get all related programmes.
-		if($subject_1 != $subject_2){
-			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
-		}else{
-			$related_courses_array = $mapping[$subject_1];
-		}
-
-		// Remove self from list as theres no point it being related to itself
-		if($self_id) unset($related_courses_array[$self_id]);
-		 
-		return $related_courses_array;
-	}
 
 	/**
 	 * Get Module Data

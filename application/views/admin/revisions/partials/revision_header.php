@@ -1,9 +1,17 @@
 <div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
+		<?php if($type == 'programmes'):?>
+			<?php
+				$preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$instance->id.'@preview', array($revision->id));
+			?>
+			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
+		<?php endif; ?>		
 		<?php if($instance->live !='2'):?>
 		<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
 		<?php endif;?>
 		<a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'@revisions', array($instance->id))?>" ><?php echo __("revisions.manage_revisions"); ?></a>
+	
+
 	</div>
 
 	<?php if($instance->live=='2'):?>

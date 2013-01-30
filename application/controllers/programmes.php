@@ -56,11 +56,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-		$this->data['campuses'] = Campus::all_as_list();
-		$this->data['school'] = School::all_as_list();
-		$this->data['awards'] = Award::all_as_list();
-		$this->data['programme_list'] = Programme::all_as_list($year);
-		$this->data['leaflets'] = Leaflet::all_as_list();
 
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
@@ -239,6 +234,25 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		return View::make('admin.'.$this->views.'.difference',$this->data);
 	}
+
+
+	/**
+	 * Routing for GET /preview/$programme_id/preview/$revision_id
+	 *
+	 * @param int    $revisionable_item_id  The object ID we are reverting to a revision on.
+	 * @param int    $revision_id  The revision ID we are reverting to.
+	 *
+	 */
+	public function get_preview($year, $type, $programme_id, $revision_id)
+	{
+		// Create preview and grab hash
+		$hash = API::create_preview($programme_id, $revision_id);
+		if($hash !== false){
+			return Redirect::to(Config::get('application.front_end_url')."preview/".$hash);	
+		}
+	}
+
+
 
 	private function splitToText($list,$options)
 	{
