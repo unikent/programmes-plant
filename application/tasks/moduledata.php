@@ -42,7 +42,8 @@ class ModuleData_Task {
 		        	$counter = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
 		        	break;
 		        default:
-		        	break;
+		        	echo "\n\n-l - ug or pg. Defaults to ug.\n-s - session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n\n";
+		        	exit;
 	        }
         }
         
