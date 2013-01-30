@@ -127,7 +127,14 @@ class ModuleData_Task {
             
             ksort($programme_modules_new->stages);
             // clear out the api output cache completely so we can regenerate the cache now including the new module data
-            Cache::purge('api-output-'.$type);
+            try
+            {
+            	Cache::purge('api-output-'.$type);
+            }
+            catch(Exception $e)
+            {
+	            echo 'No cache to purge. Continuing...' . "\n";
+            }
             
             // store complete dataset for this programme in our cache
             $cache_key = "programme-modules.$type-$session-" . $programme['id'];
