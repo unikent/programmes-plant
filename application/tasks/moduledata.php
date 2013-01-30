@@ -15,24 +15,35 @@ class ModuleData_Task {
         $module_data_obj = new ProgrammesPlant\ModuleData();
         
         // ug or pg
-        $type = 'ug';
-        if (isset($arguments[0]) && substr($arguments[0], 0, 2) == '-l')
-        {
-        	$type = str_replace('-l', '', $arguments[0]) != '' ? str_replace('-l', '', $arguments[0]) : 'ug';
-        }
+        $type = '';
+        $session = '';
+        $sleepytime = '';
+        $counter = '';
         
-        // session
-        $session = '2014';
-        if (isset($arguments[1]) && substr($arguments[0], 0, 2) == '-s')
+        foreach ($arguments as $argument)
         {
-        	$session = str_replace('-s', '', $arguments[0]) != '' ? str_replace('-s', '', $arguments[0]) : '2014';
-        }
-        
-        // sleep before the next iteration
-        $sleepytime = 5;
-        if (isset($arguments[2]) && substr($arguments[2], 0, 2) == '-t')
-        {
-        	$sleepytime = (int) str_replace('-t', '', $arguments[0]) != '' ? str_replace('-t', '', $arguments[0]) : 5;
+	        $switch_name = substr($argument, 0, 2);
+	        switch($switch_name)
+	        {
+	        	// level
+		        case '-l':
+		        	$type = str_replace('-l', '', $switch_name) != '' ? str_replace('-l', '', $switch_name) : 'ug';
+		        	break;
+		        // session
+		        case '-s':
+		        	$session = str_replace('-s', '', $switch_name) != '' ? str_replace('-s', '', $switch_name) : '2014';
+		        	break;
+		        // sleep before the next iteration
+		        case '-t':
+		        	$sleepytime = str_replace('-t', '', $switch_name) != '' ? str_replace('-t', '', $switch_name) : 5;
+		        	break;
+		        // counter
+		        case '-c':
+		        	$counter = str_replace('-c', '', $switch_name) != '' ? str_replace('-c', '', $switch_name) : 1;
+		        	break;
+		        default:
+		        	break;
+	        }
         }
         
         // institution is always 0122
@@ -48,17 +59,22 @@ class ModuleData_Task {
         $programmes = \API::get_index($session, $type);
         
         // loop through each programme in the index and call the two web services for each
+        $n = 0;
         foreach ($programmes as $id => $programme)
         {
+        	// make sure we don't get past the counter limit
+        	$n++;
+        	if ($counter > 0 && $n > $counter)
+        	{
+	        	break;
+        	}
+        	echo 'x';
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
                 Config::get('module.instituation_param') . '=' . $institution . '&' .
                 Config::get('module.campus_param') . '=' . $programme['campus_id'] . '&' .
                 Config::get('module.session_param') . '=' . $session . '&' .
                 'format=json';
-                
-            // fake the url for now
-            // this makes sure we can read from local files rather than using curl
             
             // login details for the programme module web service
             $module_data_obj->login['username'] = Config::get('module.programme_module_user');
