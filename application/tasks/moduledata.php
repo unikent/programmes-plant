@@ -15,10 +15,10 @@ class ModuleData_Task {
         $module_data_obj = new ProgrammesPlant\ModuleData();
         
         // ug or pg
-        $type = '';
-        $session = '';
-        $sleepytime = '';
-        $counter = '';
+        $type = 'ug';
+        $session = '2014';
+        $sleeptime = '5';
+        $counter = '1';
         
         foreach ($arguments as $argument)
         {
@@ -27,19 +27,19 @@ class ModuleData_Task {
 	        {
 	        	// level
 		        case '-l':
-		        	$type = str_replace('-l', '', $switch_name) != '' ? str_replace('-l', '', $switch_name) : 'ug';
+		        	$type = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
 		        	break;
 		        // session
 		        case '-s':
-		        	$session = str_replace('-s', '', $switch_name) != '' ? str_replace('-s', '', $switch_name) : '2014';
+		        	$session = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
 		        	break;
 		        // sleep before the next iteration
 		        case '-t':
-		        	$sleepytime = str_replace('-t', '', $switch_name) != '' ? str_replace('-t', '', $switch_name) : 5;
+		        	$sleeptime = str_replace('-t', '', $argument) != '' ? str_replace('-t', '', $argument) : 5;
 		        	break;
 		        // counter
 		        case '-c':
-		        	$counter = str_replace('-c', '', $switch_name) != '' ? str_replace('-c', '', $switch_name) : 1;
+		        	$counter = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
 		        	break;
 		        default:
 		        	break;
@@ -68,7 +68,7 @@ class ModuleData_Task {
         	{
 	        	break;
         	}
-        	echo 'x';
+        	
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
                 Config::get('module.instituation_param') . '=' . $institution . '&' .
@@ -135,7 +135,7 @@ class ModuleData_Task {
             
             echo 'module data cache generated with key ' . $cache_key;
             
-            sleep($sleepytime);
+            sleep($sleeptime);
         
         }
         
