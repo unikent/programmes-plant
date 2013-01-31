@@ -20,6 +20,28 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_index($year, $level, $format = 'json')
 	{
+		// Get the correct modified time for the index.
+		$last_generated = ApiIndexTime::where('year', '=', $year)->where('level', '=', 'ug')->first();
+
+		// This index should exist. If it doesn't its a problem with the caching.
+		if ($last_generated == null)
+		{
+			return Response::make('', 501);
+		}
+
+		if (Request::header('if-modified-since'))
+		{
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);
+
+			$programme_index_last_modified = strtotime($last_generated->updated_at);
+
+			if ($programme_index_last_modified == $request_modified_since)
+			{
+				return Response::make('', 304);
+			}
+		}
+
 		$index_data = API::get_index($year, $level);
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
@@ -27,11 +49,13 @@ class API_Controller extends Base_Controller {
 		{
 			// Considering 501 (server error) as more desciptive
 			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
-			return Response::error('501');
+			return Response::make('', 501);
 		}
 
+		$headers = array('Last-Modified' => $last_generated->updated_at);
+
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($index_data) : static::json($index_data);
+		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
 	}
 
 	/**
@@ -46,7 +70,7 @@ class API_Controller extends Base_Controller {
 		//Get subjects
 		$subjects = API::get_subjects_index($year, $level);
 
-		if (! $subjects) return Response::error('501');
+		if (! $subjects) return Response::make('', 501);
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects);
@@ -81,31 +105,30 @@ class API_Controller extends Base_Controller {
 
 			$programme_last_modified = strtotime($time_modified[0]->published_at);
 
-			// Check this logic is actually right!
 			if ($programme_last_modified == $request_modified_since)
 			{
 				return Response::make('', '304');
 			}
 		}
 
-		try {
+		try 
+		{
 			$programme = API::get_programme($programme_id, $year);
 		}
+		// Required data is missing?
 		catch(MissingDataException $e)
 		{
-			// Required data is missing?
-			return Response::error('501');
+			return Response::make('', 501);
 		}
 		catch(NotFoundException $e)
 		{
-			// Page does not exist / isn't published
-			return Response::error('404');
+			return Response::make('', 404);
 		}
 		
 		// Unknown issue with data.
 		if (! $programme)
 		{
-			return Response::error('501');
+			return Response::make('', 501);
 		}
 
 		$headers = array();
@@ -114,7 +137,7 @@ class API_Controller extends Base_Controller {
 		$headers['Last-Modified'] = $programme['published_at'];
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : Response::json($programme, 200, $headers);
+		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
 	}
 
 	/**
@@ -122,14 +145,15 @@ class API_Controller extends Base_Controller {
 	 *
 	 * 
 	 */
-	public function get_preview($hash, $format='json'){
+	public function get_preview($hash, $format='json')
+	{
 		try {
 			$programme = API::get_preview($hash);
 		}
 		catch(NotFoundException $e)
 		{
 			// Required data is missing?
-			return Response::error('404');
+			return Response::make('', 404);
 		}
 
 		return ($format=='xml') ? static::xml($programme) : static::json($programme);
@@ -140,18 +164,43 @@ class API_Controller extends Base_Controller {
 	* Output as XML
 	*
 	* @param $data to be shown as XML
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
 	*/
-	public static function xml($data){
-		return Response::make(API::array_to_xml($data), 200, array('Content-Type' => 'text/xml'));
+	public static function xml($data, $code = 200, $add_headers = false)
+	{
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::make(API::array_to_xml($data), 200, $headers);
 	}
 	
 	/**
 	* Output as JSON
 	*
 	* @param $data to be shown as JSON
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
 	*/
-	public static function json($data){
-		return Response::json($data, '200', array('Content-Type' => 'application/json'));
+	public static function json($data, $code = 200, $add_headers = false)
+	{
+
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::json($data, $code, $headers);
 	}
 	
 
