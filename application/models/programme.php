@@ -418,6 +418,18 @@ class Programme extends Revisionable {
 			);
 		}
 
+		// update times last generated
+		$last_generated = ApiIndexTime::where('year', '=', $year)->where('level', '=', 'ug')->first();
+		
+		if($last_generated == null)
+		{
+			ApiIndexTime::create(array('year' => $year, 'level' => 'ug'))->save();
+		}
+		else
+		{
+			$last_generated->touch();
+		}
+
 		// Store index data in to cache
 		Cache::put($cache_key_index , $index_data, 2628000);
 
