@@ -63,6 +63,30 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
+		if (Request::header('if-modified-since'))
+		{
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);
+
+			$time_modified = ProgrammeRevision::where('year', '=', $year)
+							 	->where('programme_id', '=', $programme_id)
+							 	->where('status', '=', 'live')
+								->get(array('published_at'));
+
+			// Check we got a programme back!
+			if ($time_modified == null)
+			{
+				return Response::make('', '404');
+			}
+
+			$programme_last_modified = strtotime($time_modified[0]->published_at);
+
+			// Check this logic is actually right!
+			if ($programme_last_modified == $request_modified_since)
+			{
+				return Response::make('', '304');
+			}
+		}
 
 		try {
 			$programme = API::get_programme($programme_id, $year);
@@ -83,9 +107,14 @@ class API_Controller extends Base_Controller {
 		{
 			return Response::error('501');
 		}
+
+		$headers = array();
+
+		// Set the HTTP Last-Modified header to the date that the programme was published.
+		$headers['Last-Modified'] = $programme['published_at'];
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme);
+		return ($format=='xml') ? static::xml($programme) : Response::json($programme, 200, $headers);
 	}
 
 	/**
