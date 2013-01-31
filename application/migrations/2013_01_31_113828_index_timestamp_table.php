@@ -10,6 +10,7 @@ class Index_Timestamp_Table {
 	public function up()
 	{
 		Schema::create('api_index_time', function($table){
+			$table->increments('id');
 			$table->string('level');
 			$table->string('year');
 			$table->timestamps();
