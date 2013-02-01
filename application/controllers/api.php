@@ -133,11 +133,17 @@ class API_Controller extends Base_Controller {
 
 		$headers = array();
 
+		$response = new Response($programme, 200, $headers); 
+
 		// Set the HTTP Last-Modified header to the date that the programme was published.
 		$headers['Last-Modified'] = $programme['published_at'];
+
+		// Set a less conservative caching policy.
+		//$response->foundation->set('cache-control', 'public');
+		dd($response->foundation);
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
+		//return $response->send();
 	}
 
 	/**
