@@ -173,6 +173,12 @@ Session::extend('phpsession', function()
 	return new PhpSession;
 });
 
+// the API does not need a session. This is also a way to get rig of the no-cache headers being sent
+if(strpos(Request::uri(), 'api') !== false)
+{
+	Config::set('session.driver', '');
+}
+
 if (Config::get('session.driver') !== '')
 {
 	Session::load();
