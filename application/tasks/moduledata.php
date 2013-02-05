@@ -16,9 +16,16 @@ class ModuleData_Task {
         
         // ug or pg
         $type = 'ug';
-        $session = '2014';
+        // programme session is the current session for programmes
+        $programme_session = '2014';
+        // module session might be different from programme session if we want to get modules from last year (eg during rollover when module data might not be complete
+        $module_session = '2013';
+        // interval in secs between web service hits
         $sleeptime = '5';
-        $counter = '1';
+        // limiter (mainly for testing where we don't want module data for every single programme)
+        $counter = 1;
+        // institution is always 0122 = Kent Uni
+        $institution = '0122';
         
         foreach ($arguments as $argument)
         {
@@ -29,9 +36,13 @@ class ModuleData_Task {
 		        case '-l':
 		        	$type = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
 		        	break;
-		        // session
+		        // module session
+		        case '-m':
+		        	$module_session = str_replace('-m', '', $argument) != '' ? str_replace('-m', '', $argument) : '2014';
+		        	break;
+		        // programme session
 		        case '-s':
-		        	$session = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
+		        	$programme_session = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
 		        	break;
 		        // sleep before the next iteration
 		        case '-t':
@@ -42,13 +53,10 @@ class ModuleData_Task {
 		        	$counter = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
 		        	break;
 		        default:
-		        	echo "\n\n-l - ug or pg. Defaults to ug.\n-s - session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n\n";
+		        	echo "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n\n";
 		        	exit;
 	        }
         }
-        
-        // institution is always 0122
-        $institution = '0122';
         
         // base url for the programme_module web service
         $url_programme_modules = Config::get('module.programme_module_base_url');
@@ -57,7 +65,7 @@ class ModuleData_Task {
         $url_synopsis = Config::get('module.module_data_url');
         
         // get the list of programmes for this session and programme type from our own API call
-        $programmes = \API::get_index($session, $type);
+        $programmes = \API::get_index($programme_session, $type);
         
         // loop through each programme in the index and call the two web services for each
         $n = 0;
@@ -74,7 +82,7 @@ class ModuleData_Task {
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
                 Config::get('module.instituation_param') . '=' . $institution . '&' .
                 Config::get('module.campus_param') . '=' . $programme['campus_id'] . '&' .
-                Config::get('module.session_param') . '=' . $session . '&' .
+                Config::get('module.session_param') . '=' . $module_session . '&' .
                 'format=json';
             
             // login details for the programme module web service
@@ -141,7 +149,7 @@ class ModuleData_Task {
             }
             
             // store complete dataset for this programme in our cache
-            $cache_key = "programme-modules.$type-$session-" . $programme['id'];
+            $cache_key = "programme-modules.$type-$programme_session-" . $programme['id'];
             Cache::put($cache_key, $programme_modules_new, 2628000);
             
             sleep($sleeptime);
