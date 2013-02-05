@@ -87,25 +87,18 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
-		if (Request::header('if-modified-since'))
+		// Get last updated date from cache
+		$last_modified = API::get_last_change_time();
+
+		if (Request::header('if-modified-since') && $last_modified != null)
 		{
+
 			$header = Request::header('if-modified-since');
-			$request_modified_since = strtotime($header[0]);
+			$request_modified_since = strtotime($header[0]);			
 
-			$time_modified = ProgrammeRevision::where('year', '=', $year)
-							 	->where('programme_id', '=', $programme_id)
-							 	->where('status', '=', 'live')
-								->get(array('published_at'));
-
-			// Check we got a programme back!
-			if ($time_modified == null)
-			{
-				return Response::make('', '404');
-			}
-
-			$programme_last_modified = strtotime($time_modified[0]->published_at);
-
-			if ($programme_last_modified == $request_modified_since)
+			// If time request was cached is after (or equal to) the last change made to the data
+			// send 301 as cache is still valid
+			if ($last_modified <= $request_modified_since)
 			{
 				return Response::make('', '304');
 			}
@@ -133,8 +126,8 @@ class API_Controller extends Base_Controller {
 
 		$headers = array();
 
-		// Set the HTTP Last-Modified header to the date that the programme was published.
-		$headers['Last-Modified'] = $programme['published_at'];
+		// Set the HTTP Last-Modified header to the last updated date.
+		$headers['Last-Modified'] = gmdate('D, d M Y H:i:s \G\M\T', $last_modified);
 
 		// Set a less conservative caching policy.
 		$headers['Cache-Control'] = 'public';

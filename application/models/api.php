@@ -321,7 +321,20 @@ class API {
 			}
 			
 		}
-		
+
+		// Last changed timestamp 
+		// (All data generated after this point can be considered as "up to date" by the API)
+		Cache::put('last_change', time(), 2628000);
+	}
+
+	/**
+	 * Get timestamp of when last change to caches was made
+	 *
+	 * @return unix timestamp
+	 */
+	public static function get_last_change_time(){
+
+		return Cache::get('last_change');
 	}
 
 	/**
