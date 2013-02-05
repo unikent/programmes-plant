@@ -171,6 +171,7 @@ class SimpleData extends Eloquent {
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
 				static::generate_api_data();
+				Programme::forget_api_index();
 				API::purge_output_cache();
 			}
 			
