@@ -20,6 +20,23 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_index($year, $level, $format = 'json')
 	{
+
+		// Get last updated date from cache
+		$last_generated = API::get_last_change_time();
+
+		// If we have an if modified header, check its after are last updated
+		// if so, give it a 304 rather than resending the data
+		if (Request::header('if-modified-since'))
+		{
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);
+
+			if ($last_generated <= $request_modified_since)
+			{
+				return Response::make('', 304);
+			}
+		}
+
 		$index_data = API::get_index($year, $level);
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
@@ -27,11 +44,13 @@ class API_Controller extends Base_Controller {
 		{
 			// Considering 501 (server error) as more desciptive
 			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
-			return Response::error('501');
+			return Response::make('', 501);
 		}
 
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
+
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($index_data) : static::json($index_data);
+		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
 	}
 
 	/**
@@ -43,13 +62,29 @@ class API_Controller extends Base_Controller {
 	* @return json|xml data as a string or HTTP response
 	*/
 	public function get_subject_index($year, $level, $format = 'json'){
+
+		// Get last updated date from cache
+		$last_generated = API::get_last_change_time();
+		if (Request::header('if-modified-since'))
+		{
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);
+
+			if ($last_generated <= $request_modified_since)
+			{
+				return Response::make('', 304);
+			}
+		}
+
 		//Get subjects
 		$subjects = API::get_subjects_index($year, $level);
 
-		if (! $subjects) return Response::error('501');
+		if (! $subjects) return Response::make('', 501);
+
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
 
 		// output
-		return ($format=='xml') ? static::xml($subjects) : static::json($subjects);
+		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
 	}
 	
 	/**
@@ -63,29 +98,53 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
+		// Get last updated date from cache
+		$last_modified = API::get_last_change_time();
 
-		try {
+		if (Request::header('if-modified-since') && $last_modified != null)
+		{
+
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);			
+
+			// If time request was cached is after (or equal to) the last change made to the data
+			// send 301 as cache is still valid
+			if ($last_modified <= $request_modified_since)
+			{
+				return Response::make('', '304');
+			}
+		}
+
+		try 
+		{
 			$programme = API::get_programme($programme_id, $year);
 		}
+		// Required data is missing?
 		catch(MissingDataException $e)
 		{
-			// Required data is missing?
-			return Response::error('501');
+			return Response::make('', 501);
 		}
 		catch(NotFoundException $e)
 		{
-			// Page does not exist / isn't published
-			return Response::error('404');
+			return Response::make('', 404);
 		}
 		
 		// Unknown issue with data.
 		if (! $programme)
 		{
-			return Response::error('501');
+			return Response::make('', 501);
 		}
+
+		$headers = array();
+
+		// Set the HTTP Last-Modified header to the last updated date.
+		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
+
+		// Set a less conservative caching policy.
+		$headers['Cache-Control'] = 'public';
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme);
+		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
 	}
 
 	/**
@@ -93,14 +152,15 @@ class API_Controller extends Base_Controller {
 	 *
 	 * 
 	 */
-	public function get_preview($hash, $format='json'){
+	public function get_preview($hash, $format='json')
+	{
 		try {
 			$programme = API::get_preview($hash);
 		}
 		catch(NotFoundException $e)
 		{
 			// Required data is missing?
-			return Response::error('404');
+			return Response::make('', 404);
 		}
 
 		return ($format=='xml') ? static::xml($programme) : static::json($programme);
@@ -111,18 +171,43 @@ class API_Controller extends Base_Controller {
 	* Output as XML
 	*
 	* @param $data to be shown as XML
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
 	*/
-	public static function xml($data){
-		return Response::make(API::array_to_xml($data), 200, array('Content-Type' => 'text/xml'));
+	public static function xml($data, $code = 200, $add_headers = false)
+	{
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::make(API::array_to_xml($data), 200, $headers);
 	}
 	
 	/**
 	* Output as JSON
 	*
 	* @param $data to be shown as JSON
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
 	*/
-	public static function json($data){
-		return Response::json($data, '200', array('Content-Type' => 'application/json'));
+	public static function json($data, $code = 200, $add_headers = false)
+	{
+
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::json($data, $code, $headers);
 	}
 	
 

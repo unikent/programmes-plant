@@ -338,7 +338,7 @@ class Programme extends Revisionable {
 	 */
 	public static function get_api_index($year)
 	{
-		$cache_key = "api-index-$year";
+		$cache_key = "api-index.index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
 
@@ -350,7 +350,7 @@ class Programme extends Revisionable {
 	 */
 	public static function get_api_related_programmes_map($year)
 	{
-		$cache_key = "api-programmes-$year-subject-relations";
+		$cache_key = "api-index.api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
 			return Cache::get($cache_key);
@@ -363,6 +363,23 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Forget all index's & relation maps
+	 * @todo find memory version of purge
+	 */
+	public static function forget_api_index(){
+		// @todo work out a way of purging this data in tests
+		// so we can test logic creates/removes the correct files
+		if(Request::env() != 'test'){
+			// Pokémon expection handling, gotta catch em all.
+			try {
+				Cache::purge("api-index");
+			}catch (Exception $e) {
+				// Do nothing, all this means if there was no directory (yet) to wipe
+			}
+		}
+	}
+
+	/**
 	 * generate new copy of programmes listing data from live DB
 	 *
 	 * @param $year year to get index for
@@ -371,8 +388,8 @@ class Programme extends Revisionable {
 	public static function generate_api_index($year)
 	{
 		// Set cache keys
-		$cache_key_index = "api-index-$year";
-		$cache_key_subject = "api-programmes-$year-subject-relations";
+		$cache_key_index = "api-index.index-$year";
+		$cache_key_subject = "api-index.api-programmes-$year-subject-relations";
 
 		// Obtain names for required fields
 		$title_field = Programme::get_title_field();

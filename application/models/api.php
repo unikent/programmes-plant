@@ -321,7 +321,39 @@ class API {
 			}
 			
 		}
-		
+
+		// Last changed timestamp 
+		// (All data generated after this point can be considered as "up to date" by the API)
+		Cache::put('last_change', time(), 2628000);
+	}
+
+	/**
+	 * Get timestamp of when last change to caches was made
+	 *
+	 * @return unix timestamp
+	 */
+	public static function get_last_change_time(){
+
+		return Cache::get('last_change');
+	}
+
+	/**
+	 * Get last change time in format sutable for use in headers
+	 *
+	 * @param timestamp to generate header from
+	 * @return time formatted for header
+	 */
+	public static function get_last_change_date_for_headers($time = false){
+		if($time){
+			// if time was provided, dont grab from cache
+			$last_change = $time;
+		}else{
+			$last_change = Cache::get('last_change');
+			// If null, return null
+			if($last_change == null) return null;
+		}
+		// else return in correct format
+		return gmdate('D, d M Y H:i:s \G\M\T', $last_change);
 	}
 
 	/**
