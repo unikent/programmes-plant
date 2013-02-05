@@ -20,23 +20,18 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_index($year, $level, $format = 'json')
 	{
-		// Get the correct modified time for the index.
-		$last_generated = ApiIndexTime::where('year', '=', $year)->where('level', '=', 'ug')->first();
 
-		// This index should exist. If it doesn't its a problem with the caching.
-		if ($last_generated == null)
-		{
-			return Response::make('', 501);
-		}
+		// Get last updated date from cache
+		$last_generated = API::get_last_change_time();
 
+		// If we have an if modified header, check its after are last updated
+		// if so, give it a 304 rather than resending the data
 		if (Request::header('if-modified-since'))
 		{
 			$header = Request::header('if-modified-since');
 			$request_modified_since = strtotime($header[0]);
 
-			$programme_index_last_modified = strtotime($last_generated->updated_at);
-
-			if ($programme_index_last_modified == $request_modified_since)
+			if ($last_generated <= $request_modified_since)
 			{
 				return Response::make('', 304);
 			}
@@ -52,7 +47,7 @@ class API_Controller extends Base_Controller {
 			return Response::make('', 501);
 		}
 
-		$headers = array('Last-Modified' => $last_generated->updated_at);
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
 
 		// Return the cached index file with the correct headers.
 		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
@@ -67,13 +62,29 @@ class API_Controller extends Base_Controller {
 	* @return json|xml data as a string or HTTP response
 	*/
 	public function get_subject_index($year, $level, $format = 'json'){
+
+		// Get last updated date from cache
+		$last_generated = API::get_last_change_time();
+		if (Request::header('if-modified-since'))
+		{
+			$header = Request::header('if-modified-since');
+			$request_modified_since = strtotime($header[0]);
+
+			if ($last_generated <= $request_modified_since)
+			{
+				return Response::make('', 304);
+			}
+		}
+
 		//Get subjects
 		$subjects = API::get_subjects_index($year, $level);
 
 		if (! $subjects) return Response::make('', 501);
 
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
+
 		// output
-		return ($format=='xml') ? static::xml($subjects) : static::json($subjects);
+		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
 	}
 	
 	/**
@@ -127,7 +138,7 @@ class API_Controller extends Base_Controller {
 		$headers = array();
 
 		// Set the HTTP Last-Modified header to the last updated date.
-		$headers['Last-Modified'] = gmdate('D, d M Y H:i:s \G\M\T', $last_modified);
+		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 
 		// Set a less conservative caching policy.
 		$headers['Cache-Control'] = 'public';
