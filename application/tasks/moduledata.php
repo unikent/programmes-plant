@@ -123,7 +123,7 @@ class ModuleData_Task {
             	// set the synopsis for each module
 	            foreach ($cluster->modules->module as $module_index => $module)
 	            {
-	            	if ($module != null)
+	            	if (is_object($module) && $module != null)
 	            	{
 		            	$module->synopsis = '';
 		            	if (isset($module->module_code))
@@ -151,7 +151,7 @@ class ModuleData_Task {
             // store complete dataset for this programme in our cache
             $cache_key = "programme-modules.$type-$programme_session-" . $programme['id'];
             Cache::put($cache_key, $programme_modules_new, 2628000);
-            
+            echo "output to $cache_key\n\n";
             sleep($sleeptime);
         
         }
