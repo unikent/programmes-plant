@@ -39,6 +39,14 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
         foreach($req_keys as $key){
             $request->remove($key);
         }
+
+        $headers = \Laravel\Request::foundation()->headers;
+
+        $header_keys = $headers->keys();
+       
+        foreach($header_keys as $key){
+            $headers->remove($key);
+        }
     }
 
 	/**
@@ -50,11 +58,17 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 * @param	string	$destination
 	 * @param	array	$parameters
 	 * @param	string	$method
+	 * @param	array	$headers
 	 * @return	\Laravel\Response
 	 */
-	public function call($destination, $parameters = array(), $method = 'GET')
+	public function call($destination, $parameters = array(), $method = 'GET', $headers = array())
 	{
 		Request::foundation()->setMethod($method);
+
+		if(sizeof($headers) !== 0){
+			foreach($headers as $header => $value) Request::foundation()->headers->set($header, $value);
+		}
+		
 		return Controller::call($destination, $parameters);
 	}
 
@@ -63,11 +77,12 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @param	string	$destination
 	 * @param	array	$parameters
+	 * @param	array	$headers
 	 * @return	\Laravel\Response
 	 */
-	public function get($destination, $parameters = array())
+	public function get($destination, $parameters = array(), $headers = array())
 	{
-		return $this->call($destination, $parameters, 'GET');
+		return $this->call($destination, $parameters, 'GET', $headers);
 	}
 
 	/**
