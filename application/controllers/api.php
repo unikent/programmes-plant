@@ -20,21 +20,11 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_index($year, $level, $format = 'json')
 	{
-
-		// Get last updated date from cache
+		// get last generated date
 		$last_generated = API::get_last_change_time();
-
-		// If we have an if modified header, check its after are last updated
-		// if so, give it a 304 rather than resending the data
-		if (Request::header('if-modified-since'))
-		{
-			$header = Request::header('if-modified-since');
-			$request_modified_since = strtotime($header[0]);
-
-			if ($last_generated <= $request_modified_since)
-			{
-				return Response::make('', 304);
-			}
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
 		}
 
 		$index_data = API::get_index($year, $level);
@@ -65,15 +55,9 @@ class API_Controller extends Base_Controller {
 
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
-		if (Request::header('if-modified-since'))
-		{
-			$header = Request::header('if-modified-since');
-			$request_modified_since = strtotime($header[0]);
-
-			if ($last_generated <= $request_modified_since)
-			{
-				return Response::make('', 304);
-			}
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
 		}
 
 		//Get subjects
@@ -82,6 +66,7 @@ class API_Controller extends Base_Controller {
 		if (! $subjects) return Response::make('', 501);
 
 		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
+		$headers['Cache-Control'] = 'public';
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
@@ -98,21 +83,10 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
-		// Get last updated date from cache
+		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
-
-		if (Request::header('if-modified-since') && $last_modified != null)
-		{
-
-			$header = Request::header('if-modified-since');
-			$request_modified_since = strtotime($header[0]);			
-
-			// If time request was cached is after (or equal to) the last change made to the data
-			// send 301 as cache is still valid
-			if ($last_modified <= $request_modified_since)
-			{
-				return Response::make('', '304');
-			}
+		if($this->cache_still_valid($last_modified)){
+			return Response::make('', '304');
 		}
 
 		try 
@@ -145,6 +119,57 @@ class API_Controller extends Base_Controller {
 		
 		// return a JSON version of the newly-created $final object
 		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
+	}
+
+
+	/**
+	 * get_data Return data from simpleData cache
+	 *
+	 * @param $type. Type of data to return, ie. Campuses
+	 * @param $format XML|JSON
+	 * @return json|xml data as a string or HTTP response.    
+	 */
+	public function get_data($type, $format = 'json'){
+
+		// If cache is valid, send 304
+		$last_modified = API::get_last_change_time();
+		if($this->cache_still_valid($last_modified)){
+			return Response::make('', '304');
+		}
+
+		// Set data for cache
+		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
+		$headers['Cache-Control'] = 'public';
+
+		// If data exists, send it, else 404
+		try{
+			$data = API::get_data($type);
+			return ($format=='xml') ? static::xml($data) : static::json($data, 200, $headers);
+		}catch(NotFoundException $e){
+			return Response::make('', 404);
+		}
+	}
+
+	/**
+	 * Is cache still valid
+	 *
+	 * @param $last_modified. Unix timestamp of when last change to system data was made.
+	 * @return true|false If cached data is still valid
+	 */
+	protected function cache_still_valid($last_modified){
+
+		// There is no cache (hence its invalid)
+		if(!Request::header('if-modified-since')) return false;
+		// Unknown data of last change, to be safe assume cache is invalid
+		if($last_modified === null) return false;
+
+		// Get "if-modified-since" header as a timestamp
+		$last_retrived = Request::header('if-modified-since');
+		$request_modified_since = strtotime($last_retrived[0]);
+
+		// If time the client created its cache ($request_modified_since) is after (or equal to) 
+		// the last change made to the data ($last_modified) then it is still valid.
+		return ($last_modified <= $request_modified_since);
 	}
 
 	/**
