@@ -35,7 +35,7 @@ class ExtForm extends Form{
 		if (is_array($selected)){
 			foreach ($selected as $val)
 			{
-				if($val != '' && $val != null){
+				if($val != '' && $val != null && !empty($options[$val])){
 					$selected_html[] = static::option($val, $options[$val], $val);
 				}
 			}
