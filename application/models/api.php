@@ -162,6 +162,25 @@ class API {
 		return false;
 	}
 
+	/**
+	 * Get "data" from specific datatype
+	 *
+	 * @param $type data type to return data for.
+	 * @throws NotFoundException on unknown datatype
+	 * @return array of data to return.
+	 */
+	public static function get_data($type){
+
+		// Do some magic (ie. convert schools=>school & campuses to campus for models)
+		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
+		$type = $pluralizer->singular($type);
+		// If type exists, return data
+		if(class_exists($type)){
+			return $type::get_api_data();
+		}
+		// Else throw 404
+		throw new NotFoundException("Request for unknown data type.");
+	}
 
 	/**
 	 * Create a combined programme output
