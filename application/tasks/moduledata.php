@@ -98,46 +98,56 @@ class ModuleData_Task {
             $programme_modules_new = new stdClass;
             
             // loop through each of the modules and get its synopsis, adding it to the object for output
-            foreach ($programme_modules->response->rubric->cluster as $cluster)
+            if (isset($programme_modules->response->message))
             {
-            	if (is_object($cluster) && $cluster != null)
-            	{
-	            	// set the cluster type
-	            	$cluster_type = '';
-	            	if ($cluster->compulsory == 'Y')
-	            	{
-	            		$cluster_type = 'compulsory';
-	            	}
-	            	elseif ($cluster->cluster_type == 'WILD')
-	            	{
-	            		$cluster_type = 'wildcard';
-	            	}
-	            	else
-	            	{
-		            	$cluster_type = 'optional';
-	            	}
-	            	
-	            	// rebuild the structure of the programmes modules object to make things easier on the frontend
-	            	$programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
-	            	$programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
-	            	
-	            	// set the synopsis for each module
-		            foreach ($cluster->modules->module as $module_index => $module)
-		            {
-		            	if (is_object($module) && $module != null)
-		            	{
-			            	$module->synopsis = '';
-			            	if (isset($module->module_code))
-			            	{
-					            // set the url for this web service call
-				                $url_synopsis_full = $url_synopsis . $module->module_code . '.xml';
-				                // get the synopsis and add it to the programme_modules object
-				                $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
-			                }
-		                } // end module test
-		            }
-	            } // end cluster test
+	            echo $programme_modules->response->message;
             }
+            else
+            {
+	            foreach ($programme_modules->response->rubric->cluster as $cluster)
+	            {
+	            	if (is_object($cluster) && $cluster != null)
+	            	{
+		            	// set the cluster type
+		            	$cluster_type = '';
+		            	if ($cluster->compulsory == 'Y')
+		            	{
+		            		$cluster_type = 'compulsory';
+		            	}
+		            	elseif ($cluster->cluster_type == 'WILD')
+		            	{
+		            		$cluster_type = 'wildcard';
+		            	}
+		            	else
+		            	{
+			            	$cluster_type = 'optional';
+		            	}
+		            	
+		            	// rebuild the structure of the programmes modules object to make things easier on the frontend
+		            	$programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
+		            	$programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
+		            	
+		            	// set the synopsis for each module (but don't bother with wildcards)
+		            	if ($cluster_type != 'wildcard')
+		            	{
+				            foreach ($cluster->modules->module as $module_index => $module)
+				            {
+				            	if (is_object($module) && $module != null)
+				            	{
+					            	$module->synopsis = '';
+					            	if (isset($module->module_code))
+					            	{
+							            // set the url for this web service call
+						                $url_synopsis_full = $url_synopsis . $module->module_code . '.xml';
+						                // get the synopsis and add it to the programme_modules object
+						                $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
+					                }
+				                } // end module test
+				            } // endforeach
+			            } //endif
+		            } // end cluster test
+	            } // endforeach
+            } // endif
             
             ksort($programme_modules_new->stages);
             // clear out the api output cache completely so we can regenerate the cache now including the new module data
