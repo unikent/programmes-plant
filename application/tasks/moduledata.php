@@ -26,11 +26,11 @@ class ModuleData_Task {
         $counter = 1;
         // institution can vary
         $institution = '0122';
-    	if (strstr(strtolower($programme['awarding_institute_or_body']) == 'pharmacy')
+    	if (strstr(strtolower($programme['awarding_institute_or_body']) == 'pharmacy'))
     	{
         	$institution = '40406';
     	}
-    	elseif (strstr(strtolower($programme['awarding_institute_or_body']) == 'christchurch')
+    	elseif (strstr(strtolower($programme['awarding_institute_or_body']) == 'christchurch'))
     	{
         	$institution = '0012';
     	}
@@ -60,8 +60,11 @@ class ModuleData_Task {
 		        case '-c':
 		        	$counter = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
 		        	break;
+		        case '-x':
+		        	$module_data_obj->test_mode = true;
+		        	break;
 		        default:
-		        	echo "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n\n";
+		        	echo "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
 		        	exit;
 	        }
         }
@@ -93,6 +96,12 @@ class ModuleData_Task {
                 Config::get('module.session_param') . '=' . $module_session . '&' .
                 'format=json';
             
+            // in test mode just use the local json file
+            if ($module_data_obj->test_mode)
+            {
+	            $url_programme_modules_full = $_SERVER['PWD'].'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
+            }
+            
             // login details for the programme module web service
             $module_data_obj->login['username'] = Config::get('module.programme_module_user');
             $module_data_obj->login['password'] = Config::get('module.programme_module_pass');
@@ -106,7 +115,7 @@ class ModuleData_Task {
             $programme_modules_new = new stdClass;
             
             // loop through each of the modules and get its synopsis, adding it to the object for output
-            if (isset($programme_modules->response->message))
+            if ( isset($programme_modules->response->message) )
             {
 	            echo $programme_modules->response->message;
             }
@@ -131,10 +140,12 @@ class ModuleData_Task {
 			            	$cluster_type = 'optional';
 		            	}
 		            	
-		            	// rebuild the structure of the programmes modules object to make things easier on the frontend
-		            	$programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
-		            	$programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
-		            	
+		            	// make sure the modules list is always an array, even if there's only one module in the cluster
+            			if ( is_object($cluster->modules->module) )
+		                {
+			                $cluster->modules->module = array($cluster->modules->module);
+		                }
+		                
 		            	// set the synopsis for each module (but don't bother with wildcards)
 		            	if ($cluster_type != 'wildcard')
 		            	{
@@ -151,8 +162,16 @@ class ModuleData_Task {
 						                $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
 					                }
 				                } // end module test
+				                
 				            } // endforeach
 			            } //endif
+			            
+			            
+			            // rebuild the structure of the programmes modules object to make things easier on the frontend
+		            	$programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
+		            	$programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
+		            	
+		            	
 		            } // end cluster test
 	            } // endforeach
             } // endif
