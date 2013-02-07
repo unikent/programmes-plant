@@ -24,8 +24,16 @@ class ModuleData_Task {
         $sleeptime = '5';
         // limiter (mainly for testing where we don't want module data for every single programme)
         $counter = 1;
-        // institution is always 0122 = Kent Uni
+        // institution can vary
         $institution = '0122';
+    	if (strstr(strtolower($programme['awarding_institute_or_body']) == 'pharmacy')
+    	{
+        	$institution = '40406';
+    	}
+    	elseif (strstr(strtolower($programme['awarding_institute_or_body']) == 'christchurch')
+    	{
+        	$institution = '0012';
+    	}
         
         foreach ($arguments as $argument)
         {
