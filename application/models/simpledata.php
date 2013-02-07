@@ -235,7 +235,7 @@ class SimpleData extends Eloquent {
 	 * @param $year Unused, but needed for method signature in programme (they have to be the same)
 	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids, $year = false)
+	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
 	{
 		// If nothing is set, return an empty array
 		if(trim($ids) == '') return array();
@@ -246,7 +246,14 @@ class SimpleData extends Eloquent {
 		$values = array();
 		foreach ($id_array as $id) 
 		{
-			$values[] = isset($cached_data[$id]) ? $cached_data[$id] : '';
+			if($titles_only)
+			{
+				$values[] = isset($cached_data[$id]) ? $cached_data[$id]['name'] : '';
+			}
+			else
+			{
+				$values[] = isset($cached_data[$id]) ? $cached_data[$id] : '';
+			}
 		}
 
 		return $values;

@@ -37,6 +37,16 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Get the name of the subject categories field/column in the database.
+	 * 
+	 * @return The name of the subject categories field.
+	 */
+	public static function get_subject_categories_field()
+	{
+		return 'subject_categories_47';
+	}
+
+	/**
 	 * Get the name of the award field/column in the database.
 	 * 
 	 * @return The name of the award field.
@@ -215,7 +225,7 @@ class Programme extends Revisionable {
 	 * @param $year Year course should be returned from.
 	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids, $year = false)
+	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
 	{
 
 		// If nothing is set, return an empty array
@@ -394,6 +404,7 @@ class Programme extends Revisionable {
 		// Obtain names for required fields
 		$title_field = Programme::get_title_field();
 		$slug_field = Programme::get_slug_field();
+		$subject_categories_field = Programme::get_subject_categories_field();
 		$withdrawn_field = Programme::get_withdrawn_field();
 		$suspended_field = Programme::get_suspended_field();
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
@@ -422,6 +433,7 @@ class Programme extends Revisionable {
 				'slug' => $programme->$slug_field,
 				'award' => ($programme->award != null) ? $programme->award->name : '',
 				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
+				'subject_categories' => ($programme->$subject_categories_field != null) ? SubjectCategory::replace_ids_with_values($programme->$subject_categories_field, false, true) : '',
 				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
 				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
 				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
