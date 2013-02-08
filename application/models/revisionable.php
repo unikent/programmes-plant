@@ -422,7 +422,7 @@ class Revisionable extends SimpleData {
 	public static function generate_api_data($year = false, $revision = false){
 
 		// Get model and key
-		$model = get_called_class();
+		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model.'-'.$year;
 
 		// If revision not passed, get data
