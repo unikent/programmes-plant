@@ -26,11 +26,11 @@ class ModuleData_Task {
         $counter = 1;
         // institution can vary
         $institution = '0122';
-    	if (strstr(strtolower($programme['awarding_institute_or_body']) == 'pharmacy'))
+    	if (strstr(strtolower($programme['awarding_institute_or_body']), 'pharmacy'))
     	{
         	$institution = '40406';
     	}
-    	elseif (strstr(strtolower($programme['awarding_institute_or_body']) == 'christchurch'))
+    	elseif (strstr(strtolower($programme['awarding_institute_or_body']), 'christchurch'))
     	{
         	$institution = '0012';
     	}
@@ -135,7 +135,7 @@ class ModuleData_Task {
 		            	{
 		            		$cluster_type = 'wildcard';
 		            	}
-		            	else
+		            	elseif ($cluster->compulsory == 'N')
 		            	{
 			            	$cluster_type = 'optional';
 		            	}
