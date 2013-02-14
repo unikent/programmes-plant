@@ -15,7 +15,7 @@
   <div class="control-group">
     <?php echo Form::label('type', __('fields.form.label_type'), array('class'=>'control-label'))?>
     <div class="controls">
-      <?php echo Form::select('type', array('text'=>'text','textarea'=>'textarea', 'select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model'), (isset($values)) ? $values->field_type : '', array('onchange'=>'show_options(this);') )?>
+      <?php echo Form::select('type', array('text'=>'text','textarea'=>'textarea', 'select'=>'select', 'checkbox'=>'checkbox', 'table_select'=>'select from model', 'table_multiselect'=>'multiselect from model', 'help'=>'Help text section'), (isset($values)) ? $values->field_type : '', array('onchange'=>'show_options(this);') )?>
     </div>
   </div>
 
@@ -38,34 +38,45 @@
     </div>
   </div>
 
-  <div class="control-group">
-    <?php echo Form::label('initval', __('fields.form.label_start'), array('class'=>'control-label'))?>
-    <div class="controls">
+  <div id='form_extra_controls'>
 
-      <?php echo  Form::text('initval', (isset($values)) ? $values->field_initval  : '')?>
-     <?php  if(!isset($values)): ?> Warning, this value will be applied to all existing records (except if the datatype is textarea). <?php endif; ?>
+    <div class="control-group">
+      <?php echo Form::label('initval', __('fields.form.label_start'), array('class'=>'control-label'))?>
+      <div class="controls">
+
+        <?php echo  Form::text('initval', (isset($values)) ? $values->field_initval  : '')?>
+       <?php  if(!isset($values)): ?> Warning, this value will be applied to all existing records (except if the datatype is textarea). <?php endif; ?>
+      </div>
     </div>
-  </div>
 
-  <div class="control-group">
-    <?php echo Form::label('placeholder', __('fields.form.label_placeholdertext'), array('class'=>'control-label'))?>
-    <div class="controls">
+    <div class="control-group">
+      <?php echo Form::label('placeholder', __('fields.form.label_placeholdertext'), array('class'=>'control-label'))?>
+      <div class="controls">
 
-      <?php echo  Form::text('placeholder', (isset($values)) ? $values->placeholder : '' )?>
+        <?php echo  Form::text('placeholder', (isset($values)) ? $values->placeholder : '' )?>
+      </div>
     </div>
-  </div>
-  <?php if(strcmp($field_type, 'programmes') == 0): ?>
-  <div class="control-group">
 
-    <?php echo Form::label('programme_field_type', __('fields.form.label_programme_field_type'), array('class'=>'control-label'))?>
-    <div class="controls">
+    <div class="control-group">
+      <?php echo Form::label('limit', __('fields.form.label_limit'), array('class'=>'control-label'))?>
+      <div class="controls">
 
-      <?php echo  Form::checkbox('programme_field_type', ProgrammeField::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==ProgrammeField::$types['OVERRIDABLE_DEFAULT']) ? ProgrammeField::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
+        <?php echo  Form::text('limit', (isset($values)) ? $values->limit : '' )?>
+        <br><?php echo __('fields.form.label_limit_help_text'); ?>
+      </div>
     </div>
-  </div>
-<?php endif; ?>
 
-</fieldset>
+    <?php if(strcmp($field_type, 'programmes') == 0): ?>
+    <div class="control-group">
+
+      <?php echo Form::label('programme_field_type', __('fields.form.label_programme_field_type'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo  Form::checkbox('programme_field_type', ProgrammeField::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==ProgrammeField::$types['OVERRIDABLE_DEFAULT']) ? ProgrammeField::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
+      </div>
+    </div>
+  <?php endif; ?>
+</div>
+  </fieldset>
 
 <?php  echo ( isset($values) ? Form::hidden('id', $values->id) : '' ) ?>
 <br/>

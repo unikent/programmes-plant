@@ -17,7 +17,7 @@ class TestLeaflet extends ModelTestCase
 
 		foreach ($campuses as $campus)
 		{
-			$campus->delete();
+			$campus->delete_for_test();
 		}
 
 		parent::tearDown();
@@ -32,7 +32,7 @@ class TestLeaflet extends ModelTestCase
 
 		foreach ($leaflets as $leaflet)
 		{
-			$leaflet->delete();
+			$leaflet->delete_for_test();
 		}
 
 		// Chuck all campuses to ensure clean database
@@ -40,7 +40,7 @@ class TestLeaflet extends ModelTestCase
 
 		foreach ($campuses as $campus)
 		{
-			$campus->delete();
+			$campus->delete_for_test();
 		}
 		
 		parent::tearDown();

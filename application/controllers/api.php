@@ -1,7 +1,6 @@
 <?php
 
-class API_Controller extends Base_Controller 
-{
+class API_Controller extends Base_Controller {
 
 	public $restful = true;
 	
@@ -16,100 +15,230 @@ class API_Controller extends Base_Controller
 	*
 	* @param $year
 	* @param $level - ug or pg
-	* @return json data as a string or HTTP response
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response
 	*/
-	public function get_index($year, $level)
+	public function get_index($year, $level, $format = 'json')
 	{
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
+		// get last generated date
+		$last_generated = API::get_last_change_time();
 
-		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		if (! file_exists($path . 'index.json'))
+		// If cache is valid, send 304
+		if ($this->cache_still_valid($last_generated))
 		{
-			return Response::error('204');
+			return Response::make('', '304');
 		}
 
+		$index_data = API::get_index($year, $level);
+
+		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+		if (! $index_data)
+		{
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::make('', 501);
+		}
+
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
+
 		// Return the cached index file with the correct headers.
-		return Response::make(file_get_contents($path . 'index.json'), '200', array('Content-Type' => 'application/json'));
+		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
 	}
-	
+
 	/**
-	* get data for the programme
+	* get subjects index
 	*
 	* @param $year
 	* @param $level - ug or pg
-	* @param $programme_id - the programme we're pulling data for
-	* @return json data as a string or HTTP response    
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response
 	*/
-	public function get_programme($year, $level, $programme_id)
-	{
-		// set up the path to the output/cache file
-		$path = path('storage') . 'api/' . $level . '/' . $year . '/';
-		
-		// try to get json files for global and programme settings, as well as the programme data itself
-		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		if (! file_exists($path . 'globalsetting.json') or ! file_exists($path . 'programmesetting.json') or ! file_exists($path . $programme_id . '.json') )
-		{
-			return Response::error('204');
-		}
-		// if the cache files do exist for global/programme settings and the programme data, put them into objects
-		$global_settings = json_decode(file_get_contents($path . 'globalsetting.json'));
-		$programme_settings = json_decode(file_get_contents($path . 'programmesetting.json'));
-		$programme = json_decode(file_get_contents($path . $programme_id . '.json'));
-		
-		// in local and test environments we're using a faked json file rather than one generated from the sds web service
-		$modules = '';
-		if (Request::env() == 'test' or Request::env() == 'local')
-		{
-			if(file_exists($path . $programme_id . '_modules_test.json'))
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules_test.json'));
-		}
-		else
-		{
-			if(file_exists($path . $programme_id . '_modules.json'))
-				$modules = json_decode(file_get_contents($path . $programme_id . '_modules.json'));
-		}
-		
-		// build up $final which will be an object with all the data in we need
-		// start with the global settings
-		$final = $global_settings;
-		
-		// modules
-		// note that the web service contains two levels we won't need: response and rubric. This may need fixing once we get the finished web service
-		if(!empty($modules))
-			$final->modules = $modules->response->rubric;
+	public function get_subject_index($year, $level, $format = 'json'){
 
-		// now add programme settings to the $final object
-		// no inhertence needed so just loop through the settings, adding them to the object
-		foreach($programme_settings as $key => $value)
-		{
-			$final->{$key} = $value;
+		// Get last updated date from cache
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
 		}
 
-		// pull in all programme dependencies eg an award id 1 will pull in all that award's data
-		// loop through them, adding them to the $final object
-		$programme = Programme::pull_external_data($programme);
-		foreach($programme as $key => $value)
-		{
-			// make sure any existing key in the $final object gets updated with the new $value
-			if(!empty($value) ){
-				$final->{$key} = $value;
-			}
-				
-		}
-		
-		
-		// tidy up
-		foreach(array('id','global_setting_id') as $key)
-		{
-			unset($final->{$key});
-		}
-		
-		// now remove ids from our field names, they're not necessary
-		// eg 'programme_title_1' simply becomes 'programme_title'
-		$final = Programme::remove_ids_from_field_names($final);
-		
-		// return a json version of the newly-created $final object
-		return Response::json($final);
+		//Get subjects
+		$subjects = API::get_subjects_index($year, $level);
+
+		if (! $subjects) return Response::make('', 501);
+
+		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
+
+		// Set revalidation to ten minutes.
+		$headers['Cache-Control'] = 'max-age=600';
+
+		// output
+		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
 	}
+	
+	/**
+	* Get data for the programme as JSON.
+	*
+	* @param string $year The Year.
+	* @param string $level The level - ug or pg.
+	* @param $programme_id The programme we're pulling data for.
+	* @param $format XML|JSON
+	* @return json|xml data as a string or HTTP response.    
+	*/
+	public function get_programme($year, $level, $programme_id, $format = 'json')
+	{
+		// If cache is valid, send 304
+		$last_modified = API::get_last_change_time();
+		if($this->cache_still_valid($last_modified)){
+			return Response::make('', '304');
+		}
+
+		try 
+		{
+			$programme = API::get_programme($programme_id, $year);
+		}
+		// Required data is missing?
+		catch(MissingDataException $e)
+		{
+			return Response::make('', 501);
+		}
+		catch(NotFoundException $e)
+		{
+			return Response::make('', 404);
+		}
+		
+		// Unknown issue with data.
+		if (! $programme)
+		{
+			return Response::make('', 501);
+		}
+
+		$headers = array();
+
+		// Set the HTTP Last-Modified header to the last updated date.
+		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
+
+		// Ten minutes until revalidation.
+		$headers['Cache-Control'] = 'max-age=600';
+		
+		// return a JSON version of the newly-created $final object
+		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
+	}
+
+
+	/**
+	 * get_data Return data from simpleData cache
+	 *
+	 * @param $type. Type of data to return, ie. Campuses
+	 * @param $format XML|JSON
+	 * @return json|xml data as a string or HTTP response.    
+	 */
+	public function get_data($type, $format = 'json'){
+
+		// If cache is valid, send 304
+		$last_modified = API::get_last_change_time();
+		if($this->cache_still_valid($last_modified)){
+			return Response::make('', '304');
+		}
+
+		// Set data for cache
+		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
+		$headers['Cache-Control'] = 'public';
+
+		// If data exists, send it, else 404
+		try{
+			$data = API::get_data($type);
+			return ($format=='xml') ? static::xml($data) : static::json($data, 200, $headers);
+		}catch(NotFoundException $e){
+			return Response::make('', 404);
+		}
+	}
+
+	/**
+	 * Is cache still valid
+	 *
+	 * @param $last_modified. Unix timestamp of when last change to system data was made.
+	 * @return true|false If cached data is still valid
+	 */
+	protected function cache_still_valid($last_modified){
+
+		// There is no cache (hence its invalid)
+		if(!Request::header('if-modified-since')) return false;
+
+		// Unknown data of last change, to be safe assume cache is invalid
+		if($last_modified === null) return false;
+
+		// Get "if-modified-since" header as a timestamp
+		$last_retrived = Request::header('if-modified-since');
+		$request_modified_since = strtotime($last_retrived[0]);
+
+		// If time the client created its cache ($request_modified_since) is after (or equal to) 
+		// the last change made to the data ($last_modified) then it is still valid.
+		return ($last_modified <= $request_modified_since);
+	}
+
+	/**
+	 * Get preview
+	 *
+	 * 
+	 */
+	public function get_preview($hash, $format='json')
+	{
+		try 
+		{
+			$programme = API::get_preview($hash);
+		}
+		catch(NotFoundException $e)
+		{
+			// Required data is missing?
+			return Response::make('', 404);
+		}
+
+		return ($format=='xml') ? static::xml($programme) : static::json($programme);
+	}
+
+
+	/**
+	* Output as XML
+	*
+	* @param $data to be shown as XML
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
+	*/
+	public static function xml($data, $code = 200, $add_headers = false)
+	{
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::make(API::array_to_xml($data), 200, $headers);
+	}
+	
+	/**
+	* Output as JSON
+	*
+	* @param $data to be shown as JSON
+	* @param int $code HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
+	*/
+	public static function json($data, $code = 200, $add_headers = false)
+	{
+		$headers = array();
+
+		$headers['Content-Type'] = 'application/json';
+
+		if ($add_headers)
+		{
+			$headers = array_merge($headers, $add_headers);
+		}
+
+		return Response::json($data, $code, $headers);
+	}
+	
 
 }
