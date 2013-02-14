@@ -251,7 +251,7 @@ class ModuleData_Task {
                     } //endif
                     
                     // rebuild the structure of the programmes modules object to make things easier on the frontend
-                    $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
+                    if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
                     
