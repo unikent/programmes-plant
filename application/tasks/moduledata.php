@@ -36,10 +36,6 @@ class ModuleData_Task {
                 case '-l':
                     $type = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
                     break;
-                // module session
-                case '-m':
-                    $module_session = str_replace('-m', '', $argument) != '' ? str_replace('-m', '', $argument) : '2014';
-                    break;
                 // programme session
                 case '-s':
                     $programme_session = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
@@ -60,6 +56,9 @@ class ModuleData_Task {
                     exit;
             }
         }
+        
+        // module session
+        $module_session = Config::get('module.module_session');
         
         // base url for the programme_module web service
         $url_programme_modules = Config::get('module.programme_module_base_url');
