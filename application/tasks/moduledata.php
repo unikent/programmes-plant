@@ -102,10 +102,12 @@ class ModuleData_Task {
                 $url_programme_modules_full = $_SERVER['PWD'].'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
             }
             
-            
+            // build and cache the programme's module data
             $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $type, $programme_session);
             
             echo "output to $cache_key\n\n";
+            
+            // sleep before running the next iteration of the loop ie a web service throttle
             sleep($sleeptime);
         
         }
@@ -127,20 +129,26 @@ class ModuleData_Task {
         $url_synopsis = Config::get('module.module_data_url');
         
         // get the list of programmes for this session and programme type from our own API call
-        $programme = $arguments[0];
-        $programme_session = $arguments[1];
+        $programme = $arguments[0]; // programme data
+        $programme_session = $arguments[1]; // session
+        
+        // module session is stored as a config option so it can be changed relatively easily
         $module_session = Config::get('module.module_session');
-        $type = $arguments[2];
+        $type = $arguments[2]; // ug or pg
+        
+        // create the module data object
         $this->module_data_obj = new ProgrammesPlant\ModuleData();
+        
+        // test mode lets us use a dummy json file rather than a web service
         $this->module_data_obj->test_mode = $arguments[3];
         
+        // pull out the field names so we can call the appropriate fields on the programme object
         $campus_id_field = Programme::get_location_field();
         $pos_code_field = Programme::get_pos_code_field();
         $institute_field = Programme::get_awarding_institute_or_body_field();
         
-        // institution can vary
+        // institution can vary depending on the programme
         $institution = '0122';
-        
         if (strstr(strtolower($programme->$institute_field), 'pharmacy'))
         {
             $institution = '40406';
@@ -163,6 +171,7 @@ class ModuleData_Task {
             $url_programme_modules_full = dirname(dirname(dirname(__FILE__))).'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
         }
         
+        // build the programme module data and store it in a cache
         $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
         
     }
@@ -190,6 +199,7 @@ class ModuleData_Task {
         // reset the login details for the synopsis web service because we don't need them
         $module_data_obj->login = array();
         
+        // set up the output object
         $programme_modules_new = new stdClass;
         $programme_modules_new->stages = array();
         
@@ -200,10 +210,13 @@ class ModuleData_Task {
         }
         else
         {
+            // make sure the cluster set is an array. If there's only one item in a cluster the web service returns it as an object rather than an array (which is not really what we want)
             if ( ! is_array($programme_modules->response->rubric->cluster) )
             {
                 $programme_modules->response->rubric->cluster = array($programme_modules->response->rubric->cluster);
             }
+            
+            // loop through each cluster and assign it to the appropriate cluster type
             foreach ($programme_modules->response->rubric->cluster as $cluster)
             {
                 if (is_object($cluster) && $cluster != null)
@@ -250,6 +263,7 @@ class ModuleData_Task {
                     } //endif
                     
                     // rebuild the structure of the programmes modules object to make things easier on the frontend
+                    // we now store modules in stages, with each stage broken into separate clusters
                     if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
@@ -259,7 +273,9 @@ class ModuleData_Task {
             } // endforeach
         } // endif
         
+        // sort the stages
         ksort($programme_modules_new->stages);
+        
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
         try
         {
@@ -267,6 +283,7 @@ class ModuleData_Task {
         }
         catch(Exception $e)
         {
+            echo 'No cache to purge';
         }
         
         // store complete dataset for this programme in our cache
