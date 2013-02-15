@@ -14,11 +14,10 @@ class API_Controller extends Base_Controller {
 	* Get the index data
 	*
 	* @param  int     $year     Year of index to get.
-	* @param  string  $level    Level to get, either undergraduate or postgraduate.
 	* @param  string  $format   Format, either XML or JSON.
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_index($year, $level, $format = 'json')
+	public function get_index($year, $format = 'json')
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
@@ -28,7 +27,7 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 
-		$index_data = API::get_index($year, $level);
+		$index_data = API::get_index($year, 'ug');
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
 		if (! $index_data)
@@ -48,11 +47,10 @@ class API_Controller extends Base_Controller {
 	* Get subjects index
 	*
 	* @param  int     $year     Year of index to get.
-	* @param  string  $level    Level to get, either undergraduate or post-graduate.
 	* @param  string  $format   Format, either XML or JSON.
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_subject_index($year, $level, $format = 'json')
+	public function get_subject_index($year, $format = 'json')
 	{
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
@@ -62,7 +60,7 @@ class API_Controller extends Base_Controller {
 		}
 
 		//Get subjects
-		$subjects = API::get_subjects_index($year, $level);
+		$subjects = API::get_subjects_index($year, 'ug');
 
 		if (! $subjects) return Response::make('', 501);
 
@@ -77,17 +75,17 @@ class API_Controller extends Base_Controller {
 	* Get data for the programme as JSON.
 	*
 	* @param string $year          The Year.
-	* @param string $level         The level - undergraduate or postgraduate.
 	* @param int    $programme_id  The programme we're pulling data for.
 	* @param string $format        Return in XML or JSON.      
 	* @return Response             json|xml data as a string or HTTP response.    
 	*/
-	public function get_programme($year, $level, $programme_id, $format = 'json')
+	public function get_programme($year, $programme_id, $format = 'json')
 	{
 		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
 
-		if($this->cache_still_valid($last_modified)){
+		if($this->cache_still_valid($last_modified))
+		{
 			return Response::make('', '304');
 		}
 
@@ -95,6 +93,7 @@ class API_Controller extends Base_Controller {
 		{
 			$programme = API::get_programme($programme_id, $year);
 		}
+		
 		// Required data is missing?
 		catch(MissingDataException $e)
 		{

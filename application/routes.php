@@ -94,14 +94,16 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 
 	// API
+
+	// Routing for undergraduate API, the only API currently supported.
 	Route::any(array(
-			'/api/([0-9]{4})/(undergraduate)',
-			'/api/([0-9]{4})/(undergraduate)/programmes', 
-			'/api/([0-9]{4})/(undergraduate)/programmes.(json|xml)'
+			'/api/([0-9]{4})/undergraduate',
+			'/api/([0-9]{4})/undergraduate/programmes', 
+			'/api/([0-9]{4})/undergraduate/programmes.(json|xml)'
 	), 'api@index');
 
-	Route::get(array('/api/([0-9]{4})/(undergraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
-	Route::any(array('/api/([0-9]{4})/(undergraduate)/subjects','/api/([0-9]{4})/(undergraduate)/subjects.(json|xml)'), 'api@subject_index');
+	Route::get(array('/api/([0-9]{4})/undergraduate/programmes/(:num?)','/api/([0-9]{4})/undergraduate/programmes/(:num?).(json|xml)'), 'api@programme');
+	Route::any(array('/api/([0-9]{4})/undergraduate/subjects','/api/([0-9]{4})/undergraduate/subjects.(json|xml)'), 'api@subject_index');
 	Route::get(array('/api/(:any).(json|xml)','/api/(:any)'), 'api@data');
 
 	Route::any('/api/preview/(:any?)', 'api@preview');

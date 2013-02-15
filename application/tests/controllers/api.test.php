@@ -270,7 +270,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
        
-        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
+        $response = $this->get('api@programme', array($course->year, $course->id));
        
         $this->assertEquals('200', $response->status());
     }
@@ -288,7 +288,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
+        $response = $this->get('api@programme', array($course->year, $course->id));
         $returned_data = json_decode($response->render());
         
         $this->assertEquals($input['programme_title_1'], $returned_data->programme_title);
@@ -390,7 +390,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -433,7 +433,7 @@ class TestAPI_Controller extends ControllerTestCase
             $course->make_revision_live($course->get_active_revision());
 
             // Ensure we get 200 not 301.
-            $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
+            $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
             $this->assertEquals('200', $response->status());
 
     }
