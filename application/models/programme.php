@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\CLI\Command;
+
 class Programme extends Revisionable {
 
 	public static $table = 'programmes';
@@ -165,8 +167,17 @@ class Programme extends Revisionable {
 	{
 		return 'pos_code_44';
 	}
-
-
+	
+	/**
+	 * Get the name of the 'awarding_institute_or_body' field/column in the database.
+	 * 
+	 * @return The name of the 'awarding_institute_or_body' field.
+	 */
+	public static function get_awarding_institute_or_body_field()
+	{
+		return 'awarding_institute_or_body_4';
+	}
+	
 	/**
 	 * Get this programme's award.
 	 * 
@@ -290,11 +301,17 @@ class Programme extends Revisionable {
 	 * @param $year year data is for
 	 * @param $revision data set saved with
 	 */
-	public static function generate_api_data($year = false, $revision = false)
+	public static function generate_api_data($year = false, $revision = false, $type = 'ug')
 	{
 		// Regenerate data to store in caches
 		static::generate_api_programme($revision->instance_id, $year, $revision);
 		static::generate_api_index($year);
+		
+		// regenerate the module data from webservices as the revision is made live
+		if ( Request::env() != 'test' )
+		{
+			Command::run(array('moduledata:modules', $revision, $year, $type, false));
+		}
 	}
 
 	/**
