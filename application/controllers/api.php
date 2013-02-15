@@ -22,8 +22,10 @@ class API_Controller extends Base_Controller {
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
+
 		// If cache is valid, send 304
-		if($this->cache_still_valid($last_generated)){
+		if ($this->cache_still_valid($last_generated))
+		{
 			return Response::make('', '304');
 		}
 
@@ -66,7 +68,9 @@ class API_Controller extends Base_Controller {
 		if (! $subjects) return Response::make('', 501);
 
 		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
-		$headers['Cache-Control'] = 'public';
+
+		// Set revalidation to ten minutes.
+		$headers['Cache-Control'] = 'max-age=600';
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
@@ -114,8 +118,8 @@ class API_Controller extends Base_Controller {
 		// Set the HTTP Last-Modified header to the last updated date.
 		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 
-		// Set a less conservative caching policy.
-		$headers['Cache-Control'] = 'public';
+		// Ten minutes until revalidation.
+		$headers['Cache-Control'] = 'max-age=600';
 		
 		// return a JSON version of the newly-created $final object
 		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
@@ -160,6 +164,7 @@ class API_Controller extends Base_Controller {
 
 		// There is no cache (hence its invalid)
 		if(!Request::header('if-modified-since')) return false;
+
 		// Unknown data of last change, to be safe assume cache is invalid
 		if($last_modified === null) return false;
 
@@ -179,7 +184,8 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_preview($hash, $format='json')
 	{
-		try {
+		try 
+		{
 			$programme = API::get_preview($hash);
 		}
 		catch(NotFoundException $e)
@@ -222,7 +228,6 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function json($data, $code = 200, $add_headers = false)
 	{
-
 		$headers = array();
 
 		$headers['Content-Type'] = 'application/json';
