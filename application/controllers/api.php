@@ -39,6 +39,9 @@ class API_Controller extends Base_Controller {
 
 		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
 
+		// Revalidate immediately.
+		$headers['Cache-Control'] = 'must-revalidate';
+
 		// Return the cached index file with the correct headers.
 		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
 	}
@@ -65,7 +68,9 @@ class API_Controller extends Base_Controller {
 		if (! $subjects) return Response::make('', 501);
 
 		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
-		$headers['Cache-Control'] = 'public';
+		
+		// Revalidate immediately.
+		$headers['Cache-Control'] = 'must-revalidate';
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
@@ -115,8 +120,8 @@ class API_Controller extends Base_Controller {
 		// Set the HTTP Last-Modified header to the last updated date.
 		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 
-		// Set a less conservative caching policy.
-		$headers['Cache-Control'] = 'public';
+		// Revalidate immediately.
+		$headers['Cache-Control'] = 'must-revalidate';
 		
 		// return a JSON version of the newly-created $final object
 		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
@@ -141,7 +146,9 @@ class API_Controller extends Base_Controller {
 
 		// Set data for cache
 		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
-		$headers['Cache-Control'] = 'public';
+		
+		// Revalidate immediately.
+		$headers['Cache-Control'] = 'must-revalidate';
 
 		// If data exists, send it, else 404
 		try
