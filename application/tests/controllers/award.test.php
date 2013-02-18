@@ -87,7 +87,7 @@ class TestAwards_Controller extends ControllerTestCase
 		$input = array(1 => 'BA', 2 => 'MA', 3 => 'PhD');
 		$this->populate($input);
 
-		$response = $this->get('awards@edit', array('2013', 'ug', '1'));
+		$response = $this->get('awards@edit', array('2013', 'undergraduate', '1'));
 
 		// Check we get the correct response
 		$this->assertEquals('200', $response->foundation->getStatusCode(), 'Getting the awards edit page does not return a HTTP 200 code.');
@@ -96,7 +96,7 @@ class TestAwards_Controller extends ControllerTestCase
 		$count = 1;
 		while ($count <= 3)
 		{
-			$data = $this->get_data('awards@edit', array('2013', 'ug', $count));
+			$data = $this->get_data('awards@edit', array('2013', 'undergraduate', $count));
 
 			$this->assertEquals($input[$count], $data['item']->name);
 
