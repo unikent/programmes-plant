@@ -11,23 +11,23 @@ class API_Controller extends Base_Controller {
 	}
 	
 	/**
-	* get the index data
+	* Get the index data
 	*
-	* @param $year
-	* @param $level - ug or pg
-	* @param $format XML|JSON
-	* @return json|xml data as a string or HTTP response
+	* @param  int     $year     Year of index to get.
+	* @param  string  $format   Format, either XML or JSON.
+	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_index($year, $level, $format = 'json')
+	public function get_index($year, $format = 'json')
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
+		
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)){
 			return Response::make('', '304');
 		}
 
-		$index_data = API::get_index($year, $level);
+		$index_data = API::get_index($year, 'ug');
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
 		if (! $index_data)
@@ -44,15 +44,14 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
-	* get subjects index
+	* Get subjects index
 	*
-	* @param $year
-	* @param $level - ug or pg
-	* @param $format XML|JSON
-	* @return json|xml data as a string or HTTP response
+	* @param  int     $year     Year of index to get.
+	* @param  string  $format   Format, either XML or JSON.
+	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_subject_index($year, $level, $format = 'json'){
-
+	public function get_subject_index($year, $format = 'json')
+	{
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
@@ -61,7 +60,7 @@ class API_Controller extends Base_Controller {
 		}
 
 		//Get subjects
-		$subjects = API::get_subjects_index($year, $level);
+		$subjects = API::get_subjects_index($year, 'ug');
 
 		if (! $subjects) return Response::make('', 501);
 
@@ -75,17 +74,18 @@ class API_Controller extends Base_Controller {
 	/**
 	* Get data for the programme as JSON.
 	*
-	* @param string $year The Year.
-	* @param string $level The level - ug or pg.
-	* @param $programme_id The programme we're pulling data for.
-	* @param $format XML|JSON
-	* @return json|xml data as a string or HTTP response.    
+	* @param string $year          The Year.
+	* @param int    $programme_id  The programme we're pulling data for.
+	* @param string $format        Return in XML or JSON.      
+	* @return Response             json|xml data as a string or HTTP response.    
 	*/
-	public function get_programme($year, $level, $programme_id, $format = 'json')
+	public function get_programme($year, $programme_id, $format = 'json')
 	{
 		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
-		if($this->cache_still_valid($last_modified)){
+
+		if($this->cache_still_valid($last_modified))
+		{
 			return Response::make('', '304');
 		}
 
@@ -93,6 +93,7 @@ class API_Controller extends Base_Controller {
 		{
 			$programme = API::get_programme($programme_id, $year);
 		}
+		
 		// Required data is missing?
 		catch(MissingDataException $e)
 		{
@@ -125,14 +126,15 @@ class API_Controller extends Base_Controller {
 	/**
 	 * get_data Return data from simpleData cache
 	 *
-	 * @param $type. Type of data to return, ie. Campuses
-	 * @param $format XML|JSON
-	 * @return json|xml data as a string or HTTP response.    
+	 * @param string $type.   Type of data to return, ie. Campuses
+	 * @param string $format  Return in JSON or XML.
+	 * @return Response       json|xml data as a string or HTTP response.    
 	 */
-	public function get_data($type, $format = 'json'){
-
+	public function get_data($type, $format = 'json')
+	{
 		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
+
 		if($this->cache_still_valid($last_modified)){
 			return Response::make('', '304');
 		}
@@ -142,24 +144,28 @@ class API_Controller extends Base_Controller {
 		$headers['Cache-Control'] = 'public';
 
 		// If data exists, send it, else 404
-		try{
+		try
+		{
 			$data = API::get_data($type);
 			return ($format=='xml') ? static::xml($data) : static::json($data, 200, $headers);
-		}catch(NotFoundException $e){
+		}
+		catch(NotFoundException $e)
+		{
 			return Response::make('', 404);
 		}
 	}
 
 	/**
-	 * Is cache still valid
+	 * Is cache still valid?
 	 *
-	 * @param $last_modified. Unix timestamp of when last change to system data was made.
-	 * @return true|false If cached data is still valid
+	 * @param int $last_modified.  Unix timestamp of when last change to system data was made.
+	 * @return bool true|false     If cached data is still valid.
 	 */
-	protected function cache_still_valid($last_modified){
-
+	protected function cache_still_valid($last_modified)
+	{
 		// There is no cache (hence its invalid)
 		if(!Request::header('if-modified-since')) return false;
+
 		// Unknown data of last change, to be safe assume cache is invalid
 		if($last_modified === null) return false;
 
@@ -175,11 +181,13 @@ class API_Controller extends Base_Controller {
 	/**
 	 * Get preview
 	 *
-	 * 
+	 * @param  string $hash   The hash of the preview.
+	 * @return string $format The format of the response, JSON or XML.
 	 */
 	public function get_preview($hash, $format='json')
 	{
-		try {
+		try 
+		{
 			$programme = API::get_preview($hash);
 		}
 		catch(NotFoundException $e)
@@ -195,9 +203,9 @@ class API_Controller extends Base_Controller {
 	/**
 	* Output as XML
 	*
-	* @param $data to be shown as XML
-	* @param int $code HTTP code to return.
-	* @param array $add_headers Additional headers to add to output.
+	* @param mixed $data         To be shown as XML
+	* @param int   $code         HTTP code to return.
+	* @param array $add_headers  Additional headers to add to output.
 	*/
 	public static function xml($data, $code = 200, $add_headers = false)
 	{
@@ -216,8 +224,8 @@ class API_Controller extends Base_Controller {
 	/**
 	* Output as JSON
 	*
-	* @param $data to be shown as JSON
-	* @param int $code HTTP code to return.
+	* @param mixed $data        To be shown as JSON.
+	* @param int   $code        HTTP code to return.
 	* @param array $add_headers Additional headers to add to output.
 	*/
 	public static function json($data, $code = 200, $add_headers = false)

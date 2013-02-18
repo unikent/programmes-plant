@@ -174,7 +174,7 @@ class TestAPI_Controller extends ControllerTestCase
 
     public function testget_indexReturnsHTTPCode204WithNoDataCached()
     {
-        $response = $this->get('api@index', array('2014', 'ug'));
+        $response = $this->get('api@index', array('2014', 'undergraduate'));
         $this->assertEquals('501', $response->status());
     }
 
@@ -185,7 +185,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme();
         $course = $this->make_programme_live();
     
-        $response = $this->get('api@index', array($course->year, 'ug'));
+        $response = $this->get('api@index', array($course->year, 'undergraduate'));
         $this->assertEquals('200', $response->status());
     }
 
@@ -205,7 +205,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@index', array($input['year'], 'ug'));
+        $response = $this->get('api@index', array($input['year'], 'undergraduate'));
         $returned_data = json_decode($response->render());
         
         $returned_data = $returned_data->$input['id'];
@@ -230,7 +230,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@index', array($input['year'], 'ug'));
+        $response = $this->get('api@index', array($input['year'], 'undergraduate'));
         $returned_data = json_decode($response->render());
         
         $returned_data = $returned_data->$input['id'];
@@ -250,7 +250,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
 
         $this->assertEquals('501', $response->status());
     }
@@ -270,7 +270,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
        
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+        $response = $this->get('api@programme', array($course->year, $course->id));
        
         $this->assertEquals('200', $response->status());
     }
@@ -288,7 +288,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+        $response = $this->get('api@programme', array($course->year, $course->id));
         $returned_data = json_decode($response->render());
         
         $this->assertEquals($input['programme_title_1'], $returned_data->programme_title);
@@ -303,7 +303,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', (time()-500), 10000);
 
-        $response = $this->get('api@index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     } 
     public function testget_index_returns_301_when_last_modified_is_the_same_as_last_changed()
@@ -312,7 +312,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', time(), 10000);
 
-        $response = $this->get('api@index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     }
     public function testget_index_returns_200_when_last_modified_is_before_last_changed()
@@ -321,7 +321,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -333,7 +333,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', (time()-500), 10000);
 
-        $response = $this->get('api@subject_index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@subject_index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     } 
     public function testget_subjects_returns_301_when_last_modified_is_the_same_as_last_changed()
@@ -342,7 +342,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', time(), 10000);
 
-        $response = $this->get('api@subject_index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@subject_index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     }
     public function testget_subjects_returns_200_when_last_modified_is_before_last_changed()
@@ -351,7 +351,7 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live(1);
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@subject_index', array($course->year, 'ug'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@subject_index', array($course->year, 'undergraduate'), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -366,7 +366,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', (time()-500), 10000);
 
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     }
     public function testget_programme_returns_301_when_last_modified_is_the_same_as_last_changed()
@@ -377,7 +377,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', time(), 10000);
 
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('304', $response->status());
     }
     public function testget_programme_returns_200_when_last_modified_is_before_last_changed()
@@ -390,7 +390,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@programme', array($course->year, 'ug', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -422,7 +422,7 @@ class TestAPI_Controller extends ControllerTestCase
             $course = $this->create_programme();
             $course = $this->make_programme_live(1);
 
-            $response = $this->get('api@programme', array($course->year, 'ug', $course->id));
+            $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
             // Get last modified timestamp
             $timestamp = strtotime($response->foundation->headers->get("last-modified"));
 
@@ -433,7 +433,7 @@ class TestAPI_Controller extends ControllerTestCase
             $course->make_revision_live($course->get_active_revision());
 
             // Ensure we get 200 not 301.
-            $response = $this->get('api@programme', array($course->year, 'ug', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
+            $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
             $this->assertEquals('200', $response->status());
 
     }
