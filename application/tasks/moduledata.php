@@ -27,34 +27,14 @@ class ModuleData_Task {
         // institution can vary
         $institution = '0122';
         
-        foreach ($arguments as $argument)
+        // parse the arguments passed in from the command line into parameter values
+        $parameters = $this->parse_arguments($arguments);
+        
+        // display help if needed
+        if ( isset($parameters['help']) )
         {
-            $switch_name = substr($argument, 0, 2);
-            switch($switch_name)
-            {
-                // level
-                case '-l':
-                    $type = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
-                    break;
-                // programme session
-                case '-s':
-                    $programme_session = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
-                    break;
-                // sleep before the next iteration
-                case '-t':
-                    $sleeptime = str_replace('-t', '', $argument) != '' ? str_replace('-t', '', $argument) : 5;
-                    break;
-                // counter
-                case '-c':
-                    $counter = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
-                    break;
-                case '-x':
-                    $module_data_obj->test_mode = true;
-                    break;
-                default:
-                    echo "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
-                    exit;
-            }
+            echo $parameters['help'];
+            exit;
         }
         
         // module session
@@ -67,7 +47,7 @@ class ModuleData_Task {
         $url_synopsis = Config::get('module.module_data_url');
         
         // get the list of programmes for this session and programme type from our own API call
-        $programmes = \API::get_index($programme_session, $type);
+        $programmes = \API::get_index($parameters['programme_session'], $parameters['type']);
         
         // loop through each programme in the index and call the two web services for each
         $n = 0;
@@ -75,7 +55,7 @@ class ModuleData_Task {
         {
             // make sure we don't get past the counter limit
             $n++;
-            if ($counter > 0 && $n > $counter)
+            if ($parameters['counter'] > 0 && $n > $parameters['counter'])
             {
                 break;
             }
@@ -97,18 +77,19 @@ class ModuleData_Task {
                 'format=json';
             
             // in test mode just use the local json file
+            $module_data_obj->test_mode = $parameters['test_mode'];
             if ($module_data_obj->test_mode)
             {
                 $url_programme_modules_full = $_SERVER['PWD'].'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
             }
             
             // build and cache the programme's module data
-            $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $type, $programme_session);
+            $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
             
             echo "output to $cache_key\n\n";
             
             // sleep before running the next iteration of the loop ie a web service throttle
-            sleep($sleeptime);
+            sleep($parameters['sleeptime']);
         
         }
         
@@ -168,7 +149,7 @@ class ModuleData_Task {
         // in test mode just use the local json file
         if ($this->module_data_obj->test_mode)
         {
-            $url_programme_modules_full = dirname(dirname(dirname(__FILE__))).'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
+            $url_programme_modules_full = dirname(dirname(__FILE__)).'/tests/data/programme_modules.json';
         }
         
         // build the programme module data and store it in a cache
@@ -187,7 +168,7 @@ class ModuleData_Task {
     * @param string $programme_session
     * @return string $cache_key
     */
-    private function build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme_id, $type, $programme_session)
+    public function build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme_id, $type, $programme_session)
     {
         // login details for the programme module web service
         $module_data_obj->login['username'] = Config::get('module.programme_module_user');
@@ -276,6 +257,13 @@ class ModuleData_Task {
         // sort the stages
         ksort($programme_modules_new->stages);
         
+        
+        // in test mode we just return the data, without caching it
+        if ($module_data_obj->test_mode)
+        {
+            return $programme_modules_new;
+        }
+        
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
         try
         {
@@ -289,8 +277,50 @@ class ModuleData_Task {
         // store complete dataset for this programme in our cache
         $cache_key = "programme-modules.$type-$programme_session-" . $programme_id;
         Cache::put($cache_key, $programme_modules_new, 2628000);
-        
         return $cache_key;
+    }
+    
+    /**
+    * parse_arguments - parses command line options
+    *
+    * @param array $arguments
+    * @return array $parameters
+    */
+    public function parse_arguments($arguments = array())
+    {
+        $parameters = array();
+        if ( empty($arguments) ) $arguments = array('-h');
+        
+        foreach ($arguments as $argument)
+        {
+            $switch_name = substr($argument, 0, 2);
+            switch($switch_name)
+            {
+                // level
+                case '-l':
+                    $parameters['type'] = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
+                    break;
+                // programme session
+                case '-s':
+                    $parameters['programme_session'] = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
+                    break;
+                // sleep before the next iteration
+                case '-t':
+                    $parameters['sleeptime'] = str_replace('-t', '', $argument) != '' ? str_replace('-t', '', $argument) : 5;
+                    break;
+                // counter
+                case '-c':
+                    $parameters['counter'] = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;
+                    break;
+                case '-x':
+                    $parameters['test_mode'] = true;
+                    break;
+                default:
+                    $parameters['help'] = "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+            }
+        }
+        
+        return $parameters;
     }
     
     
