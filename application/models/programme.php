@@ -310,7 +310,7 @@ class Programme extends Revisionable {
 		// regenerate the module data from webservices as the revision is made live
 		if ( Request::env() != 'test' )
 		{
-			Command::run(array('moduledata:modules', $revision, $year, $type, false));
+			//Command::run(array('moduledata:modules', $revision, $year, $type, false));
 		}
 	}
 
@@ -430,6 +430,7 @@ class Programme extends Revisionable {
 		$ucas_code_field = Programme::get_ucas_code_field();
 		$search_keywords_field = Programme::get_search_keywords_field();
 		$pos_code_field = Programme::get_pos_code_field();
+		$awarding_institute_or_body_field = Programme::get_awarding_institute_or_body_field();
 		
 		$index_data = array();
 
@@ -461,6 +462,7 @@ class Programme extends Revisionable {
 				'search_keywords' => $programme->$search_keywords_field,
 				'campus_id' => ($programme->location != null) ? $programme->location->identifier : '',
 				'pos_code' => ($programme->$pos_code_field != null) ? $programme->$pos_code_field : '',
+				'awarding_institute_or_body' => ($programme->$awarding_institute_or_body_field != null) ? $programme->$awarding_institute_or_body_field : '',
 			);
 		}
 

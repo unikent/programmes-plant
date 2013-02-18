@@ -288,8 +288,15 @@ class ModuleData_Task {
     */
     public function parse_arguments($arguments = array())
     {
-        $parameters = array();
         if ( empty($arguments) ) $arguments = array('-h');
+        
+        // set defaults for the parameters in case they're not set
+        $parameters = array();
+        $parameters['type'] = 'ug';
+        $parameters['programme_session'] = '2014';
+        $parameters['sleeptime'] = 5;
+        $parameters['counter'] = 1;
+        $parameters['test_mode'] = false;
         
         foreach ($arguments as $argument)
         {
