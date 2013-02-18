@@ -60,6 +60,7 @@ class ModuleData_Task {
                 break;
             }
             
+/*
             if (strstr(strtolower($programme['awarding_institute_or_body']), 'pharmacy'))
             {
                 $institution = '40406';
@@ -68,6 +69,7 @@ class ModuleData_Task {
             {
                 $institution = '0012';
             }
+*/
             
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
@@ -130,6 +132,7 @@ class ModuleData_Task {
         
         // institution can vary depending on the programme
         $institution = '0122';
+/*
         if (strstr(strtolower($programme->$institute_field), 'pharmacy'))
         {
             $institution = '40406';
@@ -138,6 +141,7 @@ class ModuleData_Task {
         {
             $institution = '0012';
         }
+*/
         
         // build up the full url to call for the programme_module web service for this programme
         $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme->$pos_code_field . '&' .
