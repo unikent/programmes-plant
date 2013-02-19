@@ -70,7 +70,7 @@ class API_Controller extends Base_Controller {
 		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
 		
 		// Revalidate immediately.
-		$headers['Cache-Control'] = 'public, must-revalidate';
+		$headers['Cache-Control'] = 'public, max-age=3600';
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
@@ -121,7 +121,7 @@ class API_Controller extends Base_Controller {
 		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 
 		// Revalidate immediately.
-		$headers['Cache-Control'] = 'public, must-revalidate';
+		$headers['Cache-Control'] = 'public, max-age=3600';
 		
 		// return a JSON version of the newly-created $final object
 		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
@@ -148,7 +148,7 @@ class API_Controller extends Base_Controller {
 		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 		
 		// Revalidate immediately.
-		$headers['Cache-Control'] = 'public, must-revalidate';
+		$headers['Cache-Control'] = 'public, max-age=3600';
 
 		// If data exists, send it, else 404
 		try
