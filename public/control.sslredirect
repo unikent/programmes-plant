@@ -1,5 +1,6 @@
 RewriteEngine on
 RewriteCond %{ENV:HTTPS} !on
+RewriteCond %{REQUEST_URI} !^/api/
 RewriteRule (.*) https://%{SERVER_NAME}%{REQUEST_URI} [R]
 
 ErrorDocument 401 /index.php?uri=/errors/401
