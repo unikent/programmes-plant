@@ -33,11 +33,12 @@ class ModuleData_Task {
         // display help if needed
         if ( isset($parameters['help']) )
         {
-            echo $parameters['help'];
+            echo $parameters['help'];]
             exit;
         }
         
         // module session
+        $module_session = ( isset($programme['module_session'] && $programme['module_session'] > 0 ) ? $programme['module_session'] : ;
         $module_session = Config::get('module.module_session');
         
         // base url for the programme_module web service
@@ -59,7 +60,7 @@ class ModuleData_Task {
             {
                 break;
             }
-            
+            // TODO - commented out the section below for now because there's uncertainty about whether we need to vary the institution id in the web service call from the standard 0122
 /*
             if (strstr(strtolower($programme['awarding_institute_or_body']), 'pharmacy'))
             {
@@ -95,6 +96,15 @@ class ModuleData_Task {
         
         }
         
+        // clear out the api output cache completely so we can regenerate the cache now including the new module data
+        try
+        {
+            Cache::purge('api-output-'.$type);
+        }
+        catch(Exception $e)
+        {
+            echo 'No cache to purge';
+        }
     }
     
     /**
@@ -158,6 +168,16 @@ class ModuleData_Task {
         
         // build the programme module data and store it in a cache
         $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
+        
+        // clear out the api output cache completely so we can regenerate the cache now including the new module data
+        try
+        {
+            Cache::purge('api-output-'.$type);
+        }
+        catch(Exception $e)
+        {
+            echo 'No cache to purge';
+        }
         
     }
     
@@ -261,21 +281,10 @@ class ModuleData_Task {
         // sort the stages
         ksort($programme_modules_new->stages);
         
-        
         // in test mode we just return the data, without caching it
         if ($module_data_obj->test_mode)
         {
             return $programme_modules_new;
-        }
-        
-        // clear out the api output cache completely so we can regenerate the cache now including the new module data
-        try
-        {
-            Cache::purge('api-output-'.$type);
-        }
-        catch(Exception $e)
-        {
-            echo 'No cache to purge';
         }
         
         // store complete dataset for this programme in our cache
