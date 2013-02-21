@@ -143,7 +143,7 @@ class ProgrammeField extends Field
         
         $fields = static::where_in('field_type', array('table_select', 'table_multiselect'))->get(array('colname', 'field_meta'));
         foreach ($fields as $record) {   
-                $data[$record->colname] =  $record->field_meta;
+                $data[$record->attributes["colname"]] =  $record->attributes["field_meta"];
         }
         // Store data in to cache
         Cache::put($cache_key, $data, 2628000);
