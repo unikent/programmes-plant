@@ -279,6 +279,18 @@ class SimpleData extends Eloquent {
 	{
 		parent::delete();
 	}
+
+	/**
+     * Override get_attribute method
+     * Since our attributes are only one level deep using the array_get method is not worth the cost.
+     *
+     * @param $key Attribute name
+     * @return Attribute value | null
+     */
+    public function get_attribute($key)
+    {
+        return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
+    }
 }
 
 class NoValidationException extends \Exception {}
