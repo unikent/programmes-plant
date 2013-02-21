@@ -432,6 +432,12 @@ class Programme extends Revisionable {
 		$pos_code_field = Programme::get_pos_code_field();
 		$awarding_institute_or_body_field = Programme::get_awarding_institute_or_body_field();
 		
+		$award_field = Programme::get_award_field();
+		$subject_area_1_field = Programme::get_subject_area_1_field();
+		$location_field = Programme::get_location_field();
+		$administrative_school_field = Programme::get_administrative_school_field();
+		$additional_school_field = Programme::get_additional_school_field();
+
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
@@ -440,7 +446,27 @@ class Programme extends Revisionable {
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
-						->get();
+						->get(
+							array(
+								'instance_id',
+								 $title_field,
+								 $slug_field,
+								 $award_field,
+								 $subject_area_1_field,
+								 $subject_categories_field,
+								 $administrative_school_field,
+								 $additional_school_field,
+								 $location_field,
+								 $new_programme_field,
+								 $subject_to_approval_field,
+								 $mode_of_study_field,
+								 $ucas_code_field,
+								 $search_keywords_field,
+								 $pos_code_field,
+								 $awarding_institute_or_body_field,
+								 'subject_area_2_9'
+								)
+							);
 
 		// Build index array
 		foreach($programmes as $programme)
@@ -478,7 +504,7 @@ class Programme extends Revisionable {
 		// For each programme in output
 		foreach($programmes as $programme){
 
-			$subject_area_1 = $programme->attributes["subject_area_1_8"];
+			$subject_area_1 = $programme->attributes[$subject_area_1_field];
 			$subject_area_2 = $programme->attributes["subject_area_2_9"];
 			$instance_id 	= $programme->attributes["instance_id"];
 			// Create arrays as needed.
