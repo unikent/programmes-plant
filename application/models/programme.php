@@ -351,7 +351,7 @@ class Programme extends Revisionable {
 			return false;
 		} 
 
-		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+		Cache::put($cache_key, $revision_data = $revision->attributes, 2628000);
 
 		// return
 		return $revision_data;
