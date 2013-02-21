@@ -33,7 +33,7 @@ class ModuleData_Task {
         // display help if needed
         if ( isset($parameters['help']) )
         {
-            echo $parameters['help'];]
+            echo $parameters['help'];
             exit;
         }
         
