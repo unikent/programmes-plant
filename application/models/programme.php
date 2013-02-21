@@ -478,15 +478,18 @@ class Programme extends Revisionable {
 		// For each programme in output
 		foreach($programmes as $programme){
 
+			$subject_area_1 = $programme->attributes["subject_area_1_8"];
+			$subject_area_2 = $programme->attributes["subject_area_2_9"];
+			$instance_id 	= $programme->attributes["instance_id"];
 			// Create arrays as needed.
-			if(!isset($subject_relations[$programme->subject_area_1_8])) $subject_relations[$programme->subject_area_1_8] = array();
-			if(!isset($subject_relations[$programme->subject_area_2_9])) $subject_relations[$programme->subject_area_2_9] = array();
+			if(!isset($subject_relations[$subject_area_1])) $subject_relations[$subject_area_1] = array();
+			if(!isset($subject_relations[$subject_area_2])) $subject_relations[$subject_area_2] = array();
 
 			// Add this programme to subject
-			$subject_relations[$programme->attributes["subject_area_1_8"]][$programme->attributes["instance_id"]] = $index_data[$programme->attributes["instance_id"]];
+			$subject_relations[$subject_area_1][$instance_id] = $index_data[$instance_id];
 			// If second subject isn't the same, add it to that also
-			if($programme->attributes["subject_area_1_8"] != $programme->attributes["subject_area_2_9"]){
-				$subject_relations[$programme->attributes["subject_area_2_9"]][$programme->attributes["instance_id"]] = $index_data[$programme->attributes["instance_id"]];
+			if($subject_area_1 != $subject_area_2){
+				$subject_relations[$subject_area_2][$instance_id] = $index_data[$instance_id];
 			}
 		}
 		// Store subject mapping data in to cache
