@@ -3,11 +3,20 @@
 class API_Controller extends Base_Controller {
 
 	public $restful = true;
+
+	/**
+	 * Array to store headers as header => value.
+	 * 
+	 * Static so that potentially other classes could arbitarily add or modify headers here.
+	 */
+	public static $headers = array();
 	
 	public function __construct()
 	{
 		// turn off the profiler because this interferes with the web service
 		Config::set('application.profiler', false);
+
+		static::$headers['Cache-Control'] = 'public, max-age=3600'; 
 	}
 	
 	/**
@@ -37,13 +46,10 @@ class API_Controller extends Base_Controller {
 			return Response::make('', 501);
 		}
 
-		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
-
-		// Revalidate immediately.
-		$headers['Cache-Control'] = 'must-revalidate';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200, $headers);
+		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200);
 	}
 
 	/**
@@ -67,13 +73,10 @@ class API_Controller extends Base_Controller {
 
 		if (! $subjects) return Response::make('', 501);
 
-		$headers = array('Last-Modified' => API::get_last_change_date_for_headers($last_generated));
-		
-		// Revalidate immediately.
-		$headers['Cache-Control'] = 'must-revalidate';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// output
-		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200, $headers);
+		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200);
 	}
 	
 	/**
@@ -115,16 +118,11 @@ class API_Controller extends Base_Controller {
 			return Response::make('', 501);
 		}
 
-		$headers = array();
-
 		// Set the HTTP Last-Modified header to the last updated date.
-		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
-
-		// Revalidate immediately.
-		$headers['Cache-Control'] = 'must-revalidate';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200, $headers);
+		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200);
 	}
 
 
@@ -145,16 +143,13 @@ class API_Controller extends Base_Controller {
 		}
 
 		// Set data for cache
-		$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
-		
-		// Revalidate immediately.
-		$headers['Cache-Control'] = 'must-revalidate';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 
 		// If data exists, send it, else 404
 		try
 		{
 			$data = API::get_data($type);
-			return ($format=='xml') ? static::xml($data) : static::json($data, 200, $headers);
+			return ($format=='xml') ? static::xml($data) : static::json($data, 200);
 		}
 		catch(NotFoundException $e)
 		{
@@ -216,16 +211,14 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function xml($data, $code = 200, $add_headers = false)
 	{
-		$headers = array();
-
-		$headers['Content-Type'] = 'application/json';
+		static::$headers['Content-Type'] = 'application/json';
 
 		if ($add_headers)
 		{
-			$headers = array_merge($headers, $add_headers);
+			$headers = array_merge(static::$headers, $add_headers);
 		}
 
-		return Response::make(API::array_to_xml($data), 200, $headers);
+		return Response::make(API::array_to_xml($data), 200, static::$headers);
 	}
 	
 	/**
@@ -237,17 +230,14 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function json($data, $code = 200, $add_headers = false)
 	{
-
-		$headers = array();
-
-		$headers['Content-Type'] = 'application/json';
+		static::$headers['Content-Type'] = 'application/json';
 
 		if ($add_headers)
 		{
-			$headers = array_merge($headers, $add_headers);
+			$headers = array_merge(static::$headers, $add_headers);
 		}
 
-		return Response::json($data, $code, $headers);
+		return Response::json($data, $code, static::$headers);
 	}
 	
 
