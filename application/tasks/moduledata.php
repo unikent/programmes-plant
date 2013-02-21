@@ -38,7 +38,6 @@ class ModuleData_Task {
         }
         
         // module session
-        $module_session = ( isset($programme['module_session'] && $programme['module_session'] > 0 ) ? $programme['module_session'] : ;
         $module_session = Config::get('module.module_session');
         
         // base url for the programme_module web service
