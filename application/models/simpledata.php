@@ -221,7 +221,9 @@ class SimpleData extends Eloquent {
 		// make data
 		$data = array();
 		foreach (static::all() as $record) {
-			$data[$record->id] = $record->to_array();
+			// Direct grab of attributes is faster than to_array 
+			// since don't need to worry about realtions & things like that
+			$data[$record->id] = $record->attributes;
 		}
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
