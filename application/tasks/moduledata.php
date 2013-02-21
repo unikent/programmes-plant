@@ -37,9 +37,6 @@ class ModuleData_Task {
             exit;
         }
         
-        // module session
-        $module_session = Config::get('module.module_session');
-        
         // base url for the programme_module web service
         $url_programme_modules = Config::get('module.programme_module_base_url');
         
@@ -70,6 +67,10 @@ class ModuleData_Task {
                 $institution = '0012';
             }
 */
+            
+            
+            // module session
+            $module_session = ( isset($programme['module_session'] && $programme['module_session'] > 0 ) ? $programme['module_session'] : Config::get('module.module_session');
             
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
@@ -138,6 +139,7 @@ class ModuleData_Task {
         $campus_id_field = Programme::get_location_field();
         $pos_code_field = Programme::get_pos_code_field();
         $institute_field = Programme::get_awarding_institute_or_body_field();
+        $module_session_field = Programme::get_module_session_field();
         
         // institution can vary depending on the programme
         $institution = '0122';
@@ -152,6 +154,9 @@ class ModuleData_Task {
         }
 */
         
+        // module session
+        $module_session = ( isset($programme->$module_session_field && $programme->$module_session_field > 0 ) ? $programme->$module_session_field : Config::get('module.module_session');
+            
         // build up the full url to call for the programme_module web service for this programme
         $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme->$pos_code_field . '&' .
             Config::get('module.institution_param') . '=' . $institution . '&' .
