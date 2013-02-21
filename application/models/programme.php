@@ -39,6 +39,16 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Get the name of the subject area 2 field/column in the database.
+	 * 
+	 * @return The name of the subject area 2 field.
+	 */
+	public static function get_subject_area_2_field()
+	{
+		return 'subject_area_2_9';
+	}
+
+	/**
 	 * Get the name of the subject categories field/column in the database.
 	 * 
 	 * @return The name of the subject categories field.
@@ -434,6 +444,7 @@ class Programme extends Revisionable {
 		
 		$award_field = Programme::get_award_field();
 		$subject_area_1_field = Programme::get_subject_area_1_field();
+		$subject_area_2_field = Programme::get_subject_area_2_field();
 		$location_field = Programme::get_location_field();
 		$administrative_school_field = Programme::get_administrative_school_field();
 		$additional_school_field = Programme::get_additional_school_field();
@@ -442,7 +453,7 @@ class Programme extends Revisionable {
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
-		$programmes = ProgrammeRevision::with(array('award','subject_area_1','administrative_school','additional_school','location'))->where('year','=', $year)
+		$programmes = ProgrammeRevision::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))->where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
@@ -505,7 +516,7 @@ class Programme extends Revisionable {
 		foreach($programmes as $programme){
 
 			$subject_area_1 = $programme->attributes[$subject_area_1_field];
-			$subject_area_2 = $programme->attributes["subject_area_2_9"];
+			$subject_area_2 = $programme->attributes[$subject_area_2_field];
 			$instance_id 	= $programme->attributes["instance_id"];
 			// Create arrays as needed.
 			if(!isset($subject_relations[$subject_area_1])) $subject_relations[$subject_area_1] = array();
