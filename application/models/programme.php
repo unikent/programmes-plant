@@ -39,6 +39,16 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Get the name of the subject area 2 field/column in the database.
+	 * 
+	 * @return The name of the subject area 2 field.
+	 */
+	public static function get_subject_area_2_field()
+	{
+		return 'subject_area_2_9';
+	}
+
+	/**
 	 * Get the name of the subject categories field/column in the database.
 	 * 
 	 * @return The name of the subject categories field.
@@ -351,7 +361,7 @@ class Programme extends Revisionable {
 			return false;
 		} 
 
-		Cache::put($cache_key, $revision_data = $revision->to_array(), 2628000);
+		Cache::put($cache_key, $revision_data = $revision->attributes, 2628000);
 
 		// return
 		return $revision_data;
@@ -432,37 +442,68 @@ class Programme extends Revisionable {
 		$pos_code_field = Programme::get_pos_code_field();
 		$awarding_institute_or_body_field = Programme::get_awarding_institute_or_body_field();
 		
+		$award_field = Programme::get_award_field();
+		$subject_area_1_field = Programme::get_subject_area_1_field();
+		$subject_area_2_field = Programme::get_subject_area_2_field();
+		$location_field = Programme::get_location_field();
+		$administrative_school_field = Programme::get_administrative_school_field();
+		$additional_school_field = Programme::get_additional_school_field();
+
 		$index_data = array();
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
-		$programmes = ProgrammeRevision::with(array('award','subject_area_1','administrative_school','additional_school','location'))->where('year','=', $year)
+		$programmes = ProgrammeRevision::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))->where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
-						->get();
+						->get(
+							array(
+								'instance_id',
+								 $title_field,
+								 $slug_field,
+								 $award_field,
+								 $subject_area_1_field,
+								 $subject_categories_field,
+								 $administrative_school_field,
+								 $additional_school_field,
+								 $location_field,
+								 $new_programme_field,
+								 $subject_to_approval_field,
+								 $mode_of_study_field,
+								 $ucas_code_field,
+								 $search_keywords_field,
+								 $pos_code_field,
+								 $awarding_institute_or_body_field,
+								 'subject_area_2_9'
+								)
+							);
 
 		// Build index array
 		foreach($programmes as $programme)
 		{
-			$index_data[$programme->instance_id] = array(
-				'id' => $programme->instance_id,
-				'name' => $programme->$title_field,
-				'slug' => $programme->$slug_field,
-				'award' => ($programme->award != null) ? $programme->award->name : '',
-				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
-				'subject_categories' => ($programme->$subject_categories_field != null) ? SubjectCategory::replace_ids_with_values($programme->$subject_categories_field, false, true) : '',
-				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
-				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
-				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
-				'new_programme' => $programme->$new_programme_field,
-				'subject_to_approval' => $programme->$subject_to_approval_field,
-				'mode_of_study' => $programme->$mode_of_study_field,
-				'ucas_code' => $programme->$ucas_code_field,
-				'search_keywords' => $programme->$search_keywords_field,
-				'campus_id' => ($programme->location != null) ? $programme->location->identifier : '',
-				'pos_code' => ($programme->$pos_code_field != null) ? $programme->$pos_code_field : '',
-				'awarding_institute_or_body' => ($programme->$awarding_institute_or_body_field != null) ? $programme->$awarding_institute_or_body_field : '',
+			// Get direct access data stores
+			$attributes = $programme->attributes;
+			$relationships = $programme->relationships;
+
+			$index_data[$attributes['instance_id']] = array(
+				'id' 		=> 		$attributes['instance_id'],
+				'name' 		=> 		$attributes[$title_field],
+				'slug' 		=> 		$attributes[$slug_field],
+				'award' 	=> 		isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '',
+				'subject'	 => 	isset($relationships["subject_area_1"]) ? $relationships["subject_area_1"]->attributes["name"] : '',
+				'subject_categories' => isset($attributes[$subject_categories_field]) ? SubjectCategory::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
+				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
+				'secondary_school' =>  isset($relationships["additional_school"]) ? $relationships["additional_school"]->attributes["name"] : '',
+				'campus' 	=>  isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
+				'new_programme' => 	$attributes[$new_programme_field],
+				'subject_to_approval' => $attributes[$subject_to_approval_field],
+				'mode_of_study' => 	$attributes[$mode_of_study_field],
+				'ucas_code' 	=> 		$attributes[$ucas_code_field],
+				'search_keywords' => $attributes[$search_keywords_field],
+				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
+				'pos_code' => $attributes[$pos_code_field],
+				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
 			);
 		}
 
@@ -474,15 +515,18 @@ class Programme extends Revisionable {
 		// For each programme in output
 		foreach($programmes as $programme){
 
+			$subject_area_1 = $programme->attributes[$subject_area_1_field];
+			$subject_area_2 = $programme->attributes[$subject_area_2_field];
+			$instance_id 	= $programme->attributes["instance_id"];
 			// Create arrays as needed.
-			if(!isset($subject_relations[$programme->subject_area_1_8])) $subject_relations[$programme->subject_area_1_8] = array();
-			if(!isset($subject_relations[$programme->subject_area_2_9])) $subject_relations[$programme->subject_area_2_9] = array();
+			if(!isset($subject_relations[$subject_area_1])) $subject_relations[$subject_area_1] = array();
+			if(!isset($subject_relations[$subject_area_2])) $subject_relations[$subject_area_2] = array();
 
 			// Add this programme to subject
-			$subject_relations[$programme->subject_area_1_8][$programme->instance_id] = $index_data[$programme->instance_id];
+			$subject_relations[$subject_area_1][$instance_id] = $index_data[$instance_id];
 			// If second subject isn't the same, add it to that also
-			if($programme->subject_area_1_8 != $programme->subject_area_2_9){
-				$subject_relations[$programme->subject_area_2_9][$programme->instance_id] = $index_data[$programme->instance_id];
+			if($subject_area_1 != $subject_area_2){
+				$subject_relations[$subject_area_2][$instance_id] = $index_data[$instance_id];
 			}
 		}
 		// Store subject mapping data in to cache
