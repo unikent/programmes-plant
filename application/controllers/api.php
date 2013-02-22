@@ -211,7 +211,7 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function xml($data, $code = 200, $add_headers = false)
 	{
-		static::$headers['Content-Type'] = 'application/json';
+		static::$headers['Content-Type'] = 'application/xml';
 
 		if ($add_headers)
 		{
