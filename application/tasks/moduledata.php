@@ -70,7 +70,25 @@ class ModuleData_Task {
             
             
             // module session
-            $module_session = ( isset($programme['module_session']) && $programme['module_session'] > 0 ) ? $programme['module_session'] : Config::get('module.module_session');
+            // if we have a module session field use it
+            if ( isset($programme['module_session']) && $programme['module_session'] != '' )
+            {
+                // is the module session like a year
+                if ( preg_match( '/^20[0-9][0-9]$/', $programme['module_session'] ) )
+                {
+                    $module_session = $programme['module_session'];
+                }
+                // if not we don't need to bother with pulling back any module data at all
+                else
+                {
+                    continue;
+                }
+            }
+            // otherwise use the config module session field
+            else
+            {
+                $module_session = Config::get('module.module_session');
+            }
             
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
@@ -126,7 +144,7 @@ class ModuleData_Task {
         $programme_session = $arguments[1]; // session
         
         // module session is stored as a config option so it can be changed relatively easily
-        $module_session = Config::get('module.module_session');
+        $module_session = '2013';
         $type = $arguments[2]; // ug or pg
         
         // create the module data object
@@ -154,9 +172,26 @@ class ModuleData_Task {
         }
 */
         
-        // module session
-        $module_session = ( isset($programme->$module_session_field) && $programme->$module_session_field > 0 ) ? $programme->$module_session_field : Config::get('module.module_session');
-            
+        // if we have a module session field use it
+        if ( isset($programme->$module_session_field) )
+        {
+            // is the module session like a year
+            if ( preg_match( '/^20[0-9][0-9]$/', $programme->$module_session_field ) )
+            {
+                $module_session = $programme->$module_session_field;
+            }
+            // if not we don't need to bother with pulling back any module data at all
+            else
+            {
+                return false;
+            }
+        }
+        // otherwise use the config module session field
+        else
+        {
+            $module_session = Config::get('module.module_session');
+        }
+        
         // build up the full url to call for the programme_module web service for this programme
         $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme->$pos_code_field . '&' .
             Config::get('module.institution_param') . '=' . $institution . '&' .
