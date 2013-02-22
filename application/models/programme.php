@@ -517,7 +517,7 @@ class Programme extends Revisionable {
 				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
 				'pos_code' => $attributes[$pos_code_field],
 				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
-				'module_session' => $attributes[$module_session_field],
+				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 			);
 		}
 
