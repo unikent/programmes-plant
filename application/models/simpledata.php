@@ -221,7 +221,9 @@ class SimpleData extends Eloquent {
 		// make data
 		$data = array();
 		foreach (static::all() as $record) {
-			$data[$record->id] = $record->to_array();
+			// Direct grab of attributes is faster than to_array 
+			// since don't need to worry about realtions & things like that
+			$data[$record->attributes["id"]] = $record->attributes;
 		}
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
@@ -277,6 +279,18 @@ class SimpleData extends Eloquent {
 	{
 		parent::delete();
 	}
+
+	/**
+     * Override get_attribute method
+     * Since our attributes are only one level deep using the array_get method is not worth the cost.
+     *
+     * @param $key Attribute name
+     * @return Attribute value | null
+     */
+    public function get_attribute($key)
+    {
+        return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
+    }
 }
 
 class NoValidationException extends \Exception {}
