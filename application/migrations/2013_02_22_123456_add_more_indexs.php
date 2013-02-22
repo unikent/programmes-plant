@@ -1,6 +1,6 @@
 <?php
 
-class Add_indexs {
+class Add_more_indexs {
 
 	/**
 	 * Make changes to the database.
