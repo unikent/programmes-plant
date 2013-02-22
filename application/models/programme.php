@@ -318,7 +318,8 @@ class Programme extends Revisionable {
 		static::generate_api_index($year);
 		
 		// regenerate the module data from webservices as the revision is made live
-		if ( Request::env() != 'test' )
+		// we don't want to do this in a test or local environment
+		if ( Request::env() != 'test' && Request::env() != 'local' )
 		{
 			Command::run(array('moduledata:modules', $revision, $year, $type, false));
 		}
