@@ -70,7 +70,7 @@ class ModuleData_Task {
             
             
             // module session
-            $module_session = ( isset($programme['module_session'] && $programme['module_session'] > 0 ) ? $programme['module_session'] : Config::get('module.module_session');
+            $module_session = ( isset($programme['module_session']) && $programme['module_session'] > 0 ) ? $programme['module_session'] : Config::get('module.module_session');
             
             // build up the full url to call for the programme_module web service for this programme
             $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
@@ -155,7 +155,7 @@ class ModuleData_Task {
 */
         
         // module session
-        $module_session = ( isset($programme->$module_session_field && $programme->$module_session_field > 0 ) ? $programme->$module_session_field : Config::get('module.module_session');
+        $module_session = ( isset($programme->$module_session_field) && $programme->$module_session_field > 0 ) ? $programme->$module_session_field : Config::get('module.module_session');
             
         // build up the full url to call for the programme_module web service for this programme
         $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme->$pos_code_field . '&' .

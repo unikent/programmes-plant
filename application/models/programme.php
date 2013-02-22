@@ -320,7 +320,7 @@ class Programme extends Revisionable {
 		// regenerate the module data from webservices as the revision is made live
 		if ( Request::env() != 'test' )
 		{
-			//Command::run(array('moduledata:modules', $revision, $year, $type, false));
+			Command::run(array('moduledata:modules', $revision, $year, $type, false));
 		}
 	}
 
