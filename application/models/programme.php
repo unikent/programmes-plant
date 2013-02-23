@@ -189,6 +189,16 @@ class Programme extends Revisionable {
 	}
 	
 	/**
+	 * Get the name of the 'module_session' field/column in the database.
+	 * 
+	 * @return The name of the 'module_session' field.
+	 */
+	public static function get_module_session_field()
+	{
+		return 'module_session_86';
+	}
+	
+	/**
 	 * Get this programme's award.
 	 * 
 	 * @return Award The award for this programme.
@@ -318,9 +328,10 @@ class Programme extends Revisionable {
 		static::generate_api_index($year);
 		
 		// regenerate the module data from webservices as the revision is made live
-		if ( Request::env() != 'test' )
+		// we don't want to do this in a test or local environment
+		if ( Request::env() != 'test' && Request::env() != 'local' )
 		{
-			//Command::run(array('moduledata:modules', $revision, $year, $type, false));
+			Command::run(array('moduledata:modules', $revision, $year, $type, false));
 		}
 	}
 
@@ -441,6 +452,7 @@ class Programme extends Revisionable {
 		$search_keywords_field = Programme::get_search_keywords_field();
 		$pos_code_field = Programme::get_pos_code_field();
 		$awarding_institute_or_body_field = Programme::get_awarding_institute_or_body_field();
+		$module_session_field = Programme::get_module_session_field();
 		
 		$award_field = Programme::get_award_field();
 		$subject_area_1_field = Programme::get_subject_area_1_field();
@@ -475,6 +487,7 @@ class Programme extends Revisionable {
 								 $search_keywords_field,
 								 $pos_code_field,
 								 $awarding_institute_or_body_field,
+								 $module_session_field,
 								 'subject_area_2_9'
 								)
 							);
@@ -504,6 +517,7 @@ class Programme extends Revisionable {
 				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
 				'pos_code' => $attributes[$pos_code_field],
 				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
+				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 			);
 		}
 
