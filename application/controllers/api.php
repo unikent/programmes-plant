@@ -211,7 +211,7 @@ class API_Controller extends Base_Controller {
 	*/
 	public static function xml($data, $code = 200, $add_headers = false)
 	{
-		static::$headers['Content-Type'] = 'application/json';
+		static::$headers['Content-Type'] = 'application/xml';
 
 		if ($add_headers)
 		{
@@ -234,7 +234,7 @@ class API_Controller extends Base_Controller {
 
 		if ($add_headers)
 		{
-			$headers = array_merge(static::$headers, $add_headers);
+			static::$headers = array_merge(static::$headers, $add_headers);
 		}
 
 		return Response::json($data, $code, static::$headers);
