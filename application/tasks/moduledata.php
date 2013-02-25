@@ -308,6 +308,7 @@ class ModuleData_Task {
                     
                     // rebuild the structure of the programmes modules object to make things easier on the frontend
                     // we now store modules in stages, with each stage broken into separate clusters
+                    $cluster->academic_study_stage = $cluster->academic_study_stage === 0 ? 'foundation' : $cluster->academic_study_stage;
                     if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
