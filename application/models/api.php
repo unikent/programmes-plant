@@ -352,8 +352,14 @@ class API {
 	 * @return unix timestamp
 	 */
 	public static function get_last_change_time(){
-
-		return Cache::get('last_change');
+		// Get last change
+		$last_change = Cache::get('last_change');
+		// If this is the first, say its now
+		if($last_change == null){
+			Cache::put('last_change', time(), 2628000);
+			$last_change = time();
+		}
+		return $last_change ;
 	}
 
 	/**
@@ -363,13 +369,12 @@ class API {
 	 * @return time formatted for header
 	 */
 	public static function get_last_change_date_for_headers($time = false){
+
 		if($time){
 			// if time was provided, dont grab from cache
 			$last_change = $time;
 		}else{
-			$last_change = Cache::get('last_change');
-			// If null, return null
-			if($last_change == null) return null;
+			$last_change = static::get_last_change_time();	
 		}
 		// else return in correct format
 		return gmdate('D, d M Y H:i:s \G\M\T', $last_change);
