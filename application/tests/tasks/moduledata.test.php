@@ -118,6 +118,8 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     public function testbuild_programme_modulesNoDataWrittenWithEmptyCluster()
     {
         $message = new stdClass();
+        $message->response = new stdClass();
+        $message->response->rubric = new stdClass();
         $message->response->rubric->cluster = array('test');
         
         $module_data_obj = $this->buildProgrammeModulesMock($message);
