@@ -16,19 +16,16 @@ class ModuleData_Task {
         
         // ug or pg
         $type = 'ug';
-        // programme session is the current session for programmes
-        $programme_session = '2014';
-        // module session might be different from programme session if we want to get modules from last year (eg during rollover when module data might not be complete
-        $module_session = '2013';
         // interval in secs between web service hits
         $sleeptime = '5';
         // limiter (mainly for testing where we don't want module data for every single programme)
         $counter = 1;
-        // institution can vary
-        $institution = '0122';
         
         // parse the arguments passed in from the command line into parameter values
         $parameters = $this->parse_arguments($arguments);
+        
+        // use test mode if needs be
+        $module_data_obj->test_mode = $parameters['test_mode'];
         
         // display help if needed
         if ( isset($parameters['help']) )
@@ -56,53 +53,8 @@ class ModuleData_Task {
             {
                 break;
             }
-            // TODO - commented out the section below for now because there's uncertainty about whether we need to vary the institution id in the web service call from the standard 0122
-/*
-            if (strstr(strtolower($programme['awarding_institute_or_body']), 'pharmacy'))
-            {
-                $institution = '40406';
-            }
-            elseif (strstr(strtolower($programme['awarding_institute_or_body']), 'christchurch'))
-            {
-                $institution = '0012';
-            }
-*/
             
-            
-            // module session
-            // if we have a module session field use it
-            if ( isset($programme['module_session']) && $programme['module_session'] != '' )
-            {
-                // is the module session like a year
-                if ( preg_match( '/^20[0-9][0-9]$/', $programme['module_session'] ) )
-                {
-                    $module_session = $programme['module_session'];
-                }
-                // if not we don't need to bother with pulling back any module data at all
-                else
-                {
-                    continue;
-                }
-            }
-            // otherwise use the config module session field
-            else
-            {
-                $module_session = Config::get('module.module_session');
-            }
-            
-            // build up the full url to call for the programme_module web service for this programme
-            $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
-                Config::get('module.institution_param') . '=' . $institution . '&' .
-                Config::get('module.campus_param') . '=' . $programme['campus_id'] . '&' .
-                Config::get('module.session_param') . '=' . $module_session . '&' .
-                'format=json';
-            
-            // in test mode just use the local json file
-            $module_data_obj->test_mode = $parameters['test_mode'];
-            if ($module_data_obj->test_mode)
-            {
-                $url_programme_modules_full = $_SERVER['PWD'].'/vendor/unikent/programmes-plant-modules/tests/data/programme_modules.json';
-            }
+            $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $module_data_obj->test_mode);
             
             // build and cache the programme's module data
             $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
@@ -143,8 +95,6 @@ class ModuleData_Task {
         $programme = $arguments[0]; // programme data
         $programme_session = $arguments[1]; // session
         
-        // module session is stored as a config option so it can be changed relatively easily
-        $module_session = '2013';
         $type = $arguments[2]; // ug or pg
         
         // create the module data object
@@ -153,57 +103,7 @@ class ModuleData_Task {
         // test mode lets us use a dummy json file rather than a web service
         $this->module_data_obj->test_mode = $arguments[3];
         
-        // pull out the field names so we can call the appropriate fields on the programme object
-        $campus_id_field = Programme::get_location_field();
-        $pos_code_field = Programme::get_pos_code_field();
-        $institute_field = Programme::get_awarding_institute_or_body_field();
-        $module_session_field = Programme::get_module_session_field();
-        
-        // institution can vary depending on the programme
-        $institution = '0122';
-/*
-        if (strstr(strtolower($programme->$institute_field), 'pharmacy'))
-        {
-            $institution = '40406';
-        }
-        elseif (strstr(strtolower($programme->$institute_field), 'christchurch'))
-        {
-            $institution = '0012';
-        }
-*/
-        
-        // if we have a module session field use it
-        if ( isset($programme->$module_session_field) )
-        {
-            // is the module session like a year
-            if ( preg_match( '/^20[0-9][0-9]$/', $programme->$module_session_field ) )
-            {
-                $module_session = $programme->$module_session_field;
-            }
-            // if not we don't need to bother with pulling back any module data at all
-            else
-            {
-                return false;
-            }
-        }
-        // otherwise use the config module session field
-        else
-        {
-            $module_session = Config::get('module.module_session');
-        }
-        
-        // build up the full url to call for the programme_module web service for this programme
-        $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme->$pos_code_field . '&' .
-            Config::get('module.institution_param') . '=' . $institution . '&' .
-            Config::get('module.campus_param') . '=' . $programme->$campus_id_field . '&' .
-            Config::get('module.session_param') . '=' . $module_session . '&' .
-            'format=json';
-            
-        // in test mode just use the local json file
-        if ($this->module_data_obj->test_mode)
-        {
-            $url_programme_modules_full = dirname(dirname(__FILE__)).'/tests/data/programme_modules.json';
-        }
+        $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $this->module_data_obj->test_mode);
         
         // build the programme module data and store it in a cache
         $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
@@ -299,7 +199,7 @@ class ModuleData_Task {
                                     // set the url for this web service call
                                     $url_synopsis_full = $url_synopsis . $module->module_code . '.xml';
                                     // get the synopsis and add it to the programme_modules object
-                                    $module->synopsis = str_replace("\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
+                                    $module->synopsis = str_replace("\r\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
                                 }
                             } // end module test
                             
@@ -308,8 +208,13 @@ class ModuleData_Task {
                     
                     // rebuild the structure of the programmes modules object to make things easier on the frontend
                     // we now store modules in stages, with each stage broken into separate clusters
-                    $cluster->academic_study_stage = $cluster->academic_study_stage == 0 ? 'foundation' : $cluster->academic_study_stage;
+                    // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
+                    $cluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
+                    
+                    // if a particular stage hasn't been set before, create it as a new object
                     if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
+                    
+                    // set the stage name and stage cluster array
                     $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
                     $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
                     
@@ -341,7 +246,11 @@ class ModuleData_Task {
     */
     public function parse_arguments($arguments = array())
     {
-        if ( empty($arguments) ) $arguments = array('-h');
+        if ( empty($arguments) || $arguments[0] == '-h' ) 
+        {
+            $parameters['help'] = $this->help_argument();
+            return $parameters;
+        }
         
         // set defaults for the parameters in case they're not set
         $parameters = array();
@@ -382,6 +291,85 @@ class ModuleData_Task {
         
         return $parameters;
     }
+    
+    
+    public function help_argument()
+    {
+        return "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+    }
+    
+    
+    public function build_url_programme_modules_full($programme, $url_programme_modules, $test_mode = false)
+    {
+        // if the programme is an object, store certain values as array keys to make it consistent with when the programme is just an array
+        if (is_object($programme))
+        {
+            // pull out the field names so we can call the appropriate fields on the programme object
+            $campus_id_field = Programme::get_location_field();
+            $pos_code_field = Programme::get_pos_code_field();
+            $institute_field = Programme::get_awarding_institute_or_body_field();
+            $module_session_field = Programme::get_module_session_field();
+            
+            $programme_array['module_session'] = $programme->$module_session_field;
+            $programme_array['pos_code'] = $programme->$pos_code_field;
+            $programme_array['campus_id'] = $programme->$campus_id_field; 
+            $programme_array['awarding_institute_or_body'] = $programme->$institute_field;
+            
+            unset($programme);
+            $programme = $programme_array;
+            
+        }
+        
+        $institution = '0122';
+        // TODO - commented out the section below for now because there's uncertainty about whether we need to vary the institution id in the web service call from the standard 0122
+/*
+        if (strstr(strtolower($programme['awarding_institute_or_body']), 'pharmacy'))
+        {
+            $institution = '40406';
+        }
+        elseif (strstr(strtolower($programme['awarding_institute_or_body']), 'christchurch'))
+        {
+            $institution = '0012';
+        }
+*/
+
+        // module session
+        // if we have a module session field use it
+        if ( isset($programme['module_session']) && $programme['module_session'] != '' )
+        {
+            // is the module session like a year
+            if ( preg_match( '/^20[0-9][0-9]$/', $programme['module_session'] ) )
+            {
+                $module_session = $programme['module_session'];
+            }
+            // if not we don't need to bother with pulling back any module data at all
+            else
+            {
+                return '';
+            }
+        }
+        // otherwise use the config module session field
+        else
+        {
+            $module_session = Config::get('module.module_session');
+        }
+        
+        // build up the full url to call for the programme_module web service for this programme
+        $url_programme_modules_full = $url_programme_modules . Config::get('module.pos_code_param') . '=' . $programme['pos_code'] . '&' .
+            Config::get('module.institution_param') . '=' . $institution . '&' .
+            Config::get('module.campus_param') . '=' . $programme['campus_id'] . '&' .
+            Config::get('module.session_param') . '=' . $module_session . '&' .
+            'format=json';
+        
+        // in test mode just use the local json file
+        if ($test_mode)
+        {
+            $url_programme_modules_full = dirname(dirname(__FILE__)).'/tests/data/programme_modules.json';
+        }
+        
+        return $url_programme_modules_full;
+    }
+    
     
     
 }
