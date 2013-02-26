@@ -56,13 +56,19 @@ class ModuleData_Task {
             
             $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $module_data_obj->test_mode);
             
-            // build and cache the programme's module data
-            $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
-            
-            echo "output to $cache_key\n\n";
-            
-            // sleep before running the next iteration of the loop ie a web service throttle
-            sleep($parameters['sleeptime']);
+            if ($build_url_programme_modules_full != '')
+            {
+                // build and cache the programme's module data
+                $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
+                
+                echo "output to $cache_key\n\n";
+                
+                // sleep before running the next iteration of the loop ie a web service throttle
+                sleep($parameters['sleeptime']);
+            }
+            else {
+                echo "output skipped - module data is not required for this course\n\n";
+            }
         
         }
         
@@ -105,9 +111,11 @@ class ModuleData_Task {
         
         $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $this->module_data_obj->test_mode);
         
-        // build the programme module data and store it in a cache
-        $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
-        
+        if ($build_url_programme_modules_full != '')
+        {
+            // build the programme module data and store it in a cache
+            $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
+        }
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
         try
         {
@@ -312,8 +320,11 @@ class ModuleData_Task {
             
             $programme_array['module_session'] = $programme->$module_session_field;
             $programme_array['pos_code'] = $programme->$pos_code_field;
-            $programme_array['campus_id'] = $programme->$campus_id_field; 
             $programme_array['awarding_institute_or_body'] = $programme->$institute_field;
+            
+            // we have to look up the campus id as a separate db object
+            $campus = Campus::find($programme->$campus_id_field);
+            $programme_array['campus_id'] = $campus->identifier;
             
             unset($programme);
             $programme = $programme_array;

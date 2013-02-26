@@ -11,26 +11,38 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->module_data_task = new ModuleData_Task();
     }
     
-    public function tearDown()
-    {
-        unset($this->module_data_task);
-    }
-    
-    public function populate()
+    public function populate_campus()
 	{
 		// Setup something we can edit.
 		$input = array(
-			'year' => '2014',
-			'live' => '1',
-			'created_by' => 'mb324',
-			'programme_title_1' => 'Test',
-			'pos_code_44' => 'ACCF-S:BA',
-			
+			'id' => 2,
+            'title' => 'Medway',
+			'name' => 'A campus',
+			'address_1' => '1',
+			'address_2' => '2',
+			'address_3' => '3',
+			'phone' => '82828',
+			'postcode' => 'NG4 3TG',
+			'identifier' => '58'
 		);
 
-		$programme = Programme::create($input);
-		$programme->save();
+		$campus = Campus::create($input);
+		$campus->save();
 	}
+    
+    public function tearDown()
+    {
+        unset($this->module_data_task);
+        
+        $campuses = Campus::all();
+
+		foreach ($campuses as $campus)
+		{
+			$campus->delete_for_test();
+		}
+		
+		parent::tearDown();
+    }
     
     public function testparse_argumentsShowsHelpOnEmptyArgs()
     {
@@ -172,37 +184,43 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     
     public function testbuild_url_programme_modules_fullWithModuleSession2014ProgrammeAsObject()
     {
+        $this->populate_campus();
+        
         $programme = new stdClass();
         $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '1';
+        $programme->location_11 = '2';
         $programme->module_session_86 = '2014';
         $programme->awarding_institute_or_body_4 = '0122';
         
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2014&format=json';
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckWithoutModuleSessionGives2013ProgrammeAsObject()
     {
+        $this->populate_campus();
+		
         $programme = new stdClass();
         $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '1';
-        $programme->module_session_86 = '';
+        $programme->location_11 = '2';
+        $programme->module_session_86 = '2013';
         $programme->awarding_institute_or_body_4 = '0122';
-        
+		
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2013&format=json';
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2013&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckNoneModuleSessionGivesEmptyUrlProgrammeAsObject()
     {
+        $this->populate_campus();
+        
         $programme = new stdClass();
         $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '1';
+        $programme->location_11 = '2';
         $programme->module_session_86 = 'None';
         $programme->awarding_institute_or_body_4 = '0122';
         
