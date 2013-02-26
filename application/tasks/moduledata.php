@@ -56,7 +56,7 @@ class ModuleData_Task {
             
             $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $module_data_obj->test_mode);
             
-            if ($build_url_programme_modules_full != '')
+            if ($url_programme_modules_full != '')
             {
                 // build and cache the programme's module data
                 $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
@@ -111,7 +111,7 @@ class ModuleData_Task {
         
         $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $this->module_data_obj->test_mode);
         
-        if ($build_url_programme_modules_full != '')
+        if ($url_programme_modules_full != '')
         {
             // build the programme module data and store it in a cache
             $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
