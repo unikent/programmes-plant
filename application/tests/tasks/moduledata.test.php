@@ -229,6 +229,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     public function loadProgrammeModuleErrorData()
     {
         $message = new stdClass();
+        $message->response = new stdClass();
         $message->response->message = 'no data';
         return $message;
     }
