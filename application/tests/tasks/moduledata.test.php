@@ -14,17 +14,6 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     public function tearDown()
     {
         unset($this->module_data_task);
-        
-/*
-        $programmes = Programme::all();
-
-		foreach ($programmes as $programme)
-		{
-			$programme->delete_for_test();
-		}
-
-		parent::tearDown();
-*/
     }
     
     public function populate()

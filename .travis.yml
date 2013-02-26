@@ -4,6 +4,9 @@ php:
   - 5.3
   - 5.4
 
+before_script:
+  - composer install --dev
+
 script: "php artisan test"
 
 notifications:
