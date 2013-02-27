@@ -56,19 +56,28 @@ class ModuleData_Task {
             
             $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $module_data_obj->test_mode);
             
-            if ($url_programme_modules_full != '')
+            // build and cache the programme's module data
+            $programme_modules_new = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis);
+            
+            // store complete dataset for this programme in our cache
+            // in test mode we don't cache it
+            $cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . $programme['id'];
+            if ( ! $module_data_obj->test_mode )
             {
-                // build and cache the programme's module data
-                $cache_key = $this->build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme['id'], $parameters['type'], $parameters['programme_session']);
-                
-                echo "output to $cache_key\n\n";
-                
-                // sleep before running the next iteration of the loop ie a web service throttle
-                sleep($parameters['sleeptime']);
+                Cache::put($cache_key, $programme_modules_new, 2628000);
             }
-            else {
+            
+            if ($url_programme_modules_full == '')
+            {
                 echo "output skipped - module data is not required for this course\n\n";
             }
+            else
+            {
+                echo "output to $cache_key\n\n";
+            }
+            
+            // sleep before running the next iteration of the loop ie a web service throttle
+            sleep($parameters['sleeptime']); 
         
         }
         
@@ -111,11 +120,17 @@ class ModuleData_Task {
         
         $url_programme_modules_full = $this->build_url_programme_modules_full($programme, $url_programme_modules, $this->module_data_obj->test_mode);
         
-        if ($url_programme_modules_full != '')
+        // build the programme module data and store it in a cache
+        $programme_modules_new = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis);
+        
+        // store complete dataset for this programme in our cache
+        // in test mode we don't cache it
+        $cache_key = "programme-modules.$type-$programme_session-" . $programme->programme_id;
+        if ( ! $this->module_data_obj->test_mode )
         {
-            // build the programme module data and store it in a cache
-            $cache_key = $this->build_programme_modules($this->module_data_obj, $url_programme_modules_full, $url_synopsis, $programme->programme_id, $type, $programme_session);
+            Cache::put($cache_key, $programme_modules_new, 2628000);
         }
+        
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
         try
         {
@@ -139,8 +154,17 @@ class ModuleData_Task {
     * @param string $programme_session
     * @return string $cache_key
     */
-    public function build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis, $programme_id, $type, $programme_session)
+    public function build_programme_modules($module_data_obj, $url_programme_modules_full, $url_synopsis)
     {
+        // set up the output object
+        $programme_modules_new = new stdClass;
+        $programme_modules_new->stages = array();
+        
+        // if the module url is empty, that means we don't want to bother pulling any data from the web service, and we just output an empty object
+        if ($url_programme_modules_full == '')
+        {
+            return $programme_modules_new;
+        }
         // login details for the programme module web service
         $module_data_obj->login['username'] = Config::get('module.programme_module_user');
         $module_data_obj->login['password'] = Config::get('module.programme_module_pass');
@@ -150,10 +174,6 @@ class ModuleData_Task {
         
         // reset the login details for the synopsis web service because we don't need them
         $module_data_obj->login = array();
-        
-        // set up the output object
-        $programme_modules_new = new stdClass;
-        $programme_modules_new->stages = array();
         
         // loop through each of the modules and get its synopsis, adding it to the object for output
         if ( isset($programme_modules->response->message) )
@@ -234,16 +254,8 @@ class ModuleData_Task {
         // sort the stages
         ksort($programme_modules_new->stages);
         
-        // in test mode we just return the data, without caching it
-        if ($module_data_obj->test_mode)
-        {
-            return $programme_modules_new;
-        }
+        return $programme_modules_new;
         
-        // store complete dataset for this programme in our cache
-        $cache_key = "programme-modules.$type-$programme_session-" . $programme_id;
-        Cache::put($cache_key, $programme_modules_new, 2628000);
-        return $cache_key;
     }
     
     /**

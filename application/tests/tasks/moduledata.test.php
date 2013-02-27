@@ -92,10 +92,8 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme_modules = $this->loadProgrammeModuleData();
         $module_synopsis = $this->loadModuleSynopsisData();
         $module_data_obj = $this->buildMock($programme_modules, $module_synopsis);
-        $this->module_data_task->build_programme_modules($module_data_obj, '', '', 1, 'ug', '2014');
-        
-        $cache_key = "programme-modules.ug-2014-1";
-        $output = json_encode(Cache::get($cache_key));
+        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+        $output = json_encode($programme_modules_new);
         
         // assert that what's in the cache matches what we expect
         $expected = $this->loadModuleData();
@@ -108,10 +106,8 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme_modules = $this->loadProgrammeModuleDataFoundation();
         $module_synopsis = $this->loadModuleSynopsisData();
         $module_data_obj = $this->buildMock($programme_modules, $module_synopsis);
-        $this->module_data_task->build_programme_modules($module_data_obj, '', '', 1, 'ug', '2014');
-        
-        $cache_key = "programme-modules.ug-2014-1";
-        $output = json_encode(Cache::get($cache_key));
+        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+        $output = json_encode($programme_modules_new);
         
         // assert that what's in the cache matches what we expect
         $expected = $this->loadModuleDataFoundation();
@@ -124,7 +120,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $return = $this->loadProgrammeModuleErrorData();
         $module_data_obj = $this->buildProgrammeModulesMock($return);
         $this->expectOutputString('no data');
-        $this->module_data_task->build_programme_modules($module_data_obj, '', '', 1, 'ug', '2014');
+        $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
     }
     
     public function testbuild_programme_modulesNoDataWrittenWithEmptyCluster()
@@ -135,15 +131,28 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $message->response->rubric->cluster = array('test');
         
         $module_data_obj = $this->buildProgrammeModulesMock($message);
-        $this->module_data_task->build_programme_modules($module_data_obj, '', '', 1, 'ug', '2014');
-        
-        $cache_key = "programme-modules.ug-2014-1";
-        $output = Cache::get($cache_key);
+        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
         
         $expected = new stdClass();
         $expected->stages = array();
         
-        $this->assertEquals($expected, $output);
+        $this->assertEquals($expected, $programme_modules_new);
+    }
+    
+    public function testbuild_programme_modulesNoDataWrittenWithEmptyModuleUrl()
+    {
+        $message = new stdClass();
+        $message->response = new stdClass();
+        $message->response->rubric = new stdClass();
+        $message->response->rubric->cluster = array('test');
+        
+        $module_data_obj = $this->buildProgrammeModulesMock($message);
+        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, '', 'someotherurl');
+        
+        $expected = new stdClass();
+        $expected->stages = array();
+        
+        $this->assertEquals($expected, $programme_modules_new);
     }
     
     public function testbuild_url_programme_modules_fullWithModuleSession2014()
@@ -273,7 +282,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     public function buildProgrammeModulesMock($return)
     {
         $module_data_obj = $this->getMock('ProgrammesPlant\ModuleData', array('get_programme_modules'));
-        $module_data_obj->expects($this->once())
+        $module_data_obj->expects($this->any())
                         ->method('get_programme_modules')
                         ->will($this->returnValue($return));
         return $module_data_obj;
@@ -282,7 +291,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     public function buildModuleSynopsisMock($return)
     {
         $module_data_obj = $this->getMock('ProgrammesPlant\ModuleData', array('get_module_synopsis'));
-        $module_data_obj->expects($this->once())
+        $module_data_obj->expects($this->any())
                         ->method('get_module_synopsis')
                         ->will($this->returnValue($return));
         return $module_data_obj;
@@ -292,7 +301,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     {
         $module_data_obj = $this->getMock('ProgrammesPlant\ModuleData', array('get_programme_modules', 'get_module_synopsis'));
         
-        $module_data_obj->expects($this->once())
+        $module_data_obj->expects($this->any())
                         ->method('get_programme_modules')
                         ->will($this->returnValue($programme_modules));
                         
