@@ -346,6 +346,7 @@ class ModuleData_Task {
 
         // module session
         // if we have a module session field use it
+        $module_session = '2013';
         if ( isset($programme['module_session']) && $programme['module_session'] != '' )
         {
             // is the module session like a year
