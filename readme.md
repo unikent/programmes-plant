@@ -16,7 +16,7 @@ The following are instructions on running the Programmes Plant on a local machin
 
 ### Method 1
 
-Install this in one line? Why of course!
+Install this in one line? Why of course! Should work on any sensible Unix like system with Git installed.
 
 ```shell
 curl -s https://raw.github.com/unikent/programmes-plant/setup/setup.sh | sh
@@ -46,6 +46,12 @@ mkdir application/config/local && cp application/config/*.sample application/con
 ## Testing
 
 Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.
+
+## Other Projects
+
+Want to consume the data from a Programmes Plant API? Consider using our [PHP library for this](https://github.com/unikent/of-course).
+
+Want to see what a front-end to this data might look like using this library? See [Of Course](https://github.com/unikent/of-course).
 
 ## Licensing
 
