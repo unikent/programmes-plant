@@ -51,10 +51,29 @@ class verify_ldap extends Verify
 			// Do they exist in the system now?
 			$db_user = $this->model()->where('username', '=', $arguments['username'])->first();
 
-			if (!is_null($user))
-			{
-				// User exists in the system
+			if (!is_null($db_user))
+			{	
+				// Valid user, but are they verified?
+				if (!$db_user->verified)
+				{
+					throw new UserUnverifiedException('User is unverified');
+				}
 
+				// Is the user disabled?
+				if ($db_user->disabled)
+				{
+					throw new UserDisabledException('User is disabled');
+				}
+
+				// Is the user deleted?
+				if ($db_user->deleted)
+				{
+					throw new UserDeletedException('User is deleted');
+				}
+
+
+				// User exists in the system
+				return $this->login($db_user->id, array_get($arguments, 'remember'));
 
 			}
 			throw new UserNotFoundException('User can not be found');
@@ -62,62 +81,6 @@ class verify_ldap extends Verify
 		// Not in LDAP, then fail
 		throw new UserPasswordIncorrectException('User password is incorrect');
 		
-
-
-			/*
-
-		// Get the username fields
-		$usernames = Config::get('verify::verify.username');
-		$usernames = (!is_array($usernames))
-			? array($usernames)
-			: $usernames;
-
-		foreach ($usernames as $identify_by)
-		{
-			$user = $this->model()
-				->where($identify_by, '=', array_get($arguments, $identify_by))
-				->first();
-
-			if (!is_null($user))
-			{
-				// Is user password is valid?
-		                if(!Hash::check($user->salt . array_get($arguments, 'password'), $user->password))
-		                {
-		                    throw new UserPasswordIncorrectException('User password is incorrect');
-		                }
-
-				// Valid user, but are they verified?
-				if (!$user->verified)
-				{
-					throw new UserUnverifiedException('User is unverified');
-				}
-
-				// Is the user disabled?
-				if ($user->disabled)
-				{
-					throw new UserDisabledException('User is disabled');
-				}
-
-				// Is the user deleted?
-				if ($user->deleted)
-				{
-					throw new UserDeletedException('User is deleted');
-				}
-
-				$valid = true;
-				break;
-			}
-		}
-		*/
-
-		if ($valid)
-		{
-			return $this->login($user->id, array_get($arguments, 'remember'));
-		}
-		else
-		{
-			throw new UserNotFoundException('User can not be found');
-		}
 	}
 
 }

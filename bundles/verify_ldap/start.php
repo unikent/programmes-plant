@@ -1,7 +1,7 @@
 <?php
 
 Autoloader::namespaces(array(
-	'Verify\Models'	=> Bundle::path('verify').'models'
+	'Verify\Models'	=> __DIR__ . '/../verify/models'
 ));
 
 Autoloader::map(array(
