@@ -3,7 +3,7 @@
 class GlobalSetting extends Revisionable
 {
     public static $table = 'global_settings';
-    protected $revision_model = 'GlobalSettingRevision';
+    public static $revision_model = 'GlobalSettingRevision';
     protected $data_type_id = 'global_setting';
 
     /**

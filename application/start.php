@@ -13,7 +13,7 @@
 */
 
 error_reporting(E_ALL);
-ini_set('display_errors',1);
+//ini_set('display_errors',0);
 /*
 |--------------------------------------------------------------------------
 | Laravel Configuration Loader
@@ -173,7 +173,23 @@ Session::extend('phpsession', function()
 	return new PhpSession;
 });
 
+// the API does not need a session. This is also a way to get rid of the no-cache headers being sent
+if(strpos(Request::uri(), 'api') === 0)
+{
+	Config::set('session.driver', '');
+}
+
 if (Config::get('session.driver') !== '')
 {
 	Session::load();
 }
+
+// load the filch caching bundle so it's usable on the cli
+Autoloader::map(array(
+	'Filch\\Cache' => Bundle::path('filch').'cache.php',
+));
+
+Cache::extend('filch', function(){
+	return new Filch\Cache(path('storage').'cache'.DS);
+});
+

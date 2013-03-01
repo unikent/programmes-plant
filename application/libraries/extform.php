@@ -35,7 +35,7 @@ class ExtForm extends Form{
 		if (is_array($selected)){
 			foreach ($selected as $val)
 			{
-				if($val != '' && $val != null){
+				if($val != '' && $val != null && !empty($options[$val])){
 					$selected_html[] = static::option($val, $options[$val], $val);
 				}
 			}
@@ -52,7 +52,9 @@ class ExtForm extends Form{
 			
 		}
 
-		return '<select'.HTML::attributes($attributes).'>'.implode('', $selected_html).implode('', $html).'</select>';
+		// Append hidden empty element before multiselect to allow blanking
+    	// like checkbox's, no data gets sent when saving this as empty. 	
+    	return Form::hidden($name, '').'<select'.HTML::attributes($attributes).'>'.implode('', $selected_html).implode('', $html).'</select>';
 	}
 
 }

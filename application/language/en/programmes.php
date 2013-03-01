@@ -1,14 +1,20 @@
 <?php
 return array(
-	'ug' => 'Undergraduate',
-	'pg' => 'Postgraduate',
+	'ug' => 'undergraduate',
+	'pg' => 'postgraduate',
 	'ug_introduction' => 'This is the listing for <strong>undergraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'pg_introduction' => 'This is the listing for <strong>postgraduate programmes</strong> beginning in <strong>:year</strong>.',
 	'create_introduction' => 'This form lets you enter information for a new programme.',
 	'edit_introduction' => 'This form lets you edit information for an existing programme.',
 	'edit_programme' => 'Edit',
 	'clone' => 'Clone',
-	'delete_programme' => 'Delete',
+	'delete' => 'Delete programme',
+	'delete_title' => 'Deleting a programme',
+	'delete_message' => 'Deleting a programme will remove it from the course pages. You will be asked for further confirmation if you do press the delete button.',
+	'delete_modal_title' => 'Deleting a programme',
+	'delete_modal_message' => 'Are you sure you want to detele this programme and remove it from the University course pages.',
+	'delete_modal_cancel' => 'Cancel',
+	'delete_modal_delete' => 'Delete programme',
 	'table_title' => 'Title',
 	'table_subject' => 'Subject',
 	'table_excerpt' => 'Content excerpt',
@@ -21,8 +27,8 @@ return array(
 	'create_programme_title' => 'New programme',
 
 	// Fields
-	'year' => 'Year of Programme',
-	'title' => 'Programme Title',
+	'year' => 'Year of programme',
+	'title' => 'Programme title',
 	'slug' => 'Slug',
 	'slug_help' => 'The desired short URL, for example <code>/business-studies</code>',
 	'summary' => 'Summary of programme',
@@ -30,7 +36,7 @@ return array(
 	'school_id' => 'School ID',
 	'school_adm_id' => 'School Admin ID',
 	'campus_id' => 'Campus ID',
-	'programme_id' => 'programme ID',
+	'programme_id' => 'Programme ID',
 	'honours' => 'Honours type ID',
 
 	'related_school_ids' => 'Related Schools',

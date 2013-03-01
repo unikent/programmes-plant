@@ -1,6 +1,5 @@
-<h1><?php echo  URI::segment(1) ?> <?php echo  __('programmes.' . URI::segment(2)) ?> Programmes</h1>
+<h1><?php echo  URI::segment(1) ?> <?php echo  __('programmes.' . URI::segment(2)) ?> programmes</h1>
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('programmes.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
-
 
 <?php echo Messages::get_html()?>
 
@@ -16,30 +15,33 @@
           <tr>
             <td>
                               
-                <?php if ( $programme->live == 0 ): ?>
+                <?php if ( $programme->attributes["live"] == 0 ): ?>
                     <span class="label label-important" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.new.tooltip') ?>"><?php echo __('programmes.traffic-lights.new.label') ?></span>
-                <?php elseif ( $programme->live == 1 ): ?>
+                <?php elseif ( $programme->attributes["live"]== 1 ): ?>
                     <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
-                <?php elseif ( $programme->live == 2 ): ?>
+                <?php elseif ( $programme->attributes["live"] == 2 ): ?>
                     <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
                 <?php endif; ?>
                 
             </td>
             <td>
-                <?php echo $programme->$title_field ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?>
-                <?php if(strcmp($programme->$withdrawn_field, 'true') == 0): ?>
+                <?php echo $programme->attributes[$title_field]; ?>
+
+                <?php echo isset($programme->relationships["award"]->attributes["name"]) ? ' - <em>'.$programme->relationships["award"]->attributes["name"].'</em>' : '' ; ?>
+
+                <?php if(strcmp($programme->attributes[$withdrawn_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.withdrawn_field_text')  ?></span>
                 <?php endif; ?>
-                <?php if(strcmp($programme->$suspended_field, 'true') == 0): ?>
+                <?php if(strcmp($programme->attributes[$suspended_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.suspended_field_text')  ?></span>
                 <?php endif; ?>
-                <?php if(strcmp($programme->$subject_to_approval_field, 'true') == 0): ?>
+                <?php if(strcmp($programme->attributes[$subject_to_approval_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.subject_to_approval_field_text')  ?></span>
                 <?php endif; ?>
             </td>
-            <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.edit_programme') ?></a>
+            <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->attributes["id"]))?>"><?php echo  __('programmes.edit_programme') ?></a>
     
-              <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->id))?>"><?php echo  __('programmes.clone') ?></a>
+              <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->attributes["id"]))?>"><?php echo  __('programmes.clone') ?></a>
             </td>
           </tr>
         <?php endforeach; ?>

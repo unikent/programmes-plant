@@ -1,6 +1,11 @@
 <li class='field_item' id="field-id-<?php echo $field->id?>">
 
 <span class='title'><?php echo $field->field_name?></span>
+<?php if($field->field_type == 'help'):?>
+	<span class="label label-info">Help text</span> 
+<?php endif;?>
+
+
 <?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
 	<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
 		<span class="label label-info"><i class="icon-flag icon-white"></i> <?php echo __('fields.form.programme_overwrite_text_title')?></span>
