@@ -93,6 +93,11 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 
+
+	Route::any('users', 'users@index');
+	Route::any('users/(add|edit|delete)', 'users@(:1)');
+
+
 	// API
 
 	// Routing for undergraduate API, the only API currently supported.

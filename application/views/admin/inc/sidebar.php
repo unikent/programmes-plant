@@ -33,5 +33,7 @@
         <li class="nav-header">Field setup</li>
         <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/globalsettings')?>"><i class="icon-cog"></i> Immutable fields </a></li>
         <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($selectedType.'/fields/programmes')?>"><i class="icon-cog"></i> Programme fields</a></li>
+        <li class="nav-header">User managment</li>
+        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'users') ? 'active' : false )?>"><a href="<?php echo url('users')?>"><i class="icon-user"></i> Users </a></li>
 </ul>
 </div>
