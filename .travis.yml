@@ -9,6 +9,10 @@ before_script:
 
 script: "php artisan test"
 
+branches:
+  except:
+    - setup
+
 notifications:
   hipchat:
     rooms:
