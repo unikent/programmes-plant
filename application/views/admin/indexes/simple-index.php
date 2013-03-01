@@ -1,4 +1,4 @@
-<h1><?php echo Str::title($type); ?></h1>
+<h1><?php echo (__($type . '.title') == $type . '.title') ?  Str::title($type) : __($type . '.title'); ?></h1>
 <p><?php echo __($type . '.introduction'); ?></p>
 <?php echo Messages::get_html()?>
 
@@ -45,5 +45,3 @@
       <a class="btn btn-danger yes_action"><?php echo __($type . '.modal_delete'); ?></a>
   </div>
 </div>
-
-

@@ -24,7 +24,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 
 		foreach ($programmes as $programme)
 		{
-			$programme->delete();
+			$programme->delete_for_test();
 		}
 
 		parent::tearDown();
@@ -35,7 +35,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 		//Add a programme to the system.
 		Programme::create(array('programme_title_1' => 'A programme', 'year'=> '2014', 'id' => 1));
 
-		$edit_page = $this->get('programmes@edit', array('2014', 'ug', '1'));
+		$edit_page = $this->get('programmes@edit', array('2014', 'undergraduate', '1'));
 
 		// Edit what we have populated.
 		$input = array(
@@ -47,10 +47,10 @@ class TestProgrammes_Controller extends ControllerTestCase
 		);
 
 		// Post to the edit page
-		$next_page_after_edit_page_post = $this->post('programmes@edit', $input, array('2014', 'ug'));
+		$next_page_after_edit_page_post = $this->post('programmes@edit', $input, array('2014', 'undergraduate'));
 
 		$this->assertEquals('302', $next_page_after_edit_page_post->status(), 'Page was not redirected.');
-		$this->assertEquals('/2014/ug/programmes/edit/1', $this->get_location($next_page_after_edit_page_post), 'Page was not the same page.');
+		$this->assertEquals('/2014/undergraduate/programmes/edit/1', $this->get_location($next_page_after_edit_page_post), 'Page was not the same page.');
 	}
 
 }

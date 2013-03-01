@@ -4,4 +4,14 @@ php:
   - 5.3
   - 5.4
 
+before_script:
+  - composer install --dev
+
 script: "php artisan test"
+
+notifications:
+  hipchat:
+    rooms:
+      - secure: "AYKGSOdRvNaKu2/YfOyJdB5wko74EqLJTiqw333e3sBS6KmwICo7wTagrMxD\ncSRf6YqascyZbT5uYY3siW5gQIPKCRmCh89uvbCCJKGL0b7hFs3+tG7tTC15\njo9s5vrpQM+MEZLRjyvB/1XAZ8sAUfvqTuRbqPbhRL52yztIMMs="
+  on_success: always
+  on_failure: always

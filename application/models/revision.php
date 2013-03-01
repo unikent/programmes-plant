@@ -13,7 +13,8 @@ class Revision extends Eloquent {
 	 * 
 	 * @return string identifer 
 	 */
-	public function get_identifier(){
+	public function get_identifier()
+	{
         return "R".$this->{$this->data_type_id}."-{$this->id}";
     }
 
@@ -22,8 +23,10 @@ class Revision extends Eloquent {
 	 * 
 	 * @return string decribing revision
 	 */
-    public function get_identifier_string(){
-        return '<strong>'.$this->get_identifier().'</strong> created '.$this->get_created_time().' by '.$this->edits_by ;
+    public function get_identifier_string()
+    {
+    	$link =  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'/'.$this->{$this->data_type_id}.'@view_revision', array($this->id));
+        return '<strong><a href="'.$link.'" target="_blank">'.$this->get_identifier().'</a></strong> created '.$this->get_created_time().' by '.$this->edits_by ;
     }
 
     /**
@@ -31,7 +34,8 @@ class Revision extends Eloquent {
 	 * 
 	 * @return string Published date
 	 */
-    public function get_published_time(){
+    public function get_published_time()
+    {
         return Date("jS F Y \a\\t H:i:s" ,strtotime($this->published_at));
     }
 
@@ -40,7 +44,30 @@ class Revision extends Eloquent {
 	 * 
 	 * @return string creation date
 	 */
-    public function get_created_time(){
+    public function get_created_time()
+    {
         return Date("jS F Y \a\\t H:i:s", strtotime($this->created_at));
     }
+    
+    /**
+    * deletes items in tests - overrides eloquent's delete()
+    *
+    */
+    public function delete_for_test()
+    {
+	    parent::delete();
+    }
+
+    /**
+     * Override get_attribute method
+     * Since our attributes are only one level deep using the array_get method is not worth the cost.
+     *
+     * @param $key Attribute name
+     * @return Attribute value | null
+     */
+    public function get_attribute($key)
+    {
+        return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
+    }
+    
 }

@@ -1,6 +1,8 @@
 <?php
 
 return array(
+
+	'title' => ' Subject categories',
 	/**
 	 * Buttons
 	 */

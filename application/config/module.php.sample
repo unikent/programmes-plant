@@ -1,0 +1,14 @@
+<?php
+
+return array(
+	'module_data_url' => '', // url to the module data xml files
+	'programme_module_user' => '', // web service username
+	'programme_module_pass' => '', // web service password
+	'programme_module_base_url' => '', // web service base url
+	'pos_code_param' => '', // web service pos code parameter name
+	'version_param' => '', // web service version parameter name
+	'institution_param' => '', // web service institution parameter name
+	'campus_param' => '',  // web service campus parameter name
+	'session_param' => '', // web service session parameter name
+	'module_session' => '', // module session value (where 2013 = 2012/2013 session)
+);

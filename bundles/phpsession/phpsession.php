@@ -6,7 +6,7 @@ class PhpSession extends \Laravel\Session\Drivers\Driver {
 	public function __construct()
 	{
 		if (!isset($_SESSION)) {
-		  session_start();
+			session_start();
 		}
 	}
 

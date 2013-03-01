@@ -7,7 +7,7 @@
 class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
-	protected $revision_model = false;
+	public static $revision_model = false;
 
 	// Data Type (Programme, Global, etc)
 	protected $data_type = false;
@@ -29,8 +29,8 @@ class Revisionable extends SimpleData {
 		// Use called class to deterime datatype
 		$this->data_type = get_called_class();
 		// If not set in parent, just assume modelRevision as name
-		if(!$this->revision_model)  $this->revision_model = $this->data_type .'Revision';
-		if(!$this->data_type_id) $this->data_type_id = $this->data_type;
+		if(!static::$revision_model)  static::$revision_model = $this->data_type .'Revision';
+		if(!$this->data_type_id) $this->data_type_id = strtolower($this->data_type);
 
 		// Pass to real constructor
 		parent::__construct($attributes, $exists);
@@ -53,6 +53,14 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+
+		// If instance_id  isn't set, set it to value of id.
+		// null for new records, 0 for created ones.
+		if ($this->instance_id === null || $this->instance_id  === 0){
+			$this->instance_id = $this->id;
+			$this->raw_save();
+		}
+
 		// If the save succeeds, save a new revision and return its status 
 		// (so the return from this save() is means both the revision & save itself were successful.)
 		if($success) return $this->save_revision();
@@ -67,7 +75,7 @@ class Revisionable extends SimpleData {
 	 */
 	private function save_revision()
 	{
-		$revision_model = $this->revision_model;
+		$revision_model = static::$revision_model;
 
 		// Get new revision instance
 		$revision = new $revision_model;
@@ -96,7 +104,17 @@ class Revisionable extends SimpleData {
 		// Timestamp revision & set editor etc.
 		$revision_values['created_at'] = $this->updated_at;
 		$revision_values['updated_at'] = $revision_values['created_at'];
-		$revision_values['edits_by'] = Auth::user();
+
+		// If we are on the command line, no user will be logged in, use a dummy instead.
+		// This will be used mostly when seeding the database.
+		if (! Request::cli())
+		{
+			$revision_values['edits_by'] = Auth::user();
+		}
+		else 
+		{
+			$revision_values['edits_by'] = 'seed';
+		}
 
 		// Status = selected
 		$revision_values['status'] = 'selected';
@@ -115,13 +133,19 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Get all revisions for this item
-	 * @param array of revisions
+	 * Get all revisions for this item (or revisions in a particular status if status is passed)
+	 * @param $status status of revisions to return
+	 * @return array of revisions
 	 */
-	public function get_revisions()
+	public function get_revisions($status = false)
 	{
-		$model = $this->revision_model;
-		return $model::where($this->data_type_id.'_id','=',$this->id)->order_by('created_at', 'desc')->get();
+		$model = static::$revision_model;
+		// store query obj
+		$query = $model::where($this->data_type_id.'_id','=',$this->id);
+		// if status is set add filter
+		if($status)$query = $query->where('status', '=', $status);
+		// return data
+		return $query->order_by('created_at', 'desc')->get();
 	}
 
 	/**
@@ -132,29 +156,90 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_revision($revision_id)
 	{
-		$model = $this->revision_model;
-		return $model::find($revision_id);
+		// Get revision
+		$model = static::$revision_model;
+		$revision = $model::find($revision_id);
+
+		// Ensure revision belongs to this item
+		$data_type_key = $this->data_type_id.'_id';	
+		if($revision->$data_type_key == $this->id){
+			return $revision;
+		}else{
+			// Exception ifn not.
+			throw new RevisioningException("Revision does not belong to this object.");
+		}
 	}
 
 	/**
 	 * Get currently active revision
+	 * @param $columns columns to return
 	 * @return active revision instance
 	 */
-	public function get_active_revision()
+	public function get_active_revision($columns = array('*'))
 	{
 		// If all is up to date (live=2) return live/selected item
 		// else get item marked as selected
-		$model = $this->revision_model;
-
+		$model = static::$revision_model;
 		if ($this->live == 2)
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first();
 		}
 		else
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->first();
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','selected')->first();
 		}
 	}	
+
+	/**
+	 * Get published/live revision
+	 *
+	 * @param $columns columns to return
+	 * @return live revision instance
+	 */
+	public function get_live_revision($columns = array('*'))
+	{
+		// If a revision is published
+		if($this->live != 0){
+			$model = static::$revision_model;
+			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first($columns);
+		}
+		// No published revision
+		return null;
+	}	
+
+	/**
+	 * Roll over to year
+	 *
+	 * @param year to roll over to.
+	 * @return success true|false
+	 */
+	public function roll_over_to_year($year)
+	{	
+		$model = $this->data_type;
+
+		// Check is not already rolled over
+		if($model::where("year", "=", $year)->where("instance_id", "=", $this->instance_id)->first(array('id')) != null){
+			// Fail since this has already been rolled over
+			return false;
+		}
+		// Get basic values to rollover
+		$rollover_values = $this->attributes;
+
+		// remove values we dont want to keep
+		foreach(array('id','live',) as $key){
+			unset($rollover_values[$key]);
+		} 
+
+		// Change year
+		$rollover_values->year = $year;
+
+		// Create new instance and set values
+		$new = new $model;
+		$new->fill($rollover_values);
+		
+		// Save to create revisions
+		return $new->save();
+	}
 
 	/**
 	 * make a revision of this item live.
@@ -170,24 +255,39 @@ class Revisionable extends SimpleData {
 			$revision = $this->get_revision($revision);
 		}
 
-		// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
-		$this->live = '2';
+		// Get the currently "active/selected" revision.
+		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
+		// If the active revision is already current, leave it be
+		$active_revision = $this->get_active_revision();
+		if($active_revision->status == 'live'){
+			$active_revision->status = 'selected';
+			$active_revision->save();
+		}
+
+		//If revision being made live us cyrrent, set item status to say there are no later versions
+		if($revision->status == 'selected'){
+			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
+			$this->live = '2';
+		}else{
+			// If the revision going live isn't the current, ensure system knows
+			// there are still later revisions
+			$this->live = '1';
+		}
 		parent::save();
-
-		// Get revision model.
-		$revision_model = $this->revision_model;
-
-		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 		
+		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
+		$revision_model = static::$revision_model;
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+
 		// Update and save this revision 
 		$revision->status = 'live';
 		$revision->published_at = date('Y-m-d H:i:s');
 		$revision->made_live_by = Auth::user();
 		$revision->save();
 
-		// Update feed file
-		$this->generate_feed_file($revision);
+		// Update feed file & kill output caches
+		static::generate_api_data($revision->year, $revision);
+		API::purge_output_cache();
 
 		// Return result
 		return $revision;
@@ -208,7 +308,7 @@ class Revisionable extends SimpleData {
 		}
 
 		// Get previous revision
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		$previous_revision = $model::where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->take(1)->order_by('id','DESC')->get();
 
 		// return false if no viable results are found to revert to
@@ -235,7 +335,7 @@ class Revisionable extends SimpleData {
 		}
 
 		// Mark all later revisions as unused if we are reverting back
-		$model = $this->revision_model;
+		$model = static::$revision_model;
 		$model::where($this->data_type_id.'_id','=',$this->id)->where('id','>',$revision->id)->update(array('status'=>'unused'));
 
 		// Remove the previously selected item if it is not "later" (and thus caught by the above code) and set to unused.
@@ -249,7 +349,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['edits_by']);
 		unset($revision_values['made_live_by']);
 		unset($revision_values['status']);
-		unset($revision_values[strtolower($this->data_type).'_id']);
+		unset($revision_values[strtolower($this->data_type_id).'_id']);
 
 		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
 
@@ -293,110 +393,74 @@ class Revisionable extends SimpleData {
 		return $options;
 	}
 
+
 	/**
-	 * Removes the automatically generated field ids from our field names.
-	 * 
-	 * @param $record Record to remove field ids from.
-	 * @return $new_record Record with field ids removed.
+	 * get API Data
+	 * Return cached data from data type
+	 *
+	 * @param year Year to get data for
+	 * @return data Object
 	 */
-	public static function remove_ids_from_field_names($record)
-	{
-		$new_record = array();
-		
-		foreach ($record as $name => $value) 
-		{
-			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
-		}
+	public static function get_api_data($year = false){
 
-		return $new_record;
+		// generate keys
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model.'-'.$year;
+
+		// Get data from cache (or generate it)
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+
 	}
 
 	/**
-	* Generate the feed index.json
-	*
-	* @param $programme thats been added
-	* @param $path path to cache location
-	*/
-	private function generate_feed_index($new_programme, $path)
-	{
-		$index_file = $path.'index.json';
-
-		// Obtain names for required fields
-		$title_field = Programme::get_title_field();
-		$slug_field = Programme::get_slug_field();
-		$withdrawn_field = Programme::get_withdrawn_field();
-		$suspended_field = Programme::get_suspended_field();
-		$subject_to_approval_field = Programme::get_subject_to_approval_field();
-		$new_programme_field = Programme::get_new_programme_field();
-		$mode_of_study_field = Programme::get_mode_of_study_field();
-		$ucas_code_field = Programme::get_ucas_code_field();
-
-		$index_data = array();
-
-		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
-		$programmes = ProgrammeRevision::where('year','=',$new_programme->year)
-						->where('status','!=','0')
-						->where($withdrawn_field,'!=','true')
-						->where($suspended_field,'!=','true')
-						->get();
-
-		// Build array
-		foreach($programmes as $programme)
-		{
-			$index_data[$programme->programme_id] = array(
-				'id' => $programme->programme_id,
-				'name' => $programme->$title_field,
-				'slug' => $programme->$slug_field,
-				'award' => ($programme->award != null) ? $programme->award->name : '',
-				'subject' => ($programme->subject_area_1 != null) ? $programme->subject_area_1->name : '',
-				'main_school' =>  ($programme->administrative_school != null) ? $programme->administrative_school->name : '',
-				'secondary_school' =>  ($programme->additional_school != null) ? $programme->additional_school->name : '',
-				'campus' =>  ($programme->location != null) ? $programme->location->name : '',
-				'new_programme' => $programme->$new_programme_field,
-				'subject_to_approval' => $programme->$subject_to_approval_field,
-				'mode_of_study' => $programme->$mode_of_study_field,
-				'ucas_code' => $programme->$ucas_code_field
-			);
-		}
-
-		// Save as JSON
-		file_put_contents($index_file, json_encode($index_data));
-	}
-
-	/**
-	 * Generate all the necessary JSON files that are used in our API. These are:
-	 * GlobalSettings.json
-	 * ProgrammeSettings.json
-	 * Index.json -- this function calls $this->generate_feed_index() to generate this
-	 * {programme_id}.json
-	 * 
-	 * If we're saving a programme, we generate the programme's json file as well as update our index file to reflect the changes.
-	 * All other revisionables are 
-	 * 
-	 * @param $revision The revision to base our saving on
+	 * generate API data
+	 * Get live version of API data from database
+	 *
+	 * @param year Year to get data for
+	 * @return $revision Object
 	 */
-	public function generate_feed_file($revision)
-	{
-		// global, settings, programme
-		$data_type = get_called_class();
-		$cache_location = path('storage') .'api'.'/ug/'.$revision->year.'/';
+	public static function generate_api_data($year = false, $revision = false){
 
-		// if our $cache_location isnt available, create it
-		if (!is_dir($cache_location))
-		{
-			mkdir($cache_location, 0755, true);
-		}
+		// Get model and key
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model.'-'.$year;
 
-		// if we're saving a programme
-		if($data_type == 'Programme')
-		{
-			file_put_contents($cache_location.$revision->programme_id.'.json', json_encode($revision->to_array()));
-			$this->generate_feed_index($revision,$cache_location);
-		}
-		else
-		{
-			file_put_contents($cache_location.$data_type.'.json', json_encode($revision->to_array()));
-		}
+		// If revision not passed, get data
+		if(!$revision){
+			$revisionModel = $model::$revision_model;
+			$revision = $revisionModel::where('status', '=', 'live')->where('year', '=', $year)->first();
+		} 
+
+		// Return false if there is no live revision
+		if(sizeof($revision) === 0 || $revision === null){
+			return false;
+		} 
+
+		// Store data in to cache
+		Cache::put($cache_key, $revision_data = $revision->attributes, 2628000);
+		// return
+		return $revision_data;
 	}
+
+	/**
+     * Simplifies the object by IDs from field names.
+     * 
+     * @todo This duplicates functionality in revisionable. Refactor or remove.
+     * @return StdClass A simplified version of the object minus its field names.
+     */
+    public function trim_ids_from_field_names()
+    {
+    	$trimmed = new StdClass();
+
+    	foreach ($this->attributes as $name => $value) 
+		{
+			$name = preg_replace('/_\d{1,3}$/', '', $name);
+			$trimmed->$name = $value;
+		}
+
+		return $trimmed;
+    }
 
 }
+
+class RevisioningException extends \Exception {}

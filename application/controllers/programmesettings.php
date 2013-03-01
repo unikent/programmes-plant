@@ -84,14 +84,14 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+				$subject->$col = Input::get($col);
 			}
 
 			$subject->save();
 
-			Messages::add('success','Subject added');
+			Messages::add('success','Programme settings created.');
 
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'');
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit');
 
 	}
 
@@ -114,12 +114,14 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 			$f = $this->get_fields();
 			foreach ($f as $c) {
 				$col = $c->colname;
-				if(Input::get($col) != null)  $subject->$col = Input::get($col);
+				$subject->$col = Input::get($col);
 			}
 
 			$subject->save();
 
-			return Redirect::to($year.'/'. $type.'/'. $this->views);
+			Messages::add('success','Programme settings updated.');
+
+			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit');
 
 	}
 

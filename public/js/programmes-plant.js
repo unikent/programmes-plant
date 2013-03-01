@@ -1,14 +1,22 @@
 //methods
 function show_options(selectbox) {
     if ($(selectbox).val() == 'select' || $(selectbox).val() == 'checkbox' || $(selectbox).val() == 'table_select' || $(selectbox).val() == 'table_multiselect') {
-        $('#ext_opt').show();
+        //Show all fields
+        $('#ext_opt, #form_extra_controls').show();
+
+    }else if($(selectbox).val() == 'help'){
+        //Only show top fields.
+         $('#ext_opt, #form_extra_controls').hide();
     }else {
+      //Show all fields except options
+        $('#form_extra_controls').show();
         $('#ext_opt').hide();
     }
 }
 
 //onLoad setup JS listeners
 $(document).ready(function (){
+
 
     //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
     $(".popup_toggler").click(function(){  
@@ -198,19 +206,9 @@ $(document).ready(function (){
     * data tables for programme index page
     *
     */
-    $('#programme-list').dataTable( {
-        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
-        "sPaginationType": "bootstrap",
-        "iDisplayLength": 20,
-        "oLanguage": {
-            "sSearch": ""
-        },
-        "aoColumns": [ 
-          { "bSortable": false, 'iDataSort': false },
-          { "bSortable": false, 'iDataSort': true },
-          { "bSortable": false }
-          ]
-    });
+
+     init_dataTable();
+    
     $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
     
     /*
@@ -222,4 +220,88 @@ $(document).ready(function (){
       $("[rel=tooltip]").tooltip();
     });
 
+
+    // Word Limit system!
+    $('input[data-limit]').each(function(x){
+
+      var self = {};
+      // Get word limit from item
+      self.limit = $(this).attr("data-limit");
+      self.limiting_on_words = false;
+      self.dom = document.createElement('span');
+      self.dom.className = 'text_limits';
+
+      // Work out if limit should be word or char based
+      if(self.limit.substring(self.limit.length-1) == 'w'){
+        self.limiting_on_words = true;
+        self.limit = parseInt(self.limit.substring(0, self.limit.length-1));
+      }else{
+        self.limit = parseInt(self.limit);
+      }
+
+      // Add display span
+      $(self.dom).insertAfter($(this));
+
+      // Find how much of word/char limit is left
+      var limit_left = function(field){
+        if(self.limiting_on_words){
+          //word limits
+          //See http://stackoverflow.com/questions/6543917/count-number-of-word-from-given-string-using-javascript
+          return self.limit - field.val().split(/\s+\b/).length;
+        }else{
+          //chars left
+          return self.limit - field.val().length;
+        }
+      }
+
+      // check length of input and show result
+      var checkLength = function(field){
+        // How much if left
+        var left = limit_left(field);
+
+        // If less than 5, display in Red
+        if(left < 5){
+          self.dom.style.color = 'red';
+        }else{
+          self.dom.style.color = '';
+        }
+
+        //show message to user
+        if(self.limiting_on_words){
+          self.dom.innerHTML = left+' words left';
+        }else{
+          self.dom.innerHTML =  left+' characters left';
+        }
+      }
+      //Attach listeners
+      $(this).keydown(function(){ checkLength($(this)); });
+      $(this).focus(function(){ checkLength($(this)); });
+      checkLength($(this)); // so there is data initally.
+    });
+
 });
+
+function init_dataTable(){
+
+  try{
+
+    $('#programme-list').dataTable( {
+        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 20,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "aoColumns": [ 
+            { "bSortable": false, 'iDataSort': 1 },
+            { "bSortable": false},
+            { "bSortable": false }
+          ]
+    });
+
+  }catch(e){
+    // Dont kill the page on error...
+  }
+}
+    
+
