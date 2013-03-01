@@ -10,6 +10,8 @@ It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](htt
 
 [![Build Status - develop](https://travis-ci.org/unikent/programmes-plant.png?branch=develop)](https://travis-ci.org/unikent/programmes-plant) `develop`
 
+![Programmes plant homepage screenshot](https://github.com/unikent/programmes-plant/blob/master/screenshot.png "Programmes plant homepage screenshot")
+
 ## Development Setup
 
 The following are instructions on running the Programmes Plant on a local machine for development.
