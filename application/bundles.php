@@ -36,6 +36,7 @@
 return array(
     'date' => array('auto'=>true),
     'phpsession' => array('auto' => true),
+    'verify'    => array('auto' => true),
     'ldap' => array('auto' => true),
     'filch' => array('auto' => true)
 );
