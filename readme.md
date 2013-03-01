@@ -10,7 +10,7 @@ It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](htt
 
 [![Build Status - develop](https://travis-ci.org/unikent/programmes-plant.png?branch=develop)](https://travis-ci.org/unikent/programmes-plant) `develop`
 
-![Programmes plant homepage screenshot](https://github.com/unikent/programmes-plant/blob/develop/screenshot.png "Programmes plant homepage screenshot")
+![Programmes plant homepage screenshot](https://github.com/unikent/programmes-plant/blob/master/screenshot.jpg "Programmes plant homepage screenshot")
 
 ## Development Setup
 
