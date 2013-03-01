@@ -183,7 +183,7 @@ class ModuleData_Task {
         else
         {
             // make sure the cluster set is an array. If there's only one item in a cluster the web service returns it as an object rather than an array (which is not really what we want)
-            if ( ! is_array($programme_modules->response->rubric->cluster) )
+            if ( isset($programme_modules->response->rubric->cluster) && ! is_array($programme_modules->response->rubric->cluster) )
             {
                 $programme_modules->response->rubric->cluster = array($programme_modules->response->rubric->cluster);
             }
