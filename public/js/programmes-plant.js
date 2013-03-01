@@ -293,8 +293,8 @@ function init_dataTable(){
             "sSearch": ""
         },
         "aoColumns": [ 
-            { "bSortable": false, 'iDataSort': false },
-            { "bSortable": false, 'iDataSort': true },
+            { "bSortable": false, 'iDataSort': 1 },
+            { "bSortable": false},
             { "bSortable": false }
           ]
     });
