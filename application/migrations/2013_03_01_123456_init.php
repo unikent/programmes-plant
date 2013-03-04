@@ -52,8 +52,9 @@ class Init {
 			$table->boolean('disabled');
 			$table->boolean('deleted');
 			$table->timestamps();
-
-			$table->foreign('role_id')->references('id')->on(VERIFY_PREFIX.'roles');
+			if(Request::env() != 'test'){
+				$table->foreign('role_id')->references('id')->on(VERIFY_PREFIX.'roles');
+			}
 		});
 
 		Schema::create(VERIFY_PREFIX.'permission_role', function($table)
@@ -64,9 +65,10 @@ class Init {
 			$table->integer('permission_id')->unsigned()->index();
 			$table->integer('role_id')->unsigned()->index();
 			$table->timestamps();
-
-			$table->foreign('permission_id')->references('id')->on(VERIFY_PREFIX.'permissions');
-			$table->foreign('role_id')->references('id')->on(VERIFY_PREFIX.'roles');
+			if(Request::env() != 'test'){
+				$table->foreign('permission_id')->references('id')->on(VERIFY_PREFIX.'permissions');
+				$table->foreign('role_id')->references('id')->on(VERIFY_PREFIX.'roles');
+			}
 		});
 
 		DB::table(VERIFY_PREFIX.'roles')->insert(array(

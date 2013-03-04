@@ -25,8 +25,10 @@ class User_Roles_One_To_Many {
 			$table->integer('role_id')->unsigned()->index();
 			$table->timestamps();
 
-			$table->foreign('user_id')->references('id')->on($prefix.'users');
-			$table->foreign('role_id')->references('id')->on($prefix.'roles');
+			if(Request::env() != 'test'){
+				$table->foreign('user_id')->references('id')->on($prefix.'users');
+				$table->foreign('role_id')->references('id')->on($prefix.'roles');
+			}
 		});
 
 		$users = DB::table($prefix.'users')->get();
@@ -43,8 +45,10 @@ class User_Roles_One_To_Many {
 
 		Schema::table($prefix.'users', function($table) use($prefix)
 		{
-			$table->drop_foreign($prefix.'users_role_id_foreign');
-			$table->drop_index($prefix.'users_role_id_index');
+			if(Request::env() != 'test'){
+				$table->drop_foreign($prefix.'users_role_id_foreign');
+				$table->drop_index($prefix.'users_role_id_index');
+			}
 			$table->drop_column('role_id');
 		});
 	}
@@ -81,7 +85,7 @@ class User_Roles_One_To_Many {
 
 		Schema::table($prefix.'users', function($table) use ($prefix)
 		{
-			$table->foreign('role_id')->references('id')->on($prefix.'roles');
+			if(Request::env() != 'test') $table->foreign('role_id')->references('id')->on($prefix.'roles');
 		});
 
 		Schema::drop($prefix.'role_user');
