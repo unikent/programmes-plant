@@ -37,13 +37,15 @@ curl -s https://raw.github.com/unikent/programmes-plant/setup/setup.sh | sh
 mkdir application/config/local && cp application/config/*.sample application/config/local && ls application/config/local/*.sample | while read file; do mv $file  `echo $file | sed s/.sample//`; done
 ```
 
-5. You will need to create a MySQL database if you plan to use MySQL. Create this database and add the credentials to `application/config/local/database.php`. If you want to get this running using SQLite then change line 45 of `application/config/local/database.php` to be `sqlite` not `mysql`. Should just be good to go.
+5. You will need to create a MySQL database. Create this database and add the credentials to `application/config/local/database.php`.
 
 6. The application requires an authentication driver to be used. The details of this can be setup in `application/config/local/auth.php`. We use our own LDAP driver. If you decide to use our bundled LDAP driver, the server settings can go in `application/config/local/ldap.php`.
 
 7. Run `php artisan migrate:install --env=local` to setup the migtations table. Then run `php artisan migrate --env=local` to run all the migrations to setup your database.
 
-6. Point a browser at the `public/` folder.
+6. Point a web server at the `public/` folder. If the domain you have aliased locally is not like 'localhost' or '*.dev' then Laravel will not be able to work out that you are running in the local environment and it will throw an exception on every page. If you want to use something other than these, add your environment to the array at `'local' =>` on line 25 of `./paths.php` at the root of this repository. 
+
+7. Point a browser to the URL of the Programmes Plant!
 
 ## Testing
 
