@@ -6,7 +6,7 @@
  *
  * Example: php artisan setinitaluser myname --env=local
  */
-class SetInitalUser_Task {
+class SetInitialUser_Task {
 
 	/**
 	 * Run the setinitaluser task
@@ -22,7 +22,7 @@ class SetInitalUser_Task {
 		} 
 		// Dont run if not new system
 		if(sizeof(DB::table('usersys_users')->get()) !== 1){
-			echo "\n Error: For securty reasons set inital user will only run when only the inital user is present in the DB \n";
+			echo "\n Error: For securty reasons set inital user will only run when only the initial user is present in the DB \n";
 			return;
 		}
 
@@ -34,6 +34,6 @@ class SetInitalUser_Task {
 		));
 		
 		// Confirm success
-		echo "\n Inital user set as {$username}. You can now log in. \n";
+		echo "\n Initial user set as {$username}. You can now log in. \n";
 	}
 }
