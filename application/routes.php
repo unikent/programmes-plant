@@ -107,10 +107,9 @@ Route::group(array('before' => ''), function(){
 	Route::get(array('/api/(:any).(json|xml)','/api/(:any)'), 'api@data');
 
 	Route::any('/api/preview/(:any?)', 'api@preview');
-
-
-	// XCRI-CAP Feeds
-	Route::any('/xcri-cap/(undergraduate)/([0-9]{4})', 'xcri-cap@index');
+	
+	// XCRI-CAP Feed
+	Route::any('/api/([0-9]{4})/(undergraduate)/xcri-cap', 'api@xcri_cap');
 });
 
 // Login/out
