@@ -1,15 +1,22 @@
 <?php
+	
+use \Verify\Models\user;
 
 class Users_Controller extends Admin_Controller {
 
 	public $restful = true;
-	public $views = 'users';
+
+	public $required_permissions = array("manage_users");
 
 	public function get_index()
 	{
-		$this->data[$this->views] = User::order_by('id','asc')->get();
-		return View::make('admin.'.$this->views.'.index',$this->data);
+
+		$users = User::get();
+
+		$this->layout->nest('content', 'admin.users.index',  array('users'=>$users));
 	}
+
+
 
 	public function get_edit($object_id = false){
 		// Do our checks to make sure things are in place

@@ -5,6 +5,8 @@ class Fields_Controller extends Admin_Controller {
 	public $restful = true;
 	public $views = 'fields';
 
+	public $required_permissions = array('configure_fields');
+
 	/**
 	 * Display the fields index page.
 	 */
