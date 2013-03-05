@@ -14,6 +14,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 	// Whether to use a custom form here
 	var $custom_form = false;
 
+	public $required_permissions = array("edit_data");
+
 	public function __construct()
 	{
 		// Quick use variable for access to language files

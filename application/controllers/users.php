@@ -6,6 +6,8 @@ class Users_Controller extends Admin_Controller {
 
 	public $restful = true;
 
+	public $required_permissions = array("manage_users");
+
 	public function get_index()
 	{
 
