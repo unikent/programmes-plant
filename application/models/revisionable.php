@@ -468,7 +468,7 @@ class Revisionable extends SimpleData {
      */
     public static function trim_id_from_field_name($name)
     {
-		return preg_replace('/_\d{1,3}$/', '', $name);
+		return preg_replace('/_\d{1,4}$/', '', $name);
     }
 
 }
