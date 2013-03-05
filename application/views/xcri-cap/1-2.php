@@ -12,7 +12,7 @@
   xsi:schemaLocation="http://xcri.org/profiles/1.2/catalog http://www.xcri.co.uk/bindings/xcri_cap_1_2.xsd http://xcri.org/profiles/1.2/catalog/terms  http://www.xcri.co.uk/bindings/xcri_cap_terms_1_2.xsd http://xcri.co.uk http://www.xcri.co.uk/bindings/coursedataprogramme.xsd"
   generated="<?php echo "2012-04-11T17:36:22.218Z"; ?>">
   <?php if (!empty($globalsettings->contributor)): ?>
-    <dc:contributor><?php echo html_entity_decode(strip_tags($globalsettings->contributor)); ?></dc:contributor>
+    <dc:contributor><![CDATA[<?php echo html_entity_decode(strip_tags($globalsettings->contributor)); ?>]]></dc:contributor>
   <?php endif; ?>
   <?php if (!empty($globalsettings->catalog_description)): ?>
     <dc:description>
