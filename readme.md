@@ -28,7 +28,7 @@ curl -s https://raw.github.com/unikent/programmes-plant/setup/setup.sh | sh
 
 1. Clone this repository. Change into the directory.
 
-2. Obtain Laravel as a submodule by running `git submodule init` then `git submodule update`, unless you have done a recursive clone. Note that this app uses the [University of Kent Laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the Laravel core. This fork is generally kept up to date with the Laravel master branch, so including it as a submodule should give you the latest version of Laravel.
+2. Obtain Laravel as a submodule by running `git submodule init` then `git submodule update`, unless you have done a recursive clone. Note that this app uses the [University of Kent Laravel fork](https://github.com/unikent/laravel.git), because this contains important performance enhancements as yet not pulled into the Laravel core. This fork is generally kept up to date with the Laravel master branch, so including it as a submodule should give you the latest version of Laravel. We also use the [Verify Laravel bundle](https://github.com/Toddish/Verify) as a sub-module but maintain our own fork.
 
 3. Install [Composer](http://getcomposer.org/) and run `composer.phar install --dev` to install dependencies.
 
@@ -39,13 +39,15 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 5. You will need to create a MySQL database. Create this database and add the credentials to `application/config/local/database.php`.
 
-6. The application requires an authentication driver to be used. The details of this can be setup in `application/config/local/auth.php`. We use our own LDAP driver. If you decide to use our bundled LDAP driver, the server settings can go in `application/config/local/ldap.php`.
+6. The application requires an authentication driver to be used. The details of this can be setup in `application/config/local/auth.php`. We use our own LDAP Verify driver. If you decide to use our bundled LDAP Verify driver, the server settings can go in `application/config/local/ldap.php`.
 
 7. Run `php artisan migrate:install --env=local` to setup the migtations table. Then run `php artisan migrate --env=local` to run all the migrations to setup your database.
 
-6. Point a web server at the `public/` folder. If the domain you have aliased locally is not like 'localhost' or '*.dev' then Laravel will not be able to work out that you are running in the local environment and it will throw an exception on every page. If you want to use something other than these, add your environment to the array at `'local' =>` on line 25 of `./paths.php` at the root of this repository. 
+8. Run `php artisan setinitialuser <your username> --env=local` to setup the hyperadmininistrator (the user with all access on the application - a.k.a The Big Cheese). This user must correspond to a valid LDAP user if you are using LDAP.
 
-7. Point a browser to the URL of the Programmes Plant!
+9. Point a web server at the `public/` folder. If the domain you have aliased locally is not like 'localhost' or '*.dev' then Laravel will not be able to work out that you are running in the local environment and it will throw an exception on every page. If you want to use something other than these, add your environment to the array at `'local' =>` on line 25 of `./paths.php` at the root of this repository. 
+
+10. Point a browser to the URL of the Programmes Plant!
 
 ## Testing
 
