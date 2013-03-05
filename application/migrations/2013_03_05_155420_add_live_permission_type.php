@@ -14,7 +14,6 @@ class Add_Live_Permission_Type {
 	public function __construct()
 	{
 		Config::set('verify::verify.prefix', 'usersys');
-		Config::set('verify::verify.super_admin', 'Administrator');
 	}
 
 	/**
