@@ -666,14 +666,20 @@ class TestRevisionable extends ModelTestCase {
 		$to_trim_1 = 'some_field_1';
 		$to_trim_2 = 'some_other_field_456';
 		$to_trim_3 = 'and_another_field_5684';
+		$to_trim_4 = 'field_without_id';
+		$to_trim_5 = 'field_with_very_long_id_99999';
 
 		$trimmed_1 = Revisionable::trim_id_from_field_name($to_trim_1);
 		$trimmed_2 = Revisionable::trim_id_from_field_name($to_trim_2);
 		$trimmed_3 = Revisionable::trim_id_from_field_name($to_trim_3);
+		$trimmed_4 = Revisionable::trim_id_from_field_name($to_trim_4);
+		$trimmed_5 = Revisionable::trim_id_from_field_name($to_trim_5);
 
 		$this->assertEquals('some_field', $trimmed_1);
 		$this->assertEquals('some_other_field', $trimmed_2);
 		$this->assertEquals('and_another_field', $trimmed_3);
+		$this->assertEquals('field_without_id', $trimmed_4);
+		$this->assertEquals('field_with_very_long_id_99999', $trimmed_5);
 	}
 
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
