@@ -6,6 +6,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	public $views = 'programmes';
 	protected $model = 'Programme';
 
+	public $required_permissions = array("edit_own_programmes", "view_all_programmes", "edit_all_programmes");
+
 	/**
 	 * Routing for /$year/$type/programmes
 	 *
