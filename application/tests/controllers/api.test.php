@@ -438,5 +438,22 @@ class TestAPI_Controller extends ControllerTestCase
 
     }
 
+    public function testget_xcri_capShouldReturnAnXMLContentType() {}
+
+    public function testget_xcri_capShouldReturnA200WhenDataIsFoundForAYear() {}
+
+    public function testget_xcri_capShouldReturnA404WhenDataIsNotFoundForAYear() {}
+
+    public function testget_xcri_capShouldReturnDataForUndergraduatesForAYear() {}
+
+    public function testget_xcri_capShouldReturnA404WhenGlobalSettingsThatAreRequiredAreMissing() {}
+
+    public function testget_xcri_capShouldReturnAValidXMLDocument() {}
+
+    public function testget_xcri_capShouldReturnAValidXCRIFeed() {}
+
+    public function testget_xcri_capShouldReflectChangesInDataInTheXCRIFeed() {}
+
+    public function testget_xcri_capShouldFillInAllRequiredElementsOfTheXCRIFeedOrError() {}
 
 }
