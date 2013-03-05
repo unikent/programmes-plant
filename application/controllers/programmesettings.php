@@ -6,6 +6,8 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	public $views = 'programmesettings';
 	protected $model = 'ProgrammeSetting';
 
+	public $required_permissions = array("edit_overridable_data");
+
 	/**
 	 * Routing for /$year/$type/programmesettings
 	 *
