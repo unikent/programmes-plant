@@ -10,7 +10,7 @@ class TestAwards_Controller extends ControllerTestCase
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
-
+		Auth::login(1);
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
 		TestAward::tearDown();
@@ -75,6 +75,7 @@ class TestAwards_Controller extends ControllerTestCase
 		{
 			$this->assertTrue(in_array($award, $returned_array), "Awards index did not return inputted awards.");
 		}
+		
 	}
 
 	/**

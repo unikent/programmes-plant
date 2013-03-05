@@ -4,7 +4,6 @@ require_once Bundle::path('verify_ldap') . '../verify/models/Role.php';
 require_once Bundle::path('verify_ldap') . '../verify/models/Permission.php';
 
 Config::set('verify::verify.prefix', 'usersys');
-Config::set('verify::verify.super_admin', 'Administrator');
 
 use \Verify\Models\Permission, \Verify\Models\Role ;
 
