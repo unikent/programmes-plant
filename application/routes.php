@@ -143,11 +143,23 @@ Route::filter('before', function()
 	header('X-UA-Compatible: IE=Edge,chrome=1');
 });
 
-Route::filter('auth', function()
+Route::filter('auth', function($permissions)
 {
     Session::put('referrer', URL::current());
 
-    if (Auth::guest()) {
+    // Check user is logged in
+    if (Auth::guest()) 
+    {
     	return Redirect::to('login');
     }
+
+	// If there are permissions, check user has them
+	if (sizeof($permissions) !== 0 && !Auth::user()->can($permissions))
+	{
+		//User is not allowed here. Tell them
+		$page = View::make('admin.inc.no_permissions', $permissions);
+		return View::make('layouts.admin', array('content'=> $page));
+	}
+
+	// All okay?
 });
