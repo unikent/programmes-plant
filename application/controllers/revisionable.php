@@ -95,8 +95,7 @@ class Revisionable_Controller extends Admin_Controller {
 	 */
 	public function get_make_live($year, $type, $revisionable_item_id = false, $revision_id = false)
 	{
-		// Can the user perform this action?
-		if (! Auth::user()->can('make_revision_live')) return $this->insufficient_permissions('make_revision_live'); 
+		$this->check_user_can('make_revision_live');
 		
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
