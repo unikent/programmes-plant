@@ -21,8 +21,31 @@ class Programmes_Controller extends Revisionable_Controller {
 		$withdrawn_field = Programme::get_withdrawn_field();
 		$suspended_field = Programme::get_suspended_field();
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
+		$subject_area_1 = Programme::get_subject_area_1_field();
+
 		$model = $this->model;
-		$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->order_by($title_field)->get(array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live'));
+
+		// Get user
+		$user = Auth::user();
+		// get required fields
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live');
+
+		// If user can view all programmes in system, get a list of all of them
+		if($user->can("view_all_programmes"))
+		{
+			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->order_by($title_field)->get($fields_array);
+		}
+		elseif($user->can("edit_own_programmes"))
+		{
+			// If not, but user has permissions to edit own, show list of programmes with a subject area_1 assigned to the programme
+			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->subjects))->get($fields_array);
+		}
+		else
+		{
+			// Else empty list.
+			$programmes = array();
+		}
+
 		
 		$this->data[$this->views] = $programmes;
 
