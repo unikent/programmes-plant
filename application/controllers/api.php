@@ -239,6 +239,121 @@ class API_Controller extends Base_Controller {
 
 		return Response::json($data, $code, static::$headers);
 	}
-	
 
+	/**
+	 * Return an XCRI-CAP feed for all programmes in a given year.
+	 * 
+	 * @param string $year year to generate xcri-cap of.
+	 * @param string $level Either undergraduate or postgraduate.
+	 * @return Response An XCRI-CAP field of the programmes for that year.
+	 */
+	public function get_xcri_cap($year, $level)
+	{
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
+		}
+
+		// pull from cache or send a 404
+		$cache_key = "xcri-cap-ug-$year";
+		$xcri = (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
+
+		if(!$xcri){
+			return Response::make('', '404');
+		}
+
+		//atempt gzipping the feed
+		$xcri = static::gzip($xcri);
+
+		// set the content-type header
+		static::$headers['Content-Type'] = 'text/xml';
+		
+		//send xcri-cap as our response
+		return Response::make($xcri, 200, static::$headers);
+	}
+
+	/**
+	 * Generate and cache an XCRI-CAP feed for all programmes in the given year.
+	 * 
+	 * @param string $year year to generate xcri-cap of.
+	 * @param string $level Either undergraduate or postgraduate.
+	 * @return Response An XCRI-CAP field of the programmes for that year.
+	 */
+	public static function get_generate_xcri_cap($year, $level){
+
+		// get a list of all out programmes through the API
+		$api_index = API::get_index($year, $level);
+
+		$date = array();
+
+		// fetch each programme individually for our xcri feed
+		foreach (array_keys($api_index) as $programme_id) {
+			$data['programmes'][] = API::get_xcrified_programme($programme_id, $year);
+		}
+
+		// if there are no programmes throw a 501 error
+		if (! $data['programmes'])
+		{
+			return Response::make('', 501);
+		}
+
+		// get the global settings for our xcri feed
+		$globalsettings	= GlobalSetting::get_api_data($year);
+
+		// if there are no global settings throw a 501 error
+		if (! $globalsettings)
+		{
+			return Response::make('', 501);
+		}
+
+		// neaten up the global settings
+		$data['globalsettings'] = new StdClass();
+		foreach ($globalsettings as $key => $value) {
+			$key = GlobalSetting::trim_id_from_field_name($key);
+			$data['globalsettings']->$key = $value;
+		}
+
+		// assemble the xcri-cap xml
+		$xcri_xml = View::make('xcri-cap.1-2', $data);
+
+		// cache the xcri-cap xml before sending it
+		$cache_key = "xcri-cap-ug-$year";;
+		Cache::put($cache_key, $xcri_xml, 2628000);
+
+		return $xcri_xml;
+
+	}
+
+	/**
+	 * gzip the content if the request can handle gzipped content
+	 *
+	 * @param $content The string to gzip
+	 * @return $content Hopefully gzipped
+	 */
+	public static function gzip($content)
+	{
+		// what do we have in our Accept-Encoding headers
+		$HTTP_ACCEPT_ENCODING = isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ? $_SERVER["HTTP_ACCEPT_ENCODING"] : ''; 
+	    
+		// set the right encoding
+		if( headers_sent() ) 
+	        $encoding = false; 
+	    else if( strpos($HTTP_ACCEPT_ENCODING, 'x-gzip') !== false ) 
+	        $encoding = 'x-gzip'; 
+	    else if( strpos($HTTP_ACCEPT_ENCODING,'gzip') !== false ) 
+	        $encoding = 'gzip'; 
+	    else 
+	        $encoding = false;
+		
+	    if($encoding){
+			// Add the appropriate encoding header and gzip our content
+	    	static::$headers['Content-Encoding'] = $encoding;
+	    	$content = "\x1f\x8b\x08\x00\x00\x00\x00\x00" . gzcompress($content);
+	    }
+
+	    return $content;
+	}
 }

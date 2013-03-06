@@ -415,6 +415,51 @@ class API {
 		return str_replace('&','&amp;',$xml->asXML());
 	}
 
+	/**
+	 * Creates a flat representation of the object for use in XCRI.
+	 * 
+	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
+	 */
+	public static function get_xcrified_programme($id, $year)
+	{
+		// get the programme
+		$programme = static::get_programme($id, $year);
+	
+		// format the programme appropriately
+		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
+
+		$programme['award'] = isset($programme['award'][0]) ? $programme['award'][0] : array();
+		$programme['administrative_school'] = isset($programme['administrative_school'][0]) ? $programme['administrative_school'][0] : array();
+		$programme['additional_school'] = isset($programme['additional_school'][0]) ? $programme['additional_school'][0] : array();
+		$programme['subject_area_1'] = isset($programme['subject_area_1'][0]) ? $programme['subject_area_1'][0] : array();
+		$programme['subject_area_2'] = isset($programme['subject_area_2'][0]) ? $programme['subject_area_2'][0] : array();
+		$programme['location'] = isset($programme['location'][0]) ? $programme['location'][0] : array();
+		$programme['subject_leaflet'] = isset($programme['subject_leaflet'][0]) ? $programme['subject_leaflet'][0] : array();
+		$programme['subject_leaflet_2'] = isset($programme['subject_leaflet_2'][0]) ? $programme['subject_leaflet_2'][0] : array();
+		
+		// merge subjects areas into one array 
+		if(!empty($programme['subject_area_1'])){
+			$programme['subjects'][] = $programme['subject_area_1'];
+		}
+
+		if(!empty($programme['subject_area_2'])){
+			$programme['subjects'][] = $programme['subject_area_2'];
+		}
+
+		// Set campus as default while we are making a dummy.
+		$programme['attendance_mode_id'] = 'CM';
+		$programme['attendance_mode'] = 'Campus';
+
+		// Also dummy attendence_pattern_id for now. Set to daytime.
+		$programme['attendance_pattern'] = 'Daytime';
+		$programme['attendance_pattern_id'] = 'DT';
+
+		// Leave as is for the moment.
+		$programme['cost'] = $programme['tuition_fees'];
+
+		return $programme;
+	}
+
 }
 
 class MissingDataException extends \Exception {}
