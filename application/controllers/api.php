@@ -258,7 +258,7 @@ class API_Controller extends Base_Controller {
 		}
 
 		// pull from cache or generate afresh
-		$cache_key = "api-output-ug.xcri-cap-$year";
+		$cache_key = "xcri-cap-ug-$year";
 		$xcri = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_xcri_cap($year, $level);
 
 		//atempt gzipping the feed
@@ -316,7 +316,7 @@ class API_Controller extends Base_Controller {
 		$xcri_xml = View::make('xcri-cap.1-2', $data);
 
 		// cache the xcri-cap xml before sending it
-		$cache_key = "api-output-ug.xcri-cap-$year";
+		$cache_key = "xcri-cap-ug-$year";;
 		Cache::put($cache_key, $xcri_xml, 2628000);
 
 		return $xcri_xml;
