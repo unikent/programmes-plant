@@ -67,6 +67,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_create($year, $type, $item_id = false)
 	{
+		$this->check_user_can("create_programmes");
+
 		if ($item_id)
 		{
 			// We're cloning item_id
@@ -126,6 +128,9 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function post_create($year, $type)
 	{
+		
+		$this->check_user_can("create_programmes");
+
 		// placeholder for any future validation rules
 		$rules = array(
 		);
