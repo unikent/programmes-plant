@@ -95,7 +95,7 @@ Route::group(array('before' => ''), function(){
 
 
 	Route::any('users', 'users@index');
-	Route::any('users/(add|edit|delete)', 'users@(:1)');
+	Route::any('users/(add|edit|delete)/(:num?)', 'users@(:1)');
 
 
 	// API
