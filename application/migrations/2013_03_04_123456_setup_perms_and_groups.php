@@ -1,7 +1,7 @@
 <?php
-require_once Bundle::path('verify_ldap') . '../verify/models/EloquentVerifyBase.php';
-require_once Bundle::path('verify_ldap') . '../verify/models/Role.php';
-require_once Bundle::path('verify_ldap') . '../verify/models/Permission.php';
+require_once Bundle::path('verify_ldap') . '../verify/models/eloquentverifybase.php';
+require_once Bundle::path('verify_ldap') . '../verify/models/role.php';
+require_once Bundle::path('verify_ldap') . '../verify/models/permission.php';
 
 Config::set('verify::verify.prefix', 'usersys');
 
