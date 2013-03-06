@@ -29,7 +29,9 @@ class Admin_Controller extends Base_Controller {
 	 */
 	protected function insufficient_permissions($permissions)
 	{
-		return $this->layout->nest('content', 'admin.inc.no_permissions', array("perms" => (array)$permissions));
+		$this->layout->nest('content', 'admin.inc.no_permissions', array("perms" => (array)$permissions));
+
+		echo Response::make($this->layout)->render();
 	}
 
 	/*
@@ -40,15 +42,12 @@ class Admin_Controller extends Base_Controller {
 	 */
 	protected function check_user_can($permissions)
 	{
-		// If a user does not have the required permission
-		if(!Auth::user()->can($permissions)){
-			if(!is_array($permissions)) $permissions = array($permissions);
+		// If a user does not have the required permissions.
+		if(!Auth::user()->can($permissions))
+		{
 			// If user is not able to view/use this method, force output of page and die.
-			$this->layout->nest('content', 'admin.inc.no_permissions', array("perms" => $permissions));
+			$this->insufficient_permissions($permissions);
 
-			echo Response::make($this->layout)->render();
-			
-			// Stop the framework
 			die();
 		}
 	}
