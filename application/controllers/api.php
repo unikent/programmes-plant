@@ -282,7 +282,7 @@ class API_Controller extends Base_Controller {
 	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
 	 */
-	public static function generate_xcri_cap($year, $level){
+	public static function get_generate_xcri_cap($year, $level){
 
 		// get a list of all out programmes through the API
 		$api_index = API::get_index($year, $level);
@@ -297,7 +297,7 @@ class API_Controller extends Base_Controller {
 		// if there are no programmes throw a 501 error
 		if (! $data['programmes'])
 		{
-			Response::make('', 501);
+			return Response::make('', 501);
 		}
 
 		// get the global settings for our xcri feed
@@ -306,7 +306,7 @@ class API_Controller extends Base_Controller {
 		// if there are no global settings throw a 501 error
 		if (! $globalsettings)
 		{
-			Response::make('', 501);
+			return Response::make('', 501);
 		}
 
 		// neaten up the global settings
