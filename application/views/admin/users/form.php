@@ -27,7 +27,7 @@
             <div class="control-group">
               <?php echo Form::label('subjects', 'Can manage the following subjects',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo  ExtForm::multiselect('subjects[]', Subject::all_as_list(), explode(',',$user->subjects), array('style'=>'height:200px;width:460px;'));?>
+                <?php echo  ExtForm::multiselect('subjects[]', Subject::all_as_list(), ($create ?  array() : explode(',',$user->subjects)), array('style'=>'height:200px;width:460px;'));?>
               </div>
             </div>
 
