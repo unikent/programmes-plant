@@ -1,6 +1,4 @@
 <?php
-require_once Bundle::path('verify_ldap') . '../verify/models/EloquentVerifyBase.php';
-require_once Bundle::path('verify_ldap') . '../verify/models/Permission.php';
 
 use \Verify\Models\Permission as Permission;
 
