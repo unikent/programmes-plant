@@ -3,9 +3,15 @@
 
 <?php echo Messages::get_html()?>
 
+<?php 
+  $can_create_programmes = Auth::user()->can("create_programmes");
+?>
+
+<?php if($can_create_programmes): ?>
 <div style="margin-top:20px; margin-bottom:20px">
   <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/programmes@create')?>" class="btn btn-primary"><?php echo __('programmes.create_programme'); ?></a>
 </div>
+<?php endif; ?>
 <?php if($programmes) : ?>
     <table id="programme-list" class="table table-striped table-bordered">
         <thead>
@@ -40,8 +46,9 @@
                 <?php endif; ?>
             </td>
             <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->attributes["id"]))?>"><?php echo  __('programmes.edit_programme') ?></a>
-    
+              <?php if($can_create_programmes): ?>
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->attributes["id"]))?>"><?php echo  __('programmes.clone') ?></a>
+              <?php endif; ?>
             </td>
           </tr>
         <?php endforeach; ?>

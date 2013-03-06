@@ -47,7 +47,7 @@
 
         <?php if (Auth::user()->can("manage_users")): ?>
         <li class="nav-header">User managment</li>
-        <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'users') ? 'active' : false )?>"><a href="<?php echo url('users')?>"><i class="icon-user"></i> Users </a></li>
+        <li class="<?php echo ( (URI::segment(1) == 'users' ) ? 'active' : false )?>"><a href="<?php echo url('users')?>"><i class="icon-user"></i> Users </a></li>
         <?php endif; ?>
 
 
