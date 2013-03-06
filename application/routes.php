@@ -97,6 +97,9 @@ Route::group(array('before' => ''), function(){
 	Route::any('users', 'users@index');
 	Route::any('users/(add|edit|delete)/(:num?)', 'users@(:1)');
 
+	// Editing suite
+	Route::controller('editor');
+
 	// API
 
 	// Routing for undergraduate API, the only API currently supported.
