@@ -164,14 +164,24 @@ date_default_timezone_set(Config::get('application.timezone'));
 |
 */
 
-// load the phpsession bundle and register it *before* Session::load() is called
-Autoloader::map(array(
-	'PhpSession' => Bundle::path('phpsession').'phpsession.php',
+// Setup auto loaders for required bundles (needed for tasks/tests)
+Autoloader::namespaces(array(
+	'Verify\Models'	=> Bundle::path('verify_ldap') . '../verify/models'
 ));
-Session::extend('phpsession', function()
-{
-	return new PhpSession;
-});
+Autoloader::map(array(
+	// Sessions
+	'PhpSession' => Bundle::path('phpsession').'phpsession.php',
+	// Cacging
+	'Filch\Cache' => Bundle::path('filch').'cache.php',
+	// Auth
+	'Verify_LDAP' 	=> Bundle::path('verify_ldap') . 'libraries/verify_ldap.php',
+	'LDAPConnect' => Bundle::path('verify_ldap').'libraries/ldapconnect.php',
+	'Verify' 	=> Bundle::path('verify_ldap') . '../verify/libraries/verify.php'
+));
+// Attach drivers
+Session::extend('phpsession', function(){ 	return new PhpSession; 		});
+Cache::extend('filch', function(){ 			return new Filch\Cache(path('storage').'cache'.DS); });
+Auth::extend('verify_ldap', function() { 	return new Verify_LDAP; 	});
 
 // the API does not need a session. This is also a way to get rid of the no-cache headers being sent
 if(strpos(Request::uri(), 'api') === 0)
@@ -183,13 +193,3 @@ if (Config::get('session.driver') !== '')
 {
 	Session::load();
 }
-
-// load the filch caching bundle so it's usable on the cli
-Autoloader::map(array(
-	'Filch\\Cache' => Bundle::path('filch').'cache.php',
-));
-
-Cache::extend('filch', function(){
-	return new Filch\Cache(path('storage').'cache'.DS);
-});
-
