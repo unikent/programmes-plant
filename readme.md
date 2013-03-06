@@ -21,7 +21,7 @@ The following are instructions on running the Programmes Plant on a local machin
 Install this in one line? Why of course! Should work on any sensible Unix like system with Git installed.
 
 ```shell
-curl -s https://raw.github.com/unikent/programmes-plant/setup/setup.sh | sh
+curl -s https://raw.github.com/unikent/programmes-plant/setup/setup.sh > temp.sh && sh temp.sh && rm temp.sh
 ```
 
 ### Method 2

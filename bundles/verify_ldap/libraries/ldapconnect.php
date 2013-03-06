@@ -196,6 +196,26 @@ class LDAPConnect
         return false;
     }
 
+     /**
+     * Anonymous get a users details from LDAP (no auth required)
+     *
+     * @param  string $username The username of the user.
+     * @return bool   | array False if the user is not authenticated. An array of their LDAP entries if they are.
+     */
+    public function getUserAnonymous($username){
+        $ds = $this->ldap_connection;
+        if ($ds) {
+            // bind anonymously
+             $r = $this->createRequest($ds, null, null);
+
+             if($r){
+                $sr = ldap_search($this->ldap_connection, $this->ldap_base_rdn, "uid={$username}");
+                return ldap_get_entries($this->ldap_connection, $sr);
+             } 
+        }
+        return false;
+    }
+
     /**
      * Connect to LDAP with given credentals. (Bind)
      *
