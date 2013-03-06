@@ -109,7 +109,7 @@ class Revisionable extends SimpleData {
 		// This will be used mostly when seeding the database.
 		if (! Request::cli())
 		{
-			$revision_values['edits_by'] = Auth::user();
+			$revision_values['edits_by'] = Auth::user()->username;
 		}
 		else 
 		{
@@ -282,7 +282,7 @@ class Revisionable extends SimpleData {
 		// Update and save this revision 
 		$revision->status = 'live';
 		$revision->published_at = date('Y-m-d H:i:s');
-		$revision->made_live_by = Auth::user();
+		$revision->made_live_by = Auth::user()->username;
 		$revision->save();
 
 		// Update feed file & kill output caches
