@@ -21,7 +21,7 @@
         echo '<tr>
           <td>'.$usr->fullname.' ('.$usr->username.')</td>
           
-          <td>'.$usr->email.'</td>
+          <td>'. HTML::mailto(Str::lower($usr->email)) .'</td>
 
           <td>';
           foreach($usr->roles as $role){
