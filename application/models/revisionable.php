@@ -293,6 +293,18 @@ class Revisionable extends SimpleData {
 		return $revision;
 	}
 
+	public function submit_revision_for_editing($revision)
+	{
+		// If we got an ID, then convert it to a revision.
+		if (is_int($revision))
+		{
+			$revision = $this->get_revision($revision);
+		}
+
+		$revision->status = 'under_review';
+		$revision->save();
+	}
+
 	/**
 	 * revert "current" revision to the previous one
 	 * 

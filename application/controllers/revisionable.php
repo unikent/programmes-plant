@@ -111,6 +111,24 @@ class Revisionable_Controller extends Admin_Controller {
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
+
+	public function get_submit_programme_for_editing($year, $type, $revision_item_id = false, $revision_id = false)
+	{
+		$this->check_user_can('submit_programme_for_editing');
+
+		$data = $this->get_revision_data($revision_item_id, $revision_id);
+
+		if (! $data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Get data and change revision to 'under_review' status.
+		list($item, $revision) = $data;
+
+		$modified_revision = $item->submit_revision_for_editing($revision);
+		
+		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
+
+		return Redirect::to($year . '/' . $type . '/' . $this->views);
+	}
 	
 	/**
 	 * Routing for GET /$year/$type/$object_id/unpublish/$revision_id
