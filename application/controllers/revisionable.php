@@ -85,7 +85,7 @@ class Revisionable_Controller extends Admin_Controller {
 	 * Routing for GET /$year/$type/$object_id/make_live/$revision_id
 	 * Routing for GET /$year/$type/make_live/$revision_id
 	 * 
-	 * revisionable_item_id id can be ommited, resulting in that varible containg 
+	 * revisionable_item_id id can be ommited, resulting in that variable containing 
 	 * the revision id instead. (Object assumed to have id 1 in this case)
 	 *
 	 * @param int    $year                  The year of the programme (not used, but to keep routing happy).
