@@ -257,9 +257,13 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 
-		// pull from cache or generate afresh
+		// pull from cache or send a 404
 		$cache_key = "xcri-cap-ug-$year";
-		$xcri = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_xcri_cap($year, $level);
+		$xcri = (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
+
+		if(!$xcri){
+			return Response::make('', '404');
+		}
 
 		//atempt gzipping the feed
 		$xcri = static::gzip($xcri);
