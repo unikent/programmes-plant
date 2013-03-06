@@ -11,7 +11,8 @@ class TestAPI_Controller extends ControllerTestCase
     }
 
     public static function setUpBeforeClass()
-    {
+    {   
+        Auth::login(1);
         Tests\Helper::migrate();
     }
 
@@ -66,6 +67,8 @@ class TestAPI_Controller extends ControllerTestCase
     }
 
     public function generate_programme_dependancies(){
+
+    
         ProgrammeField::create(
                 array(
                         'field_name' => 'New field',

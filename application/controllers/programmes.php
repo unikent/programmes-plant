@@ -116,7 +116,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$programme = new Programme;
 			$programme->year = Input::get('year');
-			$programme->created_by = Auth::user();
+			$programme->created_by = Auth::user()->username;
 			
 			// get the programme fields
 			$programme_fields = ProgrammeField::programme_fields();
