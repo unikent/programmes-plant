@@ -22,6 +22,7 @@ use \Verify\Models\User as User;
       <td>
         <?php
         // This is slightly horrific in terms of making calls here - but it looks really cool!
+        
         $user_details = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 
         if (is_null($user_details))
