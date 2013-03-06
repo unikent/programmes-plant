@@ -30,7 +30,7 @@
 
           echo '</td>
           
-          <td><a class="btn btn-primary" href="'.action('users@edit', array($usr->id)).'">Edit</a> <a class="delete_toggler btn btn-danger" rel="'.$usr->id.'">Delete</a></td>
+          <td><a class="btn btn-primary" href="'.action('users@edit', array($usr->id)).'">Edit</a> <a class="delete_toggler btn btn-danger" href="'.action('users@delete', array($usr->id)).'">Delete</a></td>
         </tr>';
       }
       echo '</tbody></table>';

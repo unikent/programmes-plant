@@ -20,7 +20,7 @@
             <div class="control-group">
               <?php echo Form::label('role', 'Role',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo Form::select('role', $roles, ( Input::old('role') || $create ? Input::old('role') : $user->roles[0]->id ))?>
+                <?php echo Form::select('role', $roles, ( Input::old('role') || $create ? 3 : $user->roles[0]->id ))?>
               </div>
             </div>
 
