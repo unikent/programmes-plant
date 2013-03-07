@@ -11,7 +11,7 @@
 
 		<?php if (Auth::user()->can('make_programme_live')) : ?>
 			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
-		<?php elseif (! Auth::user()->can('make_programme_live') && ! $revision->status == 'under_review') : ?>
+		<?php else : ?>
 			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>">Send for editing</a>
 		<?php endif; ?>
 
