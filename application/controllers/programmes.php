@@ -97,22 +97,22 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param string $type    Undergraduate or postgraduate.
 	 * @param int    $item_id The ID of the programme to edit.
 	 */
-	public function get_edit($year, $type, $itm_id = false)
+	public function get_edit($year, $type, $id = false)
 	{
 		// Do our checks to make sure things are in place
-		if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $id) return Redirect::to($year . '/' . $type . '/' .$this->views);
 
 		// Ensure we have a corresponding course in the database
-		$model = $this->model;
-		$course = $model::find($itm_id);
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$programme = Programme::find($id);
 
-		$this->data['programme'] = $course ;
+		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
+
+		$this->data['programme'] = $programme;
 		
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
-		$this->data['active_revision'] = $course->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
+		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
 
 		//Get lists data
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
