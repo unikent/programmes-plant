@@ -43,20 +43,42 @@ class Fields_Controller extends Admin_Controller {
 
 	public function get_add($type)
 	{
-		$roles = Role::all(true);
-		$this->layout->nest('content', 'admin.'.$this->views.'.form', array('field_type'=>$this->view, 'type'=>$type, 'roles' => $roles));
+		$data = array(
+			'field_type' => $this->view,
+			'type' => $type,
+			'roles' => Role::all(true),
+			'permissions' => array('R' => array(), 'W' => array()),
+		);
+
+		$this->layout->nest('content', 'admin.'.$this->views.'.form', $data);
 	}
 
 	public function get_edit($type, $id)
 	{
-		$data['id'] = $id;
-
 		$model = $this->model;
-		$data['values'] =  $model::find($id);
-		$data['field_type'] = $this->view;
-		$data['type'] = $type;
+		$model = $model::find($id);
 
-		$data['roles'] = Role::all(true);
+		$data = array(
+			'id' => $id,
+			'values' => $model,
+			'field_type' => $this->view,
+			'type' => $type,
+			'roles' => Role::all(true),
+			'permissions' => array('R' => array(), 'W' => array()),
+		);
+
+		// Load existing permissions
+		$colname = Revisionable::trim_id_from_field_name($model->colname);
+
+		$read_permissions = \Verify\Models\Permission::where_name("fields_read_{$colname}")->first();
+		foreach($read_permissions->roles as $role){
+			$data['permissions']['R'][] = $role->id;
+		}
+
+		$write_permissions = \Verify\Models\Permission::where_name("fields_write_{$colname}")->first();
+		foreach($write_permissions->roles as $role){
+			$data['permissions']['W'][] = $role->id;
+		}
 
 		$this->layout->nest('content', 'admin.fields.form', $data);
 	}

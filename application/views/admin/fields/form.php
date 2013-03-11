@@ -92,8 +92,8 @@
           <?php foreach($roles as $role): ?>
           <tr>
             <td><?php echo $role->name; ?></td>
-            <td><?php echo Form::checkbox('permissions[R][]', $role->id, true); ?></td>
-            <td><?php echo Form::checkbox('permissions[W][]', $role->id); ?></td>
+            <td><?php echo Form::checkbox('permissions[R][]', $role->id, in_array($role->id, $permissions['R'])? true : false); ?></td>
+            <td><?php echo Form::checkbox('permissions[W][]', $role->id, in_array($role->id, $permissions['W'])? true : false); ?></td>
           </tr>
           <?php endforeach; ?>
         </table>
