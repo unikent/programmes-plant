@@ -68,14 +68,12 @@ class Fields_Controller extends Admin_Controller {
 		);
 
 		// Load existing permissions
-		$colname = Revisionable::trim_id_from_field_name($model->colname);
-
-		$read_permissions = \Verify\Models\Permission::where_name("fields_read_{$colname}")->first();
+		$read_permissions = \Verify\Models\Permission::where_name("fields_read_{$model->colname}")->first();
 		foreach($read_permissions->roles as $role){
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = \Verify\Models\Permission::where_name("fields_write_{$colname}")->first();
+		$write_permissions = \Verify\Models\Permission::where_name("fields_write_{$model->colname}")->first();
 		foreach($write_permissions->roles as $role){
 			$data['permissions']['W'][] = $role->id;
 		}
@@ -200,16 +198,15 @@ class Fields_Controller extends Admin_Controller {
 
 		// Assign permissions
 		$permissions = Input::get('permissions');
-		$colname = Revisionable::trim_id_from_field_name($field->colname);
 
-		$permission = \Verify\Models\Permission::where_name("fields_read_{$colname}")->first();
+		$permission = \Verify\Models\Permission::where_name("fields_read_{$field->colname}")->first();
 		if(isset($permissions['R'])){
 			$permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['R'])));
 		} else {
 			$permission->roles()->sync(array(1));
 		}
 
-		$permission = \Verify\Models\Permission::where_name("fields_write_{$colname}")->first();
+		$permission = \Verify\Models\Permission::where_name("fields_write_{$field->colname}")->first();
 		if(isset($permissions['W'])){
 			$permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['W'])));					
 		} else {
