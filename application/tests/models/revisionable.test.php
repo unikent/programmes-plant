@@ -592,6 +592,7 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(1, $r->id);
 	}
+
 	public function testGetActiveRevisionAfterMakeLiveReturnsRevision(){
 		$this->populate();
 		$p = Programme::find(1);
@@ -608,6 +609,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $programme->get_active_revision();
 		$this->assertNotNull($revision);
 	}
+
 	public function testget_active_revision_for_new_programme_is_selected()
 	{
 		$this->populate();
@@ -615,6 +617,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $programme->get_active_revision();
 		$this->assertEquals('selected', $revision->status);
 	}
+
 	public function testget_active_revision_for_new_programme_is_live_once_made_live()
 	{
 		$this->populate();
@@ -626,7 +629,8 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 
-	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies(){
+	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 		$r = $p->get_active_revision();
@@ -640,7 +644,9 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(3, $r->id);
 	}
-	public function testGetLiveRevisionBeforePublishReturnsNull(){
+
+	public function testGetLiveRevisionBeforePublishReturnsNull()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 		$r = $p->get_live_revision();
@@ -648,7 +654,9 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(null, $r);
 	}
-	public function testGetLiveRevisionAfterPublishExists(){
+
+	public function testGetLiveRevisionAfterPublishExists()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 
@@ -685,7 +693,5 @@ class TestRevisionable extends ModelTestCase {
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
-
-
 
 }
