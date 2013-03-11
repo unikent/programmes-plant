@@ -26,13 +26,15 @@ class Revisionable_Controller extends Admin_Controller {
 
 		// Ensure object exists
 		$revisionable_item = $model::find($revisionable_item_id);
+
 		if (!$revisionable_item) return false;
 
 		// Ensure Revision exists
 		$revision = $revisionable_item->get_revision($revision_id);
-		if (!$revision) return false;
-		return array($revisionable_item,$revision);
 
+		if (!$revision) return false;
+
+		return array($revisionable_item,$revision);
 	}
 
 	public function get_revert_to_previous($year, $type, $revisionable_item_id = false, $revision_id = false)
