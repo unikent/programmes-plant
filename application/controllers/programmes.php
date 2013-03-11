@@ -111,6 +111,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['year'] = $year;
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
 
+		//dd($this->data['active_revision']);
 		//Get lists data
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
