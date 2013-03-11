@@ -160,6 +160,7 @@ Route::filter('auth', function($permissions)
 	{
 		//User is not allowed here. Tell them
 		$page = View::make('admin.inc.no_permissions', array("perms" => $permissions));
+
 		return View::make('layouts.admin', array('content'=> $page));
 	}
 
