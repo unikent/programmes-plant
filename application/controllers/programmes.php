@@ -27,6 +27,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		// Get user
 		$user = Auth::user();
+
 		// get required fields
 		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live');
 
