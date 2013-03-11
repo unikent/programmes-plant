@@ -37,7 +37,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
-			// If not, but user has permissions to edit own, show list of programmes with a subject area_1 assigned to the programme
 			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->subjects))->get($fields_array);
 		}
 		else
