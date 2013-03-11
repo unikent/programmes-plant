@@ -114,7 +114,14 @@ class Revisionable_Controller extends Admin_Controller {
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
 
-	public function get_submit_programme_for_editing($year, $type, $revision_item_id = false, $revision_id = false)
+	/**
+	 * Routing for GET /$year/$type/$object_id/submit_programme_for_editing/$revision_id
+	 * 
+	 * @param int    $year         The year of the object (not currently used).
+	 * @param string $type         The type of programme, either ug or pg (not currently used).
+	 * @param int    $revision_id  The ID of the revision being submitted for editing.
+	 */
+	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
 	{
 		$this->check_user_can('submit_programme_for_editing');
 
