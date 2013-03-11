@@ -160,12 +160,19 @@ class Revisionable extends SimpleData {
 		$model = static::$revision_model;
 		$revision = $model::find($revision_id);
 
-		// Ensure revision belongs to this item
-		$data_type_key = $this->data_type_id.'_id';	
-		if($revision->$data_type_key == $this->id){
+		// Ensure revision belongs to this item or throw an exception.
+
+		// We don't know what the column of the database that relates a revision to what it is a revision of.
+		// For example a revision of a programme has revisions with a column called programme_id that express this relationship
+		// We need to use $this->data_type_id to work this out.
+		$data_type_key = $this->data_type_id . '_id';
+
+		if ($revision->$data_type_key == $this->id)
+		{
 			return $revision;
-		}else{
-			// Exception ifn not.
+		}
+		else
+		{
 			throw new RevisioningException("Revision does not belong to this object.");
 		}
 	}
