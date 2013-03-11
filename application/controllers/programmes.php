@@ -99,9 +99,6 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_edit($year, $type, $id = false)
 	{
-		// Do our checks to make sure things are in place
-		if (! $id) return Redirect::to($year . '/' . $type . '/' .$this->views);
-
 		// Ensure we have a corresponding course in the database
 		$programme = Programme::find($id);
 
