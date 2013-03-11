@@ -663,7 +663,6 @@ class TestRevisionable extends ModelTestCase {
 		$r2 = $p->get_active_revision();
 		$p->make_revision_live($r2);
 
-
 		$r = $p->get_live_revision();
 
 		$this->assertEquals(1, $r->id);
@@ -693,5 +692,58 @@ class TestRevisionable extends ModelTestCase {
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+
+	public function testsubmit_revision_for_editingAcceptsARevisionIDAParameter()
+	{
+		$progamme_mock = $this->getMock('Programme', array('get_revision'));
+
+		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
+
+		$progamme_mock->expects($this->once())
+		       ->method('get_revision')
+		       ->with(1)
+		       ->will($this->returnValue($revision_mock));
+
+		$revision_mock->expects($this->once())
+		       ->method('save');
+
+		$progamme_mock->submit_revision_for_editing(1);
+	}
+
+	/**
+	 * @expectedException RevisioningException
+	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
+	 */
+	public function testsubmit_revision_for_editingRejectsAllOtherParametersArray()
+	{
+		$p = new Programme();
+
+		$p->submit_revision_for_editing(array('reject_me'));
+	}
+
+	/**
+	 * @expectedException RevisioningException
+	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
+	 */
+	public function testsubmit_revision_for_editingRejectsAllOtherParametersString()
+	{
+		$p = new Programme();
+
+		$p->submit_revision_for_editing('nope');
+	}
+
+	public function testsubmit_for_editingSetsStatusTounder_review()
+	{
+		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
+
+		$revision_mock->expects($this->once())
+		              ->method('save');
+
+		$p = new Programme();
+
+		$p->submit_revision_for_editing($revision_mock);
+
+		$this->assertEquals('under_review', $revision_mock->status);
+	}
 
 }

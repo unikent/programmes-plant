@@ -317,8 +317,13 @@ class Revisionable extends SimpleData {
 	 */
 	public function submit_revision_for_editing($revision)
 	{
+		if (! is_numeric($revision) && ! is_object($revision))
+		{
+			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
+		}
+
 		// If we got an ID, then convert it to a revision.
-		if (! is_array($revision))
+		if (is_numeric($revision))
 		{
 			$revision = $this->get_revision($revision);
 		}
