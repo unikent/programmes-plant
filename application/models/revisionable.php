@@ -318,7 +318,7 @@ class Revisionable extends SimpleData {
 	public function submit_revision_for_editing($revision)
 	{
 		// If we got an ID, then convert it to a revision.
-		if (is_int($revision))
+		if (! is_array($revision))
 		{
 			$revision = $this->get_revision($revision);
 		}
