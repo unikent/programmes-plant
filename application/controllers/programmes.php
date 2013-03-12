@@ -109,6 +109,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
+
+		// Get either the active revision, or the review under_review.
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
 
 		//dd($this->data['active_revision']);
