@@ -68,9 +68,9 @@ class Revisionable_Controller extends Admin_Controller {
 	 */
 	public function get_use_revision($year, $type, $revisionable_item_id = false, $revision_id = false)
 	{
-		
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
+
 		// If somthing went wrong
 		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -182,11 +182,13 @@ class Revisionable_Controller extends Admin_Controller {
 	 */
 	public function get_delete($year, $type, $revisionable_item_id = false)
 	{
-
+		$this->check_user_can('delete_programmes');
+			
 		// Check to see we have what is required.
 		$model = $this->model;
 		$data = $model::find($revisionable_item_id);
-		// If somthing went wrong
+
+		// If something went wrong
 		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// do the delete
