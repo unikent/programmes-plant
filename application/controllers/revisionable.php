@@ -125,14 +125,16 @@ class Revisionable_Controller extends Admin_Controller {
 	{
 		$this->check_user_can('submit_programme_for_editing');
 
-		$data = $this->get_revision_data($revision_item_id, $revision_id);
+		$model = $this->model;
+		$object = $model::find($object_id);
 
-		if (! $data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $model) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		// Get data and change revision to 'under_review' status.
-		list($item, $revision) = $data;
+		$revision_model = $model::$revision_model;
 
-		$modified_revision = $item->submit_revision_for_editing($revision);
+		$revision = $revision_model::find($revision_id);
+
+		$object->submit_revision_for_editing($revision->id);
 		
 		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
 
