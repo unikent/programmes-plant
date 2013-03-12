@@ -195,11 +195,10 @@ class Revisionable extends SimpleData {
 		}
 		else
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)
-				->where('year','=',$this->year)
-				->where('status','=','selected')
-				->or_where('status', '=', 'under_review')
-				->first();
+			return $model::where($this->data_type_id.'_id', '=' , $this->id)
+							->where('year','=',$this->year)
+							->where_in('status', array('under_review', 'selected'))
+							->first();
 		}
 	}	
 
