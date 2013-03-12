@@ -20,7 +20,7 @@ class Add_Permissions_To_Admin_User {
 		$admin_user = Role::where_name('Admin')->first();
 		$permission = Permission::where_name('make_programme_live')->first(array('id'));
 
-		$admin_user->permissions()->attach($this->permission->id);
+		$admin_user->permissions()->attach($permission->id);
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Add_Permissions_To_Admin_User {
 		$admin_user = Role::where_name('Admin')->first();
 		$permission = Permission::where_name('make_programme_live')->first(array('id'));
 
-		$this->admin_user->permissions()->detach($this->permission->id);
+		$this->admin_user->permissions()->detach($permission->id);
 	}
 
 }
