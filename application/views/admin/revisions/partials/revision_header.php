@@ -55,8 +55,13 @@
 	  <h3>Are You Sure?</h3>
 	</div>
 	<div class="modal-body">
+	<?php if ($revision->status == 'under_review') : ?>
+	<p><strong>You have already made edits to this and sent them for review by EMS</strong></p>
+	<p>Are you sure you want to send it again?</p>
+	<?php else : ?>
 	  <p>This means that you have completed edits and that you are sending this version of programme to EMS for proofing and editing.</p>
 	  <p>Are you sure you want to do this?</p>
+	<?php endif; ?>
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn">Not right now</a>
