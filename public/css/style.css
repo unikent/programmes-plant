@@ -146,3 +146,7 @@ display: none;
     border-radius:0px;
 }
 
+form table th,
+form table td { 
+    padding: 0.2em 1em;
+}

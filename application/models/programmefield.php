@@ -70,14 +70,17 @@ class ProgrammeField extends Field
     */
     public static function assign_fields($programme_obj, $programme_fields, $input_fields)
     {
+        $user = Auth::user();
+
         foreach ($programme_fields as $programme_field)
         {
             $colname = $programme_field->colname;
+
             // make sure the field is being used (if it's in section 0 then it isn't so ignore it completely)
             if ($programme_field->section > 0)
             {
                 // if the field is being used add its value to the appropriate colname in the programme object
-                if (isset($input_fields[$colname])) {
+                if (isset($input_fields[$colname]) && $user->can("fields_write_{$colname}")) {
                     // if the field's value is an array, convert it into a comma-separated string
                     if (is_array($input_fields[$colname]))
                     {
