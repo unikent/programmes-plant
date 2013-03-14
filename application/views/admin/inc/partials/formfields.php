@@ -86,8 +86,9 @@ foreach($sections as $section_name => $section)
   }
       
 ?>
-<?php if ($type != 'help') : ?> 
+<?php if (($type != 'help') && Form::if_permitted($column_name)) : ?> 
 	<div class="control-group">
+
 		<?php echo Form::label($column_name, $field->field_name,array('class'=>'control-label'))?>
 		<div class="controls">
 		
@@ -117,7 +118,7 @@ foreach($sections as $section_name => $section)
 		
 		</div>
 	</div>
-<?php else: ?>
+<?php elseif(Form::if_permitted($column_name)): ?>
     <p>
       <?php echo $field->field_description; ?>
     </p>

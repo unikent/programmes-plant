@@ -1,6 +1,16 @@
 <?php namespace Kent;
 class Form extends \Laravel\Form {
 
+	public static function if_permitted($name)
+	{
+		$user = \Laravel\Auth::user();
+
+		if($user->can("fields_read_{$name}") || $user->can("fields_write_{$name}"))
+		{
+			return true;
+		}
+	}
+
 	public static function label_if_permitted($name, $value, $attributes = array())
 	{
 		$user = \Laravel\Auth::user();
