@@ -18,7 +18,7 @@ foreach($sections as $section_name => $section)
           $current_value = $programme->$column_name;
       }
 
-      $tip = "{$type}IfPermitted";
+      $tip = "{$type}_if_permitted";
 
       // Build select box
       switch($type){
@@ -60,7 +60,7 @@ foreach($sections as $section_name => $section)
 
       case 'table_select':
         $model = $field->field_meta;
-        $form_element = Form::selectIfPermitted($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
+        $form_element = Form::select_if_permitted($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
         break;
 
       case 'table_multiselect':
