@@ -62,6 +62,7 @@ return array(
         'label_programme_field_type_text' => 'Ticking this box will create a programmes setting field that can be overwritten in individual programmes.',
         'label_limit' => 'Word limit',
         'label_permissions' => 'Access permissions',
+        'label_permissions_help_text' => 'Configure which can view and which users can edit this field. If nothing is selected, the field will be hidden.',
         'label_limit_help_text' => 'Leave blank if this field does not require a word limit. Use 200w (for 200 words) or just 500 for 500 characters.',
         'programme_overwrite_text' => 'If left blank, this field will inherit its value from its programmes setting counterpart.',
         'programme_overwrite_text_title' => 'An overridable field',
