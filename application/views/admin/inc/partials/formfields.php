@@ -1,14 +1,18 @@
+<?php foreach($sections as $section_name => $section): ?>
+
+  <?php if ($section_name != ''): ?>
+    <div class="section accordion accordion-group">
+      <div class="accordion-heading">
+        <legend>
+          <a href="#<?php echo strtolower(str_replace(' ', '-', $section_name)); ?>" class="accordion-toggle" data-toggle="collapse"><?php echo $section_name; ?></a>
+        </legend>
+      </div>
+
+      <div id="<?php echo strtolower(str_replace(' ', '-', $section_name)); ?>" class="accordion-body collapse in">
+  <?php endif; ?>
+
 <?php 
-/*
-Text Fields
-*/
-
-foreach($sections as $section_name => $section)
-{
-  if ($section_name != '') echo "<legend>{$section_name}</legend>";
-
-  foreach($section as $field)
-  {
+foreach($section as $field):
       // Get Column Name
       $column_name = $field->colname;
       $type = $field->field_type;
@@ -123,7 +127,13 @@ foreach($sections as $section_name => $section)
       <?php echo $field->field_description; ?>
     </p>
 <?php endif; ?>
-<?php
-  } // End fields foreach
-} // End sections foreach 
+<?php endforeach; // End fields foreach ?>
+
+  <?php if ($section_name != ''): ?>
+      </div>
+    </div>
+    <br />
+  <?php endif; ?>
+
+<?php endforeach; // End sections foreach ?>
 ?>
