@@ -14,67 +14,64 @@ foreach($sections as $section_name => $section)
       $type = $field->field_type;
 
       $current_value = '';
-      if (!$create && isset($programme->$column_name))
-      {
+      if (!$create && isset($programme->$column_name)){
           $current_value = $programme->$column_name;
       }
 
+      $tip = "{$type}_if_permitted";
+
       // Build select box
-      if($type=='select')
-      {
-        $options_list = explode(',',$field->field_meta);
-        asort($options_list);
-        $form_element = Form::$type($column_name, array_combine( $options_list, $options_list), $current_value);
-      }
-      else if($type=='checkbox')
-      {  
-        // Provides a default value as all empty checkboxes will otherwise result in nothing being sent and an error.
-        $form_element = Form::hidden($column_name, '');
-        $showLabel = true;
+      switch($type){
 
-        if (trim($field->field_meta) == '')
-        {  
-          // Single checkbox.
-          $options = array($field->field_name => 'true');
-          $showLabel = false;
-        }
-        else
-        {
-          // Multiple checkboxes.
-          $options = explode(',', $field->field_meta);
-          asort($options);
-        }
-        
-        // Explode comma separated options and loop through the results.
-        foreach($options as $opt)
-        {
-          if($opt=='') continue; //Ignore blanks (this is user inputted after all so we cant true it entirely.)
+        case 'select':
+          $options_list = explode(',',$field->field_meta);
+          asort($options_list);
+          $form_element = Form::$tip($column_name, array_combine( $options_list, $options_list), $current_value);
+          break;
+
+
+        case 'checkbox':
+          // Provides a default value as all empty checkboxes will otherwise result in nothing being sent and an error.
+          $form_element = Form::hidden($column_name, '');
+          $showLabel = true;
+
+          if(trim($field->field_meta) == ''){  
+            // Single checkbox.
+            $options = array($field->field_name => 'true');
+            $showLabel = false;
+          } else {
+            // Multiple checkboxes.
+            $options = explode(',', $field->field_meta);
+            asort($options);
+          }
           
-          // Output checkbox (name[] will be converted to array by PHP)
-          // If its in current value string, select it, else leave unselected
-          // WARNING: This may need to become smarter as it will not handle partal matching well.
-          // (i.e. if you have math selected it would also select mathmatics just becuse maths was within it)
-          $form_element .= '<label class="checkbox">'.Form::$type($column_name.'[]', $opt, (strpos($current_value, $opt)!==false) ? true : false);
-          $form_element .= ' '.(($showLabel)?$opt:'').'</label>';
-        }
-      }
-      else if($type=='table_select')
-      {
-        $model = $field->field_meta;
-        $form_element = Form::select($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
+          // Explode comma separated options and loop through the results.
+          foreach($options as $opt){
+            if($opt=='') continue; //Ignore blanks (this is user inputted after all so we cant true it entirely.)
+            
+            // Output checkbox (name[] will be converted to array by PHP)
+            // If its in current value string, select it, else leave unselected
+            // WARNING: This may need to become smarter as it will not handle partal matching well.
+            // (i.e. if you have math selected it would also select mathmatics just becuse maths was within it)
+            $form_element .= '<label class="checkbox">'.Form::$tip($column_name.'[]', $opt, (strpos($current_value, $opt)!==false) ? true : false);
+            $form_element .= ' '.(($showLabel)?$opt:'').'</label>';
+          }
+          break;
 
-      }
-      else if($type=='table_multiselect')
-      {
+      case 'table_select':
+        $model = $field->field_meta;
+        $form_element = Form::select_if_permitted($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
+        break;
+
+      case 'table_multiselect':
         $model = $field->field_meta;
         $form_element = ExtForm::multiselect($column_name.'[]', $model::all_as_list($year), explode(',',$current_value), array('style'=>'height:200px;width:420px;'));
-      }
-      else if ($type == 'help')
-      {
-        // Do nothing
-      }
-      else
-      {
+        break;
+
+      case 'help':
+        break;
+
+      default:
         if($current_value == '' && $field->prefill == 1) $current_value = $field->field_initval;
         
         $field_config = array('placeholder'=>$field->placeholder);
@@ -82,13 +79,16 @@ foreach($sections as $section_name => $section)
         if(trim($field->limit) != ''){
            $field_config['data-limit'] = $field->limit;
         }
-        $form_element = Form::$type($column_name, $current_value, $field_config);
-        
 
-      }
+        $form_element = Form::$tip($column_name, $current_value, $field_config);
+        break;  
+
+  }
+      
 ?>
-<?php if ($type != 'help') : ?> 
+<?php if (($type != 'help') && Form::if_permitted($column_name)) : ?> 
 	<div class="control-group">
+
 		<?php echo Form::label($column_name, $field->field_name,array('class'=>'control-label'))?>
 		<div class="controls">
 		
@@ -118,7 +118,7 @@ foreach($sections as $section_name => $section)
 		
 		</div>
 	</div>
-<?php else: ?>
+<?php elseif(Form::if_permitted($column_name)): ?>
     <p>
       <?php echo $field->field_description; ?>
     </p>
