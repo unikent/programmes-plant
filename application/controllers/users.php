@@ -1,6 +1,6 @@
 <?php
 // use user and role objects from namespace
-use \Verify\Models\user, \Verify\Models\role;
+use \Verify\Models\user;
 
 class Users_Controller extends Admin_Controller {
 
@@ -26,6 +26,7 @@ class Users_Controller extends Admin_Controller {
 	 */
 	public function get_edit($id = false)
 	{	
+
 		// If no id
 		if(!$id) return Redirect::to('users');
 
@@ -33,7 +34,12 @@ class Users_Controller extends Admin_Controller {
 		$current_user = User::find($id);
 
 		// get role is listable format
-		$roles = Role::get();
+		if(Auth::user()->is('Hyper Administrator')){
+			$roles = Role::all();
+		} else {
+			$roles = Role::all(true);
+		}
+
 		foreach($roles as $role) $role_list[$role->id] = $role->name;
 		// SHow edit form
 		$this->layout->nest('content', 'admin.users.form', array("create"=>false, 'user'=>$current_user, "roles" =>  $role_list));
@@ -47,7 +53,12 @@ class Users_Controller extends Admin_Controller {
 	public function get_add()
 	{	
 		// get role is listable format
-		$roles = Role::get();
+		if(Auth::user()->is('Hyper Administrator')){
+			$roles = Role::all();
+		} else {
+			$roles = Role::all(true);
+		}
+
 		foreach($roles as $role) $role_list[$role->id] = $role->name;
 		// Show add form
 		$this->layout->nest('content', 'admin.users.form', array("create"=> true, "roles" =>  $role_list));
@@ -64,10 +75,15 @@ class Users_Controller extends Admin_Controller {
 		$role = Input::get('role');
 		$subjects = Input::get('subjects');
 
-		// Create the user
-		$this->updateUser($username, $role, $subjects);
+		if(!Auth::user()->is('Hyper Administrator')){
+			if(in_array($role, Role::get_protected())){
+				Messages::add('error', 'Unauthorised assignment of roles.');
+				return Redirect::to('users');
+			}
+		}
 
-		return Redirect::to('users');
+		$this->updateUser($username, $role, $subjects);
+		return Redirect::to('users');			
 	}
 	/**
 	 * edit a user
@@ -80,9 +96,14 @@ class Users_Controller extends Admin_Controller {
 		$role = Input::get('role');
 		$subjects = Input::get('subjects');
 
-		// Create the user
-		$this->updateUser($username, $role, $subjects);
+		if(!Auth::user()->is('Hyper Administrator')){
+			if(in_array($role, Role::get_protected())){
+				Messages::add('error', 'Unauthorised assignment of roles.');
+				return Redirect::to('users');
+			}
+		}
 
+		$this->updateUser($username, $role, $subjects);
 		return Redirect::to('users');
 	}
 

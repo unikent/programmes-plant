@@ -1,5 +1,6 @@
 <?php
 
+use \Verify\Models\Permission;
 class ProgrammeSections_Controller extends Admin_Controller {
 
 	public $restful = true;
@@ -14,12 +15,25 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	public function get_edit($type, $object_id = false){
 		// Do our checks to make sure things are in place
 		if(!$object_id) return Redirect::to($this->views);
+
 		$object = ProgrammeSection::find($object_id);
 		if(!$object) return Redirect::to($this->views);
-		$this->data['section'] = $object;
-		$this->data['type'] = $type;
+
+		$data = array(
+			'create' => false,
+			'section' => $object,
+			'type' => $type,
+			'roles' => Role::all(true),
+			'permissions' => array('AE' => array()),
+		);
 		
-		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+		// Load existing permissions
+		$permissions = Permission::where_name('sections_autoexpand_' . $object->get_slug())->first();
+		foreach($permissions->roles as $role){
+			$data['permissions']['AE'][] = $role->id;
+		}
+
+		$this->layout->nest('content', 'admin.'.$this->views.'.form', $data);
 	}
 
 	/**
@@ -27,10 +41,14 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	 *
 	 **/
 	public function get_create($type){
-		$this->data['create'] = true;
-		$this->data['type'] = $type;
+		$data = array(
+			'create' => true,
+			'type' => $type,
+			'roles' => Role::all(true),
+			'permissions' => array('AE' => array()),
+		);
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
+		$this->layout->nest('content', 'admin.'.$this->views.'.form', $data);
 	}
 
 	public function post_delete($type){
@@ -62,8 +80,20 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		}else{
 			$section = new ProgrammeSection;
 			$section->name = Input::get('name');
-
 			$section->save();
+
+			// Now that the section has been saved, create the permission objects
+			$permission = new Permission;
+			$permission->name = 'sections_autoexpand_' . $section->get_slug();
+			$permission->save();
+
+			// Then assign the permissions as specified
+			$permissions = Input::get('permissions');
+
+			if(isset($permissions['AE']))
+			{
+				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
+			}
  
 			Messages::add('success','New Section Added');
 			return Redirect::to('/'.$type.'/fields/programmes');
@@ -86,10 +116,16 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		else
 		{
 			$section = ProgrammeSection::find(Input::get('id'));
-   
 			$section->name = Input::get('name');
-
 			$section->save();
+
+			$permissions = Input::get('permissions');
+			if(isset($permissions['AE']))
+			{
+				$permission = Permission::where_name('sections_autoexpand_' . $section->get_slug())->first();
+				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
+			}
+
 
 			Messages::add('success','Section updated');
 			return Redirect::to('/'.$type.'/fields/programmes');
