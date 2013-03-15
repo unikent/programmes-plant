@@ -1,5 +1,6 @@
 <?php
 
+use \Verify\Models\Permission;
 class Fields_Controller extends Admin_Controller {
 
 	public $restful = true;
@@ -68,13 +69,15 @@ class Fields_Controller extends Admin_Controller {
 		);
 
 		// Load existing permissions
-		$read_permissions = \Verify\Models\Permission::where_name("fields_read_{$model->colname}")->first();
-		foreach($read_permissions->roles as $role){
+		$read_permissions = Permission::where_name("fields_read_{$model->colname}")->first();
+		foreach($read_permissions->roles as $role)
+		{
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = \Verify\Models\Permission::where_name("fields_write_{$model->colname}")->first();
-		foreach($write_permissions->roles as $role){
+		$write_permissions = Permission::where_name("fields_write_{$model->colname}")->first();
+		foreach($write_permissions->roles as $role)
+		{
 			$data['permissions']['W'][] = $role->id;
 		}
 
@@ -124,27 +127,25 @@ class Fields_Controller extends Admin_Controller {
 		$field->save();
 
 		// Now that the field has been saved, create the permission objects
-		$read_permission = new \Verify\Models\Permission;
+		$read_permission = new Permission;
 		$read_permission->name = "fields_read_{$field->colname}";
 		$read_permission->save();
 
-		$write_permission = new \Verify\Models\Permission;
+		$write_permission = new Permission;
 		$write_permission->name = "fields_write_{$field->colname}";
 		$write_permission->save();
 
 		// Then assign the permissions as specified
 		$permissions = Input::get('permissions');
 
-		if(isset($permissions['R'])){
-			$read_permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['R'])));
-		} else {
-			$read_permission->roles()->sync(array(1));
+		if(isset($permissions['R']))
+		{
+			$read_permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 		}
 
-		if(isset($permissions['W'])){
-			$write_permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['W'])));					
-		} else {
-			$write_permission->roles()->sync(array(1));
+		if(isset($permissions['W']))
+		{
+			$write_permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		}
 
 		//we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
@@ -199,18 +200,16 @@ class Fields_Controller extends Admin_Controller {
 		// Assign permissions
 		$permissions = Input::get('permissions');
 
-		$permission = \Verify\Models\Permission::where_name("fields_read_{$field->colname}")->first();
-		if(isset($permissions['R'])){
-			$permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['R'])));
-		} else {
-			$permission->roles()->sync(array(1));
+		$permission = Permission::where_name("fields_read_{$field->colname}")->first();
+		if(isset($permissions['R']))
+		{
+			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 		}
 
-		$permission = \Verify\Models\Permission::where_name("fields_write_{$field->colname}")->first();
-		if(isset($permissions['W'])){
-			$permission->roles()->sync(array_merge(array(1), Role::sanitize_ids($permissions['W'])));					
-		} else {
-			$permission->roles()->sync(array(1));
+		$permission = Permission::where_name("fields_write_{$field->colname}")->first();
+		if(isset($permissions['W']))
+		{
+			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		}
 
 		// If type changes, apply data type swapper.
