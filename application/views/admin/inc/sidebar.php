@@ -10,7 +10,10 @@
 	
 	if (URI::segment(2) == 'fields') $selectedType = URI::segment(1);
   ?>
-
+        <?php if (Auth::user()->can("recieve_edit_requests")): ?>
+            <li class="nav-header">Editing</li>
+            <li class="<?php echo ( (URI::segment(2) == 'inbox' ) ? 'active' : false )?>"><a href="<?php echo url('editor/inbox')?>"><i class="icon-inbox"></i> Inbox</a></li>
+        <?php endif; ?>
 
         <li class="nav-header">Core Data</li>
 

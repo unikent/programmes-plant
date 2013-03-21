@@ -93,10 +93,12 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories', 'subjectcategories@index');
 	Route::any('([0-9]{4})/(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
 
-
+	// Users system
 	Route::any('users', 'users@index');
 	Route::any('users/(add|edit|delete)/(:num?)', 'users@(:1)');
 
+	// Editing suite
+	Route::controller('editor');
 
 	// API
 
@@ -158,6 +160,7 @@ Route::filter('auth', function($permissions)
 	{
 		//User is not allowed here. Tell them
 		$page = View::make('admin.inc.no_permissions', array("perms" => $permissions));
+
 		return View::make('layouts.admin', array('content'=> $page));
 	}
 

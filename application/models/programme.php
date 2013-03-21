@@ -249,6 +249,16 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Gets all programme revisions that are currently under review.
+	 * 
+	 * @return array $under_review  An array of programme revisions currently under review.
+	 */
+	public static function get_under_review()
+	{
+		return ProgrammeRevision::where('status', '=', 'under_review')->order_by('updated_at', 'asc')->get();
+	}
+
+	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
 	 *

@@ -27,6 +27,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		// Get user
 		$user = Auth::user();
+
 		// get required fields
 		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live');
 
@@ -37,7 +38,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
-			// If not, but user has permissions to edit own, show list of programmes with a subject area_1 assigned to the programme
 			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->subjects))->get($fields_array);
 		}
 		else
@@ -97,23 +97,23 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param string $type    Undergraduate or postgraduate.
 	 * @param int    $item_id The ID of the programme to edit.
 	 */
-	public function get_edit($year, $type, $itm_id = false)
+	public function get_edit($year, $type, $id = false)
 	{
-		// Do our checks to make sure things are in place
-		if(!$itm_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
 		// Ensure we have a corresponding course in the database
-		$model = $this->model;
-		$course = $model::find($itm_id);
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$programme = Programme::find($id);
 
-		$this->data['programme'] = $course ;
+		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
+
+		$this->data['programme'] = $programme;
 		
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
-		$this->data['active_revision'] = $course->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
 
+		// Get either the active revision, or the review under_review.
+		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
+
+		//dd($this->data['active_revision']);
 		//Get lists data
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
@@ -209,30 +209,31 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
-		if(!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get revision specified
 		$programme = Programme::find($programme_id);
 
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$revision = $programme->get_revision($revision_id);
 
-		if (!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$programme_attributes = $programme->attributes;
 		$revision_for_diff = $revision->attributes;
 
-		// Ignore these fields which will always change
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
-				unset($revision_for_diff[$ignore]);
-				unset($programme_attributes[$ignore]);
+		// Ignore these fields which will always change.
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
+		{
+			unset($revision_for_diff[$ignore]);
+			unset($programme_attributes[$ignore]);
 		}
 
 		$schools = School::all_as_list();
@@ -249,8 +250,9 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$diff = array();
 
-		foreach ($differences as $field => $value) {
-				$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
+		foreach ($differences as $field => $value) 
+		{
+			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
 		}
 
 		$this->data['diff'] = $diff;

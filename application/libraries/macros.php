@@ -8,7 +8,7 @@ Form::macro('actions', function($type, $object = null)
 	</div>';
 
 	// do this only for programmes
-	if(strcmp($type, 'programmes') == 0 && isset($object))
+	if(strcmp($type, 'programmes') == 0 && isset($object) && Auth::user()->can("delete_programmes"))
 	{
 		$actions .= '
 		<div class="alert alert-block alert-error">
