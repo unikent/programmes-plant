@@ -2,100 +2,116 @@
 
 class RevisionableThing extends Revisionable {}
 
+class RevisionableThingRevision extends Revision {}
+
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user");
 
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
+
+		Schema::create('revisionablethings', function($table){
+			$table->increments('id');
+			$table->string('name', 200);
+			$table->integer('instance_id');
+			$table->integer('live');
+			$table->timestamps();
+		});
+
+		Schema::create('revisionablethingrevisions', function($table){
+			$table->increments('id');
+			$table->string('name', 200);
+			$table->integer('instance_id');
+			$table->integer('edits_by');
+			$table->string('status', 200);
+			$table->integer('revisionablething_id');
+			$table->timestamps();
+		});
+
 		static::clear_models();
 	}
 
 	public function tearDown() 
-	{
-		// Flush the cache.
-		Cache::flush();
-
+	{	
+		Cache::flush(); // Flush the cache.
 		static::clear_models();
-
-		Programme::$list_cache = false;
-		
+		Programme::$list_cache = false;	
 		parent::tearDown();
 	}
 
+
+	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user");
+
 	public function populate($model = 'Programme', $input = false)
 	{
-
-		if (! $input)
+		if(!$input)
 		{
 			$input = $this->input;
 		}
+
 		$model::create($input);
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
-
-		
-		$this->assertCount(0, Programme::all_as_list());
+		$this->assertCount(0, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listReturnsAnArrayOfItemsFromDatabase() 
 	{
-		$this->populate();
-
-		$result = Programme::all_as_list();
+		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$result = RevisionableThing::all_as_list();
 
 		$this->assertTrue(is_array($result));
-		$this->assertEquals(array('1' => 'Thing'), $result);
+		$this->assertEquals(array('1' => 'New widget!'), $result);
 	}
 
-	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
+	public function testall_as_listReturnsTheSameWhenItIsInDiskCache()
 	{
-
-		$this->populate();
+		$this->populate('RevisionableThing', array('name' => 'New widget!'));
 
 		// Warm up the cache.
-		$before_cache = Programme::all_as_list();
+		$before_cache = RevisionableThing::all_as_list();
 
 		// Wipe memory cache
-		Programme::$list_cache = false;
+		RevisionableThing::$list_cache = false;
 
-		$after_cache = Programme::all_as_list();
+		$after_cache = RevisionableThing::all_as_list();
 
 		$this->assertEquals($before_cache, $after_cache);
 	}
 
-	public function testall_as_listReturnsTheSameWhenWhenItIsInMemoryCache() 
+	public function testall_as_listReturnsTheSameWhenItIsInMemoryCache() 
 	{
+		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+
 		// Warm up the cache.
-		$before_cache = Programme::all_as_list();
+		$before_cache = RevisionableThing::all_as_list();
 
 		// Wipe disk cache
-		Cache::forget('Programme--options-list');
+		Cache::forget('RevisionableThing--options-list');
 
-		$after_cache = Programme::all_as_list();
+		$after_cache = RevisionableThing::all_as_list();
 
 		$this->assertEquals($before_cache, $after_cache);
 	}
 
 	public function testall_as_listResultsCacheToDiskWhenThereIsNoCache() 
 	{
-		$this->populate();
+		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		RevisionableThing::all_as_list();
 
-		Programme::all_as_list();
-
-		$this->assertTrue(Cache::has('Programme--options-list'));
+		$this->assertTrue(Cache::has('RevisionableThing--options-list'));
+		$this->assertNotEmpty(Cache::get('RevisionableThing--options-list'));
 	}
 
-	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache() {
-		$this->populate();
+	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache()
+	{
+		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		RevisionableThing::all_as_list();
 
-		Programme::all_as_list();
-
-		// Check we only have one element here.
-		$this->assertCount(1, Programme::$list_cache['Programme--options-list']);
+		$this->assertNotEmpty(RevisionableThing::$list_cache['RevisionableThing--options-list']);
 	}
 
 	public function testall_as_listIfWeRemoveTheCacheThenWeCanStillGetList()
