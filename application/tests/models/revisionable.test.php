@@ -59,15 +59,10 @@ class TestRevisionable extends ModelTestCase {
 		parent::tearDown();
 	}
 
-
-	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user");
-
-	public function populate($model = 'Programme', $input = false)
+	public function populate($model = 'RevisionableThing', $input = array())
 	{
-		if(!$input)
-		{
-			$input = $this->input;
-		}
+		$default = array('name' => 'Widget A', 'year' => 2014, 'id' => 1);
+		$input = array_merge($default, $input);
 
 		$model::create($input);
 		$this->db_teardown = true;
@@ -81,16 +76,16 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsAnArrayOfItemsFromDatabase() 
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate('RevisionableThing', array('name' => 'Widget A'));
 		$result = RevisionableThing::all_as_list();
 
 		$this->assertTrue(is_array($result));
-		$this->assertEquals(array('1' => 'New widget!'), $result);
+		$this->assertEquals(array('1' => 'Widget A'), $result);
 	}
 
 	public function testall_as_listReturnsTheSameWhenItIsInDiskCache()
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 
 		// Warm up the cache.
 		$before_cache = RevisionableThing::all_as_list();
@@ -105,7 +100,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsTheSameWhenItIsInMemoryCache() 
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 
 		// Warm up the cache.
 		$before_cache = RevisionableThing::all_as_list();
@@ -120,7 +115,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listResultsCacheToDiskWhenThereIsNoCache() 
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 		RevisionableThing::all_as_list();
 
 		$this->assertTrue(Cache::has('RevisionableThing--options-list'));
@@ -129,7 +124,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache()
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 		RevisionableThing::all_as_list();
 
 		$this->assertNotEmpty(RevisionableThing::$list_cache['RevisionableThing--options-list']);
@@ -137,7 +132,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listIfWeRemoveTheCacheThenWeCanStillGetList()
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 
 		// Warm up cache.
 		$result = RevisionableThing::all_as_list();
@@ -155,7 +150,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listResultsCacheInMemoryAsWellAsOnDisk()
 	{
-		$this->populate('RevisionableThing', array('name' => 'New widget!'));
+		$this->populate();
 
 		RevisionableThing::all_as_list();
 
@@ -205,7 +200,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listResultsFallBackToDiskWhenMemoryIsNotPresent()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate();
 
 		// Setup both the memory and disk cache.
 		$result = RevisionableThing::all_as_list();
@@ -272,7 +267,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testsave_RemovesMemoryCacheOnSaveWithNoYear()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 		RevisionableThing::all_as_list(); // Warm cache.
 		$item = RevisionableThing::find(1);
 		$item->name = 'Widget B';
@@ -283,7 +278,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 		RevisionableThing::all_as_list(); // Warm cache.
 		$item = RevisionableThing::find(1);
 		$item->name = 'Widget B';
@@ -345,7 +340,7 @@ class TestRevisionable extends ModelTestCase {
 	// New revision tests
 	public function testRevisionCreatedOnSave()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate();
 
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
@@ -355,7 +350,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testInitalRevisionForNewItemIsSelected()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate();
 
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
@@ -365,7 +360,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testSecondSaveCreatesSecondRevision()
 	{	
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate();
 
     	$item = RevisionableThing::find(1);
     	$item->name = 'Widget B';
@@ -378,7 +373,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testSecondSaveSetsStatusOfFirstRevisionToDraft()
 	{		
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate();
 
     	$item = RevisionableThing::find(1);
     	$item->name = 'Widget B';
@@ -392,7 +387,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
 	{
     	// set up some data
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
 
@@ -407,7 +402,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testUseRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
 	{
     	// set up some data
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
     	$revisionable_item = RevisionableThing::find(1);
         $revision = $revisionable_item->get_revision(1);
@@ -425,7 +420,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testUseRevisionSetsLiveFieldToLatestUnpublished()
 	{
     	// set up some data
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
@@ -448,7 +443,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
 	{
     	// set up some data
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
         
@@ -465,7 +460,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
 	{
     	// set up some data
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
     	$item = RevisionableThing::find(1);
         $revision = $item->get_revision(1);
         
@@ -506,7 +501,7 @@ class TestRevisionable extends ModelTestCase {
 **/
 
 	public function testGetActiveRevisionAfterCreateReturnsRevision(){
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -515,7 +510,7 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 	public function testGetActiveRevisionAfterMakeLiveReturnsRevision(){
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -526,7 +521,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testget_active_revisionDoesntReturnNull() 	
 	{	  	
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -536,7 +531,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testget_active_revision_for_new_item_is_selected()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -546,7 +541,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testget_active_revision_for_new_item_is_live_once_made_live()
 	{
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -558,7 +553,7 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies(){
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_active_revision();
@@ -576,7 +571,7 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 	public function testGetLiveRevisionBeforePublishReturnsNull(){
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 		$revision = $item->get_live_revision();
@@ -586,7 +581,7 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 	public function testGetLiveRevisionAfterPublishExists(){
-		$this->populate('RevisionableThing', array('name' => 'Widget A', 'year' => 2014, 'id' => 1));
+		$this->populate();
 
 		$item = RevisionableThing::find(1);
 
