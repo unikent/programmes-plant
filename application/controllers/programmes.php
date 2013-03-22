@@ -215,56 +215,33 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
-		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		// Get revision specified
+		// Get programme
 		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$revisions = array(
+			'active' => $programme->get_active_revision(),
+			'proposed' => $programme->get_revision($revision_id),
+		);
+//		if (empty($revision['active']) || empty($revision['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$revision = $programme->get_revision($revision_id);
 
-		if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		
 
-		$programme_attributes = $programme->attributes;
-		$revision_for_diff = $revision->attributes;
 
-		// Ignore these fields which will always change.
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
-		{
-			unset($revision_for_diff[$ignore]);
-			unset($programme_attributes[$ignore]);
-		}
+		$data = array(
+			'programme' => $programme,
+			'revisions' => $revisions,
+			'attributes' => array(
+				'all' => Programme::get_attributes_list(),
+				'ignore' => array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'),
+				'nodiff' => array(),
+			),
+ 		);
 
-		$schools = School::all_as_list();
-		$sub = Programme::all_as_list();
-		$pro = Programme::all_as_list();
-
-		//$revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
-
-		$differences = array_diff_assoc($programme_attributes, $revision_for_diff);
-
-		$diff = array();
-
-		foreach ($differences as $field => $value) 
-		{
-			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
-		}
-
-		$this->data['diff'] = $diff;
-		$this->data['new'] = $revision_for_diff;
-		$this->data['old'] = $programme_attributes;
-
-		$this->data['attributes'] = Programme::get_attributes_list();
-
-		$this->data['revision'] = $revision;
-		$this->data['programme'] = $programme;
-
-		return View::make('admin.'.$this->views.'.difference',$this->data);
+		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
 
