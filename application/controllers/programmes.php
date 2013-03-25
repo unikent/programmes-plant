@@ -215,6 +215,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
+		$this->check_user_can('recieve_edit_requests');
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
@@ -294,6 +296,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function post_approve_revision($year, $type)
 	{
+		$this->check_user_can('make_programme_live');
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
@@ -322,6 +326,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function post_reject_revision($year, $type)
 	{
+		$this->check_user_can('revert_revisions');
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
