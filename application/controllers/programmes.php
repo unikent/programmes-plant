@@ -225,7 +225,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			'live' => $programme->get_live_revision(),
 			'proposed' => $programme->get_revision($revision_id),
 		);
-//		if (empty($revision['live']) || empty($revision['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (empty($revisions['live']) || empty($revisions['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$attributes = array(
 			'all' => array_keys($programme->attributes), // By getting attributes this way we can get non-programmatic attributes too
@@ -286,6 +286,61 @@ class Programmes_Controller extends Revisionable_Controller {
 		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
+	/**
+	 * Routing for POST /$year/$type/programmes/approve_revision
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 */
+	public function post_approve_revision($year, $type)
+	{
+		$programme_id = Input::get('programme_id');
+		$revision_id = Input::get('revision_id');
+
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		if ($programme->make_revision_live((int) $revision_id))
+		{
+			Messages::add('success', 'Revision was approved');
+		}
+		else
+		{
+			Messages::add('error', 'Revision could not be approved at this time.');
+		}
+
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
+
+	/**
+	 * Routing for POST /$year/$type/programmes/reject_revision
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 */
+	public function post_reject_revision($year, $type)
+	{
+		$programme_id = Input::get('programme_id');
+		$revision_id = Input::get('revision_id');
+
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		if ($programme->revert_to_previous_revision((int) $revision_id))
+		{
+			Messages::add('success', 'Revision was rejected');
+		}
+		else
+		{
+			Messages::add('error', 'Revision could not be rejected at this time.');
+		}
+
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
 
 	/**
 	 * Routing for GET /preview/$programme_id/preview/$revision_id
