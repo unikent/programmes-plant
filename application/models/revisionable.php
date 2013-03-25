@@ -126,7 +126,7 @@ class Revisionable extends SimpleData {
 		$revision->fill($revision_values);
 
 		// Set previous revision back to draft
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where_in('status', array('selected', 'under_review'))->update(array('status'=>'draft'));	
 
 		// Save revision
 		return $revision->save();
