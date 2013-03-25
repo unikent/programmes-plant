@@ -28,8 +28,9 @@
   </table>
 
   <div class="form-actions">
-    <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>">Approve this revision</a>
-    <a class="btn btn-danger reject_revision_toggler" data-toggle="modal" href="#reject_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@reject_revision')?>">Reject this revision</a>
+    <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.diff_edit_programme'); ?></a>
+    <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>"><?php echo  __('programmes.diff_approve_revision'); ?></a>
+    <a class="btn btn-danger reject_revision_toggler" data-toggle="modal" href="#reject_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@reject_revision')?>"><?php echo  __('programmes.diff_reject_revision'); ?></a>
   </div>
 </div><!-- span9 -->
 
