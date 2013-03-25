@@ -262,6 +262,16 @@ class Programmes_Controller extends Revisionable_Controller {
 				// ...compare the resolved attribute values, only retain them if they have changed
 				if($resolved['live'] !== $resolved['proposed'])
 				{
+					// ...restrict the diffing of fields (step not necessary if field is already excluded)
+					if(!in_array($attribute['field'], $attributes['nodiff']))
+					{
+						// ...only diff fields if they are (a) non relational, or if they (b) don't contain spaces
+						if(is_object($revisions['proposed']->{$attribute['field']}) || !preg_match('/(\s){1,}/', $resolved['proposed']))
+						{
+							$attributes['nodiff'][] = $attribute['field'];
+						}						
+					}
+
 					$attributes['resolved'][$attribute['machine']] = $resolved;
 				}
 			}
