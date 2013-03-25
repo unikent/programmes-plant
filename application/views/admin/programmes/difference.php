@@ -1,11 +1,11 @@
 <div class="span9 crud">
-  <h1>Accept Changes</h2>
+  <h1>Accept changes</h2>
   <p>The following shows the differences between the two revisions.</p>
   <table class="table table-striped table-bordered">
     <thead>
       <th></th>
-      <th>Current Version saved on <?php echo $revisions['live']->created_at ?></th>
-      <th>Revision created on <?php echo $revisions['proposed']->created_at ?></th>
+      <th>Live, <?php echo $revisions['live']->created_at ?></th>
+      <th>Proposed, <?php echo $revisions['proposed']->created_at ?></th>
     </thead>
 
     <tbody>
