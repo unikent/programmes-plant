@@ -4,40 +4,25 @@
   <table class="table table-striped table-bordered">
     <thead>
       <th></th>
-      <th>Current Version saved on <?php echo $revisions['active']->created_at ?></th>
+      <th>Current Version saved on <?php echo $revisions['live']->created_at ?></th>
       <th>Revision created on <?php echo $revisions['proposed']->created_at ?></th>
     </thead>
 
     <tbody>
-      <?php foreach($revisions['proposed']->attributes as $attribute => $value): ?>
-
-        <?php
-          $attribute = array(
-            'attribute' => $attribute,
-            'human' => Revisionable::trim_id_from_field_name($attribute),
-          );
-
-          $value = array(
-            'active' => is_object($revisions['active']->{$attribute['human']}) ? $revisions['active']->{$attribute['human']}->name : $revisions['active']->{$attribute['human']},
-            'proposed' => is_object($revisions['proposed']->{$attribute['human']}) ? $revisions['proposed']->{$attribute['human']}->name : $revisions['proposed']->{$attribute['human']},
-          );
-        ?>
-
-        <?php if(!in_array($attribute['human'], $attributes['ignore']) && !($value['active'] == $value['proposed'])): ?>
+      <?php foreach($attributes['resolved'] as $key => $value): ?>
         <tr>
-          <td><?php echo (!array_key_exists($attribute['attribute'], $attributes['all'])) ? __('programmes.' . $attribute['attribute']) : $attributes['all'][$attribute['attribute']]; ?></td>
-          <td><?php echo $value['active']; ?></td>
+          <td><?php echo $attributes['all'][$key]['label']; ?></td>
+          <td><?php echo $value['live']; ?></td>
           <td>
             <?php               
-              if(!in_array($attribute['human'], $attributes['nodiff'])):
-                echo SimpleDiff::htmlDiff($value['active'], $value['proposed']);
+              if(!in_array($attributes['all'][$key]['field'], $attributes['nodiff'])):
+                echo SimpleDiff::htmlDiff($value['live'], $value['proposed']);
               else:
                 echo $value['proposed'];
               endif; 
             ?>
           </td>
         </tr>
-       <?php endif; ?>
       <?php endforeach; ?>
     </tbody>
   </table>

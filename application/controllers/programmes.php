@@ -222,23 +222,55 @@ class Programmes_Controller extends Revisionable_Controller {
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$revisions = array(
-			'active' => $programme->get_active_revision(),
+			'live' => $programme->get_live_revision(),
 			'proposed' => $programme->get_revision($revision_id),
 		);
-//		if (empty($revision['active']) || empty($revision['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
+//		if (empty($revision['live']) || empty($revision['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
+		$attributes = array(
+			'all' => array_keys($programme->attributes), // By getting attributes this way we can get non-programmatic attributes too
+			'ignore' => array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'), // Use human friendly atttibute names (e.g. strip _ID)
+			'nodiff' => array(), // Use human friendly atttibute names (e.g. strip _ID)
+			'resolved' => array(),
+		);
 
-		
+		$attribute_map = Programme::get_attributes_list(); // This will only return programmatic atributes
 
+		// Iterate over attributes 'all'...
+		foreach($attributes['all'] as $key => $value)
+		{
+			// ...update them to make their various representations available
+			$attribute = array(
+				'machine' => $value,
+				'field' => Revisionable::trim_id_from_field_name($value),
+				'label' => isset($attribute_map[$value]) ? $attribute_map[$value] : __('programmes.' . $value),
+			);
+
+			// ...remap array to be keyed by attribute machine name
+			unset($attributes[$key]);
+			$attributes['all'][$attribute['machine']] = $attribute;
+
+			// ...if they are not in the 'ignored' array, load their values for each revision
+			if(!in_array($attribute['field'], $attributes['ignore']))
+			{
+				// Load the given attribute for each revision, gracefully resolving relational attributes
+				$resolved = array(
+					'live' => is_object($revisions['live']->{$attribute['field']}) ? $revisions['live']->{$attribute['field']}->name : $revisions['live']->{$attribute['machine']},
+					'proposed' => is_object($revisions['proposed']->{$attribute['field']}) ? $revisions['proposed']->{$attribute['field']}->name : $revisions['proposed']->{$attribute['machine']},
+				);
+
+				// ...compare the resolved attribute values, only retain them if they have changed
+				if($resolved['live'] !== $resolved['proposed'])
+				{
+					$attributes['resolved'][$attribute['machine']] = $resolved;
+				}
+			}
+		}
 
 		$data = array(
 			'programme' => $programme,
 			'revisions' => $revisions,
-			'attributes' => array(
-				'all' => Programme::get_attributes_list(),
-				'ignore' => array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'),
-				'nodiff' => array(),
-			),
+			'attributes' => $attributes,
  		);
 
 		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
