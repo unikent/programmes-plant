@@ -388,8 +388,12 @@ class Revisionable extends SimpleData {
 		unset($revision_values['made_live_by']);
 		unset($revision_values['status']);
 		unset($revision_values[strtolower($this->data_type_id).'_id']);
-
+		
+		// make sure that if there's a live revision somewhere, and the current revision isn't it, set the overall live status to 1 (ie there's something newer than the current live revision)
 		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
+		
+		// make sure that if we're switching to use the live revision the overall live status of the programme is set to 2 (ie the programme is fully up to date)
+		if ($this->live == 1 && $revision->status == 'live') $this->live = 2;
 
 		// Save this revision as the new current
 		$this->fill($revision_values);

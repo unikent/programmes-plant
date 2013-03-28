@@ -449,6 +449,29 @@ class TestRevisionable extends ModelTestCase {
         $this->assertEquals(0, $programme_modified->live);
 	}
 	
+	public function testRevertToPreviousRevisionWherePreviousIsPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+        
+        // make a new revision
+        $programme->slug = 'test';
+        $programme->save();
+        
+        // revert to the previous (ie live) revision
+        $programme->revert_to_previous_revision($programme->get_active_revision());
+        
+        // find programme #1 again and now check its 'live' value is 2
+        // it should be 2 because although a new revision was made subsequent to the live one (ie live=1), reverting to the live version should switch things back to live=2 ie the live version is the latest one.
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(2, $programme_modified->live);
+	}
+	
 	public function testMakeRevisionLiveGlobalSetting()
 	{
 		 //TEST ISSUE: see "@todo @workaround" in revisionble model
