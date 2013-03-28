@@ -64,7 +64,7 @@ div.alert p { margin:0; }
 .gallery_images .caption .action_buttons { margin:3px 0; }
 del {
 	background-color: OrangeRed;
-	text-decoration: none;
+	text-decoration: line-through;
 }
 ins {
 	background-color:SpringGreen;
@@ -146,3 +146,7 @@ display: none;
     border-radius:0px;
 }
 
+form table th,
+form table td { 
+    padding: 0.2em 1em;
+}
