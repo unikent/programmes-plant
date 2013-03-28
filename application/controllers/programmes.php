@@ -215,58 +215,138 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
-		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$this->check_user_can('recieve_edit_requests');
 
-		// Get revision specified
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Get programme
 		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$revisions = array(
+			'live' => $programme->get_live_revision(),
+			'proposed' => $programme->get_revision($revision_id),
+		);
+		if (empty($revisions['live']) || empty($revisions['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$revision = $programme->get_revision($revision_id);
+		$attributes = array(
+			'all' => array_keys($programme->attributes), // By getting attributes this way we can get non-programmatic attributes too
+			'ignore' => array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'), // Use human friendly atttibute names (e.g. strip _ID)
+			'nodiff' => array(), // Use human friendly atttibute names (e.g. strip _ID)
+			'resolved' => array(),
+		);
 
-		if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$attribute_map = Programme::get_attributes_list(); // This will only return programmatic atributes
 
-		$programme_attributes = $programme->attributes;
-		$revision_for_diff = $revision->attributes;
-
-		// Ignore these fields which will always change.
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
+		// Iterate over attributes 'all'...
+		foreach($attributes['all'] as $key => $value)
 		{
-			unset($revision_for_diff[$ignore]);
-			unset($programme_attributes[$ignore]);
+			// ...update them to make their various representations available
+			$attribute = array(
+				'machine' => $value,
+				'field' => Revisionable::trim_id_from_field_name($value),
+				'label' => isset($attribute_map[$value]) ? $attribute_map[$value] : __('programmes.' . $value),
+			);
+
+			// ...remap array to be keyed by attribute machine name
+			unset($attributes[$key]);
+			$attributes['all'][$attribute['machine']] = $attribute;
+
+			// ...if they are not in the 'ignored' array, load their values for each revision
+			if(!in_array($attribute['field'], $attributes['ignore']))
+			{
+				// Load the given attribute for each revision, gracefully resolving relational attributes
+				$resolved = array(
+					'live' => is_object($revisions['live']->{$attribute['field']}) ? $revisions['live']->{$attribute['field']}->name : $revisions['live']->{$attribute['machine']},
+					'proposed' => is_object($revisions['proposed']->{$attribute['field']}) ? $revisions['proposed']->{$attribute['field']}->name : $revisions['proposed']->{$attribute['machine']},
+				);
+
+				// ...compare the resolved attribute values, only retain them if they have changed
+				if($resolved['live'] !== $resolved['proposed'])
+				{
+					// ...restrict the diffing of fields (step not necessary if field is already excluded)
+					if(!in_array($attribute['field'], $attributes['nodiff']))
+					{
+						// ...only diff fields if they are (a) non relational, or if they (b) don't contain spaces
+						if(is_object($revisions['proposed']->{$attribute['field']}) || !preg_match('/(\s){1,}/', $resolved['proposed']))
+						{
+							$attributes['nodiff'][] = $attribute['field'];
+						}						
+					}
+
+					$attributes['resolved'][$attribute['machine']] = $resolved;
+				}
+			}
 		}
 
-		$schools = School::all_as_list();
-		$sub = Programme::all_as_list();
-		$pro = Programme::all_as_list();
+		$data = array(
+			'programme' => $programme,
+			'revisions' => $revisions,
+			'attributes' => $attributes,
+ 		);
 
-		//$revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
-
-		$differences = array_diff_assoc($programme_attributes, $revision_for_diff);
-
-		$diff = array();
-
-		foreach ($differences as $field => $value) 
-		{
-			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
-		}
-
-		$this->data['diff'] = $diff;
-		$this->data['new'] = $revision_for_diff;
-		$this->data['old'] = $programme_attributes;
-
-		$this->data['attributes'] = Programme::get_attributes_list();
-
-		$this->data['revision'] = $revision;
-		$this->data['programme'] = $programme;
-
-		return View::make('admin.'.$this->views.'.difference',$this->data);
+		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
+	/**
+	 * Routing for POST /$year/$type/programmes/approve_revision
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 */
+	public function post_approve_revision($year, $type)
+	{
+		$this->check_user_can('make_programme_live');
+
+		$programme_id = Input::get('programme_id');
+		$revision_id = Input::get('revision_id');
+
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		if ($programme->make_revision_live((int) $revision_id))
+		{
+			Messages::add('success', 'Revision was approved');
+		}
+		else
+		{
+			Messages::add('error', 'Revision could not be approved at this time.');
+		}
+
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
+
+	/**
+	 * Routing for POST /$year/$type/programmes/reject_revision
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 */
+	public function post_reject_revision($year, $type)
+	{
+		$this->check_user_can('revert_revisions');
+
+		$programme_id = Input::get('programme_id');
+		$revision_id = Input::get('revision_id');
+
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		if ($programme->revert_to_previous_revision((int) $revision_id))
+		{
+			Messages::add('success', 'Revision was rejected');
+		}
+		else
+		{
+			Messages::add('error', 'Revision could not be rejected at this time.');
+		}
+
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
 
 	/**
 	 * Routing for GET /preview/$programme_id/preview/$revision_id
