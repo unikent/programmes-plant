@@ -276,58 +276,6 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
-	 * Generate and cache an XCRI-CAP feed for all programmes in the given year.
-	 * 
-	 * @param string $year year to generate xcri-cap of.
-	 * @param string $level Either undergraduate or postgraduate.
-	 * @return Response An XCRI-CAP field of the programmes for that year.
-	 */
-	public static function get_generate_xcri_cap($year, $level){
-
-		// get a list of all out programmes through the API
-		$api_index = API::get_index($year, $level);
-
-		$date = array();
-
-		// fetch each programme individually for our xcri feed
-		foreach (array_keys($api_index) as $programme_id) {
-			$data['programmes'][] = API::get_xcrified_programme($programme_id, $year);
-		}
-
-		// if there are no programmes throw a 501 error
-		if (! $data['programmes'])
-		{
-			return Response::make('', 501);
-		}
-
-		// get the global settings for our xcri feed
-		$globalsettings	= GlobalSetting::get_api_data($year);
-
-		// if there are no global settings throw a 501 error
-		if (! $globalsettings)
-		{
-			return Response::make('', 501);
-		}
-
-		// neaten up the global settings
-		$data['globalsettings'] = new StdClass();
-		foreach ($globalsettings as $key => $value) {
-			$key = GlobalSetting::trim_id_from_field_name($key);
-			$data['globalsettings']->$key = $value;
-		}
-
-		// assemble the xcri-cap xml
-		$xcri_xml = View::make('xcri-cap.1-2', $data);
-
-		// cache the xcri-cap xml before sending it
-		$cache_key = "xcri-cap-ug-$year";;
-		Cache::put($cache_key, $xcri_xml, 2628000);
-
-		return $xcri_xml;
-
-	}
-
-	/**
 	 * gzip the content if the request can handle gzipped content
 	 *
 	 * @param $content The string to gzip
