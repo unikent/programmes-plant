@@ -70,4 +70,9 @@ return array(
 			'tooltip' => '\'New\' marks programmes which have never been pushed to live.',
 		),
 	),
+
+
+	'diff_edit_programme' => 'Edit this programme',
+	'diff_approve_revision' => 'Approve revision',
+	'diff_reject_revision' => 'Reject revision',
 );

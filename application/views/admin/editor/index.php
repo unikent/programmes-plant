@@ -9,10 +9,10 @@ use \Verify\Models\User as User;
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th>Programme Title</th>
-      <th>Submitted By</th>
+      <th>Programme title</th>
+      <th>Submitted by</th>
       <th>Updated</th>
-      <th>Editor Tools</th>
+      <th>Editor tools</th>
     </tr>
   </thead>
   <tbody>
@@ -40,8 +40,8 @@ use \Verify\Models\User as User;
         </td>
       <td><?php echo Date::forge($revision->updated_at)->ago(); ?></td>
       <td>
-        <a class="btn btn-primary" href="<?php echo $view_link; ?>">View Revision</a>
-        <a class="btn btn btn-inverse" href="<?php echo $diff_link; ?>">Difference from live</a>
+        <a class="btn btn-primary" href="<?php echo $view_link; ?>">View revision</a>
+        <a class="btn btn btn-primary" href="<?php echo $diff_link; ?>">Difference from live</a>
       </td>
     </tr>
   <?php endforeach; ?>

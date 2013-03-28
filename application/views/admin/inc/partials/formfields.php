@@ -136,4 +136,3 @@ foreach($section as $field):
   <?php endif; ?>
 
 <?php endforeach; // End sections foreach ?>
-?>

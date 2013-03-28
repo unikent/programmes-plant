@@ -64,7 +64,7 @@ div.alert p { margin:0; }
 .gallery_images .caption .action_buttons { margin:3px 0; }
 del {
 	background-color: OrangeRed;
-	text-decoration: none;
+	text-decoration: line-through;
 }
 ins {
 	background-color:SpringGreen;
