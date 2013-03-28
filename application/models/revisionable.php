@@ -109,7 +109,7 @@ class Revisionable extends SimpleData {
 		// This will be used mostly when seeding the database.
 		if (! Request::cli())
 		{
-			$revision_values['edits_by'] = Auth::user();
+			$revision_values['edits_by'] = Auth::user()->username;
 		}
 		else 
 		{
@@ -126,7 +126,7 @@ class Revisionable extends SimpleData {
 		$revision->fill($revision_values);
 
 		// Set previous revision back to draft
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','selected')->update(array('status'=>'draft'));	
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where_in('status', array('selected', 'under_review'))->update(array('status'=>'draft'));	
 
 		// Save revision
 		return $revision->save();
@@ -160,33 +160,45 @@ class Revisionable extends SimpleData {
 		$model = static::$revision_model;
 		$revision = $model::find($revision_id);
 
-		// Ensure revision belongs to this item
-		$data_type_key = $this->data_type_id.'_id';	
-		if($revision->$data_type_key == $this->id){
+		// Ensure revision belongs to this item or throw an exception.
+
+		// We don't know what the column of the database that relates a revision to what it is a revision of.
+		// For example a revision of a programme has revisions with a column called programme_id that express this relationship
+		// We need to use $this->data_type_id to work this out.
+		$data_type_key = $this->data_type_id . '_id';
+
+		if ($revision->$data_type_key == $this->id)
+		{
 			return $revision;
-		}else{
-			// Exception ifn not.
+		}
+		else
+		{
 			throw new RevisioningException("Revision does not belong to this object.");
 		}
 	}
 
 	/**
-	 * Get currently active revision
+	 * Get currently active revision.
+	 * 
 	 * @param $columns columns to return
 	 * @return active revision instance
 	 */
 	public function get_active_revision($columns = array('*'))
 	{
-		// If all is up to date (live=2) return live/selected item
-		// else get item marked as selected
+		// If all is up to date (live=2) return live and hence selected item
+		// else get item marked as selected or the one selected, but send in for review.
 		$model = static::$revision_model;
+
 		if ($this->live == 2)
 		{
 			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first();
 		}
 		else
 		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','selected')->first();
+			return $model::where($this->data_type_id.'_id', '=' , $this->id)
+							->where('year','=',$this->year)
+							->where_in('status', array('under_review', 'selected'))
+							->first();
 		}
 	}	
 
@@ -282,7 +294,7 @@ class Revisionable extends SimpleData {
 		// Update and save this revision 
 		$revision->status = 'live';
 		$revision->published_at = date('Y-m-d H:i:s');
-		$revision->made_live_by = Auth::user();
+		$revision->made_live_by = Auth::user()->username;
 		$revision->save();
 
 		// Update feed file & kill output caches
@@ -291,6 +303,32 @@ class Revisionable extends SimpleData {
 
 		// Return result
 		return $revision;
+	}
+
+	/**
+	 * Submits a revision into the inbox of EMS for editing, setting the status to 'under_review'.
+	 * 
+	 * This should work for all revisionable types that inherit from this.
+	 * 
+	 * Presently only the revisions of programmes are surfaced.
+	 * 
+	 * @param int|Revision  Revision object or integer to send for editing.
+	 */
+	public function submit_revision_for_editing($revision)
+	{
+		if (! is_numeric($revision) and ! is_object($revision))
+		{
+			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
+		}
+
+		// If we got an ID, then convert it to a revision.
+		if (is_numeric($revision))
+		{
+			$revision = $this->get_revision($revision);
+		}
+
+		$revision->status = 'under_review';
+		$revision->save();
 	}
 
 	/**
@@ -443,9 +481,8 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-     * Simplifies the object by IDs from field names.
+     * Simplifies this object by removing IDs from its field names.
      * 
-     * @todo This duplicates functionality in revisionable. Refactor or remove.
      * @return StdClass A simplified version of the object minus its field names.
      */
     public function trim_ids_from_field_names()
@@ -454,11 +491,22 @@ class Revisionable extends SimpleData {
 
     	foreach ($this->attributes as $name => $value) 
 		{
-			$name = preg_replace('/_\d{1,3}$/', '', $name);
+			$name = static::trim_id_from_field_name($name);
 			$trimmed->$name = $value;
 		}
 
 		return $trimmed;
+    }
+
+    /**
+     * strips the ID from a field name
+     * 
+     * @param $name the field name
+     * @return string a field name without an id.
+     */
+    public static function trim_id_from_field_name($name)
+    {
+		return preg_replace('/_\d{1,4}$/', '', $name);
     }
 
 }

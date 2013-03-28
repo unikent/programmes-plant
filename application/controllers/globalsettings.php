@@ -6,6 +6,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 	public $views = 'globalsettings';
 	protected $model = 'GlobalSetting';
 
+	public $required_permissions = array("edit_immutable_data");
 	/**
 	 * Routing for /$year/$type/globalsettings
 	 *

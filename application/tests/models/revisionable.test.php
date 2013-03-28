@@ -592,6 +592,7 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(1, $r->id);
 	}
+
 	public function testGetActiveRevisionAfterMakeLiveReturnsRevision(){
 		$this->populate();
 		$p = Programme::find(1);
@@ -608,6 +609,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $programme->get_active_revision();
 		$this->assertNotNull($revision);
 	}
+
 	public function testget_active_revision_for_new_programme_is_selected()
 	{
 		$this->populate();
@@ -615,6 +617,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $programme->get_active_revision();
 		$this->assertEquals('selected', $revision->status);
 	}
+
 	public function testget_active_revision_for_new_programme_is_live_once_made_live()
 	{
 		$this->populate();
@@ -626,7 +629,8 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 
-	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies(){
+	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 		$r = $p->get_active_revision();
@@ -640,7 +644,9 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(3, $r->id);
 	}
-	public function testGetLiveRevisionBeforePublishReturnsNull(){
+
+	public function testGetLiveRevisionBeforePublishReturnsNull()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 		$r = $p->get_live_revision();
@@ -648,13 +654,14 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals(null, $r);
 	}
-	public function testGetLiveRevisionAfterPublishExists(){
+
+	public function testGetLiveRevisionAfterPublishExists()
+	{
 		$this->populate();
 		$p = Programme::find(1);
 
 		$r2 = $p->get_active_revision();
 		$p->make_revision_live($r2);
-
 
 		$r = $p->get_live_revision();
 
@@ -662,12 +669,81 @@ class TestRevisionable extends ModelTestCase {
 	}
 
 
+	public function testtrim_id_from_field_nameCorrectlyRemovesID() {
+		$to_trim_1 = 'some_field_1';
+		$to_trim_2 = 'some_other_field_456';
+		$to_trim_3 = 'and_another_field_5684';
+		$to_trim_4 = 'field_without_id';
+		$to_trim_5 = 'field_with_very_long_id_99999';
 
+		$trimmed_1 = Revisionable::trim_id_from_field_name($to_trim_1);
+		$trimmed_2 = Revisionable::trim_id_from_field_name($to_trim_2);
+		$trimmed_3 = Revisionable::trim_id_from_field_name($to_trim_3);
+		$trimmed_4 = Revisionable::trim_id_from_field_name($to_trim_4);
+		$trimmed_5 = Revisionable::trim_id_from_field_name($to_trim_5);
+
+		$this->assertEquals('some_field', $trimmed_1);
+		$this->assertEquals('some_other_field', $trimmed_2);
+		$this->assertEquals('and_another_field', $trimmed_3);
+		$this->assertEquals('field_without_id', $trimmed_4);
+		$this->assertEquals('field_with_very_long_id_99999', $trimmed_5);
+	}
 
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
 
+	public function testsubmit_revision_for_editingAcceptsARevisionIDAParameter()
+	{
+		$progamme_mock = $this->getMock('Programme', array('get_revision'));
 
+		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
+
+		$progamme_mock->expects($this->once())
+		       ->method('get_revision')
+		       ->with(1)
+		       ->will($this->returnValue($revision_mock));
+
+		$revision_mock->expects($this->once())
+		       ->method('save');
+
+		$progamme_mock->submit_revision_for_editing(1);
+	}
+
+	/**
+	 * @expectedException RevisioningException
+	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
+	 */
+	public function testsubmit_revision_for_editingRejectsAllOtherParametersArray()
+	{
+		$p = new Programme();
+
+		$p->submit_revision_for_editing(array('reject_me'));
+	}
+
+	/**
+	 * @expectedException RevisioningException
+	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
+	 */
+	public function testsubmit_revision_for_editingRejectsAllOtherParametersString()
+	{
+		$p = new Programme();
+
+		$p->submit_revision_for_editing('nope');
+	}
+
+	public function testsubmit_for_editingSetsStatusTounder_review()
+	{
+		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
+
+		$revision_mock->expects($this->once())
+		              ->method('save');
+
+		$p = new Programme();
+
+		$p->submit_revision_for_editing($revision_mock);
+
+		$this->assertEquals('under_review', $revision_mock->status);
+	}
 
 }

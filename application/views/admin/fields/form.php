@@ -76,6 +76,33 @@
     </div>
   <?php endif; ?>
 </div>
+
+    <div class="control-group">
+      <?php echo Form::label('permissions', __('fields.form.label_permissions'), array('class'=>'control-label'))?>
+      <div class="controls">
+
+        <?php if(!empty($roles)): ?>
+        <table>
+          <tr>
+            <th>Role</th>
+            <th>View field</th>
+            <th>Edit field</th>
+          </tr>
+
+          <?php foreach($roles as $role): ?>
+          <tr>
+            <td><?php echo $role->name; ?></td>
+            <td><?php echo Form::checkbox('permissions[R][]', $role->id, in_array($role->id, $permissions['R'])? true : false); ?></td>
+            <td><?php echo Form::checkbox('permissions[W][]', $role->id, in_array($role->id, $permissions['W'])? true : false); ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </table>
+        <?php endif; ?>
+
+        <br><?php echo __('fields.form.label_permissions_help_text'); ?>
+      </div>
+    </div>
+
   </fieldset>
 
 <?php  echo ( isset($values) ? Form::hidden('id', $values->id) : '' ) ?>

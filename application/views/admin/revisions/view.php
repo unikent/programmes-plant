@@ -27,13 +27,7 @@ Current state is  <strong><?php echo $revision->status; ?></strong>.
     <?php foreach ($attributes as $field => $field_name) : ?>
        <tr>
         <td><?php echo (!array_key_exists($field, $attributes)) ? __("programmes.$field") : $attributes[$field] ?></td>
-        <td><?php 
-
-        $row = $revision->{$field};
-        if(is_object($row)) $row = $row->name;
-        echo  $row; 
-
-        ?></td>
+        <td><?php echo is_object($revision->{$field}) ? $revision->{$field}->name : $revision->{$field}; ?></td>
       </tr>
     <?php endforeach; ?>
 </table>

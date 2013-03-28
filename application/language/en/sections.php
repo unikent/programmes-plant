@@ -32,6 +32,12 @@ return array(
 	'name' => 'Name',
 	'name_placeholder' => 'Enter name...',
 
+	'form' => array(
+		'label_permissions' => 'Permissions',
+		'label_permissions_help_text' => 'By default, all sections within the Programmes interface are collapsed. You can set them to be open for specific roles using the checkboxes above.',
+	),
+
+
 	/**
 	 * Messages
 	 */

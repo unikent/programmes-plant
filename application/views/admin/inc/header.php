@@ -57,7 +57,7 @@
                 <?php endif ?>
                 
                 <ul class="nav pull-right">
-                    <li><a href="#"><?php echo Auth::user() ?></a></li>
+                    <li><a href="#"><?php echo Auth::user()->username; ?></a></li>
                     <li><a href="<?php echo url('logout')?>">Logout</a></li>
                 </ul>
 

@@ -18,10 +18,20 @@ var ck_config = {
 	resize_enabled: true
 };
 
-$('textarea').each( function(){
+$('textarea').each(function(){
 	//Add ckeditor
-	var ckedit = CKEDITOR.replace( $(this)[0], ck_config);
- 
+	var ckedit = CKEDITOR.replace($(this)[0], ck_config);
+
+    //instanceReady listener, to set editors to readOnly where appropriate.
+    ckedit.on('instanceReady', function( evt ){
+		var editor = evt.editor;
+		var element = editor.element.$;
+
+		if($(element).attr('readonly')){
+			editor.setReadOnly(true);
+		}
+    }, ckedit.element.$);
+
  	if($(this).attr('data-limit')){
 		//Add word limiting logic
 		var self = {};
@@ -77,8 +87,6 @@ $('textarea').each( function(){
 
 	    // Add display span
 	    $(self.dom).insertAfter($(this));
-
-	    //Attach listeners.
 	    ckedit.on( 'key', function( evt ){ 
 	    	self.checkLength(evt.editor.getData());
 	    },ckedit.element.$ );

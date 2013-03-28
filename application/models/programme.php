@@ -249,6 +249,16 @@ class Programme extends Revisionable {
 	}
 
 	/**
+	 * Gets all programme revisions that are currently under review.
+	 * 
+	 * @return array $under_review  An array of programme revisions currently under review.
+	 */
+	public static function get_under_review()
+	{
+		return ProgrammeRevision::where('status', '=', 'under_review')->order_by('updated_at', 'asc')->get();
+	}
+
+	/**
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
 	 *
@@ -273,46 +283,6 @@ class Programme extends Revisionable {
 		}
 
 		return $values;
-	}
-
-	/**
-	 * Creates a flat representation of the object for use in XCRI.
-	 * 
-	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
-	 */
-	public function xcrify()
-	{
-		$clean_programme = $this->trim_ids_from_field_names();
-		$clean_programme->url = 'http://www.kent.ac.uk/courses/undergraduate/' . $this->id . '/' . $this->slug;
-
-		// Pull in award as eager loading doesn't appear to be working.
-		$clean_programme->award = Award::find($this->award_3);
-
-		// Set campus as default while we are making a dummy.
-		$clean_programme->attendance_mode_id = 'CM';
-		$clean_programme->attendance_mode = 'Campus';
-
-		// Also dummy attendence_pattern_id for now. Set to daytime.
-		$clean_programme->attendance_pattern = 'Daytime';
-		$clean_programme->attendance_pattern_id = 'DT';
-
-		$clean_programme->campus = Campus::find($this->location_11);
-
-		// Deal with subjects in an ugly way.
-		$clean_programme->subjects = array();
-		$clean_programme->subjects[] = $this->jacs_code_subject_1_42;
-		$clean_programme->subjects[] = $this->jacs_code_subject_2_43;
-
-		$subject  = Subject::find($this->subject_area_1_8);
-		$clean_programme->subjects[] = $subject->name;
-
-		$subject  = Subject::find($this->subject_area_2_9);
-		$clean_programme->subjects[] = $subject->name;
-
-		// Leave as is for the moment.
-		$clean_programme->cost = $this->tuition_fees;
-
-		return $clean_programme;
 	}
 
 	/**

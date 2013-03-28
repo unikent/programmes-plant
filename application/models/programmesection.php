@@ -43,4 +43,14 @@ class ProgrammeSection extends Eloquent {
     {
         return $this->has_many('ProgrammeField', 'section');
     }
+
+    public function get_slug()
+    {
+        return self::slugify($this->name);
+    }
+
+    public static function slugify($string)
+    {
+        return strtolower(str_replace(' ', '_', $string));
+    }
 }
