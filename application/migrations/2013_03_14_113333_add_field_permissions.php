@@ -18,11 +18,13 @@ class Add_Field_Permissions {
 			$permission->name = "fields_read_{$field->colname}";
 			$permission->save();
 
-			$permission->roles()->sync(array(2)); // Grant read rights to Admin as default
+			$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 
 			$permission = new Permission;
 			$permission->name = "fields_write_{$field->colname}";
 			$permission->save();
+
+			$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 		}
 	}
 
