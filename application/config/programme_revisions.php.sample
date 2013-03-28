@@ -1,0 +1,9 @@
+<?php
+
+return array(
+	'notifications' => array(
+		'on' => false,
+		'to' => array('email@kent.ac.uk'),
+		'from' => array('email@kent.ac.uk'),
+	)
+);

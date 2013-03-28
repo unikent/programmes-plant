@@ -1,5 +1,8 @@
 <?php
 
+// use user and role objects from namespace
+use \Verify\Models\user;
+
 class Programmes_Controller extends Revisionable_Controller {
 
 	public $restful = true;
@@ -289,6 +292,42 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
+	 * Routing for GET /$year/$type/$object_id/submit_programme_for_editing/$revision_id
+	 * 
+	 * @param int    $year         The year of the object (not currently used).
+	 * @param string $type         The type of programme, either ug or pg (not currently used).
+	 * @param int    $revision_id  The ID of the revision being submitted for editing.
+	 */
+	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
+	{
+		$this->check_user_can('submit_programme_for_editing');
+
+		$programme = Programme::find($object_id);
+		$revision = ProgrammeRevision::find($revision_id);
+
+		if(!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$programme->submit_revision_for_editing($revision->id);
+
+		// Send email notification to the approval list
+		if(Config::get('programme_revisions.notifications.on')){
+			$author = Auth::user();
+			$title = $programme->{Programme::get_title_field()};
+
+			$mailer = IoC::resolve('mailer');
+
+			$message = Swift_Message::newInstance("New programme update for {$title}")
+				->setFrom(Config::get('programme_revisions.notifications.from'))
+				->setTo(Config::get('programme_revisions.notifications.to'))
+				->addPart("{$author->fullname} has submitted a new programme update for {$title}, which is currently pending approval.", 'text/plain');
+
+			$mailer->send($message);
+		}
+
+		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
+		return Redirect::to($year . '/' . $type . '/' . $this->views);
+	}
+
+	/**
 	 * Routing for POST /$year/$type/programmes/approve_revision
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
@@ -304,10 +343,25 @@ class Programmes_Controller extends Revisionable_Controller {
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$programme = Programme::find($programme_id);
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$revision = ProgrammeRevision::find($revision_id);
+		if (!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->make_revision_live((int) $revision_id))
 		{
+			if(Config::get('programme_revisions.notifications.on')){
+				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
+				$title = $programme->{Programme::get_title_field()};
+
+				$mailer = IoC::resolve('mailer');
+
+				$message = Swift_Message::newInstance("Your programme update was approved")
+					->setFrom(Config::get('programme_revisions.notifications.from'))
+					->setTo($author->email)
+					->addPart("Dear {$author->fullname}, \n\nYour update to {$title} has now been approved. \n\nMany thanks!", 'text/plain');
+
+				$mailer->send($message);
+			}
+
 			Messages::add('success', 'Revision was approved');
 		}
 		else
@@ -319,12 +373,55 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
+	 * Routing for POST /$year/$type/programmes/request_changes
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 */
+	public function post_request_changes($year, $type)
+	{
+		$this->check_user_can('request_changes');
+
+		$programme_id = Input::get('programme_id');
+		$revision_id = Input::get('revision_id');
+		if (!$programme_id || !$revision_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Load the Programme
+		$programme = Programme::find($programme_id);
+		if (empty($programme)) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Load the Revision
+		$revision = ProgrammeRevision::find($revision_id);
+		if (empty($revision)) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Load the message
+		$body = Input::get('message');
+		if(!empty($body))
+		{
+			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
+			$title = $programme->{Programme::get_title_field()};
+
+			$mailer = IoC::resolve('mailer');
+
+			$message = Swift_Message::newInstance("RE: Your updates to {$title}")
+				->setFrom(Config::get('programme_revisions.notifications.from'))
+				->setTo($author->email)
+				->addPart(strip_tags($body), 'text/plain')
+				->setBody($body,'text/html');
+
+			$mailer->send($message);
+		}
+
+		return Redirect::to($year.'/'.$type.'/'.$this->views);
+	}
+
+	/**
 	 * Routing for POST /$year/$type/programmes/reject_revision
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 */
-	public function post_reject_revision($year, $type)
+	public function post_message_revision_author($year, $type)
 	{
 		$this->check_user_can('revert_revisions');
 
