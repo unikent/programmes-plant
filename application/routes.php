@@ -117,7 +117,6 @@ Route::group(array('before' => ''), function(){
 	
 	// XCRI-CAP Feed
 	Route::any('/api/([0-9]{4})/(undergraduate)/xcri-cap', 'api@xcri_cap');
-	Route::any('/api/([0-9]{4})/(undergraduate)/generate-xcri-cap', 'api@generate_xcri_cap');
 });
 
 // Login/out
