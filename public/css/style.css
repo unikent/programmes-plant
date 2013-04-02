@@ -150,3 +150,8 @@ form table th,
 form table td { 
     padding: 0.2em 1em;
 }
+
+#cke_message {
+    width: 530px !important; /* Reduce width for CKEditor */
+    margin-bottom: 1em;
+}
