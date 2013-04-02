@@ -51,7 +51,7 @@ class XCRICAP_Task {
 
         // cache the xcri-cap xml before sending it
         $cache_key = "xcri-cap-ug-$year";;
-        Cache::put($cache_key, $xcri_xml, 2628000);
+        Cache::put($cache_key, $xcri_xml->__toString(), 2628000);
 
         return $xcri_xml;
     }
