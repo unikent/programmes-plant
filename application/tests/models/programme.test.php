@@ -2,11 +2,6 @@
 
 class TestProgramme extends ModelTestCase {
 
-	public function tearDown()
-	{
-		$this->clear_models(array('ProgrammeRevision', 'Programme'));
-	}
-
 	public function testXcrifyReturnsAStdClass() {}
 
 	public function testXcrifyReturnsAValidFlattenedVersionOfTheObject() {}
