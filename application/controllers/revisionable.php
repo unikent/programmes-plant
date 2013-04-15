@@ -119,33 +119,6 @@ class Revisionable_Controller extends Admin_Controller {
 		Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
 	}
-
-	/**
-	 * Routing for GET /$year/$type/$object_id/submit_programme_for_editing/$revision_id
-	 * 
-	 * @param int    $year         The year of the object (not currently used).
-	 * @param string $type         The type of programme, either ug or pg (not currently used).
-	 * @param int    $revision_id  The ID of the revision being submitted for editing.
-	 */
-	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
-	{
-		$this->check_user_can('submit_programme_for_editing');
-
-		$model = $this->model;
-		$object = $model::find($object_id);
-
-		if (! $model) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$revision_model = $model::$revision_model;
-
-		$revision = $revision_model::find($revision_id);
-
-		$object->submit_revision_for_editing($revision->id);
-		
-		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
-
-		return Redirect::to($year . '/' . $type . '/' . $this->views);
-	}
 	
 	/**
 	 * Routing for GET /$year/$type/$object_id/unpublish/$revision_id

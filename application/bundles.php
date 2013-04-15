@@ -37,5 +37,6 @@ return array(
     'date' => array('auto'=>true),
     'phpsession' => array('auto' => true),
     'verify_ldap'    => array('auto' => true),
-    'filch' => array('auto' => true)
+    'filch' => array('auto' => true),
+    'swiftmailer' => array('auto' => true),
 );
