@@ -73,6 +73,7 @@ return array(
 
 
 	'diff_edit_programme' => 'Edit this programme',
+	'diff_request_amends' => 'Request changes from author',
 	'diff_approve_revision' => 'Approve revision',
 	'diff_reject_revision' => 'Reject revision',
 );

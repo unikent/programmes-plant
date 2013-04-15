@@ -28,12 +28,33 @@
   </table>
 
   <div class="form-actions">
+    <a class="btn btn-primary" data-toggle="modal" href="#request_changes" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@request_changes')?>"><?php echo  __('programmes.diff_request_amends'); ?></a>
     <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>"><?php echo  __('programmes.diff_edit_programme'); ?></a>
     <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>"><?php echo  __('programmes.diff_approve_revision'); ?></a>
     <a class="btn btn-danger reject_revision_toggler" data-toggle="modal" href="#reject_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@reject_revision')?>"><?php echo  __('programmes.diff_reject_revision'); ?></a>
   </div>
 </div><!-- span9 -->
 
+<div class="modal hide fade" id="request_changes">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Request changes from author</h3>
+  </div>
+
+  <div class="modal-body">
+    <p>Use the form below to send a brief message to the author of this revision.</p>
+  </div>
+
+  <div class="modal-footer">
+    <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/request_changes', 'POST')?>
+    <?php echo Form::hidden('programme_id', $programme->id); ?>
+    <?php echo Form::hidden('revision_id', $revisions['proposed']->id); ?>
+    <?php echo Form::textarea('message'); ?>
+    <?php echo Form::submit('Send message', array('class' => 'btn btn-success')); ?>
+    <a data-dismiss="modal" href="#" class="btn">Cancel</a>
+    <?php echo Form::close()?>
+  </div>
+</div>
 
 <div class="modal hide fade" id="approve_revision">
   <div class="modal-header">
