@@ -1,81 +1,114 @@
 <?php
 
-class RevisionableThing extends Revisionable {}
+class RevisionableThing extends Revisionable {
+    public static $revision_model = 'RevisionableThingRevision';
+    protected $data_type_id = 'revisionable_thing';
+}
+
+class RevisionableThingRevision extends Revision {
+    protected $data_type_id = 'revisionable_thing_id';
+}
 
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user");
+	private $db_teardown = false;
 
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
+
+		Schema::create('revisionablethings', function($table){
+			$table->increments('id');
+			$table->string('name', 200);
+			$table->string('year', 4);
+			$table->integer('instance_id');
+			$table->integer('live');
+			$table->timestamps();
+		});
+
+		Schema::create('revisionablethingrevisions', function($table){
+			$table->increments('id');
+			$table->string('name', 200);
+			$table->integer('instance_id');
+			$table->string('year', 4);
+			$table->string('status', 200);
+			$table->integer('edits_by');	
+			$table->integer('made_live_by');
+			$table->integer('revisionable_thing_id');
+			$table->timestamps();
+			$table->timestamp('published_at');
+		});
+
 		static::clear_models();
 	}
 
 	public function tearDown() 
-	{
-		// Flush the cache.
-		Cache::flush();
+	{	
+		Cache::flush(); // Flush the cache.
 
-		static::clear_models();
+		if($this->db_teardown){
+			DB::query('DELETE FROM revisionablethings');
+			DB::query('DELETE FROM sqlite_sequence WHERE name = \'revisionablethings\'');
 
-		Programme::$list_cache = false;
-		
+			DB::query('DELETE FROM revisionablethingrevisions');
+			DB::query('DELETE FROM sqlite_sequence WHERE name = \'revisionablethingrevisions\'');
+			$this->db_teardown = false;
+		}
+
+		RevisionableThing::$list_cache = false;	
 		parent::tearDown();
 	}
 
-	public function populate($model = 'Programme', $input = false)
+	public function populate($model = 'RevisionableThing', $input = array())
 	{
+		$default = array('name' => 'Widget A', 'year' => 2014, 'id' => 1);
+		$input = array_merge($default, $input);
 
-		if (! $input)
-		{
-			$input = $this->input;
-		}
 		$model::create($input);
+		$this->db_teardown = true;
 	}
+
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
 	{
-
-		
-		$this->assertCount(0, Programme::all_as_list());
+		$this->assertCount(0, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listReturnsAnArrayOfItemsFromDatabase() 
 	{
-		$this->populate();
-
-		$result = Programme::all_as_list();
+		$this->populate('RevisionableThing', array('name' => 'Widget A'));
+		$result = RevisionableThing::all_as_list();
 
 		$this->assertTrue(is_array($result));
-		$this->assertEquals(array('1' => 'Thing'), $result);
+		$this->assertEquals(array('1' => 'Widget A'), $result);
 	}
 
-	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
+	public function testall_as_listReturnsTheSameWhenItIsInDiskCache()
 	{
-
 		$this->populate();
 
 		// Warm up the cache.
-		$before_cache = Programme::all_as_list();
+		$before_cache = RevisionableThing::all_as_list();
 
 		// Wipe memory cache
-		Programme::$list_cache = false;
+		RevisionableThing::$list_cache = false;
 
-		$after_cache = Programme::all_as_list();
+		$after_cache = RevisionableThing::all_as_list();
 
 		$this->assertEquals($before_cache, $after_cache);
 	}
 
-	public function testall_as_listReturnsTheSameWhenWhenItIsInMemoryCache() 
+	public function testall_as_listReturnsTheSameWhenItIsInMemoryCache() 
 	{
+		$this->populate();
+
 		// Warm up the cache.
-		$before_cache = Programme::all_as_list();
+		$before_cache = RevisionableThing::all_as_list();
 
 		// Wipe disk cache
-		Cache::forget('Programme--options-list');
+		Cache::forget('RevisionableThing--options-list');
 
-		$after_cache = Programme::all_as_list();
+		$after_cache = RevisionableThing::all_as_list();
 
 		$this->assertEquals($before_cache, $after_cache);
 	}
@@ -83,19 +116,18 @@ class TestRevisionable extends ModelTestCase {
 	public function testall_as_listResultsCacheToDiskWhenThereIsNoCache() 
 	{
 		$this->populate();
+		RevisionableThing::all_as_list();
 
-		Programme::all_as_list();
-
-		$this->assertTrue(Cache::has('Programme--options-list'));
+		$this->assertTrue(Cache::has('RevisionableThing--options-list'));
+		$this->assertNotEmpty(Cache::get('RevisionableThing--options-list'));
 	}
 
-	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache() {
+	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache()
+	{
 		$this->populate();
+		RevisionableThing::all_as_list();
 
-		Programme::all_as_list();
-
-		// Check we only have one element here.
-		$this->assertCount(1, Programme::$list_cache['Programme--options-list']);
+		$this->assertNotEmpty(RevisionableThing::$list_cache['RevisionableThing--options-list']);
 	}
 
 	public function testall_as_listIfWeRemoveTheCacheThenWeCanStillGetList()
@@ -103,67 +135,67 @@ class TestRevisionable extends ModelTestCase {
 		$this->populate();
 
 		// Warm up cache.
-		$result = Programme::all_as_list();
+		$result = RevisionableThing::all_as_list();
 
 		// Remove the cache
 		// This would be run, for example, when we save something.
-		Cache::forget('Programme--options-list');
+		Cache::forget('RevisionableThing--options-list');
 
 		// Check we actually forgot it.
-		$this->assertFalse(Cache::has('Programme--options-list'), 'Cache has not been forgotten');
+		$this->assertFalse(Cache::has('RevisionableThing--options-list'), 'Cache has not been forgotten');
 
 		// Everything should still work, even if we haven't cached.
-		$this->assertEquals($result, Programme::all_as_list());
+		$this->assertEquals($result, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listResultsCacheInMemoryAsWellAsOnDisk()
 	{
 		$this->populate();
 
-		Programme::all_as_list();
+		RevisionableThing::all_as_list();
 
-		$this->assertEquals(array('1' => 'Thing'), Programme::$list_cache['Programme--options-list']);
+		$this->assertNotEmpty(RevisionableThing::$list_cache['RevisionableThing--options-list']); // Is this now the same as testall_as_listResultsCacheToMemoryWhenThereIsNoCache() ?
+//		$this->assertEquals(array('1' => 'New widget!'), RevisionableThing::$list_cache['RevisionableThing--options-list']);
 	}
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
 	{
-
 		$this->populate();
 
 		// Warm cache, presumably also the in memory cache.
-		$result = Programme::all_as_list();
+		$result = RevisionableThing::all_as_list();
 
 		// Add a false cache to the object
 		$false_cache = array('1' => 'Other Thing');
-		Programme::$list_cache['Programme--options-list'] = $false_cache;
+		RevisionableThing::$list_cache['RevisionableThing--options-list'] = $false_cache;
 
 		// Remove the disk cache
-		Cache::forget('Programme--options-list');
+		Cache::forget('RevisionableThing--options-list');
 
 		// If we get this false cache out, we know we are hitting the in memory, not the file cache.
-		$this->assertEquals($false_cache, Programme::all_as_list());
+		$this->assertEquals($false_cache, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listResultsComeFromDiskCacheWhenCacheIsWarmedUp() 
 	{
 		// Artifically disk cache something.
 		$false_cache = array('1' => 'Other Thing');
-		Cache::forever('Programme--options-list', $false_cache);
+		Cache::forever('RevisionableThing--options-list', $false_cache);
 
 		// We now have nothing in the database, but a cache object.
 		// If we get something back then we aren't hitting the database at all.
-		$this->assertEquals($false_cache, Programme::all_as_list());
+		$this->assertEquals($false_cache, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listResultsComeFromMemoryCacheWhenCacheIsWarmedUp()
 	{
 		// Artifically create a memory cache something.
 		$false_cache = array('1' => 'Other Thing');
-		Programme::$list_cache['Programme--options-list'] = $false_cache;
+		RevisionableThing::$list_cache['RevisionableThing--options-list'] = $false_cache;
 
 		// We have only an in memory cache, no disk and no database at all.
 		// If we get something back, we are getting it from the memory cache.
-		$this->assertEquals($false_cache, Programme::all_as_list());
+		$this->assertEquals($false_cache, RevisionableThing::all_as_list());
 	}
 
 	public function testall_as_listResultsFallBackToDiskWhenMemoryIsNotPresent()
@@ -171,306 +203,277 @@ class TestRevisionable extends ModelTestCase {
 		$this->populate();
 
 		// Setup both the memory and disk cache.
-		$result = Programme::all_as_list();
+		$result = RevisionableThing::all_as_list();
 
 		// Wipe the memory cache.
-		Programme::$list_cache = false;
+		RevisionableThing::$list_cache = false;
 
 		// Check we still have the disk cache
-		$this->assertTrue(Cache::has('Programme--options-list'), 'Somehow we wiped the disk cache when we wiped the memory cache.');
+		$this->assertTrue(Cache::has('RevisionableThing--options-list'), 'Somehow we wiped the disk cache when we wiped the memory cache.');
 
-		$this->assertEquals($result, Programme::all_as_list());
+		$this->assertEquals($result, RevisionableThing::all_as_list());
 	}
 
-	public function populate_two_years()
-	{
-		$first = array('year' => '2014', 'programme_title_1' => 'Thing 2014', 'id' => 1);
-		$this->populate('Programme', $first);
 
-		$second = array('year' => '2015', 'programme_title_1' => 'Thing 2015', 'id' => 2);
-		$this->populate('Programme', $second);
-	}
+	public function testall_as_listNumberWeGetOutIsTheNumberWePutIn(){
+		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget B', 'id' => 2));
 
-	public function testNall_as_listumberWeGetOutIsTheNumberWePutIn(){
-		$this->populate_two_years();
-
-		$this->assertEquals(count(Programme::all()), count(Programme::all_as_list()));
-		$this->assertCount(2, Programme::all_as_list());
+		$this->assertCount(2, RevisionableThing::all_as_list());
+		$this->assertEquals(count(RevisionableThing::all()), count(RevisionableThing::all_as_list()));
 	}
 
 	public function testall_as_listCheckNumberWeGetOutWithNumberWePutInWithYear()
 	{
-		$this->populate_two_years();
+		$this->populate('RevisionableThing', array('name' => 'Widget 2014', 'year' => 2014, 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
-		$this->assertEquals(count(Programme::where('year', '=', '2014')), count(Programme::all_as_list(2014)));
-		$this->assertCount(1, Programme::all_as_list(2014));
+		$this->assertCount(1, RevisionableThing::all_as_list(2014));
+		$this->assertEquals(count(RevisionableThing::where('year', '=', '2014')), count(RevisionableThing::all_as_list(2014)));
 
-		$this->assertEquals(count(Programme::where('year', '=', '2015')), count(Programme::all_as_list(2015)));
-		$this->assertCount(1, Programme::all_as_list(2015));
+		$this->assertEquals(count(RevisionableThing::where('year', '=', '2015')), count(RevisionableThing::all_as_list(2015)));
+		$this->assertCount(1, RevisionableThing::all_as_list(2015));
 	}
 
 	public function testall_as_listMemoryCacheSavesDifferentYears() 
 	{
-		$this->populate_two_years();
+		$this->populate('RevisionableThing', array('name' => 'Widget 2014', 'year' => 2014, 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
 		// Expect only our 2015 data back.
-		$this->assertEquals(array(2 => 'Thing 2015'), Programme::all_as_list(2015), "Didn't get back 2015");
+		$this->assertEquals(array(2 => 'Widget 2015'), RevisionableThing::all_as_list(2015), "Didn't get back 2015");
 
 		// Wipe the disk cache so we are relying on memory.
-		Cache::forget('Programme-2015-options-list');
+		Cache::forget('RevisionableThing-2015-options-list');
 
 		// Expect only our 2014 data back.
-		$this->assertEquals(array(1 => 'Thing 2014'), Programme::all_as_list(2014), "Didn't get back 2014");
+		$this->assertEquals(array(1 => 'Widget 2014'), RevisionableThing::all_as_list(2014), "Didn't get back 2014");
 	}
 
 	public function testall_as_listDiskCacheSavesDifferentYears() 
 	{
-		$this->populate_two_years();
+		$this->populate('RevisionableThing', array('name' => 'Widget 2014', 'year' => 2014, 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
 		// Expect only our 2015 data back.
-		$this->assertEquals(array(2 => 'Thing 2015'), Programme::all_as_list(2015), "Didn't get back 2015");
+		$this->assertEquals(array(2 => 'Widget 2015'), RevisionableThing::all_as_list(2015), "Didn't get back 2015");
 
 		// Wipe the memory cache so we are relying on disk.
-		Programme::$list_cache = false;
+		RevisionableThing::$list_cache = false;
 
 		// Expect only our 2014 data back.
-		$this->assertEquals(array(1 => 'Thing 2014'), Programme::all_as_list(2014), "Didn't get back 2014");
+		$this->assertEquals(array(1 => 'Widget 2014'), RevisionableThing::all_as_list(2014), "Didn't get back 2014");
 	}
-
-	/**
-	 * Make a minor change and save it.
-	 * 
-	 * Helps with all caching tests to ensure cache is wiped on save.
-	 * 
-	 * Always saves the programme with the ID of 1, which is, when we
-	 * have two years 2014.
-	 */
-	public function resave_entry()
-	{
-		$programme = Programme::find(1);
-		$programme->programme_title_1 = 'Thing 2';
-		$programme->save();
-	}
-
-	public function populate_cache_and_resave()
-	{
-		$this->populate();
-		Programme::all_as_list(); // Warm cache.
-		$this->resave_entry();
-	}
-	
-	public function testsave_OnlyRemovesMemoryCacheForTheYearOnSave()
-	{}
 
 	public function testsave_RemovesMemoryCacheOnSaveWithNoYear()
 	{
-		$this->populate_cache_and_resave();
-		$this->assertFalse(isset(Programme::$list_cache['Programme--options-list']));
+		$this->populate();
+		RevisionableThing::all_as_list(); // Warm cache.
+		$item = RevisionableThing::find(1);
+		$item->name = 'Widget B';
+		$item->save();
+
+		$this->assertFalse(isset(RevisionableThing::$list_cache['RevisionableThing--options-list']));
 	}
 
 	public function testsave_RemovesDiscCacheOnSaveWithNoYear()
 	{
-		$this->populate_cache_and_resave();
-		$this->assertFalse(Cache::has('Programme--options-list'));
+		$this->populate();
+		RevisionableThing::all_as_list(); // Warm cache.
+		$item = RevisionableThing::find(1);
+		$item->name = 'Widget B';
+		$item->save();
+
+		$this->assertFalse(Cache::has('RevisionableThing--options-list'));
 	}
+
 
 	public function testsave_RemovesMemoryCacheOnSaveWithYear()
 	{
-		$this->populate_two_years();
+		$this->populate('RevisionableThing', array('name' => 'Widget 2014', 'year' => 2014, 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
 		// Warm cache
-		Programme::all_as_list(2014);
+		RevisionableThing::all_as_list(2014);
 
 		// 2014 example here I know to be ID 1
-		$programme = Programme::find(1);
-		$programme->programme_title_1 = 'Thing 2';
-		$programme->save();
+		$item = RevisionableThing::find(1);
+		$item->name = 'Widget 2014 B';
+		$item->save();
 
-		$this->assertFalse(isset(Programme::$list_cache['Programme-2014-options-list']));
+		$this->assertFalse(isset(RevisionableThing::$list_cache['RevisionableThing-2014-options-list']));
 	}
 
 	public function testsave_RemovesDiscCacheOnSaveWithYear()
 	{
-		$this->populate_two_years();
+		$this->populate('RevisionableThing', array('name' => 'Widget 2014', 'year' => 2014, 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
 		// Warm cache
-		Programme::all_as_list(2014);
+		RevisionableThing::all_as_list(2014);
 
 		// 2014 example here I know to be ID 1
-		$programme = Programme::find(1);
-		$programme->programme_title_1 = 'Thing 2';
-		$programme->save();
+		$item = RevisionableThing::find(1);
+		$item->name = 'Widget 2014 B';
+		$item->save();
 
-		$this->assertFalse(Cache::has('Programme-2014-options-list'));
+		$this->assertFalse(Cache::has('RevisionableThing-2014-options-list'));
 	}
+
+	
+	public function testsave_OnlyRemovesMemoryCacheForTheYearOnSave()
+	{}
 
 	/**
 	* @expectedException RevisioningException
 	*/
-	public function testget_revision_will_throw_exception_on_revision_it_doesnt_own(){
-		$this->populate_two_years();
-		$p1 = Programme::find(1);
-		// p2 = Programme::find(2)
-		//get p2's exception from p1
-		$p1->get_revision(2);
+	public function testget_revision_will_throw_exception_on_revision_it_doesnt_own()
+	{
+		$this->populate('RevisionableThing', array('name' => 'Widget A', 'id' => 1));
+		$this->populate('RevisionableThing', array('name' => 'Widget B', 'id' => 2));
+
+		$item = RevisionableThing::find(1);
+		$item->get_revision(2);
+		// TODO: I don't really understand how this test ever worked?
 	}
 
-	
 	// New revision tests
-	public function testRevisionCreatedOnSave(){
+	public function testRevisionCreatedOnSave()
+	{
 		$this->populate();
 
-    	$revisionable_item = Programme::find(1);
-
-        $revision = $revisionable_item->get_revision(1);
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
 
 		$this->assertNotNull($revision);
 	}
-	public function testInitalRevisionForNewProgrammeIsSelected(){
+
+	public function testInitalRevisionForNewItemIsSelected()
+	{
 		$this->populate();
 
-    	$revisionable_item = Programme::find(1);
-        $revision = $revisionable_item->get_revision(1);
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
 
         $this->assertEquals("selected", $revision->status);
 	}
-	public function testSecondSaveCreatesSecondRevision(){
-		
+
+	public function testSecondSaveCreatesSecondRevision()
+	{	
 		$this->populate();
 
-    	$revisionable_item = Programme::find(1);
-    	$revisionable_item->programme_title_1 = 'new name';
-    	$revisionable_item->save();
+    	$item = RevisionableThing::find(1);
+    	$item->name = 'Widget B';
+    	$item->save();
 
-        $revision = $revisionable_item->get_revision(2);
+        $revision = $item->get_revision(2);
 
 		$this->assertNotNull($revision);
 	}
-	public function testSecondSaveSetsStatusOfFirstRevisionToDraft(){
-		
+
+	public function testSecondSaveSetsStatusOfFirstRevisionToDraft()
+	{		
 		$this->populate();
 
-    	$revisionable_item = Programme::find(1);
-    	$revisionable_item->programme_title_1 = 'new name';
-    	$revisionable_item->save();
+    	$item = RevisionableThing::find(1);
+    	$item->name = 'Widget B';
+    	$item->save();
 
-    	$revision = $revisionable_item->get_revision(1);
+    	$revision = $item->get_revision(1);
 
         $this->assertEquals("draft", $revision->status);
 	}
 
-
-
 	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
 	{
     	// set up some data
-    	$this->populate();
-    	$revisionable_item = Programme::find(1);
-        $revision = $revisionable_item->get_revision(1);
+		$this->populate();
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
 
         // make the revision live
-        $revisionable_item->make_revision_live($revision);
+        $item->make_revision_live($revision);
         
         // find programme #1 and check its 'live' value is 2
-        $programme = Programme::find(1);
-        $this->assertEquals(2, $programme->live);
+        $item = RevisionableThing::find(1);
+        $this->assertEquals(2, $item->live);
 	}
 	
 	public function testUseRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
 	{
     	// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
+		$this->populate();
+
+    	$revisionable_item = RevisionableThing::find(1);
+        $revision = $revisionable_item->get_revision(1);
         
         // use a revision
-        $programme->use_revision($revision);
+        $revisionable_item->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
         // ie we have only used a revision, not made anything live
-        $programme_modified = Programme::find(1);
-        $this->assertEquals(0, $programme_modified->live);
+        $revisionable_item_modified = RevisionableThing::find(1);
+        $this->assertEquals(0, $revisionable_item_modified->live);
 	}
 	
 	public function testUseRevisionSetsLiveFieldToLatestUnpublished()
 	{
     	// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
+		$this->populate();
+
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
         
         // make the revision live
-        $programme->make_revision_live($revision);
+        $item->make_revision_live($revision);
         
         // make a new revision
-        $programme_new = Programme::find(1);
-        $programme_new->slug = 'test';
-        $programme_new->save();
+        $new = RevisionableThing::find(1);
+        $new->name = 'Widget B';
+        $new->save();
         
         // find programme #1 again and now check its 'live' value is now 1
         // it should be 1 because previously the latest version was published, but then a newer version was made
         // ie there is something newer than the live version
-        $programme_modified = Programme::find(1);
-        $this->assertEquals(1, $programme_modified->live);
+        $modified = RevisionableThing::find(1);
+        $this->assertEquals(1, $modified->live);
 	}
-	
+
 	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
 	{
     	// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
+		$this->populate();
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
         
         // use a revision
-        $programme->use_revision($revision);
+        $item->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
         // ie we have only used a revision, not made anything live
-        $programme_modified = Programme::find(1);
-        $this->assertEquals(0, $programme_modified->live);
+        $modified = RevisionableThing::find(1);
+        $this->assertEquals(0, $modified->live);
 	}
-	
+
 	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
 	{
     	// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
+		$this->populate();
+    	$item = RevisionableThing::find(1);
+        $revision = $item->get_revision(1);
         
         // use a revision
-        $programme->use_revision($revision);
+        $item->use_revision($revision);
         
         // find programme #1 again and now check its 'live' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
         // ie we have only used a revision, not made anything live
-        $programme_modified = Programme::find(1);
-        $this->assertEquals(0, $programme_modified->live);
+        $modified = RevisionableThing::find(1);
+        $this->assertEquals(0, $modified->live);
 	}
-	
-	public function testRevertToPreviousRevisionWherePreviousIsPublished()
-	{
-    	// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
-        
-        // make the revision live
-        $programme->make_revision_live($revision);
-        
-        // make a new revision
-        $programme->slug = 'test';
-        $programme->save();
-        
-        // revert to the previous (ie live) revision
-        $programme->revert_to_previous_revision($programme->get_active_revision());
-        
-        // find programme #1 again and now check its 'live' value is 2
-        // it should be 2 because although a new revision was made subsequent to the live one (ie live=1), reverting to the live version should switch things back to live=2 ie the live version is the latest one.
-        $programme_modified = Programme::find(1);
-        $this->assertEquals(2, $programme_modified->live);
-	}
+/**	
 	
 	public function testMakeRevisionLiveGlobalSetting()
 	{
@@ -495,202 +498,99 @@ class TestRevisionable extends ModelTestCase {
         $global_setting = GlobalSetting::find(1);
         $this->assertEquals('UniKent', $global_setting->institution_name_1);
 	}
-	
-	public function testMakeRevisionLiveProgrammeSetting()
-	{
-		//TEST ISSUE: see "@todo @workaround" in revisionble model
-
-    	// set up some data (set one manually as this db table is not cleared in teardown)
-    	$input =  array('programme_title_1' => 'Test programme title', 'year' => '2014', 'id' => 1);
-    	$this->populate('ProgrammeSetting', $input);
-    	
-    	$revisionable_item = ProgrammeSetting::find(1);
-	
-    	// make a new revision
-        $new = ProgrammeSetting::find(1);
-        $new->programme_title_1 = 'The Music Programme';
-        $new->save();
-   
-        $revision = $new->get_revision(1);
-        
-        // make the revision live
-        $new->make_revision_live($revision);
-        
-        // find programme #1 and check its institution name is now 'UniKent'
-        $programme_setting = ProgrammeSetting::find(1);
-        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
-	}
-	
-	public function testUnpublishRevisionSetsStatusToPriorLive()
-	{
-		// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
-        
-        // make the revision live
-        $programme->make_revision_live($revision);
-        
-        $programme->programme_title_1 = 'Testtest';
-        $programme->save();
-        
-        // now unpublish the new live revision
-        $programme->unpublish_revision($revision);
-        
-        // get the new revision and test if it's prior_live
-        $revision_new = $programme->get_revision(1);
-        
-        $this->assertEquals('prior_live', $revision_new->status); 
-	}
-	
-	public function testUnpublishRevisionSetsActiveRevisionStatusToSelectedWhenLive()
-	{
-		// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-        $revision = $programme->get_revision(1);
-        
-        // make the revision live
-        $programme->make_revision_live($revision);
-        
-        // now unpublish the live revision
-        $programme->unpublish_revision($revision);
-        
-        // get the active revision and test if it's set to 'selected'
-        $active_revision = $programme->get_active_revision();
-        
-        $this->assertEquals('selected', $active_revision->status); 
-	}
-
-	public function testDeleteProgrammeDoesntDeleteProgramme()
-	{
-		// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-
-    	//delete the programme
-        $programme->delete();
-        
-        $programme = Programme::find(1);
-        
-        $this->assertNotNull($programme);
-	}
-
-	public function testDeleteProgrammeSetsHiddenFieldInProgramme()
-	{
-		// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-
-    	//delete the programme
-        $programme->delete();
-        
-        $programme = Programme::find(1);
-        
-        $this->assertEquals(true, $programme->hidden);
-	}
-
-	public function testDeleteProgrammeUnpublishesLiveRevisions()
-	{
-		// set up some data
-    	$this->populate();
-    	$programme = Programme::find(1);
-    	$revision = $programme->get_revision(1);
-        
-        // make the revision live
-        $programme->make_revision_live($revision);
-
-    	//delete the programme
-        $programme->delete();
-
-        $revision = $programme->get_revision(1);
-        
-        $this->assertNotEquals('live', $revision->status);
-	}
+**/
 
 	public function testGetActiveRevisionAfterCreateReturnsRevision(){
 		$this->populate();
-		$p = Programme::find(1);
-		$r = $p->get_active_revision();
 
-		$this->assertEquals(1, $r->id);
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
+
+		$this->assertEquals(1, $item->id);
 	}
 
 	public function testGetActiveRevisionAfterMakeLiveReturnsRevision(){
 		$this->populate();
-		$p = Programme::find(1);
-		$r = $p->get_active_revision();
-		$p->make_revision_live($r);
 
-		$this->assertEquals(1, $r->id);
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
+		$item->make_revision_live($revision);
+
+		$this->assertEquals(1, $revision->id);
 	}
 
 	public function testget_active_revisionDoesntReturnNull() 	
 	{	  	
 		$this->populate();
-		$programme = Programme::find(1);
-		$revision = $programme->get_active_revision();
+
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
+
 		$this->assertNotNull($revision);
 	}
 
-	public function testget_active_revision_for_new_programme_is_selected()
+	public function testget_active_revision_for_new_item_is_selected()
 	{
 		$this->populate();
-		$programme = Programme::find(1);
-		$revision = $programme->get_active_revision();
+
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
+
 		$this->assertEquals('selected', $revision->status);
 	}
 
-	public function testget_active_revision_for_new_programme_is_live_once_made_live()
+	public function testget_active_revision_for_new_item_is_live_once_made_live()
 	{
 		$this->populate();
-		$programme = Programme::find(1);
-		$revision = $programme->get_active_revision();
-		$programme->make_revision_live($revision);
-		$revision2 = $programme->get_active_revision();
+
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
+
+		$item->make_revision_live($revision);
+		$revision2 = $item->get_active_revision();
+
 		$this->assertEquals('live', $revision2->status);
 	}
 
-
-	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies()
-	{
+	public function testGetActiveRevisionAfterMakeLiveThenSaveTwoCopies(){
 		$this->populate();
-		$p = Programme::find(1);
-		$r = $p->get_active_revision();
-		$p->make_revision_live($r);
-		$p->programme_title_1 = 'a';
-		$p->save();
-		$p->programme_title_1 = 'b';
-		$p->save();
 
-		$r = $p->get_active_revision();
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_active_revision();
 
-		$this->assertEquals(3, $r->id);
+		$item->make_revision_live($revision);
+		$item->name = 'Widget B';
+		$item->save();
+
+		$item->name = 'Widget C';
+		$item->save();
+
+		$revision = $item->get_active_revision();
+
+		$this->assertEquals('Widget C', $revision->name);
 	}
 
-	public function testGetLiveRevisionBeforePublishReturnsNull()
-	{
+	public function testGetLiveRevisionBeforePublishReturnsNull(){
 		$this->populate();
-		$p = Programme::find(1);
-		$r = $p->get_live_revision();
+
+		$item = RevisionableThing::find(1);
+		$revision = $item->get_live_revision();
 		//$p->make_revision_live($r);
 
-		$this->assertEquals(null, $r);
+		$this->assertEquals(null, $revision);
 	}
 
-	public function testGetLiveRevisionAfterPublishExists()
-	{
+	public function testGetLiveRevisionAfterPublishExists(){
 		$this->populate();
-		$p = Programme::find(1);
 
-		$r2 = $p->get_active_revision();
-		$p->make_revision_live($r2);
+		$item = RevisionableThing::find(1);
 
-		$r = $p->get_live_revision();
+		$revision = $item->get_active_revision();
+		$item->make_revision_live($revision);
 
-		$this->assertEquals(1, $r->id);
+		$revision = $item->get_live_revision();
+		$this->assertEquals(1, $revision->id);
 	}
-
 
 	public function testtrim_id_from_field_nameCorrectlyRemovesID() {
 		$to_trim_1 = 'some_field_1';
@@ -716,57 +616,6 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
 
-	public function testsubmit_revision_for_editingAcceptsARevisionIDAParameter()
-	{
-		$progamme_mock = $this->getMock('Programme', array('get_revision'));
 
-		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
-
-		$progamme_mock->expects($this->once())
-		       ->method('get_revision')
-		       ->with(1)
-		       ->will($this->returnValue($revision_mock));
-
-		$revision_mock->expects($this->once())
-		       ->method('save');
-
-		$progamme_mock->submit_revision_for_editing(1);
-	}
-
-	/**
-	 * @expectedException RevisioningException
-	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
-	 */
-	public function testsubmit_revision_for_editingRejectsAllOtherParametersArray()
-	{
-		$p = new Programme();
-
-		$p->submit_revision_for_editing(array('reject_me'));
-	}
-
-	/**
-	 * @expectedException RevisioningException
-	 * @expectedExceptionMessage submit_revision_for_editing only accepts revision objects or integers as parameters.
-	 */
-	public function testsubmit_revision_for_editingRejectsAllOtherParametersString()
-	{
-		$p = new Programme();
-
-		$p->submit_revision_for_editing('nope');
-	}
-
-	public function testsubmit_for_editingSetsStatusTounder_review()
-	{
-		$revision_mock = $this->getMock('ProgrammeRevision', array('save'));
-
-		$revision_mock->expects($this->once())
-		              ->method('save');
-
-		$p = new Programme();
-
-		$p->submit_revision_for_editing($revision_mock);
-
-		$this->assertEquals('under_review', $revision_mock->status);
-	}
 
 }
