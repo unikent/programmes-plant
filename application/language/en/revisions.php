@@ -6,6 +6,7 @@ return array(
 	'status_draft' 		=> 'R',
 	'status_unused' 	=> 'Unused',
 	'status_live'		=> 'Published',
+	'status_review'		=> 'Under Review',
 	'status_draft_rollback' => 'R',
 	'status_previous_live_rollback' => 'R',
 
