@@ -6,6 +6,7 @@ return array(
 	'status_draft' 		=> 'R',
 	'status_unused' 	=> 'Unused',
 	'status_live'		=> 'Published',
+	'status_review'		=> 'Under Review',
 	'status_draft_rollback' => 'R',
 	'status_previous_live_rollback' => 'R',
 
@@ -13,6 +14,7 @@ return array(
 	'active_revisions' => 'Active revisions',
 	'rollback_revisions' => 'Roll live revision back',
 	'rollback_warning' => 'Warning. Using this feature will change the revision published on the live website.',
+	'historical_revisions' => 'Previous revisions',
 
 	// Buttons
 	'manage_revisions' 	=> 'Manage revisions',
