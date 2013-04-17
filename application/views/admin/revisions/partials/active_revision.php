@@ -16,7 +16,7 @@
 		<?php endif?>
 	</div>
 
-<?php elseif($revision->status =='selected'):?>
+<?php elseif($revision->status =='selected' || $revision->status =='under_review'):?>
 
 		<div style='padding:10px;' class='alert alert-info alert-block'>		
 			<div style='float:right;'>
@@ -24,7 +24,7 @@
   			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>"><?php echo __("revisions.make_live"); ?></a>
   			<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>"><?php echo __("revisions.use_previous"); ?></a>
   		</div>
-		  <span class="label label-info" ><?php echo __("revisions.status_current"); ?></span>
+		  <span class="label label-info" ><?php echo ( $revision->status == 'under_review') ? __("revisions.status_review") : __("revisions.status_current"); ?></span>
 		  <?php echo $revision->get_identifier_string() ?><br/>&nbsp;
 		</div>
 

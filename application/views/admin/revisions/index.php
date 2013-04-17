@@ -18,11 +18,26 @@ foreach ($revisions as $revision){
     if($revision->status =='live'){
       break;
     }
-
 }
 ?>
 
 <a class="btn btn-danger" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@rollback', array($programme->id))?>" ><?php echo __("revisions.rollback_form"); ?></a>
+
+<p>&nbsp;</p>
+<h3><?php echo __("revisions.historical_revisions"); ?></h3>
+<?php
+// Loop through revisions (display modes for active & previous are differnt)
+
+$showing = false;
+foreach ($revisions as $revision){
+
+   if($showing) echo View::make('admin.revisions.partials.historical_revision', array('revision' => $revision, 'programme' => $programme))->render();
+    //After live switch mode to "non-active"
+  if($revision->status =='live'){ $showing = true; }
+}
+?>
+
+
 <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 
 <div class="modal hide fade" id="make_revision_live">

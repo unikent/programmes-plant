@@ -421,7 +421,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 */
-	public function post_message_revision_author($year, $type)
+	public function post_reject_revision($year, $type)
 	{
 		$this->check_user_can('revert_revisions');
 
