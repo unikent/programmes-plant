@@ -168,6 +168,7 @@ date_default_timezone_set(Config::get('application.timezone'));
 Autoloader::namespaces(array(
 	'Verify\Models'	=> Bundle::path('verify_ldap') . '../verify/models'
 ));
+
 Autoloader::map(array(
 	// Sessions
 	'PhpSession' => Bundle::path('phpsession').'phpsession.php',
@@ -176,7 +177,9 @@ Autoloader::map(array(
 	// Auth
 	'Verify_LDAP' 	=> Bundle::path('verify_ldap') . 'libraries/verify_ldap.php',
 	'LDAPConnect' => Bundle::path('verify_ldap').'libraries/ldapconnect.php',
-	'Verify' 	=> Bundle::path('verify_ldap') . '../verify/libraries/verify.php'
+	'Verify' 	=> Bundle::path('verify_ldap') . '../verify/libraries/verify.php',
+	'User' => Bundle::path('verify_ldap').'../verify/models/user.php',
+	'Permission' => Bundle::path('verify_ldap').'../verify/models/permission.php',
 ));
 // Attach drivers
 Session::extend('phpsession', function(){ 	return new PhpSession; 		});

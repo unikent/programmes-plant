@@ -1,6 +1,3 @@
-<?php 
-use \Verify\Models\User as User;
-?>
 <h1>Inbox</h1>
 <p>These are the incoming revisions of programmes for you to review.</p>
 <?php echo Messages::get_html()?>
@@ -21,8 +18,6 @@ use \Verify\Models\User as User;
       <td><?php echo $revision->{Programme::get_title_field()} ?></td>
       <td>
         <?php
-        // This is slightly horrific in terms of making calls here - but it looks really cool!
-        
         $user_details = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 
         if (is_null($user_details))

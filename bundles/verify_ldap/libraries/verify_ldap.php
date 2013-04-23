@@ -17,7 +17,7 @@ class verify_ldap extends Verify
 	{
 	
 		// Setup vars this will end up using
-		Config::set('verify::verify.user_model', 'Verify\Models\User');;
+		Config::set('verify::verify.user_model', 'User');
 		Config::set('verify::verify.prefix', 'usersys');
 		Config::set('verify::verify.super_admin', 'Hyper Administrator');
 
