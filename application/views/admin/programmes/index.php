@@ -28,7 +28,12 @@
                 <?php elseif ( $programme->attributes["live"] == 2 ): ?>
                     <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
                 <?php endif; ?>
-                
+
+
+                <?php if ( $programme->attributes["locked_to"] !== '' ): ?>
+                  <span class="label label-important" rel="tooltip" data-original-title="">Locked to <?php echo $programme->attributes["locked_to"]  ?> </span>
+
+                <?php endif; ?>
             </td>
             <td>
                 <?php echo $programme->attributes[$title_field]; ?>

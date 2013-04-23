@@ -32,7 +32,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$user = Auth::user();
 
 		// get required fields
-		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live');
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live', 'locked_to');
 
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
