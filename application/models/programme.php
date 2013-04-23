@@ -248,6 +248,52 @@ class Programme extends Revisionable {
 	  return $this->belongs_to('Campus', static::get_location_field());
 	}
 
+	public function save()
+	{
+		if (!$this->dirty()) return true;
+
+		// If not locked
+		if($this->locked_to == null){
+
+			// If user has approve powers, auto accept
+			if(Auth::user()->can('approve_revisions'))
+			{
+				return parent::save();
+			}
+			else
+			{
+				// Else lock revision to user
+				$this->locked_to = Auth::user()->username;
+				return parent::save();
+			}
+
+		}else{
+			// If current user, allow to edit current revision
+			if($this->locked_to == Auth::user()->username)
+			{
+				
+				$this->update_current_revision();
+			}
+
+		}
+	}
+
+	public function update_current_revision(){
+		// Sync changes to revision
+		$revision = $this->get_active_revision();
+		foreach($this->get_dirty() as $col => $value){
+			$revision->{$col} = $value;
+		}
+		// Save revision & current
+		$revision->save();
+		$this->raw_save();	
+	}
+
+
+
+
+
+
 	/**
 	 * Gets all programme revisions that are currently under review.
 	 * 
