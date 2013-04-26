@@ -318,7 +318,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$message = Swift_Message::newInstance("New programme update for {$title}")
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart("{$author->fullname} has submitted a new programme update for {$title}, which is currently pending approval.", 'text/plain');
+				->addPart(__('emails.admin_notification', array('author' => $author->fullname, 'title' => $title)), 'text/plain');
 
 			$mailer->send($message);
 		}
@@ -357,7 +357,7 @@ class Programmes_Controller extends Revisionable_Controller {
 				$message = Swift_Message::newInstance("Your programme update was approved")
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
-					->addPart("Dear {$author->fullname}, \n\nYour update to {$title} has now been approved. \n\nMany thanks!", 'text/plain');
+					->addPart(__('emails.user_notification.approve', array('author' => $author->fullname, 'title' => $title)), 'text/plain');
 
 				$mailer->send($message);
 			}
