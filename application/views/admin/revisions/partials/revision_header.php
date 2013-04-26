@@ -34,7 +34,7 @@
 				<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
 			<?php endif;?>
 		<?php else : ?>
-			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>">Send to EMS</a>
+			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>"><?php echo __("revisions.send_for_editing"); ?></a>
 		<?php endif; ?>
 
 		<?php endif;?>
@@ -90,6 +90,6 @@
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn">Not right now</a>
-   		<a class="btn btn-danger yes_action">Send to EMS</a>
+   		<a class="btn btn-danger yes_action"><?php echo __("revisions.send_for_editing"); ?></a>
 	</div>
 </div>
