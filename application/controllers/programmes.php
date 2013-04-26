@@ -96,6 +96,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	/**
 	 * Routing for GET /$year/$type/edit/$programme_id
 	 *
+	 * controls the display of the programme edit form
+	 *
 	 * @param int    $year    The year
 	 * @param string $type    Undergraduate or postgraduate.
 	 * @param int    $item_id The ID of the programme to edit.
@@ -106,18 +108,16 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme = Programme::find($id);
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
-
-		$this->data['programme'] = $programme;
 		
+		// get the appropriate data to display on the programme form
+		$this->data['programme'] = $programme;
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
 
 		// Get either the active revision, or the review under_review.
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
-
-		//dd($this->data['active_revision']);
-		//Get lists data
+		
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
 

@@ -44,21 +44,20 @@
 		<?php endif; ?>
 
 	</div>
-
-	<?php if ($instance->live=='2'):?>
-		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
-	<?php elseif ($revision->status == 'under_review') : ?>
-		<span class="label label-important">Under review</span>
-
-	<?php else : ?>
-		<span class="label label-info" ><?php echo __("revisions.status_current"); ?></span> 
-	<?php endif;?>
+    <?php if (Auth::user()->can('make_programme_live')) : ?>
+    	<?php if ($instance->live=='2'):?>
+    		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
+    	<?php elseif ($revision->status == 'under_review') : ?>
+    		<span class="label label-important">Under review</span>
     
-    <?php echo $revision->get_identifier_string() ?>
+    	<?php else : ?>
+    		<span class="label label-info" ><?php echo __("revisions.status_current"); ?></span> 
+    	<?php endif;?>
+        
+        <?php echo $revision->get_identifier_string() ?>
+    <?php endif; ?>
 
 </div>
-
-
 
 
 <div class="modal hide fade" id="make_revision_live">
