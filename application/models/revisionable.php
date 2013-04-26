@@ -85,7 +85,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['id']);
 		unset($revision_values['created_by']);
 		unset($revision_values['live']);
-
+		unset($revision_values['locked_to']);
 		// @todo @workaround for revisionble tests.
 		//
 		// The case for using mocking. 
