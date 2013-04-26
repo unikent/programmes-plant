@@ -1,23 +1,3 @@
-<?php if($instance->locked_to !== ''):?>
-
-<div style='padding:10px;' class='alert alert-warning alert-block'>		
-	<div style='float:right;'>
-			
-			<!--a class="btn btn-success" target="_blank" href="" >Review changes</a-->
-	</div>		
-	<span class="label label-warning pull-right">Draft</span>
-	<h4>Warning: This programme contains changes that are not yet ready to go live.</h4>
-	<p>&nbsp;</p>
-
-	<?php if ($revision->status == 'under_review') : ?>
-		<p>Changes have been sent for publishing by EMS. </p>
-	<?php else: ?>
-		<p>The latest changes to this programme have not yet been sent for publishing by EMS.</p>
-	<?php endif; ?>
-	<p>&nbsp;</p>
-</div>
-<?php endif; ?>
-
 <div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
 		<?php if($type == 'programmes'):?>
@@ -30,9 +10,7 @@
 		<?php if($instance->live != '2'):?>
 
 		<?php if (Auth::user()->can('make_programme_live')) : ?>
-			<?php if($instance->locked_to == ''):?>
-				<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
-			<?php endif;?>
+			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
 		<?php else : ?>
 			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>">Send for editing</a>
 		<?php endif; ?>
@@ -44,21 +22,20 @@
 		<?php endif; ?>
 
 	</div>
-
-	<?php if ($instance->live=='2'):?>
-		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
-	<?php elseif ($revision->status == 'under_review') : ?>
-		<span class="label label-important">Under review</span>
-
-	<?php else : ?>
-		<span class="label label-info" ><?php echo __("revisions.status_current"); ?></span> 
-	<?php endif;?>
+    <?php if (Auth::user()->can('make_programme_live')) : ?>
+    	<?php if ($instance->live=='2'):?>
+    		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
+    	<?php elseif ($revision->status == 'under_review') : ?>
+    		<span class="label label-important">Under review</span>
     
-    <?php echo $revision->get_identifier_string() ?>
+    	<?php else : ?>
+    		<span class="label label-info" ><?php echo __("revisions.status_current"); ?></span> 
+    	<?php endif;?>
+        
+        <?php echo $revision->get_identifier_string() ?>
+    <?php endif; ?>
 
 </div>
-
-
 
 
 <div class="modal hide fade" id="make_revision_live">
