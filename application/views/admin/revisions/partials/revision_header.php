@@ -10,9 +10,9 @@
 	<p>&nbsp;</p>
 
 	<?php if ($revision->status == 'under_review') : ?>
-		<p>Changes have been sent for publishing by EMS. </p>
+		<p>Changes have been sent to EMS for publishing.</p>
 	<?php else: ?>
-		<p>The latest changes to this programme have not yet been sent for publishing by EMS.</p>
+		<p>The latest changes to this programme have not yet been sent to EMS for publishing.</p>
 	<?php endif; ?>
 	<p>&nbsp;</p>
 </div>
