@@ -31,8 +31,7 @@
 
 
                 <?php if ( $programme->attributes["locked_to"] !== '' ): ?>
-                  <span class="label label-important" rel="tooltip" data-original-title="">Locked to <?php echo $programme->attributes["locked_to"]  ?> </span>
-
+                  <span class="label label-important" rel="tooltip" data-original-title="">In Draft</span>
                 <?php endif; ?>
             </td>
             <td>
