@@ -315,10 +315,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance("New programme update for {$title}")
+			$message = Swift_Message::newInstance(__('emails.admin_notification.title'))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart(__('emails.admin_notification', array('author' => $author->fullname, 'title' => $title)), 'text/plain');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title)), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -354,10 +354,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 				$mailer = IoC::resolve('mailer');
 
-				$message = Swift_Message::newInstance("Your programme update was approved")
+				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title'))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
-					->addPart(__('emails.user_notification.approve', array('author' => $author->fullname, 'title' => $title)), 'text/plain');
+					->addPart(__('emails.user_notification.approve.body', array('author' => $author->fullname, 'title' => $title, 'id' => $programme->id, 'slug' => $programme->slug)), 'text/html');
 
 				$mailer->send($message);
 			}
@@ -403,7 +403,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance("RE: Your updates to {$title}")
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title'))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
