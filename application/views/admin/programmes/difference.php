@@ -59,7 +59,7 @@
 <div class="modal hide fade" id="approve_revision">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
 
   <div class="modal-body">
@@ -80,7 +80,7 @@
 <div class="modal hide fade" id="reject_revision">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
 
   <div class="modal-body">
