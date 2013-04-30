@@ -76,4 +76,28 @@ return array(
 	'diff_request_amends' => 'Request changes from author',
 	'diff_approve_revision' => 'Approve revision',
 	'diff_reject_revision' => 'Reject revision',
+
+	'diff_header' => 'Accept changes',
+	'diff_intro' => 'The following shows the differences between the two revisions.',
+	'diff_table_live_header' => 'Live, :date',
+	'diff_table_proposed_header' => 'Proposed, :date',
+
+	'diff_modal' => array(
+		'request_changes' => array(
+			'header' => 'Request changes from author',
+			'body' => '<p>Use the form below to send a brief message to the author of this revision.</p>',
+			'submit' => 'Send message',
+		),
+		'approve_revision' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>This will make the currenty selected revision live, meaning it will be visible on the course pages.</p><p>Are you sure?</p>',
+			'submit' => 'Approve',
+		),
+		'reject_revision' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>This will reject the revision. Are you sure?</p>',
+			'submit' => 'Reject',
+		),
+		'cancel' => 'Cancel',
+	),
 );
