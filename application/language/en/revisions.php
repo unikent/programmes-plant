@@ -33,5 +33,16 @@ return array(
 	'rollback_form' 	=> 'Emergency rollback options',
 	'revision_form' 	=> 'View active revisions',
 
-
+	//Info
+	'locked_warning'	 			=> 'Warning: This programme contains changes that are not yet ready to go live.',
+	'locked_draft_tag'	 			=> 'Draft',
+	'locked_under_review'	 		=> 'Changes have been sent to EMS for publishing.',
+	'locked_not_under_review'		=> 'The latest changes to this programme have not yet been sent to EMS for publishing.',
+	
+	'modal_make_live_header'	 	=> 'Are You Sure?',
+	'modal_make_live_body'	 		=> '<p>This will make the currenty selected revision live, meaning it will be visable on the course pages.</p><p>Are you sure you want to do this?</p>',
+	
+	'modal_send_for_editing_header'				=> 'Are You Sure?',
+	'modal_send_for_editing_under_review_body'	=> '<p><strong>You have already made edits to this and sent them for review by EMS</strong></p><p>Are you sure you want to send it again?</p>',
+	'modal_send_for_editing_body'	 			=> '<p>This means that you have completed edits and that you are sending this version of programme to EMS for proofing and editing.</p><p>Are you sure you want to do this?</p>',
 );
