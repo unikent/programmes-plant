@@ -100,4 +100,18 @@ return array(
 		),
 		'cancel' => 'Cancel',
 	),
+
+	'index_modal' => array(
+		'deactivate_subject' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>Are you sure you want to delete this programme?</p>',
+			'submit' => 'Deactivate',
+		),
+		'activate_subject' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>Are you sure you want to make the currently selected revision live?</p>',
+			'submit' => 'Activate',
+		),
+		'cancel' => 'Keep',
+	),
 );
