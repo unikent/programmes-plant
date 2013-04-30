@@ -2,19 +2,20 @@
 
 return array(
 	// statuses
-	'status_current' 	=> 'Current revision',
-	'status_draft' 		=> 'R',
-	'status_unused' 	=> 'Unused',
-	'status_live'		=> 'Published',
-	'status_review'		=> 'Under Review',
-	'status_draft_rollback' => 'R',
+	'status_current' 				=> 'Current revision',
+	'status_draft' 					=> 'R',
+	'status_unused' 				=> 'Unused',
+	'status_live'					=> 'Published',
+	'status_live_published_text'	=> "Published on :date by :user",
+	'status_review'					=> 'Under Review',
+	'status_draft_rollback' 		=> 'R',
 	'status_previous_live_rollback' => 'R',
 
 	// Headings
-	'active_revisions' => 'Active revisions',
-	'rollback_revisions' => 'Roll live revision back',
-	'rollback_warning' => 'Warning. Using this feature will change the revision published on the live website.',
-	'historical_revisions' => 'Previous revisions',
+	'active_revisions' 		=> 'Active revisions',
+	'rollback_revisions'	=> 'Roll live revision back',
+	'rollback_warning'		=> 'Warning. Using this feature will change the revision published on the live website.',
+	'historical_revisions'	=> 'Previous revisions',
 
 	// Buttons
 	'manage_revisions' 	=> 'Manage revisions',
@@ -45,4 +46,6 @@ return array(
 	'modal_send_for_editing_header'				=> 'Are You Sure?',
 	'modal_send_for_editing_under_review_body'	=> '<p><strong>You have already made edits to this and sent them for review by EMS</strong></p><p>Are you sure you want to send it again?</p>',
 	'modal_send_for_editing_body'	 			=> '<p>This means that you have completed edits and that you are sending this version of programme to EMS for proofing and editing.</p><p>Are you sure you want to do this?</p>',
+
+	
 );
