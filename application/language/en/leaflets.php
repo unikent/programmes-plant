@@ -18,7 +18,7 @@ return array(
 	'no_items' => 'No leaflets yet',
 
 	// Modal On Deletion Attempt
-	'modal_header' => 'Are You Sure?',
+	'modal_header' => 'Are you sure?',
 	'modal_body' => 'This will remove this award, are you sure you want to do this?',
 	'modal_keep' => 'No - Keep This Leaflet',
 	'modal_delete' => 'Remove This Leaflet',

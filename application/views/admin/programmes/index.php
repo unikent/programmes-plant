@@ -67,7 +67,7 @@
 <div class="modal hide fade" id="deactivate_subject">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
   <div class="modal-body">
     <p>Are you sure you want to delete this programme?</p>
@@ -84,7 +84,7 @@
 <div class="modal hide fade" id="activate_subject">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
   <div class="modal-body">
     <p>Are you sure you want to make the currently selected revision live?</p>
