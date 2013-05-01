@@ -306,32 +306,6 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Submits a revision into the inbox of EMS for editing, setting the status to 'under_review'.
-	 * 
-	 * This should work for all revisionable types that inherit from this.
-	 * 
-	 * Presently only the revisions of programmes are surfaced.
-	 * 
-	 * @param int|Revision  Revision object or integer to send for editing.
-	 */
-	public function submit_revision_for_editing($revision)
-	{
-		if (! is_numeric($revision) and ! is_object($revision))
-		{
-			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
-		}
-
-		// If we got an ID, then convert it to a revision.
-		if (is_numeric($revision))
-		{
-			$revision = $this->get_revision($revision);
-		}
-
-		$revision->status = 'under_review';
-		$revision->save();
-	}
-
-	/**
 	 * revert "current" revision to the previous one
 	 * 
 	 * @param $revision Object|id
