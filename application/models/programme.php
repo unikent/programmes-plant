@@ -308,6 +308,10 @@ class Programme extends Revisionable {
 			$revision = $this->get_revision($revision);
 		}
 
+		// Remove review status from previous revisions
+		ProgrammeRevision::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
+
+		// Set this revision to be under review
 		$revision->under_review = 1;
 		$revision->save();
 	}
