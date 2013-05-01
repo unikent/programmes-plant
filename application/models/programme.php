@@ -659,29 +659,37 @@ class Programme extends Revisionable {
 		return $related_courses_array;
 	}
 
-
+	/**
+	 * Generate data to display diff of two revisions
+	 * 
+	 * @param $revision_1 - previous revision
+	 * @param $revision_2 - new revision
+	 * @return array(revision_1, revision_2, attributes)
+	 */
 	public static function revision_diff($revision_1, $revision_2){
-		// Revisions are blank?
+
+		// Revisions are blank, return false
 		if($revision_1==null || $revision_2== null) return false;
 
-		// Get data
-		$attributes = array();
+		// Get programme data
 		$attribute_names = Programme::get_attributes_list();
 		$attribute_types =  ProgrammeField::get_api_data();
 
-
+		// init attributes array
+		$attributes = array();
 		foreach(array_keys($revision_1->attributes) as $attribute){
 
-			// Ignore these cols
+			// Ignore these columns
 			if(in_array($attribute, array('id', 'programme_id', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id'))) continue;
 
+			// Add attribute to "attributes" array with label and "attribute_id"
 			$attributes[] = array(
 				'attribute' => $attribute,
 				'label' => isset($attribute_names[$attribute]) ? $attribute_names[$attribute] : (string) __('programmes.' . $attribute),
 			);
 
-			// Slighly hacky array flattening script for displaying simple diff
-			// Could do with finding a more efficent way
+			// If an attribute has a relation (is in the $attribute_types array)
+			// use the type to lookup & swap in the "text" equivelents to the ids before comparing
 			if(array_key_exists($attribute, $attribute_types)){
 				$type = $attribute_types[$attribute];
 
@@ -689,12 +697,12 @@ class Programme extends Revisionable {
 				$revision_2->{$attribute} =  implode(',', $type::replace_ids_with_values($revision_2->{$attribute} , $revision_2->attributes['year'], true) );
 			}	
 
-			// Apply diff highlighting to "proposed"
+			// Apply diff highlighting to "revision_2" for this attribute
 			$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
 			
 		}
 
-		
+		// Return required data
 		return array(
 			'revision_1' => $revision_1,
 			'revision_2' => $revision_2,
