@@ -18,21 +18,36 @@ foreach ($revisions as $revision){
     if($revision->status =='live'){
       break;
     }
-
 }
 ?>
 
 <a class="btn btn-danger" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@rollback', array($programme->id))?>" ><?php echo __("revisions.rollback_form"); ?></a>
+
+<p>&nbsp;</p>
+<h3><?php echo __("revisions.historical_revisions"); ?></h3>
+<?php
+// Loop through revisions (display modes for active & previous are differnt)
+
+$showing = false;
+foreach ($revisions as $revision){
+
+   if($showing) echo View::make('admin.revisions.partials.historical_revision', array('revision' => $revision, 'programme' => $programme))->render();
+    //After live switch mode to "non-active"
+  if($revision->status =='live'){ $showing = true; }
+}
+?>
+
+
 <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 
 <div class="modal hide fade" id="make_revision_live">
 <div class="modal-header">
   <a class="close" data-dismiss="modal">×</a>
-  <h3>Are You Sure?</h3>
+  <h3><?php echo __('modals.confirm_title'); ?></h3>
 </div>
 <div class="modal-body">
   <p>This will make the currenty selected revision live, meaning it will be visable on the course pages.</p>
-  <p>Are you sure you want to do this?</p>
+  <p><?php echo __('modals.confirm_body'); ?></p>
 </div>
 <div class="modal-footer">
     <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
@@ -44,11 +59,11 @@ foreach ($revisions as $revision){
 <div class="modal hide fade" id="unpublish">
 <div class="modal-header">
   <a class="close" data-dismiss="modal">×</a>
-  <h3>Are You Sure?</h3>
+  <h3><?php echo __('modals.confirm_title'); ?></h3>
 </div>
 <div class="modal-body">
   <p>This will unpublish the currenty selected revision, meaning it will be hidden on the course pages.</p>
-  <p>Are you sure you want to do this?</p>
+  <p><?php echo __('modals.confirm_body'); ?></p>
 </div>
 <div class="modal-footer">
     <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
@@ -59,11 +74,11 @@ foreach ($revisions as $revision){
 <div class="modal hide fade" id="use_previous">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
   <div class="modal-body">
     <p>This will revert the active copy of this page to the previous version</p>
-    <p>Are you sure you want to do this?</p>
+    <p><?php echo __('modals.confirm_body'); ?></p>
   </div>
   <div class="modal-footer">
       <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
@@ -74,11 +89,11 @@ foreach ($revisions as $revision){
 <div class="modal hide fade" id="use_revision">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
   <div class="modal-body">
     <p>This will set the active copy of this page to the selected revision</p>
-    <p>Are you sure you want to do this?</p>
+    <p><?php echo __('modals.confirm_body'); ?></p>
   </div>
   <div class="modal-footer">
       <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>

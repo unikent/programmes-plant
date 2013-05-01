@@ -20,7 +20,7 @@ return array(
 	'no_items' => 'No subject categories yet',
 
 	// Modal On Deletion Attempt
-	'modal_header' => 'Are You Sure?',
+	'modal_header' => 'Are you sure?',
 	'modal_body' => 'This will remove this subject category, are you sure you want to do this?',
 	'modal_keep' => 'No - Keep This Subject category',
 	'modal_delete' => 'Remove This Subject category',

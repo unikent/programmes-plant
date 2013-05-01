@@ -85,7 +85,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['id']);
 		unset($revision_values['created_by']);
 		unset($revision_values['live']);
-
+		unset($revision_values['locked_to']);
 		// @todo @workaround for revisionble tests.
 		//
 		// The case for using mocking. 
@@ -276,8 +276,8 @@ class Revisionable extends SimpleData {
 			$active_revision->save();
 		}
 
-		//If revision being made live us cyrrent, set item status to say there are no later versions
-		if($revision->status == 'selected'){
+		//	If revision being made live us current, set item status to say there are no later versions
+		if($revision->status == 'selected' || $revision->status == 'under_review'){
 			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
 			$this->live = '2';
 		}else{
