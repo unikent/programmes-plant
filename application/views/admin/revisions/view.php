@@ -1,11 +1,22 @@
+<h1 class='pull-left' style='margin-bottom:5px;'>Revision: <?php echo $revision->get_identifier();?></h1>
+
+
+
+
 <?php if(get_class($programme) == 'Programme'):?>
       <?php
         $preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$programme->id.'@preview', array($revision->id));
+        $diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));
       ?>
-      <a class="btn btn-warning " style='margin-top:15px;margin-left:10px;' target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
+    
+
+    <div style='clear:both;'>
+      <a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a>
+      <a class="btn btn-warning "  target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
+    </div>
 <?php endif; ?> 
 
-<h1 class='pull-left' style='margin-bottom:5px;'>Revision: <?php echo $revision->get_identifier();?></h1>
+
 <p>&nbsp;</p>
 <p>
 Programme created at <strong><?php echo $programme->created_at; ?> </strong> by  <strong><?php echo $programme->created_by; ?> </strong>.
@@ -18,6 +29,7 @@ Revision created at  <strong><?php echo $revision->created_at; ?> </strong> by  
 Current state is  <strong><?php echo $revision->status; ?></strong>.
 </p>
 
+<h3> Contents </h3>
  <table class="table table-striped table-bordered">
   <thead>
     <th style='width:190px;'>Attribute</th>
