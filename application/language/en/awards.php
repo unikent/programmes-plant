@@ -29,8 +29,23 @@ return array(
 	'edit_introduction' => 'Edit this award below.',
 	'create_introduction' => 'Create the new award below.',
 
-	'name' => 'Name',
-	'name_placeholder' => 'Enter name...',
+	'form' => array(
+		'edit' => array(
+			'header' => 'Edit Award',
+		),
+		'new' => array(
+			'header' => 'New Award',
+		),
+		'details_header' => 'Award Details',
+		'name' => array(
+			'label' => 'Name',
+			'placeholder' => 'Enter award name...',
+		),
+		'long_name' => array(
+			'label' => 'Long name',
+			'placeholder' => 'Enter long award name...',
+		),
+	),
 
 	/**
 	 * Messages

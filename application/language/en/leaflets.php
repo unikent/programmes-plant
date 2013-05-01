@@ -26,11 +26,27 @@ return array(
 	/**
 	 * Forms
 	 */
-	'edit_introduction' => 'Edit this award below.',
-	'create_introduction' => 'Create the new award below.',
 
-	'name' => 'Name',
-	'name_placeholder' => 'Enter name...',
+	'form' => array(
+		'edit' => array(
+			'header' => 'Edit Leaflet',
+		),
+		'new' => array(
+			'header' => 'New Leaflet',
+		),
+		'details_header' => 'Leaflet Details',
+		'name' => array(
+			'label' => 'Name',
+			'placeholder' => 'Enter Leaflet name...',
+		),
+		'campus' => array(
+			'label' => 'Campus',
+		),
+		'tracking_code' => array(
+			'label' => 'Tracking code',
+			'placeholder' => 'Enter Tracking code...',
+		),
+	),
 
 	/**
 	 * Messages
