@@ -299,7 +299,7 @@ class Programme extends Revisionable {
 	 */
 	public static function get_under_review()
 	{
-		return ProgrammeRevision::where('status', '=', 'under_review')->order_by('updated_at', 'asc')->get();
+		return ProgrammeRevision::where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
 	}
 
 	/**
