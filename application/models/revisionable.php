@@ -126,7 +126,7 @@ class Revisionable extends SimpleData {
 		$revision->fill($revision_values);
 
 		// Set previous revision back to draft
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where_in('status', array('selected', 'under_review'))->update(array('status'=>'draft'));	
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status', '=' 'selected')->update(array('status'=>'draft'));	
 
 		// Save revision
 		return $revision->save();
@@ -197,7 +197,7 @@ class Revisionable extends SimpleData {
 		{
 			return $model::where($this->data_type_id.'_id', '=' , $this->id)
 							->where('year','=',$this->year)
-							->where_in('status', array('under_review', 'selected'))
+							->where('status', '=', 'selected')
 							->first();
 		}
 	}	
@@ -277,7 +277,7 @@ class Revisionable extends SimpleData {
 		}
 
 		//	If revision being made live us current, set item status to say there are no later versions
-		if($revision->status == 'selected' || $revision->status == 'under_review'){
+		if($revision->status == 'selected'){
 			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
 			$this->live = '2';
 		}else{
