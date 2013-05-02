@@ -23,6 +23,7 @@
 		<?php if($type == 'programmes'):?>
 			<?php
 				$preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$instance->id.'@preview', array($revision->id));
+				$review_link = action( $revision->year . '/ug/programmes/' . $instance->id . '@review', array($revision->id));
 			?>
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
@@ -32,6 +33,9 @@
 		<?php if (Auth::user()->can('make_programme_live')) : ?>
 			<?php if($instance->locked_to == ''):?>
 				<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>">Make live</a>
+			<?php else:?>
+				<a class="btn btn-success" target="_blank" href="<?php echo $review_link; ?>" >Review</a>
+
 			<?php endif;?>
 		<?php else : ?>
 			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>">Send for editing</a>
@@ -47,7 +51,7 @@
     <?php if (Auth::user()->can('make_programme_live')) : ?>
     	<?php if ($instance->live=='2'):?>
     		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
-    	<?php elseif ($revision->status == 'under_review') : ?>
+    	<?php elseif ($revision->under_review == 1) : ?>
     		<span class="label label-important">Under review</span>
     
     	<?php else : ?>
@@ -80,7 +84,7 @@
 	  <h3>Are You Sure?</h3>
 	</div>
 	<div class="modal-body">
-	<?php if ($revision->status == 'under_review') : ?>
+	<?php if ($revision->under_review == 1) : ?>
 	<p><strong>You have already made edits to this and sent them for review by EMS</strong></p>
 	<p>Are you sure you want to send it again?</p>
 	<?php else : ?>
