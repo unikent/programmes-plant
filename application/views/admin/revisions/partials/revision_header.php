@@ -9,7 +9,7 @@
 	<h4>Warning: This programme contains changes that are not yet ready to go live.</h4>
 	<p>&nbsp;</p>
 
-	<?php if ($revision->status == 'under_review') : ?>
+	<?php if ($revision->under_review == 1) : ?>
 		<p>Changes have been sent to EMS for publishing.</p>
 	<?php else: ?>
 		<p>The latest changes to this programme have not yet been sent to EMS for publishing.</p>
