@@ -36,14 +36,32 @@
           <?php if (isset($programme['learning_outcomes'])): ?>
             <learningOutcome>
               <div xmlns="http://www.w3.org/1999/xhtml">
-                <![CDATA[<?php echo ($programme['learning_outcomes']); ?>]]>
+                <![CDATA[
+                  <p><strong>Knowledge and understanding</strong></p>
+                  <?php echo ($programme['learning_outcomes']); ?>
+
+                <?php if (isset($programme['intellectual_skills_learning_outcomes'])): ?>
+                  <p><strong>Intellectual Skills</strong></p>
+                  <?php echo ($programme['intellectual_skills_learning_outcomes']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($programme['subjectspecific_skills_learning_outcomes'])): ?>
+                  <p><strong>Subject-specific skills</strong></p>
+                  <?php echo ($programme['subjectspecific_skills_learning_outcomes']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($programme['transferable_skills_learning_outcomes'])): ?>
+                  <p><strong>Transferable skills</strong></p>
+                  <?php echo ($programme['transferable_skills_learning_outcomes']); ?>
+                <?php endif; ?>
+                ]]>
               </div>
             </learningOutcome>
           <?php endif; ?>
-          <?php if (isset($programme['objective'])): ?>
+          <?php if (isset($programme['programme_aims'])): ?>
             <mlo:objective>
               <div xmlns="http://www.w3.org/1999/xhtml">
-                <![CDATA[<?php echo ($programme['objective']); ?>]]>
+                <![CDATA[<?php echo ($programme['programme_aims']); ?>]]>
               </div>
             </mlo:objective>
           <?php endif; ?>
