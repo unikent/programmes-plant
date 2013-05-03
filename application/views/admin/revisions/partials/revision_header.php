@@ -18,6 +18,19 @@
 </div>
 <?php endif; ?>
 
+<?php
+ 	$revisions_link = action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'@revisions', array($instance->id));
+?>
+<?php if($revision === null): ?>
+	<div style='padding:10px;height:30px;' class='alert alert-danger'>
+		<div style='float:right;'>
+			<?php if (Auth::user()->can('manage_revisions')) : ?>
+				<a class="btn btn-info" href="<?php echo $revisions_link; ?>" ><?php echo __("revisions.manage_revisions"); ?></a>
+			<?php endif;?>
+		</div>
+		<span class="label label-important">Unknown</span> Publishing state unknown.
+	</div>
+<?php else: ?>
 <div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
 		<?php if($type == 'programmes'):?>
@@ -44,7 +57,7 @@
 		<?php endif;?>
 
 		<?php if (Auth::user()->can('manage_revisions')) : ?>
-		<a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'@revisions', array($instance->id))?>" ><?php echo __("revisions.manage_revisions"); ?></a>
+		<a class="btn btn-info" href="<?php echo $revisions_link; ?>" ><?php echo __("revisions.manage_revisions"); ?></a>
 		<?php endif; ?>
 
 	</div>
@@ -97,3 +110,5 @@
    		<a class="btn btn-danger yes_action">Send for editing</a>
 	</div>
 </div>
+
+<?php endif; ?>

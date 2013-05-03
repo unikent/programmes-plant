@@ -294,12 +294,11 @@ class Revisionable extends SimpleData {
 		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 
 		// Hacky, but better than doing an if type == programme.
-		if(isset($this->attributes['under_review'])){
+		if(isset($revision->attributes['under_review'])){
 			// Remove under review state for any programmes of this type, prior to the published revision.
 			// Since the latest copy will include the changes of the "under-review" item, by pushing a revision live
 			// a user is implicty accepting the former changes.
-			$revision_model::where('under_review', '=', 1)->where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->update(array('under_review'=>0));
-			$revision->under_review = 0;
+			$revision_model::where('under_review', '=', 1)->where($this->data_type_id.'_id','=',$this->id)->where('id','<=',$revision->id)->update(array('under_review'=>0));
 		}
 
 		// Update and save this revision 
