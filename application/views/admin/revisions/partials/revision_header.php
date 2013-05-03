@@ -1,17 +1,17 @@
-<?php if(isset($instance->locked_to) && $instance->locked_to !== ''):?>
+<?php if(isset($instance->locked_to) && $instance->locked_to !== '' && $revision !== null):?>
 
-<div style='padding:10px;' class='alert alert-warning alert-block'>		
-	<span class="label label-warning pull-right"><?php echo __('revisions.draft'); ?></span>
-	<h4><?php echo __('revisions.draft_warning'); ?></h4>
-	<p>&nbsp;</p>
+	<div style='padding:10px;' class='alert alert-warning alert-block'>		
+		<span class="label label-warning pull-right"><?php echo __('revisions.draft'); ?></span>
+		<h4><?php echo __('revisions.draft_warning'); ?></h4>
+		<p>&nbsp;</p>
 
-	<?php if ($revision->under_review == 1) : ?>
-		<p><?php echo __('revisions.under_review_warning'); ?></p>
-	<?php else: ?>
-		<p><?php echo __('revisions.review_warning'); ?></p>
-	<?php endif; ?>
-	<p>&nbsp;</p>
-</div>
+		<?php if ($revision->under_review == 1) : ?>
+			<p><?php echo __('revisions.under_review_warning'); ?></p>
+		<?php else: ?>
+			<p><?php echo __('revisions.review_warning'); ?></p>
+		<?php endif; ?>
+		<p>&nbsp;</p>
+	</div>
 <?php endif; ?>
 
 <?php
