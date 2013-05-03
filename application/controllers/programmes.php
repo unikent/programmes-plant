@@ -315,10 +315,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance("New programme update for {$title}")
+			$message = Swift_Message::newInstance(__('emails.admin_notification.title'))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart("{$author->fullname} has submitted a new programme update for {$title}, which is currently pending approval.", 'text/plain');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title)), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -351,13 +351,14 @@ class Programmes_Controller extends Revisionable_Controller {
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 				$title = $programme->{Programme::get_title_field()};
+				$slug = $programme->{Programme::get_slug_field()};
 
 				$mailer = IoC::resolve('mailer');
 
-				$message = Swift_Message::newInstance("Your programme update was approved")
+				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title'))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
-					->addPart("Dear {$author->fullname}, \n\nYour update to {$title} has now been approved. \n\nMany thanks!", 'text/plain');
+					->addPart(__('emails.user_notification.approve.body', array('author' => $author->fullname, 'title' => $title, 'id' => $programme->id, 'slug' => $slug)), 'text/html');
 
 				$mailer->send($message);
 			}
@@ -403,7 +404,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance("RE: Your updates to {$title}")
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title'))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
