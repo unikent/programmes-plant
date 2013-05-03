@@ -1,4 +1,4 @@
-<?php if($instance->locked_to !== ''):?>
+<?php if(isset($instance->locked_to) && $instance->locked_to !== ''):?>
 
 <div style='padding:10px;' class='alert alert-warning alert-block'>		
 	<div style='float:right;'>
