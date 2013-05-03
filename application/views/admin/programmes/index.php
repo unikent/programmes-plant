@@ -67,16 +67,16 @@
 <div class="modal hide fade" id="deactivate_subject">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('programmes.index_modal.deactivate_subject.header'); ?></h3>
   </div>
   <div class="modal-body">
-    <p>Are you sure you want to delete this programme?</p>
+    <?php echo __('programmes.index_modal.deactivate_subject.body'); ?>
   </div>
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/deactivate', 'POST')?>
-    <a data-dismiss="modal" href="#deactivate_subject" class="btn">Keep</a>
+    <a data-dismiss="modal" href="#deactivate_subject" class="btn"><?php echo __('programmes.index_modal.cancel'); ?></a>
     <input type="hidden" name="id" id="postvalue" value="" />
-    <input type="submit" class="btn btn-danger" value="Deactivate" />
+    <input type="submit" class="btn btn-danger" value="<?php echo __('programmes.index_modal.activate_subject.submit'); ?>" />
     <?php echo Form::close()?>
   </div>
 </div>
@@ -84,16 +84,16 @@
 <div class="modal hide fade" id="activate_subject">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3><?php echo __('programmes.index_modal.activate_subject.header'); ?></h3>
   </div>
   <div class="modal-body">
-    <p>Are you sure you want to make the currently selected revision live?</p>
+    <?php echo __('programmes.index_modal.activate_subject.body'); ?>
   </div>
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/activate', 'POST')?>
-    <a data-dismiss="modal" href="#activate_subject" class="btn">Keep</a>
+    <a data-dismiss="modal" href="#activate_subject" class="btn"><?php echo __('programmes.index_modal.cancel'); ?></a>
     <input type="hidden" name="id" id="postvalue2" value="" />
-    <input type="submit" class="btn btn-danger" value="Activate" />
+    <input type="submit" class="btn btn-danger" value="<?php echo __('programmes.index_modal.activate_subject.submit'); ?>" />
     <?php echo Form::close()?>
   </div>
 </div>
