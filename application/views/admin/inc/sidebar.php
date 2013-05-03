@@ -16,7 +16,7 @@
 
          <?php if (Auth::user()->can(array("edit_own_programmes", "view_all_programmes", "edit_all_programmes"))): ?>
 
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>" class="spinner"><i class="icon-home"></i> Programmes</a></li>
+        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url($mainpath.'programmes')?>"><i class="icon-home"></i> Programmes</a></li>
        
         <?php endif; ?>
 

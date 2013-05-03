@@ -67,7 +67,7 @@
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
-   		<a class="btn btn-danger yes_action spinner"><?php echo __("revisions.make_live"); ?></a>
+   		<a class="btn btn-danger yes_action"><?php echo __("revisions.make_live"); ?></a>
 	</div>
 </div>
 <div class="modal hide fade" id="send_for_editing">
