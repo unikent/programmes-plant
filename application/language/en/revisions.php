@@ -30,7 +30,7 @@ return array(
 	'cancel' 			=> 'Not right now',
 	'unpublish'         => 'Unpublish',
 	'view_preview'		=> 'Preview',
-	'send_for_editing' => 'Send for editing',
+	'send_for_editing'	=> 'Send to EMS',
 
 	//Links
 	'edit_form'	 		=> 'Return to edit form',
