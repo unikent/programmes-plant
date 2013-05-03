@@ -706,7 +706,7 @@ class Programme extends Revisionable {
 		foreach(array_keys($revision_1->attributes) as $attribute){
 
 			// Ignore these columns
-			if(in_array($attribute, array('id', 'programme_id', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id'))) continue;
+			if(in_array($attribute, array('id', 'programme_id', 'under_review', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id'))) continue;
 
 			// Add attribute to "attributes" array with label and "attribute_id"
 			$attributes[] = array(

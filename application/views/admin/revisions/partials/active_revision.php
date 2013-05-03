@@ -13,7 +13,7 @@
 
 		
 		<?php echo $revision->get_identifier_string() ?> <br/>
-		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
+		<?php echo __('revisions.status_live_published_text', array('date' => $revision->get_published_time(), 'user' => $revision->made_live_by)) ?>
 		<?php if(get_class($programme) == 'Programme'):?>
 			<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
 		<?php endif?>
