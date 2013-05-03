@@ -294,14 +294,17 @@ class Form extends \Laravel\Form {
 	public static function checkbox_if_permitted($name, $value = 1, $checked = false, $attributes = array())
 	{
 		$user = \Laravel\Auth::user();
+		
+		// remove square brackets added to a checkbox group's name
+		$name_for_permission = str_replace('[]', '', $name);
 
-		if($user->can("fields_write_{$name}"))
+		if($user->can("fields_write_{$name_for_permission}"))
 		{
 			return parent::checkbox($name, $value, $checked, $attributes);
 		} 
-		elseif($user->can("fields_read_{$name}"))
+		elseif($user->can("fields_read_{$name_for_permission}"))
 		{
-			$attributes = array_merge($attributes, array('readonly' => true));
+			$attributes = array_merge($attributes, array('readonly' => true, 'disabled' => 'disabled'));
 			return parent::checkbox($name, $value, $checked, $attributes);
 		}
 
