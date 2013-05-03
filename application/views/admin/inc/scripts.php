@@ -21,6 +21,8 @@
 <!-- placeholder for ie fix js -->
 <script src="<?php echo asset('js/jquery.placeholder.min.js');?>" type="text/javascript" charset="utf8"></script>
 
+<!-- spinner js -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js" type="text/javascript" charset="utf8" ></script>
 
 <!-- our js -->
 <script type='text/javascript' charset="utf8">

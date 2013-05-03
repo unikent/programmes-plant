@@ -2,14 +2,14 @@
 
 return array(
 	/**
-	 * emails to users
+	 * emails to admin
 	 */
-	'admin_notification' => array('title' => "New programme update for :title",
-									'body' => ":author has submitted a new programme update for :title, which is currently <a href='https://webtools.kent.ac.uk/programmes/editor/inbox'>pending approval</a>."
+	'admin_notification' => array('title' => "New programme-factory update for :title",
+									'body' => "Dear EMS Publishing Office,<br /><br />:author has submitted a new programme-plant update for :title, which is currently <a href='https://webtools.kent.ac.uk/programmes/editor/inbox'>pending approval</a>."
 							),
 	
 	/**
-	 * emails from users
+	 * emails to users
 	 */
 	'user_notification' => array(
 								'approve' => array('title' => "programme-plant updates approved",
