@@ -281,7 +281,7 @@ class Revisionable extends SimpleData {
 			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
 			$this->live = '2';
 			// Unlock revision as it no longer contains any changes
-			$this->locked_to = '';
+			if(isset($this->attributes['locked_to'])) $this->locked_to = '';
 		}else{
 			// If the revision going live isn't the current, ensure system knows
 			// there are still later revisions
@@ -293,15 +293,17 @@ class Revisionable extends SimpleData {
 		$revision_model = static::$revision_model;
 		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
 
-		// Remove under review state for any programmes of this type, prior to the published revision.
-		// Since the latest copy will include the changes of the "under-review" item, by pushing a revision live
-		// a user is implicty accepting the former changes.
-		$revision_model::where('under_review', '=', 1)->where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->update(array('under_review'=>0));
-
+		// Hacky, but better than doing an if type == programme.
+		if(isset($this->attributes['under_review'])){
+			// Remove under review state for any programmes of this type, prior to the published revision.
+			// Since the latest copy will include the changes of the "under-review" item, by pushing a revision live
+			// a user is implicty accepting the former changes.
+			$revision_model::where('under_review', '=', 1)->where($this->data_type_id.'_id','=',$this->id)->where('id','<',$revision->id)->update(array('under_review'=>0));
+			$revision->under_review = 0;
+		}
 
 		// Update and save this revision 
 		$revision->status = 'live';
-		$revision->under_review = 0;
 		$revision->published_at = date('Y-m-d H:i:s');
 		$revision->made_live_by = Auth::user()->username;
 		$revision->save();
