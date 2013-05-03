@@ -126,7 +126,7 @@ class Revisionable extends SimpleData {
 		$revision->fill($revision_values);
 
 		// Set previous revision back to draft
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where_in('status', array('selected', 'under_review'))->update(array('status'=>'draft'));	
+		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status', '=', 'selected')->update(array('status'=>'draft'));	
 
 		// Save revision
 		return $revision->save();
@@ -197,7 +197,7 @@ class Revisionable extends SimpleData {
 		{
 			return $model::where($this->data_type_id.'_id', '=' , $this->id)
 							->where('year','=',$this->year)
-							->where_in('status', array('under_review', 'selected'))
+							->where('status', '=', 'selected')
 							->first();
 		}
 	}	
@@ -277,9 +277,11 @@ class Revisionable extends SimpleData {
 		}
 
 		//	If revision being made live us current, set item status to say there are no later versions
-		if($revision->status == 'selected' || $revision->status == 'under_review'){
+		if($revision->status == 'selected'){
 			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
 			$this->live = '2';
+			// Unlock revision as it no longer contains any changes
+			if(isset($this->attributes['locked_to'])) $this->locked_to = '';
 		}else{
 			// If the revision going live isn't the current, ensure system knows
 			// there are still later revisions
@@ -290,6 +292,14 @@ class Revisionable extends SimpleData {
 		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
 		$revision_model = static::$revision_model;
 		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status','=','live')->update(array('status'=>'prior_live'));
+
+		// Hacky, but better than doing an if type == programme.
+		if(isset($revision->attributes['under_review'])){
+			// Remove under review state for any programmes of this type, prior to the published revision.
+			// Since the latest copy will include the changes of the "under-review" item, by pushing a revision live
+			// a user is implicty accepting the former changes.
+			$revision_model::where('under_review', '=', 1)->where($this->data_type_id.'_id','=',$this->id)->where('id','<=',$revision->id)->update(array('under_review'=>0));
+		}
 
 		// Update and save this revision 
 		$revision->status = 'live';
@@ -303,32 +313,6 @@ class Revisionable extends SimpleData {
 
 		// Return result
 		return $revision;
-	}
-
-	/**
-	 * Submits a revision into the inbox of EMS for editing, setting the status to 'under_review'.
-	 * 
-	 * This should work for all revisionable types that inherit from this.
-	 * 
-	 * Presently only the revisions of programmes are surfaced.
-	 * 
-	 * @param int|Revision  Revision object or integer to send for editing.
-	 */
-	public function submit_revision_for_editing($revision)
-	{
-		if (! is_numeric($revision) and ! is_object($revision))
-		{
-			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
-		}
-
-		// If we got an ID, then convert it to a revision.
-		if (is_numeric($revision))
-		{
-			$revision = $this->get_revision($revision);
-		}
-
-		$revision->status = 'under_review';
-		$revision->save();
 	}
 
 	/**
