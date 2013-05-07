@@ -33,7 +33,7 @@ foreach ($revisions as $revision){
   <h3><?php echo __('modals.confirm_title'); ?></h3>
 </div>
 <div class="modal-body">
-  <p>This will make the currenty selected revision live, meaning it will be visable on the course pages.</p>
+  <p>This will make the currently selected revision live, meaning it will be visible on the course pages.</p>
   <p><?php echo __('modals.confirm_body'); ?></p>
 </div>
 <div class="modal-footer">

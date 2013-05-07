@@ -94,7 +94,7 @@ return array(
 		),
 		'approve_revision' => array(
 			'header' => 'Are you sure?',
-			'body' => '<p>This will make the currenty selected revision live, meaning it will be visible on the course pages.</p><p>Are you sure?</p>',
+			'body' => '<p>This will make the currently selected revision live, meaning it will be visible on the course pages.</p><p>Are you sure?</p>',
 			'submit' => 'Approve',
 		),
 		'reject_revision' => array(

@@ -100,7 +100,7 @@ class Fields_Controller extends Admin_Controller {
 
 		$field->get_input();
 
-		// By default this is both active and visable.
+		// By default this is both active and visible.
 		$field->active = 1;
 		$field->view = 1;
 

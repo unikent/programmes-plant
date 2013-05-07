@@ -46,7 +46,7 @@ foreach ($revisions as $revision){
   <h3><?php echo __('modals.confirm_title'); ?></h3>
 </div>
 <div class="modal-body">
-  <p>This will make the currenty selected revision live, meaning it will be visable on the course pages.</p>
+  <p>This will make the currently selected revision live, meaning it will be visible on the course pages.</p>
   <p><?php echo __('modals.confirm_body'); ?></p>
 </div>
 <div class="modal-footer">
@@ -62,7 +62,7 @@ foreach ($revisions as $revision){
   <h3><?php echo __('modals.confirm_title'); ?></h3>
 </div>
 <div class="modal-body">
-  <p>This will unpublish the currenty selected revision, meaning it will be hidden on the course pages.</p>
+  <p>This will unpublish the currently selected revision, meaning it will be hidden on the course pages.</p>
   <p><?php echo __('modals.confirm_body'); ?></p>
 </div>
 <div class="modal-footer">
@@ -77,7 +77,7 @@ foreach ($revisions as $revision){
     <h3><?php echo __('modals.confirm_title'); ?></h3>
   </div>
   <div class="modal-body">
-    <p>This will revert the active copy of this page to the previous version</p>
+    <p>This will revert the active copy of this page to the previous version.</p>
     <p><?php echo __('modals.confirm_body'); ?></p>
   </div>
   <div class="modal-footer">
