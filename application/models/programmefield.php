@@ -41,7 +41,9 @@ class ProgrammeField extends Field
             foreach ($section->programmefields as $programmefield)
             {
                 // make sure the section is active
-                if ($section->id > 0)
+                // and user has permission to read the field
+                
+                if ($section->id > 0 && Auth::user()->can("fields_read_{$programmefield->colname}"))
                 {
                     // build up the final array indexed by section name and programme field order
                     $sections_array[$section->name][$programmefield->order] = $programmefield;

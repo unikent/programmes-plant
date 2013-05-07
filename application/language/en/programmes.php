@@ -71,9 +71,51 @@ return array(
 		),
 	),
 
+	'diff_header' => 'Differences between live and :ident',
+	'diff_intro' => 'The following shows the differences between the currently live revision and the one being proposed.',
+	'diff_table_live_header' => 'Live <div> :ident_str </div>',
+	'diff_table_proposed_header' => 'Proposed <div> :ident_str </div> ',
 
-	'diff_edit_programme' => 'Edit this programme',
-	'diff_request_amends' => 'Request changes from author',
-	'diff_approve_revision' => 'Approve revision',
-	'diff_reject_revision' => 'Reject revision',
+	'rev_header' => 'Review changes',
+	'rev_intro' => 'The following shows the differences between the currently live revision and the one being proposed.',
+	'rev_table_live_header' => 'Live <div> :ident_str </div>',
+	'rev_table_proposed_header' => 'Proposed <div> :ident_str </div> ',
+
+
+	'rev_edit_programme' => 'Edit this programme',
+	'rev_request_amends' => 'Request changes from author',
+	'rev_approve_revision' => 'Approve revision and make live',
+
+	'diff_modal' => array(
+		'request_changes' => array(
+			'header' => 'Request changes from author',
+			'body' => '<p>Use the form below to send a brief message to the author of this revision.</p>',
+			'submit' => 'Send message',
+		),
+		'approve_revision' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>This will make the currently selected revision live, meaning it will be visible on the course pages.</p><p>Are you sure?</p>',
+			'submit' => 'Approve',
+		),
+		'reject_revision' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>This will reject the revision. Are you sure?</p>',
+			'submit' => 'Reject',
+		),
+		'cancel' => 'Cancel',
+	),
+
+	'index_modal' => array(
+		'deactivate_subject' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>Are you sure you want to delete this programme?</p>',
+			'submit' => 'Deactivate',
+		),
+		'activate_subject' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>Are you sure you want to make the currently selected revision live?</p>',
+			'submit' => 'Activate',
+		),
+		'cancel' => 'Keep',
+	),
 );

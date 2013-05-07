@@ -248,6 +248,76 @@ class Programme extends Revisionable {
 	  return $this->belongs_to('Campus', static::get_location_field());
 	}
 
+
+	/**
+	 * Save changes to programme
+	 * 
+	 * @return true|false
+	 */
+	public function save()
+	{
+		if (!$this->dirty()) return true;
+
+		// If user has approve powers, auto accept
+		if(Auth::user()->can('approve_revisions'))
+		{
+			return parent::save();
+		}
+		else
+		{
+			// Set to be in draft (locked, but not enforced)
+			$this->locked_to = Auth::user()->username;
+			return parent::save();
+		}
+
+	}
+
+
+	/**
+	 * Update the current revision with changes
+	 */
+	public function update_current_revision(){
+		// Sync changes to revision
+		$revision = $this->get_active_revision();
+		foreach($this->get_dirty() as $col => $value){
+			$revision->{$col} = $value;
+		}
+		// Save revision & current
+		$revision->save();
+		$this->raw_save();	
+	}
+
+
+	/**
+	 * Submits a revision into the inbox of EMS for editing, setting the status to 'under_review'.
+	 * This should work for all revisionable types that inherit from this.
+	 * Presently only the revisions of programmes are surfaced.
+	 * 
+	 * @param int|Revision  Revision object or integer to send for editing.
+	 */
+	public function submit_revision_for_editing($revision)
+	{
+		if (! is_numeric($revision) and ! is_object($revision))
+		{
+			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
+		}
+
+		// If we got an ID, then convert it to a revision.
+		if (is_numeric($revision))
+		{
+			$revision = $this->get_revision($revision);
+		}
+
+		// Remove review status from previous revisions
+		ProgrammeRevision::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
+
+		// Set this revision to be under review
+		$revision->under_review = 1;
+		$revision->save();
+	}
+
+
+
 	/**
 	 * Gets all programme revisions that are currently under review.
 	 * 
@@ -255,7 +325,7 @@ class Programme extends Revisionable {
 	 */
 	public static function get_under_review()
 	{
-		return ProgrammeRevision::where('status', '=', 'under_review')->order_by('updated_at', 'asc')->get();
+		return ProgrammeRevision::where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
 	}
 
 	/**
@@ -615,6 +685,57 @@ class Programme extends Revisionable {
 		return $related_courses_array;
 	}
 
+	/**
+	 * Generate data to display diff of two revisions
+	 * 
+	 * @param $revision_1 - previous revision
+	 * @param $revision_2 - new revision
+	 * @return array(revision_1, revision_2, attributes)
+	 */
+	public static function revision_diff($revision_1, $revision_2){
+
+		// Revisions are blank, return false
+		if($revision_1==null || $revision_2== null) return false;
+
+		// Get programme data
+		$attribute_names = Programme::get_attributes_list();
+		$attribute_types =  ProgrammeField::get_api_data();
+
+		// init attributes array
+		$attributes = array();
+		foreach(array_keys($revision_1->attributes) as $attribute){
+
+			// Ignore these columns
+			if(in_array($attribute, array('id', 'programme_id', 'under_review', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id'))) continue;
+
+			// Add attribute to "attributes" array with label and "attribute_id"
+			$attributes[] = array(
+				'attribute' => $attribute,
+				'label' => isset($attribute_names[$attribute]) ? $attribute_names[$attribute] : (string) __('programmes.' . $attribute),
+			);
+
+			// If an attribute has a relation (is in the $attribute_types array)
+			// use the type to lookup & swap in the "text" equivelents to the ids before comparing
+			if(array_key_exists($attribute, $attribute_types)){
+				$type = $attribute_types[$attribute];
+
+				$revision_1->{$attribute} = implode(',', $type::replace_ids_with_values($revision_1->{$attribute} , $revision_1->attributes['year'], true) );
+				$revision_2->{$attribute} =  implode(',', $type::replace_ids_with_values($revision_2->{$attribute} , $revision_2->attributes['year'], true) );
+			}	
+
+			// Apply diff highlighting to "revision_2" for this attribute
+			$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
+			
+		}
+
+		// Return required data
+		return array(
+			'revision_1' => $revision_1,
+			'revision_2' => $revision_2,
+			'attributes' => $attributes,
+ 		);
+
+	}
 
 
 }
