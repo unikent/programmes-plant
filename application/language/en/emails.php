@@ -5,7 +5,7 @@ return array(
 	 * emails to admin
 	 */
 	'admin_notification' => array('title' => "New programme-factory update for :title",
-									'body' => "Dear EMS Publishing Office,<br /><br />:author has submitted a new programme-plant update for :title, which is currently <a href='https://webtools.kent.ac.uk/programmes/editor/inbox'>pending approval</a>."
+									'body' => "Dear EMS Publishing Office,<br /><br />:author has submitted a new programme-plant update for :title, which is currently :pending_approval."
 							),
 	
 	/**
