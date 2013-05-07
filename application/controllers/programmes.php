@@ -345,7 +345,6 @@ class Programmes_Controller extends Revisionable_Controller {
 						)), 
 						'text/html'
 					);
-					echo $message; exit();
 
 				$mailer->send($message);
 			}
