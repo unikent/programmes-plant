@@ -295,7 +295,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$message = Swift_Message::newInstance(__('emails.admin_notification.title'))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'pending_approval' => HTML::link_to_action('editor@inbox', 'pending approval'))), 'text/html');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -335,7 +335,17 @@ class Programmes_Controller extends Revisionable_Controller {
 				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
-					->addPart(__('emails.user_notification.approve.body', array('author' => $author->fullname, 'title' => $title, 'id' => $programme->id, 'slug' => $slug)), 'text/html');
+					->addPart(
+						__('emails.user_notification.approve.body', array(
+							'author' => $author->fullname, 
+							'title' => $title, 
+							'id' => $programme->id, 
+							'slug' => $slug, 
+							'link_to_programme' => HTML::link_to_action('programmes@edit', __('emails.user_notification.link_to_programme_text', $title, array($year, $type, $programme->id)))
+						)), 
+						'text/html'
+					);
+					echo $message; exit();
 
 				$mailer->send($message);
 			}
