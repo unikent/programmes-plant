@@ -131,4 +131,22 @@ class TestProgramme extends ModelTestCase {
         $programme_setting = ProgrammeSetting::find(1);
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
+
+	public function testApproveRevisionSetsStatusToPublished() {
+	
+    	// set up some data and a revision
+		$this->populate();
+    	$item = Programme::find(1);
+        $revision = $item->get_revision(1);
+        
+        // submit the revision for editing
+        $item->submit_revision_for_editing($revision);
+        
+        // make the revision live
+        $item->make_revision_live($revision);
+        
+        // find programme #1 and check its 'live' value is 2
+        $item = Programme::find(1);
+        $this->assertEquals(2, $item->live);
+	}
 }
