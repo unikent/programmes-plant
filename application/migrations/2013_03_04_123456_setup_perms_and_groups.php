@@ -1,9 +1,6 @@
 <?php
 Config::set('verify::verify.prefix', 'usersys');
 
-use \Verify\Models\Permission as Permission;
-use \Verify\Models\Role as Role;
-
 class setup_perms_and_groups {
 
 	

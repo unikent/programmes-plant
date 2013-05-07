@@ -1,8 +1,5 @@
 <?php
 
-use \Verify\Models\Role as Role;
-use \Verify\Models\Permission as Permission;
-
 class Add_Manage_Revisions_Permission {
 
 	public function __construct()
