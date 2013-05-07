@@ -295,7 +295,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title)), 'text/html');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -335,7 +335,17 @@ class Programmes_Controller extends Revisionable_Controller {
 				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
-					->addPart(__('emails.user_notification.approve.body', array('author' => $author->fullname, 'title' => $title, 'id' => $programme->id, 'slug' => $slug)), 'text/html');
+					->addPart(
+						__('emails.user_notification.approve.body', array(
+							'author' => $author->fullname, 
+							'title' => $title, 
+							'id' => $programme->id, 
+							'slug' => $slug, 
+							'link_to_edit_programme' => HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title),
+							'link_to_programme_frontend' => HTML::link(Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug, Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug)
+						)), 
+						'text/html'
+					);
 
 				$mailer->send($message);
 			}
@@ -381,7 +391,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance(__('emails.user_notification.request.title'))
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
