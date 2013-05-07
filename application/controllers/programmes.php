@@ -341,7 +341,8 @@ class Programmes_Controller extends Revisionable_Controller {
 							'title' => $title, 
 							'id' => $programme->id, 
 							'slug' => $slug, 
-							'link_to_programme' => HTML::link_to_action('programmes@edit', __('emails.user_notification.link_to_programme_text', $title, array($year, $type, $programme->id)))
+							'link_to_edit_programme' => HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title),
+							'link_to_programme_frontend' => HTML::link(Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug, Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug)
 						)), 
 						'text/html'
 					);
@@ -390,7 +391,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance(__('emails.user_notification.request.title'))
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
