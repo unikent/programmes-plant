@@ -616,65 +616,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
 	
-	public function testApproveRevisionSetsStatusToPublished() {
-	
-    	// set up some data and a revision
-		$this->populate();
-    	$item = RevisionableThing::find(1);
-        $revision = $item->get_revision(1);
-        
-        // submit the revision for editing
-        $item->submit_revision_for_editing($revision);
-        
-        // make the revision live
-        $item->make_revision_live($revision);
-        
-        // find programme #1 and check its 'live' value is 2
-        $item = RevisionableThing::find(1);
-        $this->assertEquals(2, $item->live);
-	}
-	
-	public function testRejectRevisionRevertsToPreviousRevision() {
-	   
-    	// set up some revisions
-    	$this->populate();
-    	$programme = RevisionableThing::find(1);
-        $programme->name = 'Widget B';
-    	$programme->save();
-    	
-    	// get revision 2
-    	$revision = $programme->get_revision(2);
-        
-        // submit the revision for editing
-        $programme->submit_revision_for_editing($revision);
-        
-        // make the revision live
-        $programme->revert_to_previous_revision($revision);
-        
-        // find programme #1 and check its current active revision is 1
-        $revision_active = $programme->get_active_revision();
-        $this->assertEquals(1, $revision_active->id);
-	}
-	
-	public function testRejectRevisionRevertsToPreviousRevisionWhenOnlyOneRevision() {
-	   
-    	// set up some revisions
-    	$this->populate();
-    	$programme = RevisionableThing::find(1);
-    	
-    	// get revision 1
-    	$revision = $programme->get_revision(1);
-        
-        // submit the revision for editing
-        $programme->submit_revision_for_editing($revision);
-        
-        // make the revision live
-        $programme->revert_to_previous_revision($revision);
-        
-        // find programme #1 and check its current active revision is 1
-        $revision_active = $programme->get_active_revision();
-        $this->assertEquals(1, $revision_active->id);
-	}
+
 
 
 }

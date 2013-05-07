@@ -1,8 +1,5 @@
 <?php
 
-use \Verify\Models\Role as Role;
-use \Verify\Models\Permission as Permission;
-
 class Add_Permission_For_Getting_Requests {
 
 	public function __construct()

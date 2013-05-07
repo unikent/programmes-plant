@@ -1,8 +1,5 @@
 <?php
 
-// use user and role objects from namespace
-use \Verify\Models\user;
-
 class Programmes_Controller extends Revisionable_Controller {
 
 	public $restful = true;
@@ -115,7 +112,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['title_field'] = Programme::get_title_field();
 		$this->data['year'] = $year;
 
-		// Get either the active revision, or the review under_review.
+		// get the active revision
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
 		
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
@@ -216,6 +213,38 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
+	public function get_review($year, $type, $programme_id = false, $revision_id = false)
+	{
+		$this->check_user_can('recieve_edit_requests');
+
+		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		// Get programme
+		$programme = Programme::find($programme_id);
+		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		//Get diff data
+
+		$diff = Programme::revision_diff($programme->get_live_revision(),  $programme->get_revision($revision_id));
+		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$data = array(
+			'diff' => $diff,
+			'programme' => $programme
+		);
+
+ 		return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+	}
+
+
+	/**
+	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
+	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
+	 */
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
 		$this->check_user_can('recieve_edit_requests');
@@ -226,69 +255,17 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme = Programme::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$revisions = array(
-			'live' => $programme->get_live_revision(),
-			'proposed' => $programme->get_revision($revision_id),
-		);
-		if (empty($revisions['live']) || empty($revisions['proposed'])) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		//Get diff data
 
-		$attributes = array(
-			'all' => array_keys($programme->attributes), // By getting attributes this way we can get non-programmatic attributes too
-			'ignore' => array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live'), // Use human friendly atttibute names (e.g. strip _ID)
-			'nodiff' => array(), // Use human friendly atttibute names (e.g. strip _ID)
-			'resolved' => array(),
-		);
-
-		$attribute_map = Programme::get_attributes_list(); // This will only return programmatic atributes
-
-		// Iterate over attributes 'all'...
-		foreach($attributes['all'] as $key => $value)
-		{
-			// ...update them to make their various representations available
-			$attribute = array(
-				'machine' => $value,
-				'field' => Revisionable::trim_id_from_field_name($value),
-				'label' => isset($attribute_map[$value]) ? $attribute_map[$value] : __('programmes.' . $value),
-			);
-
-			// ...remap array to be keyed by attribute machine name
-			unset($attributes[$key]);
-			$attributes['all'][$attribute['machine']] = $attribute;
-
-			// ...if they are not in the 'ignored' array, load their values for each revision
-			if(!in_array($attribute['field'], $attributes['ignore']))
-			{
-				// Load the given attribute for each revision, gracefully resolving relational attributes
-				$resolved = array(
-					'live' => is_object($revisions['live']->{$attribute['field']}) ? $revisions['live']->{$attribute['field']}->name : $revisions['live']->{$attribute['machine']},
-					'proposed' => is_object($revisions['proposed']->{$attribute['field']}) ? $revisions['proposed']->{$attribute['field']}->name : $revisions['proposed']->{$attribute['machine']},
-				);
-
-				// ...compare the resolved attribute values, only retain them if they have changed
-				if($resolved['live'] !== $resolved['proposed'])
-				{
-					// ...restrict the diffing of fields (step not necessary if field is already excluded)
-					if(!in_array($attribute['field'], $attributes['nodiff']))
-					{
-						// ...only diff fields if they are (a) non relational, or if they (b) don't contain spaces
-						if(is_object($revisions['proposed']->{$attribute['field']}) || !preg_match('/(\s){1,}/', $resolved['proposed']))
-						{
-							$attributes['nodiff'][] = $attribute['field'];
-						}						
-					}
-
-					$attributes['resolved'][$attribute['machine']] = $resolved;
-				}
-			}
-		}
+		$diff = Programme::revision_diff($programme->get_live_revision(),  $programme->get_revision($revision_id));
+		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
-			'programme' => $programme,
-			'revisions' => $revisions,
-			'attributes' => $attributes,
- 		);
+			'diff' => $diff,
+			'programme' => $programme
+		);
 
-		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
+ 		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
 	/**
@@ -355,7 +332,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 				$mailer = IoC::resolve('mailer');
 
-				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title'))
+				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
 					->addPart(__('emails.user_notification.approve.body', array('author' => $author->fullname, 'title' => $title, 'id' => $programme->id, 'slug' => $slug)), 'text/html');

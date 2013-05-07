@@ -71,16 +71,20 @@ return array(
 		),
 	),
 
+	'diff_header' => 'Differences between live and :ident',
+	'diff_intro' => 'The following shows the differences between the currently live revision and the one being proposed.',
+	'diff_table_live_header' => 'Live <div> :ident_str </div>',
+	'diff_table_proposed_header' => 'Proposed <div> :ident_str </div> ',
 
-	'diff_edit_programme' => 'Edit this programme',
-	'diff_request_amends' => 'Request changes from author',
-	'diff_approve_revision' => 'Approve revision',
-	'diff_reject_revision' => 'Reject revision',
+	'rev_header' => 'Review changes',
+	'rev_intro' => 'The following shows the differences between the currently live revision and the one being proposed.',
+	'rev_table_live_header' => 'Live <div> :ident_str </div>',
+	'rev_table_proposed_header' => 'Proposed <div> :ident_str </div> ',
 
-	'diff_header' => 'Accept changes',
-	'diff_intro' => 'The following shows the differences between the two revisions.',
-	'diff_table_live_header' => 'Live, :date',
-	'diff_table_proposed_header' => 'Proposed, :date',
+
+	'rev_edit_programme' => 'Edit this programme',
+	'rev_request_amends' => 'Request changes from author',
+	'rev_approve_revision' => 'Approve revision and make live',
 
 	'diff_modal' => array(
 		'request_changes' => array(
