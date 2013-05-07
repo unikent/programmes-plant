@@ -1,7 +1,6 @@
 <?php
 Config::set('verify::verify.prefix', 'usersys');
 
-use \Verify\Models\Permission;
 class Add_Section_Permissions {
 
 	/**

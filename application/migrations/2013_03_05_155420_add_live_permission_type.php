@@ -1,7 +1,5 @@
 <?php
 
-use \Verify\Models\Permission as Permission;
-
 class Add_Live_Permission_Type {
 
 	private $permissions = array(

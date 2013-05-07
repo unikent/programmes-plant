@@ -9,8 +9,10 @@
 
 	<div style='padding:10px;' class='alert alert-success alert-block'>
 		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span>
+
+
+		
 		<?php echo $revision->get_identifier_string() ?> <br/>
-		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
 		<?php if(get_class($programme) == 'Programme'):?>
 			<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
 		<?php endif?>
@@ -18,15 +20,20 @@
 
 <?php elseif($revision->status =='selected'):?>
 
-		<div style='padding:10px;' class='alert alert-info alert-block'>		
-			<div style='float:right;'>
-  			<a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a>
-  			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>"><?php echo __("revisions.make_live"); ?></a>
-  			<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>"><?php echo __("revisions.use_previous"); ?></a>
-  		</div>
-		  <span class="label label-info" ><?php echo __("revisions.status_current"); ?></span>
-		  <?php echo $revision->get_identifier_string() ?><br/>&nbsp;
-		</div>
+	<div style='padding:10px;' class='alert alert-info alert-block'>		
+		<div style='float:right;'>
+	  		<a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a>
+	  		<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>"><?php echo __("revisions.make_live"); ?></a>
+	  		<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>"><?php echo __("revisions.use_previous"); ?></a>
+	  	</div>
+
+		<span class="label label-info" ><?php echo __("revisions.status_current"); ?></span>
+	  	<?php echo $revision->get_identifier_string() ?><br/>
+
+	  	<?php if($revision->under_review == 1): ?>
+			<span class="label label-warning" ><?php echo __("revisions.status_review") ;?></span>
+		<?php endif; ?> &nbsp;
+	</div>
 
 <?php elseif($revision->status == 'unused'):?>
 
@@ -39,7 +46,10 @@
 <?php else:?>
 
 			<div style='padding:5px;margin-left:25px;' class='alert alert-info'>
-				<span class="label label-info" ><?php echo __("revisions.status_draft"); ?></span> 
+				<span class="label label-info" ><?php echo __("revisions.status_draft"); ?></span>
+				<?php if($revision->under_review == 1): ?>
+					<span class="label label-warning" ><?php echo __("revisions.status_review") ;?></span>
+				<?php endif; ?>
 				<?php echo $revision->get_identifier_string() ?> 
 				<div style='float:right;'><a class="popup_toggler" href='#use_revision' rel="<?php echo $use_link;?>"><?php echo __("revisions.use_revision"); ?></a> | <a class="popup_toggler" href='#make_revision_live' rel="<?php echo $live_link;?>" ><?php echo __("revisions.make_live"); ?></a></div>
 			</div>

@@ -1,6 +1,3 @@
-<?php 
-use \Verify\Models\User as User;
-?>
 <h1>Inbox</h1>
 <p>These are the incoming revisions of programmes for you to review.</p>
 <?php echo Messages::get_html()?>
@@ -21,8 +18,6 @@ use \Verify\Models\User as User;
       <td><?php echo $revision->{Programme::get_title_field()} ?></td>
       <td>
         <?php
-        // This is slightly horrific in terms of making calls here - but it looks really cool!
-        
         $user_details = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 
         if (is_null($user_details))
@@ -35,13 +30,12 @@ use \Verify\Models\User as User;
         }
 
         $view_link = action( $revision->year . '/ug/programmes/' . $revision->programme_id . '@view_revision', array($revision->id));
-        $diff_link = action( $revision->year . '/ug/programmes/' . $revision->programme_id . '@difference', array($revision->id));
+        $diff_link = action( $revision->year . '/ug/programmes/' . $revision->programme_id . '@review', array($revision->id));
         ?>
         </td>
       <td><?php echo Date::forge($revision->updated_at)->ago(); ?></td>
       <td>
-        <a class="btn btn-primary" href="<?php echo $view_link; ?>">View revision</a>
-        <a class="btn btn btn-primary" href="<?php echo $diff_link; ?>">Difference from live</a>
+        <a class="btn btn-primary" href="<?php echo $diff_link; ?>">Review</a>
       </td>
     </tr>
   <?php endforeach; ?>

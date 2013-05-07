@@ -49,6 +49,12 @@ mkdir application/config/local && cp application/config/*.sample application/con
 
 10. Point a browser to the URL of the Programmes Plant!
 
+## Seeding the data
+
+We have provided some data seeds to allow you to get going with some sample data, particularly for programme data.
+
+To run all the seeds type `php artisan seed --env=local`.
+
 ## Testing
 
 Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.

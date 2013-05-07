@@ -1,8 +1,5 @@
 <?php
 
-use \Verify\Models\Role as Role;
-use \Verify\Models\Permission as Permission;
-
 class Add_Permissions_For_Sending_To_Standard_User {
 
 	public function __construct()

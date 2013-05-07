@@ -615,6 +615,7 @@ class TestRevisionable extends ModelTestCase {
 	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+	
 
 
 

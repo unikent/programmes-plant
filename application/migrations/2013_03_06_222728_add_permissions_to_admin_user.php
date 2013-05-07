@@ -1,7 +1,4 @@
 <?php
-
-use \Verify\Models\Role as Role;
-use \Verify\Models\Permission as Permission;
 	
 class Add_Permissions_To_Admin_User {
 

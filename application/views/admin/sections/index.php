@@ -53,7 +53,7 @@
     <div class="modal hide fade" id="delete_section">
       <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
-        <h3>Are You Sure?</h3>
+        <h3><?php echo __('modals.confirm_title'); ?></h3>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete this section?</p>
