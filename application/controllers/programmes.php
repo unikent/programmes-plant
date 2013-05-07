@@ -292,7 +292,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance(__('emails.admin_notification.title'))
+			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
 				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title)), 'text/html');
