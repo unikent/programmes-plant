@@ -1,6 +1,4 @@
 <?php
-// use user and role objects from namespace
-use \Verify\Models\user;
 
 class Users_Controller extends Admin_Controller {
 

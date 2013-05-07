@@ -1,8 +1,5 @@
 <?php
 
-use \Verify\Models\Role as Role;
-use \Verify\Models\Permission as Permission;
-
 class Add_Additional_Permissions {
 
 	private $permissions = array(

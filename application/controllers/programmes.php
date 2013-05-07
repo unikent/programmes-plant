@@ -1,8 +1,5 @@
 <?php
 
-// use user and role objects from namespace
-use \Verify\Models\user;
-
 class Programmes_Controller extends Revisionable_Controller {
 
 	public $restful = true;
