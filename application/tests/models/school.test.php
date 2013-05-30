@@ -17,7 +17,7 @@ class TestSchool extends ModelTestCase
 	/**
 	 * Remove everything in the database.
 	 */
-	public function tearDown()
+	public static function tear_down()
 	{
 		$schools = School::all();
 
@@ -26,7 +26,7 @@ class TestSchool extends ModelTestCase
 			$school->delete_for_test();
 		}
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	public function testInputPopulatesSchoolObjectSuccessfully()
