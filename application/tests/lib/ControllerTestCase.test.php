@@ -7,7 +7,7 @@
  *
  * @author  Joseph Wynn <joseph@wildlyinaccurate.com>
  */
-abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
+abstract class ControllerTestCase extends BaseTestCase
 {
 
 	/**
@@ -23,15 +23,10 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
 		Session::load();
 	}
 
-	public function tearDown()
-	{
-		ControllerTestCase::clean_request();
-	}
-
 	/**
 	 * Ensures we don't have problems with dirty requests.
 	 */
-	private function clean_request(){
+	protected static function clean_request(){
         $request = \Laravel\Request::foundation()->request;
 
         $req_keys = $request->keys();

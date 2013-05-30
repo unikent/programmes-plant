@@ -13,12 +13,12 @@ class TestProgramme extends ModelTestCase {
 		static::clear_models();
 	}
 
-	public function tearDown() 
+	public static function tear_down() 
 	{	
 		Cache::flush(); // Flush the cache.
 		static::clear_models();
 		Programme::$list_cache = false;	
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 
