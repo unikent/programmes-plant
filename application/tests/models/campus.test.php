@@ -16,16 +16,12 @@ class TestCampus extends ModelTestCase
 	/**
 	 * Remove everything in the database.
 	 */
-	public function tearDown()
+	public static function tear_down()
 	{
-		$campuses = Campus::all();
 
-		foreach ($campuses as $campus)
-		{
-			$campus->delete_for_test();
-		}
+		static::clear_models(array("campus"));
 		
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	public function setUp()
@@ -90,6 +86,7 @@ class TestCampus extends ModelTestCase
 
 	public function testNameIsRequired() 
 	{
+
 		unset($this->input['name']);
 
 		Request::foundation()->request->add($this->input);

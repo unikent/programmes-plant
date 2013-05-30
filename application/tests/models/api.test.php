@@ -23,12 +23,12 @@ class TestAPI extends ModelTestCase
 		static::clear_models();
 	}
 
-	public function tearDown()
+	public static function tear_down()
 	{	
 		static::clear_models();
 
 		Cache::flush();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	// Test data
