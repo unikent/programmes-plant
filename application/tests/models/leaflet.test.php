@@ -20,13 +20,13 @@ class TestLeaflet extends ModelTestCase
 			$campus->delete_for_test();
 		}
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**
 	 * Remove everything in the database.
 	 */
-	public function tearDown()
+	public static function tear_down()
 	{
 		$leaflets = Leaflet::all();
 
@@ -43,7 +43,7 @@ class TestLeaflet extends ModelTestCase
 			$campus->delete_for_test();
 		}
 		
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

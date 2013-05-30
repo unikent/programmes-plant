@@ -9,7 +9,7 @@ class TestSimpleData extends ModelTestCase {
 
 	public $input =  array('name' => 'Thing', 'id' => 1);
 
-	public function tearDown()
+	public static function tear_down()
 	{
 		Thing::$rules = array();
 
@@ -24,7 +24,7 @@ class TestSimpleData extends ModelTestCase {
 
 		Schema::drop('things');
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	public function setUp()
