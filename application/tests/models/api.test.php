@@ -152,4 +152,58 @@ class TestAPI extends ModelTestCase
 	}
 
 	
+	public function testget_subjects_index_with_cache(){}
+
+	
+	public function testget_subjects_index_without_cache(){}
+
+	
+	public function testget_subjects_index_course_mapping(){}
+
+	
+	public function testget_preview_with_cache(){}
+
+	
+	public function testget_preview_without_cache(){}
+
+	
+	public function testget_preview_invalid_revision(){}
+
+
+	public function testget_data_with_types(){}
+
+
+	public function testcombine_programme(){}
+
+
+	public function testmerge_related_courses(){}
+
+
+	public function testget_module_data(){}
+
+
+	public function testremove_ids_from_field_names(){}
+
+
+	public function testload_external_data(){}
+
+
+	public function testpurge_output_cache(){}
+
+
+	public function testget_last_change_time(){}
+
+
+	public function testget_last_change_time_without_cache(){}
+
+
+	public function testget_last_change_date_for_headers(){}
+
+
+	public function testarray_to_xml(){}
+
+
+	public function testget_xcrified_programme(){}
+
+	
 }
