@@ -41,8 +41,13 @@ class verify_ldap extends Verify
 
 		// Boot LDAP
 		$this->ldap = LDAPConnect::instance();
-		$ldap_user = $this->ldap->getAuthenticateUser($username, $password);
 
+		// Re: the str_replace
+		// Allow authentication using test users (Normal username -test). Test accounts will authenticate normally
+		// using the parent usernames credentals, but can be setup in the admin backend to have custom permissions.
+
+		$ldap_user = $this->ldap->getAuthenticateUser(str_replace('-test','',$username), $password);
+		
 		if ($ldap_user !== false)
 		{
 			// User has a valid kent username & password.
