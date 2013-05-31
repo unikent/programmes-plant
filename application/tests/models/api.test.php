@@ -275,44 +275,112 @@ class TestAPI extends ModelTestCase
 
 	}
 
-	
-	public function testget_preview_invalid_revision(){}
+	/**
+     * @expectedException RevisioningException
+     */
+	public function testcreate_preview_invalid_revision(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$title_field = Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		// there is no revision with an id of 500
+		$preview_hash = API::create_preview($programme->id, 500);
+	}
 
 
-	public function testget_data_with_types(){}
+	public function testget_data_with_types(){
+
+		$types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
+
+		foreach ($types as $type) {
+			$data = API::get_data($type);
+			print_r($data);
+		}
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testcombine_programme(){}
+	public function testcombine_programme(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testmerge_related_courses(){}
+	public function testmerge_related_courses(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testget_module_data(){}
+	public function testget_module_data(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testremove_ids_from_field_names(){}
+	public function testremove_ids_from_field_names(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testload_external_data(){}
+	public function testload_external_data(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testpurge_output_cache(){}
+	public function testpurge_output_cache(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testget_last_change_time(){}
+	public function testget_last_change_time(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testget_last_change_time_without_cache(){}
+	public function testget_last_change_time_without_cache(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testget_last_change_date_for_headers(){}
+	public function testget_last_change_date_for_headers(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testarray_to_xml(){}
+	public function testarray_to_xml(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 
-	public function testget_xcrified_programme(){}
+	public function testget_xcrified_programme(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 
 	
 }
