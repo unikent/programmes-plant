@@ -16,10 +16,10 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_index($year, $type)
 	{
-		$title_field = Programme::get_title_field();
+		$title_field = Programme::get_programme_title_field();
 		$award_field = Programme::get_award_field();
-		$withdrawn_field = Programme::get_withdrawn_field();
-		$suspended_field = Programme::get_suspended_field();
+		$withdrawn_field = Programme::get_programme_withdrawn_field();
+		$suspended_field = Programme::get_programme_suspended_field();
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
 		$subject_area_1 = Programme::get_subject_area_1_field();
 

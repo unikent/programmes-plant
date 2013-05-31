@@ -497,6 +497,37 @@ class Revisionable extends SimpleData {
 		return preg_replace('/_\d{1,4}$/', '', $name);
     }
 
+
+    public static $fields = array();
+
+	public static function load_field_map(){
+
+		$model = get_called_class().'Field';
+
+		$field_map = array();
+		$field_list = $model::get(array('colname'));
+
+		foreach($field_list as $field){
+			$field_map[static::trim_id_from_field_name($field->colname)] = $field->colname;
+		}
+		static::$fields = $field_map;
+	}
+
+	public function __call($method, $parameters)
+	{	
+
+		if (ends_with($method, '_field') && starts_with($method, 'get_')){
+
+			if( sizeof(static::$fields) === 0 ) static::load_field_map();
+			$method = str_replace(array('get_','_field'),'',$method);
+
+			return isset(static::$fields[$method]) ? static::$fields[$method] : null;
+		}
+		return parent::__call($method, $parameters);
+	}
+
+
+
 }
 
 class RevisioningException extends \Exception {}
