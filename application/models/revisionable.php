@@ -497,6 +497,41 @@ class Revisionable extends SimpleData {
 		return preg_replace('/_\d{1,4}$/', '', $name);
     }
 
+    // Fields cache
+    public static $fields = array();
+
+    // Load field mapping - true field name => field colname
+	public static function load_field_map(){
+
+		$model = get_called_class().'Field';
+
+		$field_map = array();
+		$field_list = $model::get(array('colname'));
+
+		foreach($field_list as $field){
+			$field_map[static::trim_id_from_field_name($field->colname)] = $field->colname;
+		}
+		static::$fields = $field_map;
+	}
+
+	// Add additional check to call magic method
+	public function __call($method, $parameters)
+	{	
+		// If matchs get_X_field
+		if (ends_with($method, '_field') && starts_with($method, 'get_')){
+			// Check we have a fields map, if not load it
+			if( sizeof(static::$fields) === 0 ) static::load_field_map();
+			// get just X (remove get_ and _field)
+			$method = str_replace(array('get_','_field'),'',$method);
+			// return result | null
+			return isset(static::$fields[$method]) ? static::$fields[$method] : null;
+		}
+		// Else, normal action
+		return parent::__call($method, $parameters);
+	}
+
+
+
 }
 
 class RevisioningException extends \Exception {}

@@ -8,196 +8,10 @@ class Programme extends Revisionable {
 	
 	public static $revision_model = 'ProgrammeRevision';
 
-	/**
-	 * Get the name of the title field/column in the database.
-	 * 
-	 * @return The name of the title field.
-	 */
-	public static function get_title_field()
-	{
-		return 'programme_title_1';
-	}
 
-	/**
-	 * Get the name of the slug field/column in the database.
-	 * 
-	 * @return The name of the slug field.
-	 */
-	public static function get_slug_field()
-	{
-		return 'slug_2';
+	public static function get_title_field(){
+		return static::get_programme_title_field();
 	}
-
-	/**
-	 * Get the name of the subject area 1 field/column in the database.
-	 * 
-	 * @return The name of the subject area 1 field.
-	 */
-	public static function get_subject_area_1_field()
-	{
-		return 'subject_area_1_8';
-	}
-
-	/**
-	 * Get the name of the subject area 2 field/column in the database.
-	 * 
-	 * @return The name of the subject area 2 field.
-	 */
-	public static function get_subject_area_2_field()
-	{
-		return 'subject_area_2_9';
-	}
-
-	/**
-	 * Get the name of the subject categories field/column in the database.
-	 * 
-	 * @return The name of the subject categories field.
-	 */
-	public static function get_subject_categories_field()
-	{
-		return 'subject_categories_47';
-	}
-
-	/**
-	 * Get the name of the award field/column in the database.
-	 * 
-	 * @return The name of the award field.
-	 */
-	public static function get_award_field()
-	{
-		return 'award_3';
-	}
-	
-	/**
-	 * Get the name of the 'programme withdrawn' field/column in the database.
-	 * 
-	 * @return The name of 'programme withdrawn the  field.
-	 */
-	public static function get_withdrawn_field()
-	{
-		return 'programme_withdrawn_54';
-	}
-	
-	/**
-	 * Get the name of the 'programme suspended' field/column in the database.
-	 * 
-	 * @return The name of the 'programme suspended' field.
-	 */
-	public static function get_suspended_field()
-	{
-		return 'programme_suspended_53';
-	}
-	
-	/**
-	 * Get the name of the 'subject to approval' field/column in the database.
-	 * 
-	 * @return The name of the 'subject to approval' field.
-	 */
-	public static function get_subject_to_approval_field()
-	{
-		return 'subject_to_approval_52';
-	}
-	
-	/**
-	 * Get the name of the 'get new programme' field/column in the database.
-	 * 
-	 * @return The name of the 'get new programme' field.
-	 */
-	public static function get_new_programme_field()
-	{
-		return 'new_programme_50';
-	}
-	
-	/**
-	 * Get the name of the 'mode of stude' field/column in the database.
-	 * 
-	 * @return The name of the 'mode of study' field.
-	 */
-	public static function get_mode_of_study_field()
-	{
-		return 'mode_of_study_12';
-	}
-	
-	/**
-	 * Get the name of the 'ucas code' field/column in the database.
-	 * 
-	 * @return The name of the 'ucas code' field.
-	 */
-	public static function get_ucas_code_field()
-	{
-		return 'ucas_code_10';
-	}
-
-	/**
-	 * Get the name of the 'additional school' field/column in the database.
-	 * 
-	 * @return The name of the 'additional school' field.
-	 */
-	public static function get_additional_school_field()
-	{
-		return 'additional_school_7';
-	}
-
-	/**
-	 * Get the name of the 'administrative school' field/column in the database.
-	 * 
-	 * @return The name of the 'administrative school' field.
-	 */
-	public static function get_administrative_school_field()
-	{
-		return 'administrative_school_6';
-	}
-
-	/**
-	 * Get the name of the 'location' field/column in the database.
-	 * 
-	 * @return The name of the 'location' field.
-	 */
-	public static function get_location_field()
-	{
-		return 'location_11';
-	}
-
-	/**
-	 * Get the name of the 'search_keywords' field/column in the database.
-	 * 
-	 * @return The name of the 'search_keywords' field.
-	 */
-	public static function get_search_keywords_field()
-	{
-		return 'search_keywords_46';
-	}
-	
-	/**
-	 * Get the name of the 'pos_code' field/column in the database.
-	 * 
-	 * @return The name of the 'pos_code' field.
-	 */
-	public static function get_pos_code_field()
-	{
-		return 'pos_code_44';
-	}
-	
-	/**
-	 * Get the name of the 'awarding_institute_or_body' field/column in the database.
-	 * 
-	 * @return The name of the 'awarding_institute_or_body' field.
-	 */
-	public static function get_awarding_institute_or_body_field()
-	{
-		return 'awarding_institute_or_body_4';
-	}
-	
-	/**
-	 * Get the name of the 'module_session' field/column in the database.
-	 * 
-	 * @return The name of the 'module_session' field.
-	 */
-	public static function get_module_session_field()
-	{
-		return 'module_session_86';
-	}
-	
 	/**
 	 * Get this programme's award.
 	 * 
@@ -483,8 +297,7 @@ class Programme extends Revisionable {
 		$title_field = Programme::get_title_field();
 		$slug_field = Programme::get_slug_field();
 		$subject_categories_field = Programme::get_subject_categories_field();
-		$withdrawn_field = Programme::get_withdrawn_field();
-		$suspended_field = Programme::get_suspended_field();
+		
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
@@ -500,6 +313,9 @@ class Programme extends Revisionable {
 		$location_field = Programme::get_location_field();
 		$administrative_school_field = Programme::get_administrative_school_field();
 		$additional_school_field = Programme::get_additional_school_field();
+
+		$withdrawn_field = Programme::get_programme_withdrawn_field();
+		$suspended_field = Programme::get_programme_suspended_field();
 
 		$index_data = array();
 
