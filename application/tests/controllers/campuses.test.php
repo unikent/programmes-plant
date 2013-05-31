@@ -1,5 +1,4 @@
 <?php
-require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
 
 class TestCampuses_Controller extends ControllerTestCase
 {

@@ -330,6 +330,10 @@ class Programmes_Controller extends Revisionable_Controller {
 				$title = $programme->{Programme::get_title_field()};
 				$slug = $programme->{Programme::get_slug_field()};
 
+				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
+				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
+				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
+
 				$mailer = IoC::resolve('mailer');
 
 				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
@@ -341,8 +345,8 @@ class Programmes_Controller extends Revisionable_Controller {
 							'title' => $title, 
 							'id' => $programme->id, 
 							'slug' => $slug, 
-							'link_to_edit_programme' => HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title),
-							'link_to_programme_frontend' => HTML::link(Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug, Config::get('application.front_end_url') . '/undergraduate/' . $programme->id . '/' . $slug)
+							'link_to_edit_programme' => $link_to_edit_programme,
+							'link_to_programme_frontend' => $link_to_programme_frontend
 						)), 
 						'text/html'
 					);

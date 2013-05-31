@@ -1,5 +1,6 @@
 <?php
-require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
+require_once dirname(dirname(__FILE__)) . '/lib/BaseTestCase.test.php';
+require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.test.php';
 
 class TestAPI_Controller extends ControllerTestCase
 {
@@ -21,7 +22,7 @@ class TestAPI_Controller extends ControllerTestCase
 
     }
 
-    public function tearDown()
+    public static function tear_down()
     {
         $programmes = Programme::all();
         foreach ($programmes as $programme)
@@ -63,7 +64,7 @@ class TestAPI_Controller extends ControllerTestCase
         // Since we now use the normal cache, we can just flush it
         Cache::flush();
 
-        parent::tearDown();
+        parent::tear_down();
     }
 
     public function generate_programme_dependancies(){

@@ -42,7 +42,7 @@ class TestRevisionable extends ModelTestCase {
 		static::clear_models();
 	}
 
-	public function tearDown() 
+	public function tearDown()
 	{	
 		Cache::flush(); // Flush the cache.
 
@@ -56,7 +56,7 @@ class TestRevisionable extends ModelTestCase {
 		}
 
 		RevisionableThing::$list_cache = false;	
-		parent::tearDown();
+		static::tear_down();
 	}
 
 	public function populate($model = 'RevisionableThing', $input = array())
