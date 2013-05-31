@@ -12,10 +12,10 @@ class TestAward extends ModelTestCase
 
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
-		TestAward::tearDown();
+		static::tear_down();
 	}
 
-	public function tearDown()
+	public static function tear_down()
 	{
 		$awards = Award::all();
 
@@ -24,7 +24,7 @@ class TestAward extends ModelTestCase
 			$award->delete_for_test();
 		}
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
 
 class TestAwards_Controller extends ControllerTestCase
 {
@@ -13,13 +12,13 @@ class TestAwards_Controller extends ControllerTestCase
 		Auth::login(1);
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
-		TestAward::tearDown();
+		TestAward::tear_down();
 	}
 
 	/**
 	 * Remove all the awards.
 	 */
-	public function tearDown()
+	public static function tear_down()
 	{
 		$awards = Award::all();
 

@@ -138,7 +138,12 @@ class Users_Controller extends Admin_Controller {
 
 		// Attempt to load user from ldap
 		$ldap = LDAPConnect::instance();
-		$userdata = $ldap->getUserAnonymous($username);
+		
+		// Re: the str_replace
+		// Allow authentication using test users (Normal username -test). Test accounts will authenticate normally
+		// using the parent usernames credentals, but can be setup in the admin backend to have custom permissions.
+
+		$userdata = $ldap->getUserAnonymous(str_replace('-test','',$username));
 
 		if($userdata != false){
 			// grab ldap details
@@ -146,7 +151,7 @@ class Users_Controller extends Admin_Controller {
 			$email = $userdata[0]['mail'][0];
 
 			// Attempt to get existing user
-			$user = User::where('username','=',$username)->first();
+			$user = User::where('username', '=', $username)->first();
 
 			// if user doesnt exist, create em
 			if($user === null) $user = new User();

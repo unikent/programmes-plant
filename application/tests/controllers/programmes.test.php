@@ -1,5 +1,4 @@
 <?php
-require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
 
 class TestProgrammes_Controller extends ControllerTestCase
 {
@@ -18,7 +17,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 		$programme->save();
 	}
 
-	public function tearDown()
+	public static function tear_down()
 	{
 		$programmes = Programme::all();
 
@@ -27,7 +26,7 @@ class TestProgrammes_Controller extends ControllerTestCase
 			$programme->delete_for_test();
 		}
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	public function testRemainOnTheSamePageWhenSavingProgrammes()
