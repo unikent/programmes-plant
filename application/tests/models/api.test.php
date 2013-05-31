@@ -36,16 +36,26 @@ class TestAPI extends ModelTestCase
 		$programme = Programme::create(static::$test_programme);
         $revision = $programme->get_active_revision();
         $programme->make_revision_live($revision);
+
+        return $programme;
 	}
 	private function publish_globals(){
 		$global = GlobalSetting::create(array('year' => '2014'));
         $revision = $global->get_active_revision();
         $global->make_revision_live($revision);
+
+        return $global;
 	}
 	private function publish_programme_settings(){
 		$setting = ProgrammeSetting::create(array('year' => '2014'));
         $revision = $setting->get_active_revision();
         $setting->make_revision_live($revision);
+
+        return $setting;
+	}
+
+	public function create_subject_area(){
+		return Subject::create(array('name' => 'API Test Subject'));
 	}
 
 	// Check index generates
@@ -152,19 +162,118 @@ class TestAPI extends ModelTestCase
 	}
 
 	
-	public function testget_subjects_index_with_cache(){}
+	public function testget_subjects_index_course_mapping(){
+		$programme = $this->publish_programme();
+		$subject_area = $this->create_subject_area();
+		
+		$subject_area_1_field = Programme::get_subject_area_1_field();
+		$programme->$subject_area_1_field = $subject_area->id;
+		$programme->save();
+        $programme->make_revision_live($programme->get_active_revision());
+		
+		$subjects_index = API::get_subjects_index($programme->year);
+
+		$subject_found_in_index = false;
+
+		foreach ($subjects_index as $subject_index) {
+			if ($subject_index['id'] == $subject_area->id){
+				$subject_found_in_index = true;
+				$title_field = Programme::get_title_field();
+				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				break;
+			}
+		}
+		
+		$this->assertTrue($subject_found_in_index); 
+	}
 
 	
-	public function testget_subjects_index_without_cache(){}
+	public function testget_subjects_index_course_mapping_without_cache(){
+		$programme = $this->publish_programme();
+		$subject_area = $this->create_subject_area();
+		
+		$subject_area_1_field = Programme::get_subject_area_1_field();
+		$programme->$subject_area_1_field = $subject_area->id;
+		$programme->save();
+        $programme->make_revision_live($programme->get_active_revision());
+		
+		$subjects_index = API::get_subjects_index($programme->year);
+
+		Cache::flush();
+
+		$subject_found_in_index = false;
+
+		foreach ($subjects_index as $subject_index) {
+			if ($subject_index['id'] == $subject_area->id){
+				$subject_found_in_index = true;
+				$title_field = Programme::get_title_field();
+				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				break;
+			}
+		}
+		
+		$this->assertTrue($subject_found_in_index);
+	}
 
 	
-	public function testget_subjects_index_course_mapping(){}
+	public function testcreate_get_preview(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
 
-	
-	public function testget_preview_with_cache(){}
+		$title_field = Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
 
-	
-	public function testget_preview_without_cache(){}
+		$revision = $programme->get_active_revision();
+
+		$preview_hash = API::create_preview($programme->id, $revision->id);
+
+		$this->assertFalse(empty($preview_hash));
+
+		$preview = API::get_preview($preview_hash);
+
+		$title_field_without_id = Revisionable::trim_id_from_field_name($title_field);
+
+		$this->assertEquals($preview[$title_field_without_id], $programme->$title_field);
+
+	}
+
+	public function testcreate_get_preview_without_globals_and_settings(){
+		$programme = $this->publish_programme();
+
+		$title_field = Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		$revision = $programme->get_active_revision();
+
+		$preview_hash = API::create_preview($programme->id, $revision->id);
+
+		$this->assertFalse($preview_hash);
+	}
+
+	/**
+     * @expectedException NotFoundException
+     */
+	public function testget_preview_without_cache(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$title_field = Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		$revision = $programme->get_active_revision();
+
+		$preview_hash = API::create_preview($programme->id, $revision->id);
+
+		Cache::flush("programme-previews.preview-{$preview_hash}");
+
+		$preview = API::get_preview($preview_hash);
+
+	}
 
 	
 	public function testget_preview_invalid_revision(){}
