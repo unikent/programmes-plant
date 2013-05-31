@@ -8,6 +8,10 @@ class Programme extends Revisionable {
 	
 	public static $revision_model = 'ProgrammeRevision';
 
+
+	public static function get_title_field(){
+		return static::get_programme_title_field();
+	}
 	/**
 	 * Get this programme's award.
 	 * 
@@ -293,8 +297,7 @@ class Programme extends Revisionable {
 		$title_field = Programme::get_title_field();
 		$slug_field = Programme::get_slug_field();
 		$subject_categories_field = Programme::get_subject_categories_field();
-		$withdrawn_field = Programme::get_withdrawn_field();
-		$suspended_field = Programme::get_suspended_field();
+		
 		$subject_to_approval_field = Programme::get_subject_to_approval_field();
 		$new_programme_field = Programme::get_new_programme_field();
 		$mode_of_study_field = Programme::get_mode_of_study_field();
@@ -310,6 +313,9 @@ class Programme extends Revisionable {
 		$location_field = Programme::get_location_field();
 		$administrative_school_field = Programme::get_administrative_school_field();
 		$additional_school_field = Programme::get_additional_school_field();
+
+		$withdrawn_field = Programme::get_programme_withdrawn_field();
+		$suspended_field = Programme::get_programme_suspended_field();
 
 		$index_data = array();
 

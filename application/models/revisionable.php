@@ -516,6 +516,7 @@ class Revisionable extends SimpleData {
 	public function __call($method, $parameters)
 	{	
 
+
 		if (ends_with($method, '_field') && starts_with($method, 'get_')){
 
 			if( sizeof(static::$fields) === 0 ) static::load_field_map();

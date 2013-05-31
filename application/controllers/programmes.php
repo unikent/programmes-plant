@@ -50,6 +50,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data[$this->views] = $programmes;
 
 		$this->data['title_field'] = $title_field;
+
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
@@ -109,7 +110,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		// get the appropriate data to display on the programme form
 		$this->data['programme'] = $programme;
 		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-		$this->data['title_field'] = Programme::get_title_field();
+		$this->data['title_field'] = Programme::get_programme_title_field();
 		$this->data['year'] = $year;
 
 		// get the active revision
