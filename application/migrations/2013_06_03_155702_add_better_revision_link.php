@@ -13,6 +13,14 @@ class Add_Better_Revision_Link {
 			$table->integer('live_revision');
 			$table->integer('current_revision');
 		});
+		Schema::table('programme_settings', function($table){
+			$table->integer('live_revision');
+			$table->integer('current_revision');
+		});
+		Schema::table('global_settings', function($table){
+			$table->integer('live_revision');
+			$table->integer('current_revision');
+		});
 
 		// Setup inital linkage between programmes and revisions
 		foreach(Programme::all() as $programme){
@@ -44,6 +52,19 @@ class Add_Better_Revision_Link {
 			$programme->current_revision = $current;
 			$programme->raw_save();
 		}
+		// migrate other datatypes
+		foreach(ProgrammeSetting::all() as $setting){
+			$live_setting = ProgrammeSettingRevision::where('year','=',$setting->year)->where('status','=','live')->first(array('id'));
+			$setting->live_revision = $live_setting->id;
+			$setting->current_revision = $live_setting->id;
+			$setting->raw_save();
+		}
+		foreach(GlobalSetting::all() as $global){
+			$live_setting = GlobalSettingRevision::where('year','=',$setting->year)->where('status','=','live')->first(array('id'));
+			$global->live_revision = $live_setting->id;
+			$global->current_revision = $live_setting->id;
+			$global->raw_save();
+		}
 
 	}
 
@@ -55,6 +76,14 @@ class Add_Better_Revision_Link {
 	public function down()
 	{
 		Schema::table('programmes', function($table){
+			$table->drop_column('live_revision');
+			$table->drop_column('current_revision');
+		});
+		Schema::table('programme_settings', function($table){
+			$table->drop_column('live_revision');
+			$table->drop_column('current_revision');
+		});
+		Schema::table('global_settings', function($table){
 			$table->drop_column('live_revision');
 			$table->drop_column('current_revision');
 		});
