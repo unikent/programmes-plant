@@ -40,8 +40,6 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
 		{
 			$campus->delete_for_test();
 		}
-		
-		parent::tearDown();
     }
     
     public function testparse_argumentsShowsHelpOnEmptyArgs()
@@ -160,7 +158,10 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme['pos_code'] = 'ACCF-S:BA';
         $programme['campus_id'] = '1';
         $programme['module_session'] = '2014';
-        
+        Programme::$fields['module_session'] = 'module_session_86';
+       
+
+
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2014&format=json';
@@ -184,6 +185,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme['pos_code'] = 'ACCF-S:BA';
         $programme['campus_id'] = '1';
         $programme['module_session'] = 'None';
+
         
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
