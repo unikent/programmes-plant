@@ -185,21 +185,8 @@ class Revisionable extends SimpleData {
 	 */
 	public function get_active_revision($columns = array('*'))
 	{
-		// If all is up to date (live=2) return live and hence selected item
-		// else get item marked as selected or the one selected, but send in for review.
 		$model = static::$revision_model;
-
-		if ($this->live == 2)
-		{
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first();
-		}
-		else
-		{
-			return $model::where($this->data_type_id.'_id', '=' , $this->id)
-							->where('year','=',$this->year)
-							->where('status', '=', 'selected')
-							->first();
-		}
+		return $model::where('id', '=', $this->current_revision)->first($columns);
 	}	
 
 	/**
@@ -209,14 +196,9 @@ class Revisionable extends SimpleData {
 	 * @return live revision instance
 	 */
 	public function get_live_revision($columns = array('*'))
-	{
-		// If a revision is published
-		if($this->live != 0){
-			$model = static::$revision_model;
-			return $model::where($this->data_type_id.'_id','=',$this->id)->where('year','=',$this->year)->where('status','=','live')->first($columns);
-		}
-		// No published revision
-		return null;
+	{	
+		$model = static::$revision_model;
+		return $model::where('id', '=', $this->live_revision)->first($columns);
 	}	
 
 	/**
