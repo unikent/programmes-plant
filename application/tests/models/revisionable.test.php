@@ -23,6 +23,10 @@ class TestRevisionable extends ModelTestCase {
 			$table->string('year', 4);
 			$table->integer('instance_id');
 			$table->integer('live');
+
+			$table->integer('current_revision');
+			$table->integer('live_revision');
+
 			$table->timestamps();
 		});
 
@@ -574,7 +578,7 @@ class TestRevisionable extends ModelTestCase {
 		$this->populate();
 
 		$item = RevisionableThing::find(1);
-		$revision = $item->get_live_revision();
+		$revision = $item->find_live_revision();
 		//$p->make_revision_live($r);
 
 		$this->assertEquals(null, $revision);
@@ -588,7 +592,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $item->get_active_revision();
 		$item->make_revision_live($revision);
 
-		$revision = $item->get_live_revision();
+		$revision = $item->find_live_revision();
 		$this->assertEquals(1, $revision->id);
 	}
 
