@@ -23,6 +23,10 @@ class TestRevisionable extends ModelTestCase {
 			$table->string('year', 4);
 			$table->integer('instance_id');
 			$table->integer('live');
+
+			$table->integer('current_revision');
+			$table->integer('live_revision');
+
 			$table->timestamps();
 		});
 
