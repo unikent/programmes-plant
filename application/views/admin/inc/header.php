@@ -23,7 +23,7 @@
                 
                 ?>
                 <ul class="nav">
-                    <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( '/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
+                    <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( '/ug/'.$url)?>">Undergraduate</a></li>
                 </ul>
                 
                 <ul class="nav">
@@ -43,11 +43,14 @@
                 ?>
                 
                 <ul class="nav">
-                  <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
+                    <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
+                    <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/pg/'.$url)?>">Postgraduate</a></li>
                 </ul>
+
                 <ul class="nav">
                     <li class="divider-vertical"></li>
                 </ul>
+                
                 <ul class="nav">
                     <li class="<?php echo ( $selectedYear == $year ? 'active' : false ); ?>"><a href="<?php echo $href1; ?>"><?php echo $year; ?></a></li>
                     <li class="<?php echo ( $selectedYear == ($year+1) ? 'active' : false ); ?>"><a href="<?php echo $href2; ?>"><?php echo $year+1 ?></a></li>
