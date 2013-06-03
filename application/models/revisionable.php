@@ -282,6 +282,10 @@ class Revisionable extends SimpleData {
 			// there are still later revisions
 			$this->live = '1';
 		}
+
+		//Update live revision pointer
+		$this->live_revision = $revision->id;
+
 		parent::save();
 		
 		// Set previous live to a non-live status (prior_live so we can tell them apart from drafts that have never been used)
@@ -366,6 +370,7 @@ class Revisionable extends SimpleData {
 		unset($revision_values['edits_by']);
 		unset($revision_values['made_live_by']);
 		unset($revision_values['status']);
+		unset($revision_values['under_review']);
 		unset($revision_values[strtolower($this->data_type_id).'_id']);
 		
 		// make sure that if there's a live revision somewhere, and the current revision isn't it, set the overall live status to 1 (ie there's something newer than the current live revision)
@@ -374,8 +379,12 @@ class Revisionable extends SimpleData {
 		// make sure that if we're switching to use the live revision the overall live status of the programme is set to 2 (ie the programme is fully up to date)
 		if ($this->live == 1 && $revision->status == 'live') $this->live = 2;
 
+		// update current revisions pointer
+		$this->current_revision = $revision->id;
+
 		// Save this revision as the new current
 		$this->fill($revision_values);
+
 		parent::save();
 
 		// Update revisions status to selected (assuming its not a live one)
