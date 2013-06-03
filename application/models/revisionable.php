@@ -131,7 +131,7 @@ class Revisionable extends SimpleData {
 		$success = $revision->save();
 
 		// Set previously active revision back to draft (if its not live)
-		if($this->attributes['current_revision'] != $this->attributes['live_revision']){
+		if(isset($this->attributes['current_revision']) && $this->attributes['current_revision'] != $this->attributes['live_revision']){
 			$active = $this->get_active_revision();
 			$active->status = 'draft';
 			$active->save();
