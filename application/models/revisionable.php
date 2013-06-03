@@ -86,6 +86,8 @@ class Revisionable extends SimpleData {
 		unset($revision_values['created_by']);
 		unset($revision_values['live']);
 		unset($revision_values['locked_to']);
+		unset($revision_values['current_revision']);
+		unset($revision_values['live_revision']);
 		// @todo @workaround for revisionble tests.
 		//
 		// The case for using mocking. 
@@ -125,11 +127,22 @@ class Revisionable extends SimpleData {
 		// Set the data in to the revision
 		$revision->fill($revision_values);
 
-		// Set previous revision back to draft
-		$revision_model::where($this->data_type_id.'_id','=',$this->id)->where('status', '=', 'selected')->update(array('status'=>'draft'));	
+		// Save everything
+		$success = $revision->save();
+
+		// Set previously active revision back to draft (if its not live)
+		if($this->attributes['current_revision'] != $this->attributes['live_revision']){
+			$active = $this->get_active_revision();
+			$active->status = 'draft';
+			$active->save();
+		} 
+
+		// link new revision
+		$this->current_revision = $revision->id;
+		$this->raw_save();
 
 		// Save revision
-		return $revision->save();
+		return $success;
 	}
 
 	/**
@@ -195,7 +208,7 @@ class Revisionable extends SimpleData {
 	 * @param $columns columns to return
 	 * @return live revision instance
 	 */
-	public function get_live_revision($columns = array('*'))
+	public function find_live_revision($columns = array('*'))
 	{	
 		$model = static::$revision_model;
 		return $model::where('id', '=', $this->live_revision)->first($columns);

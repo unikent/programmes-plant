@@ -34,7 +34,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
 		{
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->order_by($title_field)->get($fields_array);
+			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->get($fields_array);
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
@@ -226,7 +226,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->get_live_revision(),  $programme->get_revision($revision_id));
+		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
@@ -258,7 +258,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->get_live_revision(),  $programme->get_revision($revision_id));
+		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(

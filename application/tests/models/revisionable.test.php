@@ -574,7 +574,7 @@ class TestRevisionable extends ModelTestCase {
 		$this->populate();
 
 		$item = RevisionableThing::find(1);
-		$revision = $item->get_live_revision();
+		$revision = $item->find_live_revision();
 		//$p->make_revision_live($r);
 
 		$this->assertEquals(null, $revision);
@@ -588,7 +588,7 @@ class TestRevisionable extends ModelTestCase {
 		$revision = $item->get_active_revision();
 		$item->make_revision_live($revision);
 
-		$revision = $item->get_live_revision();
+		$revision = $item->find_live_revision();
 		$this->assertEquals(1, $revision->id);
 	}
 
