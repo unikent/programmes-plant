@@ -432,6 +432,7 @@ class Programme extends Revisionable {
 		}
 		
 		$this->live = 0;
+		$this->live_revision = 0;
 		parent::save();
 		
 		// Update feed file & kill output caches
