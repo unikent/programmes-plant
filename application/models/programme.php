@@ -4,6 +4,8 @@ use Laravel\CLI\Command;
 
 abstract class Programme extends Revisionable {
 
+	protected $data_type_id = 'programme';
+
 	public static function get_title_field(){
 		return static::get_programme_title_field();
 	}

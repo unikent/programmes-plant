@@ -95,9 +95,10 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 		$fieldModel = $this->model.'Field';
 		$this->data['sections'] = $fieldModel::programme_fields_by_section();
-
+		$this->data['model'] = $this->model;
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
+
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
