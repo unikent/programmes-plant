@@ -2,11 +2,21 @@
 
 class Programmes_Controller extends Revisionable_Controller {
 
-	public $restful = true;
-	public $views = 'programmes';
 	protected $model = 'Programme';
+	public $views = 'programmes';
+	public $restful = true;
 
 	public $required_permissions = array("edit_own_programmes", "view_all_programmes", "edit_all_programmes");
+
+	// Determine correct model (PG / UG)
+	public function __construct()
+	{  	
+		$this->model = (URI::segment(2)=='ug') ? 'Programme' : 'ProgrammePG';
+
+		// Construct parent.
+		parent::__construct();
+	}
+	
 
 	/**
 	 * Routing for /$year/$type/programmes
@@ -16,14 +26,15 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_index($year, $type)
 	{
-		$title_field = Programme::get_programme_title_field();
-		$award_field = Programme::get_award_field();
-		$withdrawn_field = Programme::get_programme_withdrawn_field();
-		$suspended_field = Programme::get_programme_suspended_field();
-		$subject_to_approval_field = Programme::get_subject_to_approval_field();
-		$subject_area_1 = Programme::get_subject_area_1_field();
-
 		$model = $this->model;
+
+		// get fields
+		$title_field 		= 	$model::get_programme_title_field();
+		$award_field 		= 	$model::get_award_field();
+		$withdrawn_field 	= 	$model::get_programme_withdrawn_field();
+		$suspended_field 	= 	$model::get_programme_suspended_field();
+		$subject_to_approval_field = $model::get_subject_to_approval_field();
+		$subject_area_1 	= 	$model::get_subject_area_1_field();
 
 		// Get user
 		$user = Auth::user();
@@ -50,12 +61,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data[$this->views] = $programmes;
 
 		$this->data['title_field'] = $title_field;
-
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
+		$this->layout->nest('content', 'admin.programmes.index', $this->data);
 	}
 
 	/**
@@ -83,7 +93,8 @@ class Programmes_Controller extends Revisionable_Controller {
 			$this->data['clone'] = false;
 		}
 		
-		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
+		$fieldModel = $this->model.'Field';
+		$this->data['sections'] = $fieldModel::programme_fields_by_section();
 
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
@@ -101,16 +112,20 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $item_id The ID of the programme to edit.
 	 */
 	public function get_edit($year, $type, $id = false)
-	{
+	{	
+		$fieldModel = $this->model.'Field';
+		$model = $this->model;
+
+
 		// Ensure we have a corresponding course in the database
-		$programme = Programme::find($id);
+		$programme = $model::find($id);
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
 		
 		// get the appropriate data to display on the programme form
 		$this->data['programme'] = $programme;
-		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-		$this->data['title_field'] = Programme::get_programme_title_field();
+		$this->data['sections'] = $fieldModel::programme_fields_by_section();
+		$this->data['title_field'] = $model::get_programme_title_field();
 		$this->data['year'] = $year;
 
 		// get the active revision
