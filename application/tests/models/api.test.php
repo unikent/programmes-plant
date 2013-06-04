@@ -10,6 +10,8 @@ class TestAPI extends ModelTestCase
         'programme_withdrawn_54' => ''
     );
 
+    public static $data_types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
+
 	/**
 	 * Set up the database.
 	 */
@@ -54,8 +56,15 @@ class TestAPI extends ModelTestCase
         return $setting;
 	}
 
-	public function create_subject_area(){
-		return Subject::create(array('name' => 'API Test Subject'));
+	public function create_data_types(){
+		$data_type_objects = array();
+		
+		foreach (static::$data_types as $data_type) {
+			$data_type_objects[$data_type] = $data_type::create(array('name' => "API Test {$data_type}"));
+		}
+		
+
+		return $data_type_objects;
 	}
 
 	// Check index generates
@@ -164,7 +173,8 @@ class TestAPI extends ModelTestCase
 	
 	public function testget_subjects_index_course_mapping(){
 		$programme = $this->publish_programme();
-		$subject_area = $this->create_subject_area();
+		$data_type_objects = $this->create_data_types();
+		$subject_area = $data_type_objects['subject'];
 		
 		$subject_area_1_field = Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -190,7 +200,8 @@ class TestAPI extends ModelTestCase
 	
 	public function testget_subjects_index_course_mapping_without_cache(){
 		$programme = $this->publish_programme();
-		$subject_area = $this->create_subject_area();
+		$data_type_objects = $this->create_data_types();
+		$subject_area = $data_type_objects['subject'];
 		
 		$subject_area_1_field = Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -293,29 +304,73 @@ class TestAPI extends ModelTestCase
 
 
 	public function testget_data_with_types(){
-
-		$types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
-
-		foreach ($types as $type) {
+		$this->create_data_types();
+		foreach (static::$data_types as $type) {
 			$data = API::get_data($type);
-			print_r($data);
+			$this->assertNotEmpty($data);
 		}
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+	}
+
+	/**
+     * @expectedException NotFoundException
+     */
+	public function testget_unknown_data_type(){
+		$data = API::get_data("blahBlah");
 	}
 
 
 	public function testcombine_programme(){
+		$programme = $this->publish_programme();
+		$globals = $this->publish_globals();
+		$programme_settings = $this->publish_programme_settings();
+
+		$api_programme 	= Programme::get_api_programme($programme->id, $programme->year);
+		$api_globals = GlobalSetting::get_api_data($globals->year);
+		$api_programme_settings = ProgrammeSetting::get_api_data($programme_settings->year);
+		
+		$combined_programme = API::combine_programme($api_programme, $api_programme_settings, $api_globals);
+
+		$this->assertNotEmpty($combined_programme);
+
 		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
+          'This needs further tests to check that various aspects of the combine worked'
         );
 	}
 
 
 	public function testmerge_related_courses(){
+
+		$programme = $this->publish_programme();
+		$related_programme = $this->publish_programme();
+		$another_related_programme = $this->publish_programme();
+		$data_type_objects = $this->create_data_types();
+
+		$title_field = Programme::get_title_field();
+		$subject_area_1_field = Programme::get_subject_area_1_field();
+
+		$programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$programme->save();	
+		$programme->make_revision_live($programme->get_active_revision());
+
+		$related_programme->$title_field = "Related thing";
+		$related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$related_programme->save();	
+		$related_programme->make_revision_live($related_programme->get_active_revision());
+
+		$another_related_programme->$title_field = "Another related thing";
+		$another_related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$another_related_programme->save();	
+		$another_related_programme->make_revision_live($another_related_programme->get_active_revision());
+
+		$related_courses = Programme::get_programmes_in($data_type_objects['subject']->id, null, $programme->year, $programme->id);
+		
+		$related_courses = API::merge_related_courses($related_courses, null);
+
+		$this->assertEquals($another_related_programme->$title_field, $related_courses[0]['name']);
+		$this->assertEquals($related_programme->$title_field, $related_courses[1]['name']);
+		
 		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
+          'This test is incomplete. Should test passing a second parameter to API::merge_related_courses'
         );
 	}
 
@@ -328,9 +383,21 @@ class TestAPI extends ModelTestCase
 
 
 	public function testremove_ids_from_field_names(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		$record = array(
+			'first_record_1' => 'first_record',
+			'second_record_03' => 'second_record',
+			'third_record_105' => 'third_record',
+			'fourth_record_99' => 'fourth_record',
+			'fifth_record_999' => 'fifth_record',
+			'sixth_record_' => 'sixth_record_',
+			'seventh_record' => 'seventh_record'
+		);
+
+		$record_without_ids = API::remove_ids_from_field_names($record);
+
+		foreach ($record_without_ids as $key => $value) {
+			$this->assertEquals($key, $value);
+		}
 	}
 
 
@@ -348,37 +415,54 @@ class TestAPI extends ModelTestCase
 	}
 
 
-	public function testget_last_change_time(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-	}
-
-
-	public function testget_last_change_time_without_cache(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-	}
-
-
-	public function testget_last_change_date_for_headers(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-	}
-
-
 	public function testarray_to_xml(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		$record = array(
+			'column_1' => 'column_1',
+			'column_2~*' => 'column_2',
+			'2' => 'item'
+		);
+
+		$xml = API::array_to_xml($record);
+
+		$xml_object = new SimpleXMLElement($xml);
+
+		foreach ($record as $key => $value) {
+			$result = $xml_object->xpath("/response/{$value}");
+			while(list( , $node) = each($result)) {
+				$this->assertEquals($node, $value);
+				break;
+			}
+		}
 	}
 
+	/**
+     * @expectedException MissingDataException
+     */
+	public function testget_xcrified_programme_no_globals_or_settings(){
+		$programme = $this->publish_programme();
+
+		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year);
+	}
+
+	/**
+     * @expectedException NotFoundException
+     */
+	public function testget_xcrified_programme_invalid_programme(){
+		$programme = $this->publish_programme();
+		$xcrified_programme = API::get_xcrified_programme(50, "2020");
+	}
 
 	public function testget_xcrified_programme(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year);
+		
+		$this->assertNotEmpty($xcrified_programme);
+
 		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
+          'This test has not been implemented yet. Possibly test for more specific cases'
         );
 	}
 
