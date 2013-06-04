@@ -1,5 +1,8 @@
 <?php 
 $section_model = $model.'Section';
+$field_model = $model.'Field';
+$overwritable_model = $model.'Setting';
+
 
 foreach($sections as $section_name => $section): ?>
 
@@ -16,6 +19,9 @@ foreach($sections as $section_name => $section): ?>
 
 <?php 
 foreach($section as $field):
+
+
+
       // Get Column Name
       $column_name = $field->colname;
       $type = $field->field_type;
@@ -91,17 +97,18 @@ foreach($section as $field):
         break;  
 
   }
-      
+    
 ?>
 <?php if (($type != 'help') && Form::if_permitted($column_name)) : ?> 
 	<div class="control-group">
 
-		<?php echo Form::label($column_name, $field->field_name,array('class'=>'control-label'))?>
+		<?php echo Form::label($column_name, $field->field_name, array('class'=>'control-label'))?>
 		<div class="controls">
 		
 			<?php echo $form_element?>
-			
-			<?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
+
+			<?php if(isset($field->programme_field_type) && $field->programme_field_type == $field_model::$types['OVERRIDABLE_DEFAULT']): ?>
+
 				<div class="overridable-badge">
 					<span class="badge badge-info" rel="tooltip" data-original-title="
 					<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
@@ -113,8 +120,8 @@ foreach($section as $field):
 					
 					<div class="description">
 						<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
-						<?php if(ProgrammeSetting::get_setting($year, $field->colname) != null): ?>
-						<br />i.e. <br /> <pre><?php echo ProgrammeSetting::get_setting($year, $field->colname) ?></pre>
+						<?php if($overwritable_model::get_setting($year, $field->colname) != null): ?>
+						<br />i.e. <br /> <pre><?php echo $overwritable_model::get_setting($year, $field->colname) ?></pre>
 						<?php endif; ?>
 						<?php endif; ?>
 					</div>
@@ -127,7 +134,7 @@ foreach($section as $field):
 	</div>
 <?php elseif(Form::if_permitted($column_name)): ?>
     <p>
-      <?php echo $field->field_description; ?>
+      <?php echo $field->field_description;   ?>
     </p>
 <?php endif; ?>
 <?php endforeach; // End fields foreach ?>

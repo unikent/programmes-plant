@@ -1,6 +1,6 @@
 <?php
 
-abtract class ProgrammeSection extends Eloquent {
+abstract class ProgrammeSection extends Eloquent {
     
 	/**
 	 * Gives us the sections as a list, for use in a <option> tag.

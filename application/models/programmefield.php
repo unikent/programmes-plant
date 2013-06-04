@@ -32,10 +32,10 @@ abstract class ProgrammeField extends Field
     public static function programme_fields_by_section()
     {
         $fieldModel = static::$type.'_programmefields';
-
+        $sectionModel = static::$type.'_ProgrammeSection';
 
         // get the section and field data
-        $sections = ProgrammeSection::with($fieldModel)->order_by('order','asc')->get();
+        $sections = $sectionModel::with("programmefields")->order_by('order','asc')->get();
 
         $sections_array = array();
 
