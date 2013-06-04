@@ -444,14 +444,6 @@ class TestAPI extends ModelTestCase
 		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year);
 	}
 
-	/**
-     * @expectedException NotFoundException
-     */
-	public function testget_xcrified_programme_invalid_programme(){
-		$programme = $this->publish_programme();
-		$xcrified_programme = API::get_xcrified_programme(50, "2020");
-	}
-
 	public function testget_xcrified_programme(){
 		$programme = $this->publish_programme();
 		$this->publish_globals();

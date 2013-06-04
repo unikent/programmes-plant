@@ -424,10 +424,6 @@ class API {
 	{
 		// get the programme
 		$programme = static::get_programme($id, $year);
-
-		if (empty($programme)) {
-			throw new NotFoundException("Programme not found");
-		}
 	
 		// format the programme appropriately
 		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
