@@ -1,5 +1,5 @@
 <?php
-
+Config::set('verify::verify.prefix', 'usersys');
 class Add_Programmes_Fields_Pg {
 
 	/**
@@ -40,7 +40,7 @@ class Add_Programmes_Fields_Pg {
 		
 		// Add the fields in
 		foreach ($programme_fields as $field) {
-			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['NORMAL'], $field[4]);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['NORMAL'], $field[4]);
 		}
 
 	}
@@ -99,31 +99,16 @@ class Add_Programmes_Fields_Pg {
 				}
 					
 			});
-			
-			// modify the schema for the revisions table eg programme_settings_revisions
-			// by default columns are varchars unless they've been specified as textareas
-			Schema::table($value.'_revisions', function($table) use ($colname, $type) {
-			
-				if ($type=='textarea')
-				{
-					$table->text($colname);
-				}
-				else
-				{
-					$table->string($colname,255);
-				}
-				
-			});
 		}
 
 		// set up read/write permissions for the field
 		$permission = new Permission;
-		$permission->name = "fields_read_{$field->colname}";
+		$permission->name = "fields_read_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 
 		$permission = new Permission;
-		$permission->name = "fields_write_{$field->colname}";
+		$permission->name = "fields_write_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 	}
@@ -146,7 +131,7 @@ class Add_Programmes_Fields_Pg {
 		
 		// remove the fields
 		foreach ($programme_fields as $field) {
-			$this->remove_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0]);
+			$this->remove_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg','programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0]);
 		}
 	}
 
@@ -167,8 +152,9 @@ class Add_Programmes_Fields_Pg {
     	
     	// delete all the fields
     	$field_object = new $modelname;
-    	$obj = $modelname::all();
-    	$obj->delete();
+    	
+    	foreach($modelname::all() as $obj )$obj->delete();
+ 
 
 		// delete all the fields from the programmes and programme settings tables too
 		if(!is_array($tablename)){
@@ -180,18 +166,12 @@ class Add_Programmes_Fields_Pg {
 			Schema::table($value, function($table) use ($colname) {
 	    		$table->drop_column($colname);
 			});
-			
-			// modify the schema for the revisions table eg programme_settings_revisions
-			// by default columns are varchars unless they've been specified as textareas
-			Schema::table($value.'_revisions', function($table) use ($colname) {
-				$table->drop_column($colname);
-			});
 		}
 
 		// revoke permissions
 		$permissions = array_merge(
-			Permission::where('name', '=', "fields_read_{$field->colname}")->get(),
-			Permission::where('name', '=', "fields_write_{$field->colname}")->get()
+			Permission::where('name', '=', "fields_read_{$field_object->colname}")->get(),
+			Permission::where('name', '=', "fields_write_{$field_object->colname}")->get()
 		);
 		foreach($permissions as $permission){
 			$permission->roles()->sync(array());
