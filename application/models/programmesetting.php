@@ -1,9 +1,9 @@
 <?php
 
-class ProgrammeSetting extends Revisionable
+abstract class ProgrammeSetting extends Revisionable
 {
-    public static $table = 'programme_settings';
-    public static $revision_model = 'ProgrammeSettingRevision';
+    public static $table = '';
+    public static $revision_model = '';
     protected $data_type_id = 'programme_setting';
 
     public static $settings_cache = array();
@@ -23,7 +23,9 @@ class ProgrammeSetting extends Revisionable
         if(isset(static::$settings_cache[$year])) return isset(static::$settings_cache[$year]->$colname) ? static::$settings_cache[$year]->$colname : '';
 
         // Otherwise, get data
-        $settings = ProgrammeSettingRevision::where('year', '=', $year)->where('status', '=', 'live')->first();
+        $revision_model = static::$revision_model;
+        
+        $settings = $revision_model::where('year', '=', $year)->where('status', '=', 'live')->first();
         
         // Check data was okay
         if(!$settings) return null;

@@ -2,7 +2,7 @@
 
 class Programmes_Controller extends Revisionable_Controller {
 
-	protected $model = 'Programme';
+	protected $model = '';
 	public $views = 'programmes';
 	public $restful = true;
 
@@ -11,7 +11,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	// Determine correct model (PG / UG)
 	public function __construct()
 	{  	
-		$this->model = (URI::segment(2)=='ug') ? 'Programme' : 'ProgrammePG';
+		$this->model = (URI::segment(2)=='ug') ? 'UG_Programme' : 'PG_Programme';
 
 		// Construct parent.
 		parent::__construct();
@@ -116,7 +116,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		$fieldModel = $this->model.'Field';
 		$model = $this->model;
 
-
 		// Ensure we have a corresponding course in the database
 		$programme = $model::find($id);
 
@@ -124,7 +123,9 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 		// get the appropriate data to display on the programme form
 		$this->data['programme'] = $programme;
+		$this->data['model'] = $model;
 		$this->data['sections'] = $fieldModel::programme_fields_by_section();
+
 		$this->data['title_field'] = $model::get_programme_title_field();
 		$this->data['year'] = $year;
 
@@ -145,6 +146,10 @@ class Programmes_Controller extends Revisionable_Controller {
 	public function post_create($year, $type)
 	{
 		
+		$fieldModel = $this->model.'Field';
+		$model = $this->model;
+
+
 		$this->check_user_can("create_programmes");
 
 		// placeholder for any future validation rules
@@ -158,15 +163,15 @@ class Programmes_Controller extends Revisionable_Controller {
 		} 
 		else 
 		{
-			$programme = new Programme;
+			$programme = new $model;
 			$programme->year = Input::get('year');
 			$programme->created_by = Auth::user()->username;
 			
 			// get the programme fields
-			$programme_fields = ProgrammeField::programme_fields();
+			$programme_fields = $fieldModel::programme_fields();
 			
 			// assign the input data to the programme fields
-			$programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 			
 			// save the modified programme data
 			$programme_modified->save();

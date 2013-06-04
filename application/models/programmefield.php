@@ -1,7 +1,7 @@
 <?php
-class ProgrammeField extends Field
+abstract class ProgrammeField extends Field
 {
-    public static $table = 'programmes_fields';
+    public static $table = '';
 
     /**
      * Stores programme field types.
@@ -31,14 +31,17 @@ class ProgrammeField extends Field
      */
     public static function programme_fields_by_section()
     {
+        $fieldModel = static::$type.'_programmefields';
+
+
         // get the section and field data
-        $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
+        $sections = ProgrammeSection::with($fieldModel)->order_by('order','asc')->get();
 
         $sections_array = array();
 
         foreach ($sections as $section)
         {
-            foreach ($section->programmefields as $programmefield)
+            foreach ($section->$fieldModel as $programmefield)
             {
                 // make sure the section is active
                 // and user has permission to read the field

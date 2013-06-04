@@ -1,6 +1,6 @@
 <?php
 
-class ProgrammeSection extends Eloquent {
+abtract class ProgrammeSection extends Eloquent {
     
 	/**
 	 * Gives us the sections as a list, for use in a <option> tag.
@@ -39,9 +39,13 @@ class ProgrammeSection extends Eloquent {
         }
     }
     
-    public function programmefields()
+    public function ug_programmefields()
     {
-        return $this->has_many('ProgrammeField', 'section');
+        return $this->has_many('ug_ProgrammeField', 'section');
+    }
+     public function pg_programmefields()
+    {
+        return $this->has_many('pg_ProgrammeField', 'section');
     }
 
     public function get_slug()

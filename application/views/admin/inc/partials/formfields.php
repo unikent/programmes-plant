@@ -1,14 +1,17 @@
-<?php foreach($sections as $section_name => $section): ?>
+<?php 
+$section_model = $model.'Section';
+
+foreach($sections as $section_name => $section): ?>
 
   <?php if ($section_name != ''): ?>
     <div class="section accordion accordion-group">
       <div class="accordion-heading">
         <legend>
-          <a href="#<?php echo ProgrammeSection::slugify($section_name); ?>" class="accordion-toggle" data-toggle="collapse"><?php echo $section_name; ?></a>
+          <a href="#<?php echo $section_model::slugify($section_name); ?>" class="accordion-toggle" data-toggle="collapse"><?php echo $section_name; ?></a>
         </legend>
       </div>
 
-      <div id="<?php echo ProgrammeSection::slugify($section_name); ?>" class="accordion-body collapse <?php echo Auth::user()->can('sections_autoexpand_' . ProgrammeSection::slugify($section_name)) ? 'in' : 'out' ?>">
+      <div id="<?php echo $section_model::slugify($section_name); ?>" class="accordion-body collapse <?php echo Auth::user()->can('sections_autoexpand_' . ProgrammeSection::slugify($section_name)) ? 'in' : 'out' ?>">
   <?php endif; ?>
 
 <?php 

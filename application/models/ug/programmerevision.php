@@ -1,7 +1,7 @@
 <?php
-abstract class ProgrammeRevision extends Revision
+class UG_ProgrammeRevision extends ProgrammeRevision
 {
-    public static $table = 'programmes_revisions';
+    public static $table = 'programmes_revisions_ug';
     protected $data_type_id = 'programme_id';
 
     /**
@@ -11,7 +11,7 @@ abstract class ProgrammeRevision extends Revision
      */
     public function award()
     {
-      return $this->belongs_to('Award', Programme::get_award_field());
+      return $this->belongs_to('Award', UG_Programme::get_award_field());
     }
 
     /**
@@ -21,7 +21,7 @@ abstract class ProgrammeRevision extends Revision
      */
     public function subject_area_1()
     {
-      return $this->belongs_to('Subject', Programme::get_subject_area_1_field());
+      return $this->belongs_to('Subject', UG_Programme::get_subject_area_1_field());
     }
 
     /**
@@ -31,7 +31,7 @@ abstract class ProgrammeRevision extends Revision
      */
     public function administrative_school()
     {
-      return $this->belongs_to('School', Programme::get_administrative_school_field());
+      return $this->belongs_to('School', UG_Programme::get_administrative_school_field());
     }
 
     /**
@@ -41,7 +41,7 @@ abstract class ProgrammeRevision extends Revision
      */
     public function additional_school()
     {
-      return $this->belongs_to('School', Programme::get_additional_school_field());
+      return $this->belongs_to('School', UG_Programme::get_additional_school_field());
     }
 
     /**
@@ -51,10 +51,6 @@ abstract class ProgrammeRevision extends Revision
      */
     public function location()
     {
-      return $this->belongs_to('Campus', Programme::get_location_field());
+      return $this->belongs_to('Campus', UG_Programme::get_location_field());
     }
-
-    
-
-   
 }
