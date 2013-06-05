@@ -35,6 +35,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 		$this->data['fields'] = $this->get_fields();
 		
 		$this->data['create'] = true;
+		$this->data['model'] = $this->model;
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
@@ -58,6 +59,8 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 		$this->data['active_revision'] = $globalsetting->get_active_revision();
 
 		$this->data['fields'] = $this->get_fields();
+		$this->data['model'] = $model;
+		
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}

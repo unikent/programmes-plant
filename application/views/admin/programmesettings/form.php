@@ -28,7 +28,7 @@
     </div>
   </div>
 
-   <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'sections' => array('' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings'))->render(); ?>
+   <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'sections' => array('' => $fields), 'programme' => isset($programmesettings) ? $programmesettings : null,'create'=>$create, 'from' => 'programmesettings', 'model' => str_replace('Setting','',$model)))->render(); ?>
 </fieldset>
 
 <div class="form-actions">
