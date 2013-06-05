@@ -24,19 +24,11 @@ class Set_Field_Permissions {
 		array('section_name' => 'Key facts','colname' => 'total_kent_credits_awarded_on_completion_18','section' => '1', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Key facts','colname' => 'total_ects_credits_awarded_on_completion_19','section' => '1', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Key facts','colname' => 'start_61','section' => '1', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Key facts','colname' => 'url_for_administrative_school_74','section' => '1', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Key facts','colname' => 'url_for_additional_school_75','section' => '1', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Overview','colname' => 'programme_abstract_20','section' => '2', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Overview','colname' => 'programme_overview_text_21','section' => '2', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Course Structure','colname' => 'foundation_year_78','section' => '3', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Course Structure','colname' => 'year_in_industry_79','section' => '3', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Course Structure','colname' => 'year_abroad_80','section' => '3', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Teaching and Assessment','colname' => 'teaching_and_assessment_22','section' => '4', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Teaching and Assessment','colname' => 'programme_aims_23','section' => '4', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Teaching and Assessment','colname' => 'learning_outcomes_24','section' => '4', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Teaching and Assessment','colname' => 'intellectual_skills_learning_outcomes_82','section' => '4', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Teaching and Assessment','colname' => 'subjectspecific_skills_learning_outcomes_83','section' => '4', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Teaching and Assessment','colname' => 'transferable_skills_learning_outcomes_84','section' => '4', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Careers','colname' => 'careers_overview_25','section' => '5', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Careers','colname' => 'professional_recognition_26','section' => '5', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Careers','colname' => 'did_you_know_fact_box_27','section' => '5', 'user_permissions' => array('read','write')),
@@ -60,8 +52,6 @@ class Set_Field_Permissions {
 		array('section_name' => 'Further information','colname' => 'student_profile_38','section' => '9', 'user_permissions' => array('read')),
 		array('section_name' => 'Further information','colname' => 'student_profile_2_39','section' => '9', 'user_permissions' => array('read')),
 		array('section_name' => 'Further information','colname' => 'enquiries_72','section' => '9', 'user_permissions' => array('read','write')),
-		array('section_name' => 'Further information','colname' => 'student_profile_1_link_text_76','section' => '9', 'user_permissions' => array('read')),
-		array('section_name' => 'Further information','colname' => 'student_profile_2_link_text_77','section' => '9', 'user_permissions' => array('read')),
 		array('section_name' => 'KIS details','colname' => 'kiscourseid_40','section' => '10', 'user_permissions' => array()),
 		array('section_name' => 'KIS details','colname' => 'jacs_code_subject_1_42','section' => '10', 'user_permissions' => array()),
 		array('section_name' => 'KIS details','colname' => 'jacs_code_subject_2_43','section' => '10', 'user_permissions' => array()),
@@ -77,9 +67,8 @@ class Set_Field_Permissions {
 		array('section_name' => 'Page administration','colname' => 'programme_withdrawn_54','section' => '11', 'user_permissions' => array()),
 		array('section_name' => 'Programme title and POS code','colname' => 'programme_title_1','section' => '12', 'user_permissions' => array('read','write')),
 		array('section_name' => 'Programme title and POS code','colname' => 'pos_code_44','section' => '12', 'user_permissions' => array('read')),
-		array('section_name' => 'Programme title and POS code','colname' => 'module_session_86','section' => '12', 'user_permissions' => array())
 	);
-	
+
 	/**
 	 * Run the permissions seed. Here's how
 	 * php artisan seed set-field-permissions --env=[environment]
