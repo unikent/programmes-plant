@@ -13,15 +13,21 @@ class Fields_Controller extends Admin_Controller {
 	 */
 	public function get_index($type)
 	{
-		$model = $this->model;
+
+		$model = $type.'_'.$this->model;
+		$sectionModel = $type.'_ProgrammeSection';
+
+	
 		$fields = $model::select('*');
+
+
 		
 		if($this->where_clause){
 			foreach ($this->where_clause as $clause) {
 				$fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
 			}
 		}
-		
+
 		// Sections
 		$sections = "";
 
@@ -29,7 +35,7 @@ class Fields_Controller extends Admin_Controller {
 		if ($this->view == 'programmes')
 		{
 			$fields = $fields->order_by('order','asc')->get();
-			$sections = ProgrammeSection::order_by('order','asc')->get();
+			$sections = $sectionModel::order_by('order','asc')->get();
 			$view = "sortable_index";
 		}
 		// standard view, so order by field_name not order number
