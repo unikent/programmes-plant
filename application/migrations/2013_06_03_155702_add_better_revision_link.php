@@ -48,22 +48,34 @@ class Add_Better_Revision_Link {
 				$live = ($live !== null) ? $live->id : 0;
 			}
 
-			$programme->live_revision = $live;
-			$programme->current_revision = $current;
-			$programme->raw_save();
+			DB::table('programmes')
+				->where('id', '=', $programme->id)
+				->update(array(
+					'live_revision'  => $live,
+					'current_revision' => $current
+			));
+
 		}
 		// migrate other datatypes
 		foreach(DB::table('programme_settings')->get() as $setting){
 			$live_setting = DB::table('programme_settings_revisions')->where('year','=',$setting->year)->where('status','=','live')->first(array('id'));
-			$setting->live_revision = $live_setting->id;
-			$setting->current_revision = $live_setting->id;
-			$setting->raw_save();
+			
+			DB::table('programme_settings')
+				->where('id', '=', $setting->id)
+				->update(array(
+					'live_revision'  => $live_setting->id,
+					'current_revision' => $live_setting->id
+			));
 		}
 		foreach(DB::table('global_settings')->get() as $global){
-			$live_setting = DB::table('global_settings')->where('year','=',$setting->year)->where('status','=','live')->first(array('id'));
-			$global->live_revision = $live_setting->id;
-			$global->current_revision = $live_setting->id;
-			$global->raw_save();
+			$live_setting = DB::table('global_settings_revisions')->where('year','=',$setting->year)->where('status','=','live')->first(array('id'));
+			
+			DB::table('global_settings')
+				->where('id', '=', $global->id)
+				->update(array(
+					'live_revision'  => $live_setting->id,
+					'current_revision' => $live_setting->id
+			));
 		}
 
 	}
