@@ -1,6 +1,13 @@
 <?php
 Config::set('verify::verify.prefix', 'usersys');
 
+if ( ! class_exists('LegacyProgrammeSection') )
+{
+	class LegacyProgrammeSection extends ProgrammeSection {
+		public static $table = 'programmesections';
+	}
+}
+
 class Add_Section_Permissions {
 
 	/**
@@ -10,7 +17,7 @@ class Add_Section_Permissions {
 	 */
 	public function up()
 	{
-		$sections = ProgrammeSection::get();
+		$sections = LegacyProgrammeSection::get();
 		foreach($sections as $section){
 			$name = $section->get_slug();
 
@@ -27,7 +34,7 @@ class Add_Section_Permissions {
 	 */
 	public function down()
 	{
-		$sections = ProgrammeSection::get();
+		$sections = LegacyProgrammeSection::get();
 		foreach($sections as $section){
 			$name = $section->get_slug();
 

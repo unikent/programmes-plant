@@ -32,6 +32,7 @@ class Add_Programmes_Fields_Pg {
 		// standard fields which are required by the system for it to work properly
 		// array format: title, type, hints, options, section (except setting_fields)
 		$programme_fields[] = array('Programme title', 'text', 'eg Accounting and Finance and Economics', '', 1);
+		$programme_fields[] = array('Slug', 'text', '', '', 1);
 		$programme_fields[] = array('Award', 'table_select', '', 'Award', 2);
 		$programme_fields[] = array('Subject area 1', 'table_select', 'Please select the main subject area for this programme.  If the programme is joint honours, please ensure the subject selected is taught by the administrative school.', 'Subject', 2);
 		$programme_fields[] = array('Programme withdrawn', 'text', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', '', 10);
