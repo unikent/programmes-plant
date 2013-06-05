@@ -132,7 +132,7 @@ class TestProgramme extends ModelTestCase {
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
 
-	public function testApproveRevisionSetsStatusToPublished() {
+	public function testApproveRevisionSetsLiveRevisionId() {
 	
     	// set up some data and a revision
 		$this->populate();
@@ -145,8 +145,8 @@ class TestProgramme extends ModelTestCase {
         // make the revision live
         $item->make_revision_live($revision);
         
-        // find programme #1 and check its 'live' value is 2
+        // find programme #1 and check its live_revision is the revision we've just made live
         $item = Programme::find(1);
-        $this->assertEquals(2, $item->live);
+        $this->assertEquals($item->live_revision, $revision->id);
 	}
 }

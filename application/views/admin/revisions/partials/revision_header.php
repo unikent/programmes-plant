@@ -27,7 +27,7 @@
 		<span class="label label-important">Unknown</span> Publishing state unknown.
 	</div>
 <?php else: ?>
-<div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
+<div style='padding:10px;height:30px;' class='alert <?php if($instance->get_publish_status() === 'published'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
 		<?php if($type == 'programmes'):?>
 			<?php
@@ -37,7 +37,7 @@
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
 
-		<?php if($instance->live != '2'):?>
+		<?php if($instance->get_publish_status() === 'editing'):?>
 
 		<?php if (Auth::user()->can('make_programme_live')) : ?>
 			<?php if($instance->locked_to == ''):?>
@@ -57,7 +57,7 @@
 
 	</div>
     <?php if (Auth::user()->can('make_programme_live')) : ?>
-    	<?php if ($instance->live=='2'):?>
+    	<?php if ($instance->get_publish_status() === 'published'):?>
     		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
     	<?php elseif ($revision->under_review == 1) : ?>
     		<span class="label label-important"><?php echo __("revisions.status_review"); ?></span>

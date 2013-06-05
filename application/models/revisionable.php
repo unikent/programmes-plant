@@ -18,6 +18,9 @@ class Revisionable extends SimpleData {
 	// Does this model seperate items by year? (false by default, although true for (all|most) revisionble types)
 	public static $data_by_year = true;
 
+	// The different live statuses
+	public static $publish_statuses = array('new', 'editing', 'published');
+
 	/**
 	 * Create new instance of a revisionble object
 	 *
@@ -36,7 +39,7 @@ class Revisionable extends SimpleData {
 		parent::__construct($attributes, $exists);
 
 		// Ensure default status is 0
-		$this->live = 0;
+		$this->live_revision = 0;
 	}
 
 	/**
@@ -47,9 +50,6 @@ class Revisionable extends SimpleData {
 	public function save()
 	{
 		if (!$this->dirty()) return true;
-
-		// Toggle live status (0=unpublished, if has been published set to 1 = changes)
-		if ($this->live != 0)  $this->live = 1;
 
 		// Save self.
 		$success = parent::save();
@@ -217,7 +217,30 @@ class Revisionable extends SimpleData {
 	{	
 		$model = static::$revision_model;
 		return $model::where('id', '=', $this->live_revision)->first($columns);
-	}	
+	}
+
+	/**
+	 * Get publish status
+	 *
+	 * @return publish status
+	 */
+	public function get_publish_status()
+	{
+		// return new
+		if($this->live_revision == 0){
+			return static::$publish_statuses[0];
+		}
+
+		// return published
+		elseif($this->live_revision == $this->current_revision){
+			return static::$publish_statuses[2];
+		}
+
+		// return editing
+		else{
+			return static::$publish_statuses[1];
+		}
+	}
 
 	/**
 	 * Roll over to year
@@ -278,14 +301,8 @@ class Revisionable extends SimpleData {
 
 		//	If revision being made live us current, set item status to say there are no later versions
 		if($revision->status == 'selected'){
-			// Update the 'live' setting in the main item (not the revision) so it's marked as latest version published to live (ie 2)
-			$this->live = '2';
 			// Unlock revision as it no longer contains any changes
 			if(isset($this->attributes['locked_to'])) $this->locked_to = '';
-		}else{
-			// If the revision going live isn't the current, ensure system knows
-			// there are still later revisions
-			$this->live = '1';
 		}
 
 		//Update live revision pointer
@@ -377,12 +394,6 @@ class Revisionable extends SimpleData {
 		unset($revision_values['status']);
 		unset($revision_values['under_review']);
 		unset($revision_values[strtolower($this->data_type_id).'_id']);
-		
-		// make sure that if there's a live revision somewhere, and the current revision isn't it, set the overall live status to 1 (ie there's something newer than the current live revision)
-		if ($this->live != 0 && $revision->status != 'live') $this->live = 1;
-		
-		// make sure that if we're switching to use the live revision the overall live status of the programme is set to 2 (ie the programme is fully up to date)
-		if ($this->live == 1 && $revision->status == 'live') $this->live = 2;
 
 		// update current revisions pointer
 		$this->current_revision = $revision->id;
