@@ -289,9 +289,9 @@ class Fields_Controller extends Admin_Controller {
 	 *
 	 * This allows fields to be reordered via an AJAX request from the UI
 	 */
-	public function post_reorder()
+	public function post_reorder($type)
 	{
-		$model = $this->model;
+		$model = $type.'_'.$this->model;
 
 		if($model::reorder(Input::get('order'), Input::get('section'))){
 			return 'true';
