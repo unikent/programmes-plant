@@ -96,17 +96,17 @@ E: information@kent.ac.uk*/
 		
 		// Add the fields in
 		foreach ($programme_fields as $field) {
-			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['NORMAL'], $field[4]);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['NORMAL'], $field[4]);
 		}
 
 		// Add the fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['DEFAULT']);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['DEFAULT']);
 		}
 
 		// Add the fields in
 		foreach ($programme_override_fields as $field) {
-			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
 		}
 	}
 

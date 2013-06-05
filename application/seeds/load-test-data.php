@@ -382,7 +382,9 @@ class Load_Test_Data {
 	function run()
 	{
 		// Increase PHP memory limit a great deal.
-		ini_set('memory_limit', '256M');
+		ini_set('memory_limit', '1024M');
+
+		Auth::login(1);
 
 		// Create some subjects and subject categories.
 		for ($i = 0; $i <= 30; $i++)
@@ -450,9 +452,6 @@ class Load_Test_Data {
 				break;
 
 				case 'table_multiselect':
-
-				// TODO - fix by making sure a meta type 'programme' in the field list is now 'ug_programme' and 'pg_programme'
-
 					$model = $field->field_meta;
 					$options = $model::all_as_list();
 
