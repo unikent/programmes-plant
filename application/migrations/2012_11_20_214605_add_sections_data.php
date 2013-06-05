@@ -1,5 +1,12 @@
 <?php
 
+if ( ! class_exists('LegacyProgrammeSection') )
+{
+	class LegacyProgrammeSection extends ProgrammeSection {
+		public static $table = 'programmesections';
+	}
+}
+
 class Add_Sections_Data {
 
 	/**
@@ -12,7 +19,7 @@ class Add_Sections_Data {
 		// Add award demo data
 		foreach (array('Programme title and key facts', 'Overview', 'Course Structure', 'Teaching and Assessment', 'Careers', 'Entry requirements ', 'Fees and Funding', 'How to apply', 'Further information', 'KIS details', 'Page administration') as $count => $section)
 		{
-			$tmp = new ProgrammeSection;
+			$tmp = new LegacyProgrammeSection;
 			$tmp->name = $section;
 			$tmp->order = $count;
 			$tmp->save();
@@ -26,7 +33,7 @@ class Add_Sections_Data {
 	 */
 	public function down()
 	{
-		$sections = ProgrammeSection::all();
+		$sections = LegacyProgrammeSection::all();
 
 		foreach ($sections as $section)
 		{

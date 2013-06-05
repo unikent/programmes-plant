@@ -1,5 +1,7 @@
 <?php
 
+Config::set('verify::verify.prefix', 'usersys');
+
 class Add_Pg_Fields {
 
 	public function run(){
@@ -71,7 +73,7 @@ class Add_Pg_Fields {
 		// section: page administration
 		$programme_fields[] = array('Programme url', 'text', '', '', 10);
 		$programme_fields[] = array('Search keywords', 'text', 'Add search keywords, separated by a comma.', '', 10);
-		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'Programme', 10);
+		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'PG_Programme', 10);
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or removed.', '', 10);
 		$programme_fields[] = array('New programme', 'checkbox', 'Check the box if this is a new programme that has been added since the start of the prospectus cycle', '', 10);
 
@@ -94,17 +96,17 @@ E: information@kent.ac.uk*/
 		
 		// Add the fields in
 		foreach ($programme_fields as $field) {
-			$this->add_field('Pg_ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['NORMAL'], $field[4]);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['NORMAL'], $field[4]);
 		}
 
 		// Add the fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('Pg_ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['DEFAULT']);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['DEFAULT']);
 		}
 
 		// Add the fields in
 		foreach ($programme_override_fields as $field) {
-			$this->add_field('Pg_ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
+			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], Pg_ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
 		}
 	}
 
@@ -162,31 +164,16 @@ E: information@kent.ac.uk*/
 				}
 					
 			});
-			
-			// modify the schema for the revisions table eg programme_settings_revisions
-			// by default columns are varchars unless they've been specified as textareas
-			Schema::table($value.'_revisions', function($table) use ($colname, $type) {
-			
-				if ($type=='textarea')
-				{
-					$table->text($colname);
-				}
-				else
-				{
-					$table->string($colname,255);
-				}
-				
-			});
 		}
 
 		// set up read/write permissions for the field
 		$permission = new Permission;
-		$permission->name = "fields_read_{$field->colname}";
+		$permission->name = "fields_read_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 
 		$permission = new Permission;
-		$permission->name = "fields_write_{$field->colname}";
+		$permission->name = "fields_write_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 	}
