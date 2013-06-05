@@ -12,6 +12,10 @@ class ProgrammeFields_Controller extends Fields_Controller {
 		parent::__construct(); 
 		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['NORMAL']);
 		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['OVERRIDABLE_DEFAULT']);
+		
+		$type = URI::segment(1);
+		$this->model = $type.'_'.$this->model;
+
 	}
 
 }

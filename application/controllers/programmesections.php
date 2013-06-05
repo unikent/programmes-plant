@@ -6,17 +6,29 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	public $restful = true;
 	public $views = 'sections';
 	protected $model = 'ProgrammeSection';
+	protected $type = 'ug';
+
+	public function __construct(){
+
+		$this->type = URI::segment(1);
+		$this->model = $this->type.'_'.$this->model;
+
+		parent::__construct();
+	}
 
 	public function get_index($type)
 	{
 		return Redirect::to('/'.$type.'/fields/programmes');
 	}
 
-	public function get_edit($type, $object_id = false){
+	public function get_edit($type, $object_id = false)
+	{
+		$model = $this->model;
+	
 		// Do our checks to make sure things are in place
 		if(!$object_id) return Redirect::to($this->views);
-
-		$object = ProgrammeSection::find($object_id);
+		
+		$object = $model::find($object_id);
 		if(!$object) return Redirect::to($this->views);
 
 		$data = array(
@@ -52,6 +64,9 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	}
 
 	public function post_delete($type){
+
+		$model = $this->model;
+
 		$rules = array(
 			'id'  => 'required|exists:programmesections',
 		);
@@ -61,7 +76,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			Messages::add('error','You tried to delete a user that doesn\'t exist.');
 			return Redirect::to('/'.$type.'/fields/programmes');
 		}else{
-			$section = ProgrammeSection::find(Input::get('id'));
+			$section = $model::find(Input::get('id'));
 			$section->delete();
 			Messages::add('success','Section Removed');
 			return Redirect::to('/'.$type.'/fields/programmes');
@@ -69,6 +84,9 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	}
 
 	public function post_create($type){
+
+		$model = $this->model;
+
 		$rules = array(
 			'name'  => 'required|unique:programmesections|max:255',
 		);
@@ -78,7 +96,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			Messages::add('error',$validation->errors->all());
 			return Redirect::to('/'.$this->views.'/create')->with_input();
 		}else{
-			$section = new ProgrammeSection;
+			$section = new $model;
 			$section->name = Input::get('name');
 			$section->save();
 
@@ -101,9 +119,11 @@ class ProgrammeSections_Controller extends Admin_Controller {
 	}
 
 	public function post_edit($type){
+
+		$model = $this->model;
 		$rules = array(
-			'id'  => 'required|exists:programmesections,id',
-			'name'  => 'required|max:255|unique:programmesections,name,'.Input::get('id'),
+			'id'  => 'required|exists:programmesections_'.$this->type.',id',
+			'name'  => 'required|max:255|unique:programmesections_'.$this->type.',name,'.Input::get('id'),
 		);
 		
 		$validation = Validator::make(Input::all(), $rules);
@@ -115,7 +135,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		}
 		else
 		{
-			$section = ProgrammeSection::find(Input::get('id'));
+			$section = $model::find(Input::get('id'));
 			$section->name = Input::get('name');
 			$section->save();
 
@@ -125,7 +145,6 @@ class ProgrammeSections_Controller extends Admin_Controller {
 				$permission = Permission::where_name('sections_autoexpand_' . $section->get_slug())->first();
 				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
 			}
-
 
 			Messages::add('success','Section updated');
 			return Redirect::to('/'.$type.'/fields/programmes');

@@ -14,13 +14,10 @@ class Fields_Controller extends Admin_Controller {
 	public function get_index($type)
 	{
 
-		$model = $type.'_'.$this->model;
+		$model = $this->model;
 		$sectionModel = $type.'_ProgrammeSection';
 
-	
 		$fields = $model::select('*');
-
-
 		
 		if($this->where_clause){
 			foreach ($this->where_clause as $clause) {
@@ -291,7 +288,7 @@ class Fields_Controller extends Admin_Controller {
 	 */
 	public function post_reorder($type)
 	{
-		$model = $type.'_'.$this->model;
+		$model = $this->model;
 
 		if($model::reorder(Input::get('order'), Input::get('section'))){
 			return 'true';
