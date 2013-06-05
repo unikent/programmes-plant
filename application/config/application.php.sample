@@ -189,6 +189,7 @@ return array(
         'Log'        => 'Laravel\\Log',
         'Memcached'  => 'Laravel\\Memcached',
         'Paginator'  => 'Laravel\\Paginator',
+        'Profiler'   => 'Laravel\\Profiling\\Profiler',
         'URL'        => 'Laravel\\URL',
         'Redirect'   => 'Laravel\\Redirect',
         'Redis'      => 'Laravel\\Redis',
