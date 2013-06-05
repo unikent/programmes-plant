@@ -174,6 +174,10 @@ class Revisionable extends SimpleData {
 		$model = static::$revision_model;
 		$revision = $model::find($revision_id);
 
+		if(empty($revision)) {
+			throw new RevisioningException("Revision does not exist.");
+		}
+
 		// Ensure revision belongs to this item or throw an exception.
 
 		// We don't know what the column of the database that relates a revision to what it is a revision of.
