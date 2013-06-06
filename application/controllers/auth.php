@@ -56,7 +56,7 @@ class Auth_Controller extends Base_Controller {
 				return Redirect::to(Session::get('referrer'));
 			}
 			// else send em to the index
-			return Redirect::to('/');
+			return Redirect::to('programmes@index');
 		}
 		else
 		{
