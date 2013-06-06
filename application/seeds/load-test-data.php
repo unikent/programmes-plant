@@ -382,7 +382,9 @@ class Load_Test_Data {
 	function run()
 	{
 		// Increase PHP memory limit a great deal.
-		ini_set('memory_limit', '256M');
+		ini_set('memory_limit', '1024M');
+
+		Auth::login(1);
 
 		// Create some subjects and subject categories.
 		for ($i = 0; $i <= 30; $i++)
@@ -397,7 +399,8 @@ class Load_Test_Data {
 			// Populate each year for all the programmes.
 			foreach (self::$title_list as $title_data)
 			{
-				$programme = $this->generate_dummy_programme($year, $title_data['title']);
+				$programme_ug = $this->generate_dummy_programme($year, $title_data['title'], 'UG_Programme');
+				$programme_pg = $this->generate_dummy_programme($year, $title_data['title'], 'PG_Programme');
 			}
 		}
 	}
@@ -408,7 +411,7 @@ class Load_Test_Data {
 	 * @param string $title The title of the programme, if named.
 	 * @return bool The success or otherwise of saving the dummy programme.
 	 */
-	function generate_dummy_programme($year = 2014, $title = null)
+	function generate_dummy_programme($year = 2014, $title = null, $type = 'UG_Programme')
 	{
 		// If no title is specified grab a random one.
 		if (! $title)
@@ -418,15 +421,16 @@ class Load_Test_Data {
 		}
 
 		// Set up the new programme.
-		$programme = new Programme;
+		$programme = new $type;
 		$programme->year = $year;
 		$programme->created_by = 'at369';
 		$programme->live = 1;
 
 		$programme->programme_title_1 = $title;
 		$programme->slug_2 = Str::slug($title);
-
-		$fields = ProgrammeField::all();
+		
+		$programme_field_type = $type . 'Field';
+		$fields = $programme_field_type::all();
 
 		// Provide dummy data for each field in turn.
 		foreach ($fields as $field)

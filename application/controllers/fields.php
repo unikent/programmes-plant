@@ -13,7 +13,10 @@ class Fields_Controller extends Admin_Controller {
 	 */
 	public function get_index($type)
 	{
+
 		$model = $this->model;
+		$sectionModel = $type.'_ProgrammeSection';
+
 		$fields = $model::select('*');
 		
 		if($this->where_clause){
@@ -21,7 +24,7 @@ class Fields_Controller extends Admin_Controller {
 				$fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
 			}
 		}
-		
+
 		// Sections
 		$sections = "";
 
@@ -29,7 +32,7 @@ class Fields_Controller extends Admin_Controller {
 		if ($this->view == 'programmes')
 		{
 			$fields = $fields->order_by('order','asc')->get();
-			$sections = ProgrammeSection::order_by('order','asc')->get();
+			$sections = $sectionModel::order_by('order','asc')->get();
 			$view = "sortable_index";
 		}
 		// standard view, so order by field_name not order number
@@ -283,7 +286,7 @@ class Fields_Controller extends Admin_Controller {
 	 *
 	 * This allows fields to be reordered via an AJAX request from the UI
 	 */
-	public function post_reorder()
+	public function post_reorder($type)
 	{
 		$model = $this->model;
 

@@ -2,6 +2,15 @@
 
 class Field extends Eloquent 
 {
+	public $model = '';
+
+	public function __construct($attributes = array(), $exists = false)
+	{
+		$this->model = get_called_class();
+		// Pass to real constructor
+		parent::__construct($attributes, $exists);
+	}
+
 	/**
 	 * Validation object once it has been created.
 	 */

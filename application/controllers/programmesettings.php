@@ -8,6 +8,16 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 	public $required_permissions = array("edit_overridable_data");
 
+
+	public function __construct()
+	{  	
+		$this->type = URI::segment(2);
+		$this->model = ($this->type=='ug') ? 'UG_ProgrammeSetting' : 'PG_ProgrammeSetting';
+
+		// Construct parent.
+		parent::__construct();
+	}
+
 	/**
 	 * Routing for /$year/$type/programmesettings
 	 *
@@ -39,6 +49,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 		$this->data['fields'] = $this->get_fields();
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
+		$this->data['model'] = $this->model;
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
@@ -63,8 +74,9 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 		$this->data['active_revision'] = $programmesetting->get_active_revision();
 
 		$this->data['fields'] = $this->get_fields();
-		$this->data['year'] = $year;
 
+		$this->data['year'] = $year;
+		$this->data['model'] = $model;
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
 
@@ -129,7 +141,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 	private function get_fields()
 	{
-		$model = 'ProgrammeField';
+		$model = $this->type.'_ProgrammeField';
 
 		return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
 	}

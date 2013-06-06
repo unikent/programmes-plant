@@ -10,7 +10,7 @@ class Revisionable extends SimpleData {
 	public static $revision_model = false;
 
 	// Data Type (Programme, Global, etc)
-	protected $data_type = false;
+	public $data_type = false;
 	
 	// Id used to link items of datatype (optional)
 	protected $data_type_id = false;
@@ -158,6 +158,7 @@ class Revisionable extends SimpleData {
 		// if status is set add filter
 		if($status)$query = $query->where('status', '=', $status);
 		// return data
+
 		return $query->order_by('created_at', 'desc')->get();
 	}
 
@@ -172,6 +173,10 @@ class Revisionable extends SimpleData {
 		// Get revision
 		$model = static::$revision_model;
 		$revision = $model::find($revision_id);
+
+		if(empty($revision)) {
+			throw new RevisioningException("Revision does not exist.");
+		}
 
 		// Ensure revision belongs to this item or throw an exception.
 

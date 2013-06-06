@@ -1,3 +1,7 @@
+<script type='text/javascript'>
+  var programme_sort_type = '<?php echo $type; ?>';
+</script>
+
 
 <div class='sortableUI'>
 

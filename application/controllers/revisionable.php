@@ -19,7 +19,7 @@ class Revisionable_Controller extends Admin_Controller {
 		}
 
 		// Get model
-		$model = $this->model;
+		$model = $this->data_type;
 
 		// Ensure item & revision id are supplied
 		if(!$revisionable_item_id || !$revision_id) return false;
@@ -194,7 +194,7 @@ class Revisionable_Controller extends Admin_Controller {
 
 		// Ensure item exists (Redirect if it does not)
 		$course = $model::find($itm_id);
-	
+
 		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
 	
 		// load revisions for item.

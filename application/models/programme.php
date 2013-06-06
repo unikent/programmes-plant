@@ -2,12 +2,9 @@
 
 use Laravel\CLI\Command;
 
-class Programme extends Revisionable {
+abstract class Programme extends Revisionable {
 
-	public static $table = 'programmes';
-	
-	public static $revision_model = 'ProgrammeRevision';
-
+	protected $data_type_id = 'programme';
 
 	public static function get_title_field(){
 		return static::get_programme_title_field();
@@ -121,9 +118,9 @@ class Programme extends Revisionable {
 		{
 			$revision = $this->get_revision($revision);
 		}
-
+		$revision_model = static::$revision_model;
 		// Remove review status from previous revisions
-		ProgrammeRevision::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
+		$revision_model::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
 
 		// Set this revision to be under review
 		$revision->under_review = 1;
@@ -139,7 +136,8 @@ class Programme extends Revisionable {
 	 */
 	public static function get_under_review()
 	{
-		return ProgrammeRevision::where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
+		$revision_model = static::$revision_model;
+		return $revision_model::where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
 	}
 
 	/**
@@ -198,7 +196,7 @@ class Programme extends Revisionable {
 	 */
 	public static function get_api_programme($id, $year)
 	{
-		$cache_key = "api-programme-ug-$year-$id";
+		$cache_key = "api-{static::$table}-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
 
@@ -212,13 +210,14 @@ class Programme extends Revisionable {
 	 */
 	public static function generate_api_programme($id, $year, $revision = false)
 	{
-		$cache_key = "api-programme-ug-$year-$id";
+		$cache_key = "api-{static::$table}-$year-$id";
 
 		$model = get_called_class();
+		$revision_model = static::$revision_model;
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = ProgrammeRevision::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
+			$revision = $revision_mode::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
 		}
 
 		// Return false if there is no live revision
@@ -289,33 +288,37 @@ class Programme extends Revisionable {
 	 */
 	public static function generate_api_index($year)
 	{
+
+		$revision_model = static::$revision_model;
+
+
 		// Set cache keys
 		$cache_key_index = "api-index.index-$year";
 		$cache_key_subject = "api-index.api-programmes-$year-subject-relations";
 
 		// Obtain names for required fields
-		$title_field = Programme::get_title_field();
-		$slug_field = Programme::get_slug_field();
-		$subject_categories_field = Programme::get_subject_categories_field();
+		$title_field = static::get_title_field();
+		$slug_field = static::get_slug_field();
+		$subject_categories_field = static::get_subject_categories_field();
 		
-		$subject_to_approval_field = Programme::get_subject_to_approval_field();
-		$new_programme_field = Programme::get_new_programme_field();
-		$mode_of_study_field = Programme::get_mode_of_study_field();
-		$ucas_code_field = Programme::get_ucas_code_field();
-		$search_keywords_field = Programme::get_search_keywords_field();
-		$pos_code_field = Programme::get_pos_code_field();
-		$awarding_institute_or_body_field = Programme::get_awarding_institute_or_body_field();
-		$module_session_field = Programme::get_module_session_field();
+		$subject_to_approval_field = static::get_subject_to_approval_field();
+		$new_programme_field = static::get_new_programme_field();
+		$mode_of_study_field = static::get_mode_of_study_field();
+		$ucas_code_field = static::get_ucas_code_field();
+		$search_keywords_field = static::get_search_keywords_field();
+		$pos_code_field = static::get_pos_code_field();
+		$awarding_institute_or_body_field = static::get_awarding_institute_or_body_field();
+		$module_session_field = static::get_module_session_field();
 		
-		$award_field = Programme::get_award_field();
-		$subject_area_1_field = Programme::get_subject_area_1_field();
-		$subject_area_2_field = Programme::get_subject_area_2_field();
-		$location_field = Programme::get_location_field();
-		$administrative_school_field = Programme::get_administrative_school_field();
-		$additional_school_field = Programme::get_additional_school_field();
+		$award_field = static::get_award_field();
+		$subject_area_1_field = static::get_subject_area_1_field();
+		$subject_area_2_field = static::get_subject_area_2_field();
+		$location_field = static::get_location_field();
+		$administrative_school_field = static::get_administrative_school_field();
+		$additional_school_field = static::get_additional_school_field();
 
-		$withdrawn_field = Programme::get_programme_withdrawn_field();
-		$suspended_field = Programme::get_programme_suspended_field();
+		$withdrawn_field = static::get_programme_withdrawn_field();
+		$suspended_field = static::get_programme_suspended_field();
 
 		$index_data = array();
 
@@ -438,7 +441,7 @@ class Programme extends Revisionable {
 		// Update feed file & kill output caches
 		static::generate_api_index($revision->year);
 		API::purge_output_cache();
-		Cache::forget('api-programme-ug'. '-'. $revision->year . '-'. $revision->instance_id);
+		Cache::forget('api-'. static::$table . '-'. $revision->year . '-'. $revision->instance_id);
 		
 		return $revision;
 	}
