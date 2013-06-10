@@ -117,7 +117,7 @@ class API {
 	 */
 	public static function get_preview($hash)
 	{	
-		$key = "programme-previews.preview-{$hash}";
+		$key =  Mode::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
@@ -135,7 +135,8 @@ class API {
 	 */
 	public static function create_preview($id, $revision_id)
 	{
-		$p = Programme::find($id);
+		$model =  Mode::get_type().'_Programme';
+		$p = $model::find($id);
 		$revision = $p->get_revision($revision_id);
 		
 		// If this revision exists
@@ -155,7 +156,7 @@ class API {
 			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
 			$hash = sha1(json_encode($final));
 			// Store it, & return hash
-			Cache::put("programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
+			Cache::put(Mode::get_type()."-programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
 			return $hash;
 		}
 
