@@ -19,7 +19,7 @@ class Add_Pg_Sections {
 		foreach($sections as $section){
 			$name = $section->get_slug();
 			$permission = new Permission;
-			$permission->name = "sections_autoexpand_{$name}";
+			$permission->name = "pg_sections_autoexpand_{$name}";
 			$permission->save();
 		}
 	}

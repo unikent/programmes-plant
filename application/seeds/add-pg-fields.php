@@ -168,12 +168,12 @@ E: information@kent.ac.uk*/
 
 		// set up read/write permissions for the field
 		$permission = new Permission;
-		$permission->name = "fields_read_{$field_object->colname}";
+		$permission->name = "pg_fields_read_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 
 		$permission = new Permission;
-		$permission->name = "fields_write_{$field_object->colname}";
+		$permission->name = "pg_fields_write_{$field_object->colname}";
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 	}

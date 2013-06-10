@@ -15,7 +15,7 @@ class Add_Section_Permissions_Pg {
 			$name = $section->get_slug();
 
 			$permission = new Permission;
-			$permission->name = "sections_autoexpand_{$name}";
+			$permission->name = "pg_sections_autoexpand_{$name}";
 			$permission->save();
 		}
 	}
@@ -31,7 +31,7 @@ class Add_Section_Permissions_Pg {
 		foreach($sections as $section){
 			$name = $section->get_slug();
 
-			$permissions = Permission::where('name', '=', "sections_autoexpand_{$name}")->get();
+			$permissions = Permission::where('name', '=', "pg_sections_autoexpand_{$name}")->get();
 			foreach($permissions as $permission){
 				$permission->delete();
 			}
