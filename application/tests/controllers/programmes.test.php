@@ -8,7 +8,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 		// Setup something we can edit.
 		$input = array(
 			'year' => '2014',
-			'live' => '1',
 			'created_by' => 'aa',
 			'programme_title_1' => 'Test'
 		);
@@ -40,7 +39,6 @@ class TestProgrammes_Controller extends ControllerTestCase
 		$input = array(
 			'programme_id' => 1,
 			'year' => '2014',
-			'live' => '1',
 			'created_by' => 'aa',
 			'programme_title_1' => 'Test Change'
 		);

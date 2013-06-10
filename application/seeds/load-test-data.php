@@ -424,7 +424,6 @@ class Load_Test_Data {
 		$programme = new $type;
 		$programme->year = $year;
 		$programme->created_by = 'at369';
-		$programme->live = 1;
 
 		$programme->programme_title_1 = $title;
 		$programme->slug_2 = Str::slug($title);

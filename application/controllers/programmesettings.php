@@ -170,7 +170,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 		$revision_for_diff = (array) $revision;
 
 		// Ignore these fields which will always change
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) {
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live_revision', 'current_revision') as $ignore) {
 			unset($revision_for_diff[$ignore]);
 			unset($revision_attributes[$ignore]);
 		}
