@@ -19,7 +19,8 @@ class Revisionable_Controller extends Admin_Controller {
 		}
 
 		// Get model
-		$model = $this->data_type;
+
+		$model = $this->model;
 
 		// Ensure item & revision id are supplied
 		if(!$revisionable_item_id || !$revision_id) return false;

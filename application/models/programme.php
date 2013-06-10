@@ -196,7 +196,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_programme($id, $year)
 	{
-		$cache_key = "api-{static::$table}-$year-$id";
+		$tbl = static::$table;
+		$cache_key = "api-{$tbl}-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
 	}
 
@@ -210,9 +211,10 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_programme($id, $year, $revision = false)
 	{
-		$cache_key = "api-{static::$table}-$year-$id";
 
-		$model = get_called_class();
+		$tbl = static::$table;
+		$cache_key = "api-{$tbl}-$year-$id";
+
 		$revision_model = static::$revision_model;
 
 		// If revision not passed, get data
@@ -324,7 +326,7 @@ abstract class Programme extends Revisionable {
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
-		$programmes = ProgrammeRevision::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))->where('year','=', $year)
+		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))->where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
