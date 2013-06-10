@@ -46,7 +46,7 @@ abstract class ProgrammeField extends Field
                 // make sure the section is active
                 // and user has permission to read the field
                 
-                if ($section->id > 0 && Auth::user()->can("fields_read_{$programmefield->colname}"))
+                if ($section->id > 0 && Auth::user()->can(Mode::get_type()."_fields_read_{$programmefield->colname}"))
                 {
                     // build up the final array indexed by section name and programme field order
                     $sections_array[$section->name][$programmefield->order] = $programmefield;

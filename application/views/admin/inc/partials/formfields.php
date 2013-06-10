@@ -3,7 +3,6 @@ $section_model = $model.'Section';
 $field_model = $model.'Field';
 $overwritable_model = $model.'Setting';
 
-
 foreach($sections as $section_name => $section): ?>
 
   <?php if ($section_name != ''): ?>
@@ -14,7 +13,7 @@ foreach($sections as $section_name => $section): ?>
         </legend>
       </div>
 
-      <div id="<?php echo $section_model::slugify($section_name); ?>" class="accordion-body collapse <?php echo Auth::user()->can('sections_autoexpand_' . ProgrammeSection::slugify($section_name)) ? 'in' : 'out' ?>">
+      <div id="<?php echo $section_model::slugify($section_name); ?>" class="accordion-body collapse <?php echo Auth::user()->can( Mode::get_type().'_sections_autoexpand_' . ProgrammeSection::slugify($section_name)) ? 'in' : 'out' ?>">
   <?php endif; ?>
 
 <?php 
