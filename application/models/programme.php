@@ -240,8 +240,9 @@ abstract class Programme extends Revisionable {
 	 * @return programmes index
 	 */
 	public static function get_api_index($year)
-	{
-		$cache_key = "api-index.index-$year";
+	{	
+		$type = Mode::get_type();
+		$cache_key = "api-index-{$type}.index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
 
@@ -252,8 +253,9 @@ abstract class Programme extends Revisionable {
 	 * @return programmes mapping
 	 */
 	public static function get_api_related_programmes_map($year)
-	{
-		$cache_key = "api-index.api-programmes-$year-subject-relations";
+	{	
+		$type = Mode::get_type();
+		$cache_key = "api-index-{$type}.api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
 			return Cache::get($cache_key);
@@ -275,7 +277,8 @@ abstract class Programme extends Revisionable {
 		if(Request::env() != 'test'){
 			// Pokémon expection handling, gotta catch em all.
 			try {
-				Cache::purge("api-index");
+				$type = Mode::get_type();
+				Cache::purge("api-index-{$type}");
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
 			}
@@ -295,8 +298,9 @@ abstract class Programme extends Revisionable {
 
 
 		// Set cache keys
-		$cache_key_index = "api-index.index-$year";
-		$cache_key_subject = "api-index.api-programmes-$year-subject-relations";
+		$type = Mode::get_type();
+		$cache_key_index = "api-index-{$type}.index-$year";
+		$cache_key_subject = "api-index-{$type}.api-programmes-$year-subject-relations";
 
 		// Obtain names for required fields
 		$title_field = static::get_title_field();
