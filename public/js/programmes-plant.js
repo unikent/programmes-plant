@@ -110,7 +110,7 @@ $(document).ready(function (){
     //Handle reorder within section
     var onReorder = function(sorter){
       var order = sorter.sortable('toArray').toString();
-      $.post(base_url+"ug/fields/programmes/reorder", {
+      $.post(base_url+programme_sort_type+"/fields/programmes/reorder", {
          'order': order,
          'section': sorter.parent().attr('id')
       });
@@ -121,7 +121,7 @@ $(document).ready(function (){
       // in case the ordering has an empty list item at the start
       if (order_array[0] == '') order_array.shift();
       var order = order_array.toString();
-      $.post(base_url+"ug/fields/programmes/reorder", {
+      $.post(base_url+programme_sort_type+"/fields/programmes/reorder", {
          'order': order,
          'section': newList.attr('id')
       });

@@ -8,7 +8,7 @@ class TestAPI_Controller extends ControllerTestCase
 
     public function populate($input)
     {
-        Programme::create($input)->save();
+        UG_Programme::create($input)->save();
     }
 
     public static function setUpBeforeClass()
@@ -24,12 +24,12 @@ class TestAPI_Controller extends ControllerTestCase
 
     public static function tear_down()
     {
-        $programmes = Programme::all();
+        $programmes = UG_Programme::all();
         foreach ($programmes as $programme)
         {
             $programme->delete_for_test();
         }
-        $programme_revisions = ProgrammeRevision::all();
+        $programme_revisions = UG_ProgrammeRevision::all();
         foreach ($programme_revisions as $revision)
         {
             $revision->delete_for_test();
@@ -44,23 +44,23 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $revision->delete_for_test();
         }
-        $programme_settings = ProgrammeSetting::all();
+        $programme_settings = UG_ProgrammeSetting::all();
         foreach ($programme_settings as $setting)
         {
             $setting->delete_for_test();
         }
-        $programme_settings_revisions = ProgrammeSettingRevision::all();
+        $programme_settings_revisions = UG_ProgrammeSettingRevision::all();
         foreach ($programme_settings_revisions as $revision)
         {
             $revision->delete_for_test();
         }
         //Reset auto incriment sequences
-        DB::query('delete from sqlite_sequence where name="programmes"');
-        DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+        DB::query('delete from sqlite_sequence where name="programmes_ug"');
+        DB::query('delete from sqlite_sequence where name="programmes_revisions_ug"');
         DB::query('delete from sqlite_sequence where name="global_settings"');
         DB::query('delete from sqlite_sequence where name="global_settings_revisions"');
-        DB::query('delete from sqlite_sequence where name="programme_settings"');
-        DB::query('delete from sqlite_sequence where name="programme_settings_revisions"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_ug"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_revisions_ug"');
         // Since we now use the normal cache, we can just flush it
         Cache::flush();
 
@@ -70,7 +70,7 @@ class TestAPI_Controller extends ControllerTestCase
     public function generate_programme_dependancies(){
 
     
-        ProgrammeField::create(
+        UG_ProgrammeField::create(
                 array(
                         'field_name' => 'New field',
                         'field_type' => 'textarea',
@@ -118,13 +118,13 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        ProgrammeSetting::create(
+        UG_ProgrammeSetting::create(
                 array(
                         'id' => 1,
                         'year' => '2014'
                     )
             )->save();
-        $ps = ProgrammeSetting::find(1);
+        $ps = UG_ProgrammeSetting::find(1);
         $revision = $ps->get_revision(1);
         $ps->make_revision_live($revision);
 
@@ -145,7 +145,7 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $input = array(
                 'id' => 1, 
-                Programme::get_title_field() => 'Programme 1',
+                UG_Programme::get_title_field() => 'Programme 1',
                 'year' => '2014',
                 'programme_suspended_53' => '',
                 'programme_withdrawn_54' => '',
@@ -154,13 +154,13 @@ class TestAPI_Controller extends ControllerTestCase
 
         $this->populate($input);
 
-        $course = Programme::find($input['id']);
+        $course = UG_Programme::find($input['id']);
         return $course;
     }
 
     public function make_programme_live($id = 1)
     {
-        $course = Programme::find($id);
+        $course = UG_Programme::find($id);
         
         if(!empty($course))
         {

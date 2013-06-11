@@ -3,8 +3,10 @@
     <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
   </div>
 </div>
-
-<h1><?php echo $programme->{Programme::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<?php
+ 	$model = $programme->data_type;
+?>
+<h1><?php echo $programme->{$model::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <h3><?php echo __("revisions.active_revisions"); ?></h3>
 

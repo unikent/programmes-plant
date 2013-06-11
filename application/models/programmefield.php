@@ -1,7 +1,7 @@
 <?php
-class ProgrammeField extends Field
+abstract class ProgrammeField extends Field
 {
-    public static $table = 'programmes_fields';
+    public static $table = '';
 
     /**
      * Stores programme field types.
@@ -31,19 +31,22 @@ class ProgrammeField extends Field
      */
     public static function programme_fields_by_section()
     {
+        $fieldModel = static::$type.'_programmefields';
+        $sectionModel = static::$type.'_ProgrammeSection';
+
         // get the section and field data
-        $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
+        $sections = $sectionModel::with("programmefields")->order_by('order','asc')->get();
 
         $sections_array = array();
 
         foreach ($sections as $section)
         {
-            foreach ($section->programmefields as $programmefield)
+            foreach ($section->$fieldModel as $programmefield)
             {
                 // make sure the section is active
                 // and user has permission to read the field
                 
-                if ($section->id > 0 && Auth::user()->can("fields_read_{$programmefield->colname}"))
+                if ($section->id > 0 && Auth::user()->can(Mode::get_type()."_fields_read_{$programmefield->colname}"))
                 {
                     // build up the final array indexed by section name and programme field order
                     $sections_array[$section->name][$programmefield->order] = $programmefield;
@@ -57,7 +60,7 @@ class ProgrammeField extends Field
     
     public static function programme_fields()
     {
-        return ProgrammeField::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
+        return static::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
     }
     
     /**

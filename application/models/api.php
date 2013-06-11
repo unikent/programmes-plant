@@ -12,7 +12,8 @@ class API {
 	public static function get_index($year, $level = 'ug')
 	{
 		// Get index of programmes
-		return Programme::get_api_index($year);
+		$model =  $level.'_Programme';
+		return $model::get_api_index($year);
 	}
 
 	/**
@@ -25,7 +26,7 @@ class API {
 	public static function get_subjects_index($year, $level = 'ug')
 	{
 		// api-output-ug gets wiped on every action.
-		$cache_key = "api-output-ug.subjects_index-$year";
+		$cache_key = "api-output-{$level}.subjects_index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_subjects_index($year, $level);
 	}
 
@@ -39,11 +40,12 @@ class API {
 	public static function generate_subjects_index($year, $level = 'ug')
 	{
 		// api-output-ug gets wiped on every action.
-		$cache_key = "api-output-ug.subjects_index-$year";
+		$cache_key = "api-output-{$level}.subjects_index-$year";
 
+		$model = $level.'_Programme';
 		// Get subjects and course mappings
 		$subjects = Subject::get_api_data($year);
-		$subjects_map = Programme::get_api_related_programmes_map($year);
+		$subjects_map = $model::get_api_related_programmes_map($year);
 		// Generate feed array
 		$subjects_array = array();
 		foreach($subjects as $subject){
@@ -66,8 +68,9 @@ class API {
 	 * @return combined programme data array
 	 */
 	public static function get_programme($id, $year)
-	{
-		$cache_key = "api-output-ug.programme-$year-$id";
+	{	
+		$type = Mode::get_type();
+		$cache_key = "api-output-{$type}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
 
@@ -79,12 +82,16 @@ class API {
 	 * @return combined programme data array
 	 */
 	public static function generate_programme_data($id, $year)
-	{
-		$cache_key = "api-output-ug.programme-$year-$id";
+	{	
+		$type = Mode::get_type();
+		$cache_key = "api-output-{$type}.programme-$year-$id";
+
+		$settings_model = $type.'_ProgrammeSetting';
+		$programme_model = $type.'_Programme';
 
 		// Get basic data set
 		$globals 			= GlobalSetting::get_api_data($year);	
-		$programme_settings = ProgrammeSetting::get_api_data($year);
+		$programme_settings = $settings_model::get_api_data($year);
 		
 		// Do we have the required data to show a programme?
 		if($globals === false || $programme_settings === false){
@@ -93,7 +100,7 @@ class API {
 		}
 
 		// Get programme itself
-		$programme 	= Programme::get_api_programme($id, $year);
+		$programme 	= $programme_model::get_api_programme($id, $year);
 
 		// If programe does not exist/is not published.
 		if($programme === false){
@@ -104,7 +111,6 @@ class API {
 
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
-
 		return $final;
 	}
 
@@ -117,7 +123,7 @@ class API {
 	 */
 	public static function get_preview($hash)
 	{	
-		$key = "programme-previews.preview-{$hash}";
+		$key =  Mode::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
@@ -135,14 +141,17 @@ class API {
 	 */
 	public static function create_preview($id, $revision_id)
 	{
-		$p = Programme::find($id);
+		$model =  Mode::get_type().'_Programme';
+		$setting_model =  Mode::get_type().'_ProgrammeSetting';
+
+		$p = $model::find($id);
 		$revision = $p->get_revision($revision_id);
 		
 		// If this revision exists
 		if($revision !== false){
 			// Grab additional data sets
 			$globals 			= GlobalSetting::get_api_data($revision->year);	
-			$programme_settings = ProgrammeSetting::get_api_data($revision->year);
+			$programme_settings = $setting_model::get_api_data($revision->year);
 			// Fail if these arent set
 			if($globals === false || $programme_settings === false){
 				return false;	
@@ -155,7 +164,7 @@ class API {
 			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
 			$hash = sha1(json_encode($final));
 			// Store it, & return hash
-			Cache::put("programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
+			Cache::put(Mode::get_type()."-programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
 			return $hash;
 		}
 
@@ -227,7 +236,11 @@ class API {
 		if(empty($final['subject_area_2'])){
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
-		$related_courses = Programme::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
+
+		$programme_model = Mode::get_type().'_Programme';
+
+		$related_courses = $programme_model::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
+
 		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
 		// Add global settings data
@@ -309,9 +322,10 @@ class API {
 	 * @return $new_record A new record with ids substituted
 	 */
 	public static function load_external_data($record)
-	{
+	{	
+		$field_model = Mode::get_type().'_ProgrammeField';
 		// get programme fields (mapping of columns to their datatypes)
-		$programme_fields =  ProgrammeField::get_api_data();
+		$programme_fields =  $field_model::get_api_data();
 
 		// For each column with a special data type, update its value in the record;
 		foreach($programme_fields as $field_name => $data_type){
@@ -335,6 +349,7 @@ class API {
 			// Pokémon expection handling, gotta catch em all.
 			try {
 				Cache::purge('api-output-ug');
+				Cache::purge('api-output-pg');
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
 			}
