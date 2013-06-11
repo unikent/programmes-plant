@@ -3,6 +3,7 @@ class UG_ProgrammeRevision extends ProgrammeRevision
 {
     public static $table = 'programmes_revisions_ug';
     protected $data_type_id = 'programme_id';
+    public static $programme_model = 'UG_Programme';
 
     /**
      * Get this programme's award.

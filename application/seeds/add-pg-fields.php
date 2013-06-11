@@ -53,7 +53,8 @@ class Add_Pg_Fields {
 
 		// section: research
 		$programme_fields[] = array('Research groups', 'textarea', 'Please enter details of research groups here.', '', 6);
-		$programme_fields[] = array('Staff research interests', 'table_multiselect', '', 'Staff', 6);
+		$programme_fields[] = array('Staff research interests', 'textarea', '', '', 6);
+		
 
 		// section: fees and funding
 		$programme_override_fields[] = array('Fees and Funding', 'textarea', '', '', 7);
@@ -77,6 +78,8 @@ class Add_Pg_Fields {
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or removed.', '', 10);
 		$programme_fields[] = array('New programme', 'checkbox', 'Check the box if this is a new programme that has been added since the start of the prospectus cycle', '', 10);
 
+		$programme_fields[] = array('Subject Categoeries', 'table_select', '', 'SubjectCategory', 10);
+		$programme_fields[] = array('Module Session', 'text', '', '', 10);
 
 
 		// immutable fields

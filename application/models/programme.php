@@ -296,7 +296,6 @@ abstract class Programme extends Revisionable {
 
 		$revision_model = static::$revision_model;
 
-
 		// Set cache keys
 		$type = Mode::get_type();
 		$cache_key_index = "api-index-{$type}.index-$year";
@@ -328,34 +327,37 @@ abstract class Programme extends Revisionable {
 
 		$index_data = array();
 
+
+		$fields = array(
+					'instance_id',
+					 $title_field,
+					 $slug_field,
+					 $award_field,
+					 $subject_area_1_field,
+					 $subject_categories_field,
+					 $administrative_school_field,
+					 $additional_school_field,
+					 $location_field,
+					 $new_programme_field,
+					 $subject_to_approval_field,
+					 $mode_of_study_field,
+					 $search_keywords_field,
+					 $pos_code_field,
+					 $awarding_institute_or_body_field,
+					 $module_session_field,
+					 $subject_area_2_field
+		);
+		// If UG, add ucas field
+		if(Mode::get_type() == 'ug') $field[] = $ucas_code_field;
+
+
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))->where('year','=', $year)
 						->where('status','=','live')
 						->where($withdrawn_field,'!=','true')
 						->where($suspended_field,'!=','true')
-						->get(
-							array(
-								'instance_id',
-								 $title_field,
-								 $slug_field,
-								 $award_field,
-								 $subject_area_1_field,
-								 $subject_categories_field,
-								 $administrative_school_field,
-								 $additional_school_field,
-								 $location_field,
-								 $new_programme_field,
-								 $subject_to_approval_field,
-								 $mode_of_study_field,
-								 $ucas_code_field,
-								 $search_keywords_field,
-								 $pos_code_field,
-								 $awarding_institute_or_body_field,
-								 $module_session_field,
-								 'subject_area_2_9'
-								)
-							);
+						->get($fields);
 
 		// Build index array
 		foreach($programmes as $programme)
@@ -377,7 +379,7 @@ abstract class Programme extends Revisionable {
 				'new_programme' => 	$attributes[$new_programme_field],
 				'subject_to_approval' => $attributes[$subject_to_approval_field],
 				'mode_of_study' => 	$attributes[$mode_of_study_field],
-				'ucas_code' 	=> 		$attributes[$ucas_code_field],
+				'ucas_code' 	=> 	isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '',
 				'search_keywords' => $attributes[$search_keywords_field],
 				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
 				'pos_code' => $attributes[$pos_code_field],
@@ -391,6 +393,7 @@ abstract class Programme extends Revisionable {
 
 		// Map relaated subjects.
 		$subject_relations = array();
+
 		// For each programme in output
 		foreach($programmes as $programme){
 
@@ -400,7 +403,6 @@ abstract class Programme extends Revisionable {
 			// Create arrays as needed.
 			if(!isset($subject_relations[$subject_area_1])) $subject_relations[$subject_area_1] = array();
 			if(!isset($subject_relations[$subject_area_2])) $subject_relations[$subject_area_2] = array();
-
 			// Add this programme to subject
 			$subject_relations[$subject_area_1][$instance_id] = $index_data[$instance_id];
 			// If second subject isn't the same, add it to that also
@@ -408,6 +410,7 @@ abstract class Programme extends Revisionable {
 				$subject_relations[$subject_area_2][$instance_id] = $index_data[$instance_id];
 			}
 		}
+
 		// Store subject mapping data in to cache
 		Cache::put($cache_key_subject, $subject_relations, 2628000);
 
