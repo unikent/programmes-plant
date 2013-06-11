@@ -278,7 +278,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('recieve_edit_requests');
 		$model = $this->model;
-		
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
@@ -411,16 +411,19 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('request_changes');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 		if (!$programme_id || !$revision_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (empty($programme)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Revision
-		$revision = ProgrammeRevision::find($revision_id);
+		$revision = $revision_model::find($revision_id);
 		if (empty($revision)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the message
@@ -428,7 +431,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		if(!empty($body))
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-			$title = $programme->{Programme::get_title_field()};
+			$title = $programme->{$model::get_title_field()};
 
 			$mailer = IoC::resolve('mailer');
 
@@ -457,9 +460,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
+		$model = $this->model;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->revert_to_previous_revision((int) $revision_id))
