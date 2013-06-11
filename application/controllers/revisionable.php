@@ -234,7 +234,7 @@ class Revisionable_Controller extends Admin_Controller {
 		if(!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array();
-		$data['attributes'] = Programme::get_attributes_list();
+		$data['attributes'] = $model::get_attributes_list();
 		$data['revision'] = $revision;
 		$data['programme'] = $course;
 
