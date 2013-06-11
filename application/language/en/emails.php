@@ -20,7 +20,9 @@ return array(
 												Regards,<br /><br />
 												EMS Publishing Office<br /><br />"
 											),
-								'request' => array('title' => "RE: Your updates to :title"),
+								'request' => array('title' => "RE: Your updates to :title",
+													'body' => "Your changes to <a href=':link'>:title</a> have been reviewed but not yet published. Please see the following comments:<br /><br />"
+													),
 							),
 		
 );
