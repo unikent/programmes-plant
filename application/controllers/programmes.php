@@ -244,15 +244,17 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('recieve_edit_requests');
 
+		$model = $this->model ;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
+		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
@@ -341,21 +343,24 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('make_programme_live');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
-		$revision = ProgrammeRevision::find($revision_id);
+		$programme = $model::find($programme_id);
+		$revision = $revision_model::find($revision_id);
 		if (!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->make_revision_live((int) $revision_id))
 		{
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-				$title = $programme->{Programme::get_title_field()};
-				$slug = $programme->{Programme::get_slug_field()};
+				$title = $programme->{$model::get_title_field()};
+				$slug = $programme->{$model::get_slug_field()};
 
 				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
