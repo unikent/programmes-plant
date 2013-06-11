@@ -5,10 +5,11 @@
 	$selectedYear = '2014';
 	$selectedType = 'ug';
     if(is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
+    
     if(URI::segment(2) == 'pg') $selectedType = URI::segment(2) ;
-	$mainpath = $selectedYear.'/'.$selectedType.'/';
-	
 	if (URI::segment(2) == 'fields') $selectedType = URI::segment(1);
+
+    $mainpath = $selectedYear.'/'.$selectedType.'/';
   ?>
         
 
