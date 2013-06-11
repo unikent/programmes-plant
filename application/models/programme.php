@@ -489,7 +489,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_programmes_in($subject_1, $subject_2, $year, $self_id = false)
 	{
-		$mapping = Programme::get_api_related_programmes_map($year);
+		$mapping = static::get_api_related_programmes_map($year);
 
 		// If subject isn't set, just return an empty array of relations.
 		if($subject_1 == null){
