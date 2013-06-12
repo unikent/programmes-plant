@@ -49,7 +49,7 @@ class TestAPI extends ModelTestCase
         return $global;
 	}
 	private function publish_programme_settings(){
-		$setting = ProgrammeSetting::create(array('year' => '2014'));
+		$setting = UG_ProgrammeSetting::create(array('year' => '2014'));
         $revision = $setting->get_active_revision();
         $setting->make_revision_live($revision);
 
@@ -91,7 +91,7 @@ class TestAPI extends ModelTestCase
 		// Add first programme
 		$this->publish_programme();
 		// Add second
-		Programme::create(static::$test_programme);
+		UG_Programme::create(static::$test_programme);
 		// Wipe cache
 		Cache::flush();
 		$result = API::get_index('2014');
@@ -103,7 +103,7 @@ class TestAPI extends ModelTestCase
 		// Add first programme
 		$this->publish_programme();
 		// Add second
-		Programme::create(static::$test_programme);
+		UG_Programme::create(static::$test_programme);
 
 		$result = API::get_index('2014');
 
@@ -326,7 +326,7 @@ class TestAPI extends ModelTestCase
 
 		$api_programme 	= UG_Programme::get_api_programme($programme->id, $programme->year);
 		$api_globals = GlobalSetting::get_api_data($globals->year);
-		$api_programme_settings = ProgrammeSetting::get_api_data($programme_settings->year);
+		$api_programme_settings = UG_ProgrammeSetting::get_api_data($programme_settings->year);
 		
 		$combined_programme = API::combine_programme($api_programme, $api_programme_settings, $api_globals);
 
