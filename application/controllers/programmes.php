@@ -426,7 +426,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$title = $programme->{Programme::get_title_field()};
 			$link = URL::to_action($year.'/'.$type.'/'.'programmes@edit', array($programme_id));
 			
-			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link) . $body;
+			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link)) . $body;
 
 			$mailer = IoC::resolve('mailer');
 			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
