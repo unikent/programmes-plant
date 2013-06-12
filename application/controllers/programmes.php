@@ -244,15 +244,17 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('recieve_edit_requests');
 
+		$model = $this->model ;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
+		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
@@ -275,16 +277,17 @@ class Programmes_Controller extends Revisionable_Controller {
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
 		$this->check_user_can('recieve_edit_requests');
+		$model = $this->model;
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
+		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
@@ -303,11 +306,15 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $revision_id  The ID of the revision being submitted for editing.
 	 */
 	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
-	{
+	{	
 		$this->check_user_can('submit_programme_for_editing');
 
-		$programme = Programme::find($object_id);
-		$revision = ProgrammeRevision::find($revision_id);
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
+
+		$programme = $model::find($object_id);
+		$revision = $revision_model::find($revision_id);
 
 		if(!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 		$programme->submit_revision_for_editing($revision->id);
@@ -315,7 +322,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		// Send email notification to the approval list
 		if(Config::get('programme_revisions.notifications.on')){
 			$author = Auth::user();
-			$title = $programme->{Programme::get_title_field()};
+			$title = $programme->{$model::get_title_field()};
 
 			$mailer = IoC::resolve('mailer');
 
@@ -327,7 +334,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$mailer->send($message);
 		}
 
-		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
+		Messages::add('success', "Revision of " . $revision->{$model::get_title_field()} . " been sent to EMS for editing, thank you.");
 		return Redirect::to($year . '/' . $type . '/' . $this->views);
 	}
 
@@ -341,21 +348,24 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('make_programme_live');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
-		$revision = ProgrammeRevision::find($revision_id);
+		$programme = $model::find($programme_id);
+		$revision = $revision_model::find($revision_id);
 		if (!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->make_revision_live((int) $revision_id))
 		{
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-				$title = $programme->{Programme::get_title_field()};
-				$slug = $programme->{Programme::get_slug_field()};
+				$title = $programme->{$model::get_title_field()};
+				$slug = $programme->{$model::get_slug_field()};
 
 				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
@@ -401,16 +411,19 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('request_changes');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 		if (!$programme_id || !$revision_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (empty($programme)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Revision
-		$revision = ProgrammeRevision::find($revision_id);
+		$revision = $revision_model::find($revision_id);
 		if (empty($revision)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the message
@@ -418,7 +431,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		if(!empty($body))
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-			$title = $programme->{Programme::get_title_field()};
+			$title = $programme->{$model::get_title_field()};
 
 			$mailer = IoC::resolve('mailer');
 
@@ -447,9 +460,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
+		$model = $this->model;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->revert_to_previous_revision((int) $revision_id))

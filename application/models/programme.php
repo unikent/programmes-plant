@@ -527,8 +527,10 @@ abstract class Programme extends Revisionable {
 		if($revision_1==null || $revision_2== null) return false;
 
 		// Get programme data
-		$attribute_names = Programme::get_attributes_list();
-		$attribute_types =  ProgrammeField::get_api_data();
+		$attribute_names = static::get_attributes_list();
+
+		$field_model = static::$type.'_ProgrammeField';
+		$attribute_types = $field_model::get_api_data();
 
 		// init attributes array
 		$attributes = array();
