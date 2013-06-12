@@ -19,6 +19,10 @@ class Admin_Controller extends Base_Controller {
 
 		// Construct parent.
 		parent::__construct();
+
+		// calculate things like year, course type, current year, etc
+		// these are used in various places in views
+		URLParams::init();
 	}
 
 	/**
