@@ -158,7 +158,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme['pos_code'] = 'ACCF-S:BA';
         $programme['campus_id'] = '1';
         $programme['module_session'] = '2014';
-        Programme::$fields['module_session'] = 'module_session_86';
+        UG_Programme::$fields['module_session'] = 'module_session_86';
        
 
 

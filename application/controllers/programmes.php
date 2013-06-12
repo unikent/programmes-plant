@@ -212,6 +212,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		else 
 		{
 			$programme = $model::find(Input::get('programme_id'));
+		
 			$programme->year = Input::get('year');
 			
 			// get the programme fields

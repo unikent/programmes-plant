@@ -219,7 +219,7 @@ abstract class Programme extends Revisionable {
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $revision_mode::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
+			$revision = $revision_model::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
 		}
 
 		// Return false if there is no live revision
