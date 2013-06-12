@@ -15,6 +15,9 @@ class TestAPI_Controller extends ControllerTestCase
     {   
         Auth::login(1);
         Tests\Helper::migrate();
+
+        // SET URIs so tests don't attempt to add _bla classes (as URI::segments() arn't populated in tests)
+        URI::$uri = 'test'; URI::$segments = array('ug','2014');
     }
 
     public static function tearDownAfterClass()
@@ -245,6 +248,8 @@ class TestAPI_Controller extends ControllerTestCase
 
     public function testget_programmeReturns204WithNoCache()
     {
+
+
         $input = array(
             'id' => 1, 
             'programme_title_1' => 'Programme 1',

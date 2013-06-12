@@ -4,7 +4,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 	public $restful = true;
 	public $views = 'programmesettings';
-	protected $model = 'ProgrammeSetting';
+	protected $model = '';
 
 	public $required_permissions = array("edit_overridable_data");
 
