@@ -2,10 +2,6 @@
 
 abstract class BaseTestCase extends PHPUnit_Framework_TestCase
 {
-	public function __construct()
-	{
-		Auth::login(1);
-	}
 
 	// Set tearDown to call static version (avoid static errors)
 	public function tearDown(){
