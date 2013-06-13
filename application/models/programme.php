@@ -241,7 +241,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_index($year)
 	{	
-		$type = Mode::get_type();
+		$type = URLParams::get_type();
 		$cache_key = "api-index-{$type}.index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
@@ -254,7 +254,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_related_programmes_map($year)
 	{	
-		$type = Mode::get_type();
+		$type = URLParams::get_type();
 		$cache_key = "api-index-{$type}.api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
@@ -277,7 +277,7 @@ abstract class Programme extends Revisionable {
 		if(Request::env() != 'test'){
 			// Pokémon expection handling, gotta catch em all.
 			try {
-				$type = Mode::get_type();
+				$type = URLParams::get_type();
 				Cache::purge("api-index-{$type}");
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
@@ -297,7 +297,7 @@ abstract class Programme extends Revisionable {
 		$revision_model = static::$revision_model;
 
 		// Set cache keys
-		$type = Mode::get_type();
+		$type = URLParams::get_type();
 		$cache_key_index = "api-index-{$type}.index-$year";
 		$cache_key_subject = "api-index-{$type}.api-programmes-$year-subject-relations";
 
@@ -348,7 +348,7 @@ abstract class Programme extends Revisionable {
 					 $subject_area_2_field
 		);
 		// If UG, add ucas field
-		if(Mode::get_type() == 'ug') $field[] = $ucas_code_field;
+		if(URLParams::get_type() == 'ug') $field[] = $ucas_code_field;
 
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn

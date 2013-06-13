@@ -15,7 +15,7 @@
     <?php foreach($fields as $field) : ?>
     <tr id="field-id-<?php echo $field->id ?>">
       <td><?php echo $field_type == 'programmes' ? '<i class="icon-move"></i> ' : ''; ?><?php echo $field->field_name ?></td>
-      <td><?php $fieldModel = Mode::get_type()."_ProgrammeField"; if(isset($field->programme_field_type) && $field->programme_field_type == $fieldModel::$types['OVERRIDABLE_DEFAULT']): ?>
+      <td><?php $fieldModel = URLParams::get_type()."_ProgrammeField"; if(isset($field->programme_field_type) && $field->programme_field_type == $fieldModel::$types['OVERRIDABLE_DEFAULT']): ?>
           <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
             <span class="label label-info"><i class="icon-flag icon-white"></i> <?php echo __('fields.form.programme_overwrite_text_title')?></span>
           <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>

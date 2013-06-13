@@ -1,6 +1,6 @@
 <h1><?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?></h1>
 
-<?php $fieldModel = Mode::get_type()."_ProgrammeField"; ?>
+<?php $fieldModel = URLParams::get_type()."_ProgrammeField"; ?>
 <?php echo Messages::get_html()?>
 
 <?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>

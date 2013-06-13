@@ -69,7 +69,7 @@ class API {
 	 */
 	public static function get_programme($id, $year)
 	{	
-		$type = Mode::get_type();
+		$type = URLParams::get_type();
 		$cache_key = "api-output-{$type}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
@@ -83,7 +83,7 @@ class API {
 	 */
 	public static function generate_programme_data($id, $year)
 	{	
-		$type = Mode::get_type();
+		$type = URLParams::get_type();
 		$cache_key = "api-output-{$type}.programme-$year-$id";
 
 		$settings_model = $type.'_ProgrammeSetting';
@@ -123,7 +123,7 @@ class API {
 	 */
 	public static function get_preview($hash)
 	{	
-		$key =  Mode::get_type()."-programme-previews.preview-{$hash}";
+		$key =  URLParams::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
@@ -141,8 +141,8 @@ class API {
 	 */
 	public static function create_preview($id, $revision_id)
 	{
-		$model =  Mode::get_type().'_Programme';
-		$setting_model =  Mode::get_type().'_ProgrammeSetting';
+		$model =  URLParams::get_type().'_Programme';
+		$setting_model =  URLParams::get_type().'_ProgrammeSetting';
 
 		$p = $model::find($id);
 		$revision = $p->get_revision($revision_id);
@@ -164,7 +164,7 @@ class API {
 			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
 			$hash = sha1(json_encode($final));
 			// Store it, & return hash
-			Cache::put(Mode::get_type()."-programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
+			Cache::put(URLParams::get_type()."-programme-previews.preview-{$hash}", $final, 2419200);// 4 weeks
 			return $hash;
 		}
 
@@ -237,7 +237,7 @@ class API {
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
 
-		$programme_model = Mode::get_type().'_Programme';
+		$programme_model = URLParams::get_type().'_Programme';
 
 		$related_courses = $programme_model::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
 
@@ -323,7 +323,7 @@ class API {
 	 */
 	public static function load_external_data($record)
 	{	
-		$field_model = Mode::get_type().'_ProgrammeField';
+		$field_model = URLParams::get_type().'_ProgrammeField';
 		// get programme fields (mapping of columns to their datatypes)
 		$programme_fields =  $field_model::get_api_data();
 

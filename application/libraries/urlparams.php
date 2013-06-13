@@ -31,6 +31,13 @@ class URLParams {
 			static::$type = 'pg';
 		}
 
+		// If on API url
+		if(URI::segment(1) == 'api'){
+			static::$year = URI::segment(2);
+			static::$type = (URI::segment(3) == 'postgraduate') ? 'pg' : 'ug';
+			return;
+		}
+
 		// useful in various places
 		static::$mainpath = static::$year . '/' . static::$type . '/';
 	}
@@ -43,7 +50,18 @@ class URLParams {
 		
 	}
 
+	public static function get_type(){
+		return static::$type;
+
+	}
+
+	public static function get_year(){
+		return static::$year;
+	}
+
 }
+
+URLParams::init();
 
 // /2014/ug/
 // /ug/fields
