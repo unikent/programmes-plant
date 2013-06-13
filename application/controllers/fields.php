@@ -61,6 +61,7 @@ abstract class Fields_Controller extends Admin_Controller {
 		$model = $model::find($id);
 
 		$data = array(
+			'path' => URI::current(),
 			'id' => $id,
 			'values' => $model,
 			'field_type' => $this->view,
@@ -109,48 +110,20 @@ abstract class Fields_Controller extends Admin_Controller {
 			
 		$field->save();
 
-		// Now we have an ID, set it as the corresponding column name.
-		// to avoid risk of duplication
-		$colname = Str::slug(Input::get('title'), '_');
-		$colname .= '_' . $field->id;
-		$field->colname = $colname;
-		$field->save();
-
-		// Now that the field has been saved, create the permission objects
-		$read_permission = new Permission;
-		$read_permission->name = URLParams::get_type()."_fields_read_{$field->colname}";
-		$read_permission->save();
-
-		$write_permission = new Permission;
-		$write_permission->name = URLParams::get_type()."_fields_write_{$field->colname}";
-		$write_permission->save();
 
 		// Then assign the permissions as specified
 		$permissions = Input::get('permissions');
 
+		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
 		if(isset($permissions['R']))
 		{
-			$read_permission->roles()->sync(Role::sanitize_ids($permissions['R']));
+			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 		}
 
+		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
 		if(isset($permissions['W']))
 		{
-			$write_permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
-		}
-
-		//we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
-		$tables_to_update = array($this->table);
-
-		if(strcasecmp($model, 'UG_ProgrammeField') == 0){
-			$tables_to_update = array(UG_Programme::$table, UG_ProgrammeSetting::$table);
-		}
-		if(strcasecmp($model, 'PG_ProgrammeField') == 0){
-			$tables_to_update = array(PG_Programme::$table, PG_ProgrammeSetting::$table);
-		}
-
-		//add relevant table columns
-		foreach ($tables_to_update as $table_to_update) {
-			$this->update_schema($field->colname, $field->field_initval, $field->field_type, $table_to_update);
+			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		}
 
 		Messages::add('success','Row added to schema');
@@ -175,28 +148,6 @@ abstract class Fields_Controller extends Admin_Controller {
 		$oldtype = $field->field_type;
 
 		$field->get_input();
-
-		if(empty($field->programme_field_type)){
-			//check that this a kind of programme field before proceeding
-			if(strcmp($model, 'UG_ProgrammeField') == 0){
-				//set the right value for the kind of field
-				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = UG_ProgrammeField::$types['NORMAL'];
-				}
-				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = UG_ProgrammeField::$types['DEFAULT'];
-				}
-			}
-			if(strcmp($model, 'PG_ProgrammeField') == 0){
-				//set the right value for the kind of field
-				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = PG_ProgrammeField::$types['NORMAL'];
-				}
-				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = PG_ProgrammeField::$types['DEFAULT'];
-				}
-			}
-		}
 	  
 		$field->save();
 
@@ -215,6 +166,7 @@ abstract class Fields_Controller extends Admin_Controller {
 			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		}
 
+		/*
 		// If type changes, apply data type swapper.
 		if ($oldtype != Input::get('type')) 
 		{
@@ -223,43 +175,13 @@ abstract class Fields_Controller extends Admin_Controller {
 			
 			DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
 			DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-		}
+		}*/
 
 		Messages::add('success','Edited field.');
 
 		return Redirect::to('/'.$type.'/fields/'.$this->view);
 	}
 
-	// This needs to be moved to the model.
-	private function update_schema($colname, $init_val, $type, $table_to_update = null)
-	{
-		if(!$table_to_update){
-			$table_to_update = $this->table;
-		}
-
-		// Adjust Tables
-		Schema::table($table_to_update, function($table) use ($colname, $init_val, $type)
-		{
-			if ($type=='textarea') {
-				$table->text($colname);
-			} else {
-				$table->string($colname,255)->default($init_val);
-			}
-
-		});
-
-		Schema::table($table_to_update.'_revisions', function($table) use ($colname, $init_val, $type)
-		{
-			if ($type=='textarea')
-			{
-				$table->text($colname);
-			} 
-			else 
-			{
-				$table->string($colname,255)->default($init_val);
-			}
-		});
-	}
 
 	public function get_deactivate($type)
 	{

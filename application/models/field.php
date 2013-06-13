@@ -99,4 +99,78 @@ class Field extends Eloquent
         return true;
     }
 
+
+    public function save() {
+    	$updateSchema = false;
+
+    	// if this is a new field, remeber to create db schema
+    	if(!$this->exists) $updateSchema = true;
+
+    	// Save record
+    	$saved = parent::save();
+ 
+ 		// If save went okay, update the db schema
+    	if($saved && $updateSchema){
+
+    		$this->colname = Str::slug($this->field_name, '_').'_' . $this->id;
+   
+    		// Create permissions for fields
+    		$this->create_field_permissions($this->colname);
+
+    		// Update relevent table schamas
+    		if(URLParams::get_type() == 'ug'){
+	    		$this->updateSchama(array(
+	    			'UG_Programme',
+	    			'UG_ProgrammeRevision',
+	    			'UG_ProgrammeSetting',
+	    			'UG_ProgrammeSettingRevision'
+
+	    		));
+	    	}
+	    	else
+	    	{
+	    		$this->updateSchama(array(
+	    			'PG_Programme',
+	    			'PG_ProgrammeRevision',
+	    			'PG_ProgrammeSetting',
+	    			'PG_ProgrammeSettingRevision'
+	    		));
+	    	}
+
+    		parent::save();
+    	}
+
+    	return $saved;
+    }
+
+    private function updateSchama($models){
+
+    	// Get values for schema creation
+    	$column = $this->colname;
+    	$inital_value = $this->field_initval;
+    	$field_type = $this->field_type;
+
+    	// Update schema for each model
+    	foreach($models as $model){
+
+    		Schema::table($model::$table, function($table) use ($column, $inital_value, $field_type)
+			{
+				if ($field_type=='textarea') {
+					$table->text($column);
+				} else {
+					$table->string($column, 255)->default($inital_value);
+				}
+			});
+		}
+    }
+
+    private function create_field_permissions($colname){
+    	$type = URLParams::get_type();
+    	Permission::create(array('name' => $type."_fields_read_{$colname}"));
+    	Permission::create(array('name' => $type."_fields_write_{$colname}"));
+    }
+
+
+
+
 }
