@@ -39,6 +39,7 @@
             <li class="<?php echo ( (URI::segment(1) == 'fields' && URI::segment(2) == 'immutable') ? 'active' : false )?>"><a href="<?php echo url('fields/immutable')?>"><i class="icon-cog"></i> Immutable fields </a></li>
 
             <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$type.'/fields/standard')?>"><i class="icon-cog"></i> Programme fields</a></li>
+
         <?php endif; ?>
 
         <?php if (Auth::user()->can("manage_users")): ?>
