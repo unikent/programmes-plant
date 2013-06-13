@@ -3,7 +3,7 @@
 class GlobalSettingFields_Controller extends Fields_Controller {
 	
 	public $table = 'global_settings';
-	public $view = 'globalsettings';
+	public $view = 'immutable';
 	protected $model = 'GlobalSettingField';
 
 }
