@@ -26,12 +26,11 @@ class Schools_Controller extends Simple_Admin_Controller {
 
 	public function post_edit()
 	{
-		
-		$validation = Validator::make(Input::all(), $rules);
+		$model = $this->model;
 
-		if ($validation->fails())
+		if (! $model::is_valid())
 		{
-			Messages::add('error',$validation->errors->all());
+			Messages::add('error', $model::$validation->errors->all());
 			return Redirect::to($this->views.'/edit/'.Input::get('id'));
 		}else{
 			$school = School::find(Input::get('id'));
