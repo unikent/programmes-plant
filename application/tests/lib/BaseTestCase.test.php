@@ -32,4 +32,9 @@ abstract class BaseTestCase extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	public static function setURI($type, $year){
+		 URI::$uri = 'test'; 
+		 URI::$segments = array($type, $year);
+	}
+
 }

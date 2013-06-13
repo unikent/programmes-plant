@@ -17,7 +17,7 @@ class TestAPI_Controller extends ControllerTestCase
         Tests\Helper::migrate();
 
         // SET URIs so tests don't attempt to add _bla classes (as URI::segments() arn't populated in tests)
-        URI::$uri = 'test'; URI::$segments = array('ug','2014');
+        static::setURI('ug','2014');
     }
 
     public static function tearDownAfterClass()

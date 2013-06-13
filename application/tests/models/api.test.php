@@ -70,7 +70,7 @@ class TestAPI extends ModelTestCase
 	// Check index generates
 	public function testget_index_returns_result_with_cache()
 	{
-
+		static::setURI('ug','2014');
 		$this->publish_programme();
 		$result = API::get_index('2014');
 
