@@ -86,7 +86,7 @@ abstract class Fields_Controller extends Admin_Controller {
 		$this->layout->nest('content', 'admin.fields.form', $data);
 	}
 
-	public function post_add($type)
+	public function post_add()
 	{
 		$model = $this->model;
 		$name = $this->name;
@@ -99,17 +99,14 @@ abstract class Fields_Controller extends Admin_Controller {
 
 		// Add Row
 		$field = new $model;
-
 		$field->get_input();
-
 		// By default this is both active and visible.
 		$field->active = 1;
 		$field->view = 1;
 
-		$field->programme_field_type = $model::$types['NORMAL'];
+		if(isset($model::$types)) $field->programme_field_type = $model::$types['NORMAL'];
 			
 		$field->save();
-
 
 		// Then assign the permissions as specified
 		$permissions = Input::get('permissions');
@@ -128,10 +125,10 @@ abstract class Fields_Controller extends Admin_Controller {
 
 		Messages::add('success','Row added to schema');
 
-		return Redirect::to('/'.$type.'/fields/'.$this->view);
+		return Redirect::to(URI::current());
 	}
 
-	public function post_edit($type)
+	public function post_edit()
 	{
 		$model = $this->model;
 		$name = $this->name;
@@ -179,7 +176,7 @@ abstract class Fields_Controller extends Admin_Controller {
 
 		Messages::add('success','Edited field.');
 
-		return Redirect::to('/'.$type.'/fields/'.$this->view);
+		return Redirect::to(URI::current());
 	}
 
 

@@ -118,25 +118,8 @@ class Field extends Eloquent
     		$this->create_field_permissions($this->colname);
 
     		// Update relevent table schamas
-    		if(URLParams::get_type() == 'ug'){
-	    		$this->updateSchama(array(
-	    			'UG_Programme',
-	    			'UG_ProgrammeRevision',
-	    			'UG_ProgrammeSetting',
-	    			'UG_ProgrammeSettingRevision'
-
-	    		));
-	    	}
-	    	else
-	    	{
-	    		$this->updateSchama(array(
-	    			'PG_Programme',
-	    			'PG_ProgrammeRevision',
-	    			'PG_ProgrammeSetting',
-	    			'PG_ProgrammeSettingRevision'
-	    		));
-	    	}
-
+			$this->updateSchama(static::$schemas);
+	    	
     		parent::save();
     	}
 
