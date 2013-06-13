@@ -7,6 +7,8 @@ class URLParams {
 	public static $current_year = '2014';
 	public static $fields = false;
 	public static $mainpath = '';
+	public static $is_year_sensitive = false;
+	public static $is_level_sensitive = false;
 
 	public static function init()
 	{
@@ -31,6 +33,14 @@ class URLParams {
 
 		// useful in various places
 		static::$mainpath = static::$year . '/' . static::$type . '/';
+	}
+
+	public static function set_is_year_sensitive(){
+
+	}
+
+	public static function set_is_level_sensitive(){
+		
 	}
 
 }

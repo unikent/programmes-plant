@@ -26,7 +26,7 @@
         <?php endif; ?>
 
         <?php if (Auth::user()->can("edit_immutable_data")): ?>
-            <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$mainpath.'globalsettings')?>"><i class="icon-list-alt"></i> Immutable fields</a></li>
+            <li class="<?php echo ( (URI::segment(1) != 'fields' && URI::segment(2) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$year.'/globalsettings')?>"><i class="icon-list-alt"></i> Immutable fields</a></li>
         <?php endif; ?>
 
         <?php if (Auth::user()->can("edit_overridable_data")): ?>

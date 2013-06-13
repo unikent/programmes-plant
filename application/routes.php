@@ -55,10 +55,10 @@ Route::group(array('before' => ''), function(){
 	Route::any('(ug|pg)/sections/(:any?)/(:num?)', 'programmesections@(:2)');
 
 	// Do global settings
-	Route::any('globalsettings', 'globalsettings@index');
-	Route::any('globalsettings/(:any)', 'globalsettings@(:3)');
-	Route::any('globalsettings/(:any)/(:num)', 'globalsettings@(:3)');
-	Route::any('globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:4)');
+	Route::any('([0-9]{4})/globalsettings', 'globalsettings@index');
+	Route::any('([0-9]{4})/globalsettings/(:any)', 'globalsettings@(:2)');
+	Route::any('([0-9]{4})/globalsettings/(:any)/(:num)', 'globalsettings@(:2)');
+	Route::any('([0-9]{4})/globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:3)');
 
 	// Customised routing for immutable fields
 	Route::any('fields/globalsettings', 'globalsettingfields@index');
