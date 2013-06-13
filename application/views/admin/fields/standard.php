@@ -10,12 +10,8 @@
 
   <div style="margin-top:20px; margin-bottom:20px">
       <a href="<?php echo url($path.'/add')?>" class="btn btn-primary"><?php echo __('fields.btn.new'); ?></a>
-        <a href="<?php echo action($path.'/../sections@create')?>" class="btn btn-primary"><?php echo __('fields.btn.new-section') ?></a>
+        <a href="<?php echo action(URLParams::$type.'/sections@create')?>" class="btn btn-primary"><?php echo __('fields.btn.new-section') ?></a>
   </div>
-
-
-
-
   <div class='sortable_sections'>
   <?php if ($sections): ?>
     <?php foreach($sections as $section): ?>

@@ -41,16 +41,18 @@ abstract class Fields_Controller extends Admin_Controller {
 		);
 	}
 
-	public function get_add($type)
+	public function get_add()
 	{
 		$data = array(
-			'field_type' => $this->view,
-			'type' => $type,
+			'path' => URI::current(),
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
+
+			'field_type' => $this->view,
+			'type' => URLParams::get_type(),
 		);
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.form', $data);
+		$this->layout->nest('content', 'admin.fields.form', $data);
 	}
 
 	public function get_edit($type, $id)
@@ -103,19 +105,8 @@ abstract class Fields_Controller extends Admin_Controller {
 		$field->active = 1;
 		$field->view = 1;
 
-		if(empty($field->programme_field_type)){
-			//check that this a kind of programme field before proceeding
-			if(strcmp($model, $model) == 0){
-				//set the right value for the kind of field
-				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = $fieldModel::$types['NORMAL'];
-				}
-				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = $fieldModel::$types['DEFAULT'];
-				}
-			}
-		}
-
+		$field->programme_field_type = $model::$types['NORMAL'];
+			
 		$field->save();
 
 		// Now we have an ID, set it as the corresponding column name.
@@ -149,10 +140,11 @@ abstract class Fields_Controller extends Admin_Controller {
 
 		//we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
 		$tables_to_update = array($this->table);
-		if(strcmp($model, 'UG_ProgrammeField') == 0){
+
+		if(strcasecmp($model, 'UG_ProgrammeField') == 0){
 			$tables_to_update = array(UG_Programme::$table, UG_ProgrammeSetting::$table);
 		}
-		if(strcmp($model, 'PG_ProgrammeField') == 0){
+		if(strcasecmp($model, 'PG_ProgrammeField') == 0){
 			$tables_to_update = array(PG_Programme::$table, PG_ProgrammeSetting::$table);
 		}
 

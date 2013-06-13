@@ -3,7 +3,7 @@
 <?php $fieldModel = URLParams::get_type()."_ProgrammeField"; ?>
 <?php echo Messages::get_html()?>
 
-<?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files($path, 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
   <div class="control-group">
