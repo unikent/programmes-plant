@@ -67,31 +67,31 @@ Route::group(array('before' => ''), function(){
 
 	// Customised routing for campuses
 	Route::any('campuses', 'campuses@index');
-	Route::any('campuses/(:any?)/(:num?)', 'campuses@(:3)');
+	Route::any('campuses/(:any?)/(:num?)', 'campuses@(:1)');
 
 	// Customised routing for schools
 	Route::any('schools', 'schools@index');
-	Route::any('schools/(:any?)/(:num?)', 'schools@(:3)');
+	Route::any('schools/(:any?)/(:num?)', 'schools@(:1)');
 
 	// Customised routing for faculties
 	Route::any('faculties', 'faculties@index');
-	Route::any('faculties/(:any?)/(:num?)', 'faculties@(:3)');
+	Route::any('faculties/(:any?)/(:num?)', 'faculties@(:1)');
 
 	// Customised routing for awards
 	Route::any('awards', 'awards@index');
-	Route::any('awards/(:any?)/(:num?)', 'awards@(:3)');
+	Route::any('awards/(:any?)/(:num?)', 'awards@(:1)');
 
 	// Customised routing for leaflets
 	Route::any('leaflets', 'leaflets@index');
-	Route::any('leaflets/(:any?)/(:num?)', 'leaflets@(:3)');
+	Route::any('leaflets/(:any?)/(:num?)', 'leaflets@(:1)');
 
 	// Customised routing for subjects
 	Route::any('subjects', 'subjects@index');
-	Route::any('subjects/(:any?)/(:num?)', 'subjects@(:3)');
+	Route::any('subjects/(:any?)/(:num?)', 'subjects@(:1)');
 
 	// Customised routing for subject categories
 	Route::any('subjectcategories', 'subjectcategories@index');
-	Route::any('subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:3)');
+	Route::any('subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:1)');
 
 	// Users system
 	Route::any('users', 'users@index');

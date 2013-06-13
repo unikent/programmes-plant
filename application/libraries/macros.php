@@ -4,7 +4,7 @@ Form::macro('actions', function($type, $object = null)
     $actions = '
 	<div class="form-actions">
 		<input type="submit" class="btn btn-warning" value="'.__($type . '.save').'" />
-		<a class="btn" href="'.url(URI::segment(1).'/'.URI::segment(2).'/'.$type ).'">'. __($type.'.back').'</a>
+		<a class="btn" href="'.url($type ).'">'. __($type.'.back').'</a>
 	</div>';
 
 	// do this only for programmes

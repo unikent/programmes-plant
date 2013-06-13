@@ -19,7 +19,7 @@
     <tr>
       <td><?php echo $item->name ?></td>
         <td>
-          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
+          <a class="btn btn-primary" href="<?php echo action($type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
            <a href="#remove" class="popup_toggler btn btn-danger" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@delete', array($item->id)); ?>"><?php echo __($type . '.delete') ?></a>
          </td>
     </tr>
