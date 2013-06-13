@@ -35,9 +35,7 @@
 
         <?php if (Auth::user()->can("configure_fields")): ?>
             <li class="nav-header">Field setup</li>
-
             <li class="<?php echo ( (URI::segment(1) == 'fields' && URI::segment(2) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url('fields/globalsettings')?>"><i class="icon-cog"></i> Immutable fields </a></li>
-
             <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$type.'/fields/programmes')?>"><i class="icon-cog"></i> Programme fields</a></li>
         <?php endif; ?>
 
