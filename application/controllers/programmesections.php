@@ -40,7 +40,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		);
 		
 		// Load existing permissions
-		$permissions = Permission::where_name(Mode::get_type().'_sections_autoexpand_' . $object->get_slug())->first();
+		$permissions = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $object->get_slug())->first();
 		foreach($permissions->roles as $role){
 			$data['permissions']['AE'][] = $role->id;
 		}
@@ -102,7 +102,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 
 			// Now that the section has been saved, create the permission objects
 			$permission = new Permission;
-			$permission->name = Mode::get_type().'_sections_autoexpand_' . $section->get_slug();
+			$permission->name = URLParams::get_type().'_sections_autoexpand_' . $section->get_slug();
 			$permission->save();
 
 			// Then assign the permissions as specified
@@ -142,7 +142,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			$permissions = Input::get('permissions');
 			if(isset($permissions['AE']))
 			{
-				$permission = Permission::where_name(Mode::get_type().'_sections_autoexpand_' . $section->get_slug())->first();
+				$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $section->get_slug())->first();
 				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
 			}
 

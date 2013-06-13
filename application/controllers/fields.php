@@ -17,7 +17,7 @@ class Fields_Controller extends Admin_Controller {
 		$model = $this->model;
 		$sectionModel = $type.'_ProgrammeSection';
 
-		$fieldModel = Mode::get_type()."_ProgrammeField";
+		$fieldModel = URLParams::get_type()."_ProgrammeField";
 
 		$fields = $model::select('*');
 		
@@ -74,13 +74,13 @@ class Fields_Controller extends Admin_Controller {
 		);
 
 		// Load existing permissions
-		$read_permissions = Permission::where_name(Mode::get_type()."_fields_read_{$model->colname}")->first();
+		$read_permissions = Permission::where_name(URLParams::get_type()."_fields_read_{$model->colname}")->first();
 		foreach($read_permissions->roles as $role)
 		{
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = Permission::where_name(Mode::get_type()."_fields_write_{$model->colname}")->first();
+		$write_permissions = Permission::where_name(URLParams::get_type()."_fields_write_{$model->colname}")->first();
 		foreach($write_permissions->roles as $role)
 		{
 			$data['permissions']['W'][] = $role->id;
@@ -94,7 +94,7 @@ class Fields_Controller extends Admin_Controller {
 		$model = $this->model;
 		$name = $this->name;
 
-		$fieldModel = Mode::get_type()."_ProgrammeField";
+		$fieldModel = URLParams::get_type()."_ProgrammeField";
 
 		if (! $model::is_valid())
 		{
@@ -135,11 +135,11 @@ class Fields_Controller extends Admin_Controller {
 
 		// Now that the field has been saved, create the permission objects
 		$read_permission = new Permission;
-		$read_permission->name = Mode::get_type()."_fields_read_{$field->colname}";
+		$read_permission->name = URLParams::get_type()."_fields_read_{$field->colname}";
 		$read_permission->save();
 
 		$write_permission = new Permission;
-		$write_permission->name = Mode::get_type()."_fields_write_{$field->colname}";
+		$write_permission->name = URLParams::get_type()."_fields_write_{$field->colname}";
 		$write_permission->save();
 
 		// Then assign the permissions as specified
@@ -219,13 +219,13 @@ class Fields_Controller extends Admin_Controller {
 		// Assign permissions
 		$permissions = Input::get('permissions');
 
-		$permission = Permission::where_name(Mode::get_type()."_fields_read_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
 		if(isset($permissions['R']))
 		{
 			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 		}
 
-		$permission = Permission::where_name(Mode::get_type()."_fields_write_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
 		if(isset($permissions['W']))
 		{
 			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
