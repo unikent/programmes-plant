@@ -1,50 +1,44 @@
 <?php
 
 use \Verify\Models\Permission;
-class Fields_Controller extends Admin_Controller {
+abstract class Fields_Controller extends Admin_Controller {
 
 	public $restful = true;
-	public $views = 'fields';
 
 	public $required_permissions = array('configure_fields');
 
 	/**
 	 * Display the fields index page.
 	 */
-	public function get_index($type)
+	public function get_index()
 	{
-
 		$model = $this->model;
-		$sectionModel = $type.'_ProgrammeSection';
-
-		$fieldModel = URLParams::get_type()."_ProgrammeField";
-
-		$fields = $model::select('*');
-		
-		if($this->where_clause){
-			foreach ($this->where_clause as $clause) {
-				$fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
-			}
-		}
 
 		// Sections
-		$sections = "";
+		$sections = null;
 
-		// Only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
-		if ($this->view == 'programmes')
+		// Get immutable fields if view is immutable
+		if($this->view == 'immutable')
 		{
-			$fields = $fields->order_by('order','asc')->get();
-			$sections = $sectionModel::order_by('order','asc')->get();
-			$view = "sortable_index";
+			$fields = $model::order_by('field_name','asc')->get();
 		}
-		// standard view, so order by field_name not order number
 		else
 		{
-			$fields = $fields->order_by('field_name','asc')->get();
-			$view = "index";
+			// Get programmes fields + sections
+			$sectionModel = $model::$sections_model;
+			$fields = $model::order_by('order','asc')->get();
+			$sections = $sectionModel::order_by('order','asc')->get();
 		}
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type, 'from' => $this->view));
+		$this->layout->nest(
+			'content', 
+			'admin.fields.'.$this->view,
+			 array(
+			 	'fields' => $fields,
+			  	'sections' => $sections,
+			  	'path' => URI::current()
+			)
+		);
 	}
 
 	public function get_add($type)
@@ -94,8 +88,6 @@ class Fields_Controller extends Admin_Controller {
 		$model = $this->model;
 		$name = $this->name;
 
-		$fieldModel = URLParams::get_type()."_ProgrammeField";
-
 		if (! $model::is_valid())
 		{
 			Messages::add('error', $model::$validation->errors->all());
@@ -113,7 +105,7 @@ class Fields_Controller extends Admin_Controller {
 
 		if(empty($field->programme_field_type)){
 			//check that this a kind of programme field before proceeding
-			if(strcmp($model, $fieldModel) == 0){
+			if(strcmp($model, $model) == 0){
 				//set the right value for the kind of field
 				if(strcmp($name, 'Programmes') == 0){
 					$field->programme_field_type = $fieldModel::$types['NORMAL'];
