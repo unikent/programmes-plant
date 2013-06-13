@@ -62,8 +62,7 @@ Route::group(array('before' => ''), function(){
 
 	// Customised routing for immutable fields
 	Route::any('fields/globalsettings', 'globalsettingfields@index');
-	Route::any('fields/globalsettings/(:any?)', 'globalsettingfields@(:2)');
-	Route::any('fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:2)');
+	Route::any('fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:1)');
 
 	// Customised routing for campuses
 	Route::any('campuses', 'campuses@index');
