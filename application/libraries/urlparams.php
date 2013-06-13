@@ -7,8 +7,11 @@ class URLParams {
 	public static $current_year = '2014';
 	public static $fields = false;
 	public static $mainpath = '';
-	public static $is_year_sensitive = false;
-	public static $is_level_sensitive = false;
+
+	// header links params
+	public static $no_header_links = false;
+	public static $year_header_links_only = false;
+	public static $type_header_links_only = false;
 
 	public static function init()
 	{
@@ -40,14 +43,8 @@ class URLParams {
 
 		// useful in various places
 		static::$mainpath = static::$year . '/' . static::$type . '/';
-	}
 
-	public static function set_is_year_sensitive(){
-
-	}
-
-	public static function set_is_level_sensitive(){
-		
+		static::set_header_links_params();
 	}
 
 	public static function get_type(){
@@ -58,6 +55,37 @@ class URLParams {
 	public static function get_year(){
 		return static::$year;
 	}
+
+	/*
+	 * Set the various header link statuses
+	 */
+	public static function set_header_links_params(){
+		
+		static::$no_header_links = (
+			URI::segment(1) == 'editor' ||
+            URI::segment(1) == 'campuses' ||
+            URI::segment(1) == 'faculties' ||
+            URI::segment(1) == 'awards' ||
+            URI::segment(1) == 'leaflets' ||
+            URI::segment(1) == 'schools' ||
+            URI::segment(1) == 'subjects' ||
+            URI::segment(1) == 'subjectcategories' ||
+            URI::segment(1) == 'users'
+        );
+
+        static::$year_header_links_only = (
+        	is_numeric(URI::segment(1)) && URI::segment(1) == 'globalsettings'
+        );
+
+        static::$type_header_links_only = static::url_segment_is_type(URI::segment(1));
+	}
+
+
+	public static function url_segment_is_type($segment){
+		return strtolower($segment) == 'ug' || strtolower($segment) == 'pg';
+	}
+
+
 
 }
 

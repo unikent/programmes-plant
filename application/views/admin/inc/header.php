@@ -9,17 +9,7 @@
             <a class="brand" href="<?php echo url(URLParams::$mainpath)?>">Programmes Plant</a>
             <div class="nav-collapse collapse">
 
-            <?php if (
-                    URI::segment(1) == 'editor' ||
-                    URI::segment(1) == 'campuses' ||
-                    URI::segment(1) == 'faculties' ||
-                    URI::segment(1) == 'awards' ||
-                    URI::segment(1) == 'leaflets' ||
-                    URI::segment(1) == 'schools' ||
-                    URI::segment(1) == 'subjects' ||
-                    URI::segment(1) == 'subjectcategories' ||
-                    URI::segment(1) == 'users' 
-                ): ?>
+            <?php if (URLParams::$no_header_links): ?>
 
                     <?php //Display no navigation (for now). The inbox should display everything accross all years and programme types?>
             
