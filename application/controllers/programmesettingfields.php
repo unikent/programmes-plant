@@ -10,6 +10,7 @@ class ProgrammeSettingFields_Controller extends Fields_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['DEFAULT']);
+		$fieldModel = Mode::get_type()."_ProgrammeField";
+		$this->where_clause[] = array('programme_field_type', '=', $fieldModel::$types['DEFAULT']);
 	}
 }
