@@ -9,9 +9,10 @@ class ProgrammeFields_Controller extends Fields_Controller {
 	protected $where_clause;
 
 	function __construct(){
+		$fieldModel = Mode::get_type()."_ProgrammeField";
 		parent::__construct(); 
-		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['NORMAL']);
-		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['OVERRIDABLE_DEFAULT']);
+		$this->where_clause[] = array('programme_field_type', '=', $fieldModel::$types['NORMAL']);
+		$this->where_clause[] = array('programme_field_type', '=', $fieldModel::$types['OVERRIDABLE_DEFAULT']);
 		
 		$type = URI::segment(1);
 		$this->model = $type.'_'.$this->model;

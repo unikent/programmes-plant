@@ -21,6 +21,15 @@ class Mode {
 		static::$year = '2014';
 		static::$type = 'ug';
 
+		// If on API url
+		if(URI::segment(1) == 'api'){
+			static::$year = URI::segment(2);
+			static::$type = (URI::segment(3) == 'postgraduate') ? 'pg' : 'ug';
+			return;
+		}
+
+
+
 		if (is_numeric(URI::segment(1))){
 			 static::$year = URI::segment(1);
 			 static::$type = URI::segment(2);

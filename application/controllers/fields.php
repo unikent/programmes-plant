@@ -17,6 +17,8 @@ class Fields_Controller extends Admin_Controller {
 		$model = $this->model;
 		$sectionModel = $type.'_ProgrammeSection';
 
+		$fieldModel = Mode::get_type()."_ProgrammeField";
+
 		$fields = $model::select('*');
 		
 		if($this->where_clause){
@@ -92,6 +94,8 @@ class Fields_Controller extends Admin_Controller {
 		$model = $this->model;
 		$name = $this->name;
 
+		$fieldModel = Mode::get_type()."_ProgrammeField";
+
 		if (! $model::is_valid())
 		{
 			Messages::add('error', $model::$validation->errors->all());
@@ -109,13 +113,13 @@ class Fields_Controller extends Admin_Controller {
 
 		if(empty($field->programme_field_type)){
 			//check that this a kind of programme field before proceeding
-			if(strcmp($model, 'ProgrammeField') == 0){
+			if(strcmp($model, $fieldModel) == 0){
 				//set the right value for the kind of field
 				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = ProgrammeField::$types['NORMAL'];
+					$field->programme_field_type = $fieldModel::$types['NORMAL'];
 				}
 				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+					$field->programme_field_type = $fieldModel::$types['DEFAULT'];
 				}
 			}
 		}
@@ -153,8 +157,11 @@ class Fields_Controller extends Admin_Controller {
 
 		//we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
 		$tables_to_update = array($this->table);
-		if(strcmp($model, 'ProgrammeField') == 0){
-			$tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
+		if(strcmp($model, 'UG_ProgrammeField') == 0){
+			$tables_to_update = array(UG_Programme::$table, UG_ProgrammeSetting::$table);
+		}
+		if(strcmp($model, 'PG_ProgrammeField') == 0){
+			$tables_to_update = array(PG_Programme::$table, PG_ProgrammeSetting::$table);
 		}
 
 		//add relevant table columns
@@ -187,13 +194,22 @@ class Fields_Controller extends Admin_Controller {
 
 		if(empty($field->programme_field_type)){
 			//check that this a kind of programme field before proceeding
-			if(strcmp($model, 'ProgrammeField') == 0){
+			if(strcmp($model, 'UG_ProgrammeField') == 0){
 				//set the right value for the kind of field
 				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = ProgrammeField::$types['NORMAL'];
+					$field->programme_field_type = UG_ProgrammeField::$types['NORMAL'];
 				}
 				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = ProgrammeField::$types['DEFAULT'];
+					$field->programme_field_type = UG_ProgrammeField::$types['DEFAULT'];
+				}
+			}
+			if(strcmp($model, 'PG_ProgrammeField') == 0){
+				//set the right value for the kind of field
+				if(strcmp($name, 'Programmes') == 0){
+					$field->programme_field_type = PG_ProgrammeField::$types['NORMAL'];
+				}
+				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
+					$field->programme_field_type = PG_ProgrammeField::$types['DEFAULT'];
 				}
 			}
 		}

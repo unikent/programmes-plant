@@ -1,5 +1,6 @@
 <h1><?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?></h1>
 
+<?php $fieldModel = Mode::get_type()."_ProgrammeField"; ?>
 <?php echo Messages::get_html()?>
 
 <?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
@@ -71,7 +72,7 @@
 
       <?php echo Form::label('programme_field_type', __('fields.form.label_programme_field_type'), array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo  Form::checkbox('programme_field_type', ProgrammeField::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==ProgrammeField::$types['OVERRIDABLE_DEFAULT']) ? ProgrammeField::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
+        <?php echo  Form::checkbox('programme_field_type', $fieldModel::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==$fieldModel::$types['OVERRIDABLE_DEFAULT']) ? $fieldModel::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
       </div>
     </div>
   <?php endif; ?>

@@ -6,7 +6,7 @@
 <?php endif;?>
 
 
-<?php if(isset($field->programme_field_type) && $field->programme_field_type == ProgrammeField::$types['OVERRIDABLE_DEFAULT']): ?>
+<?php $fieldModel = Mode::get_type()."_ProgrammeField"; if(isset($field->programme_field_type) && $field->programme_field_type == $fieldModel::$types['OVERRIDABLE_DEFAULT']): ?>
 	<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
 		<span class="label label-info"><i class="icon-flag icon-white"></i> <?php echo __('fields.form.programme_overwrite_text_title')?></span>
 	<?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>

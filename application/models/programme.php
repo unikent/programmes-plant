@@ -219,7 +219,7 @@ abstract class Programme extends Revisionable {
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $revision_mode::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
+			$revision = $revision_model::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
 		}
 
 		// Return false if there is no live revision
@@ -489,7 +489,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_programmes_in($subject_1, $subject_2, $year, $self_id = false)
 	{
-		$mapping = Programme::get_api_related_programmes_map($year);
+		$mapping = static::get_api_related_programmes_map($year);
 
 		// If subject isn't set, just return an empty array of relations.
 		if($subject_1 == null){
@@ -527,8 +527,10 @@ abstract class Programme extends Revisionable {
 		if($revision_1==null || $revision_2== null) return false;
 
 		// Get programme data
-		$attribute_names = Programme::get_attributes_list();
-		$attribute_types =  ProgrammeField::get_api_data();
+		$attribute_names = static::get_attributes_list();
+
+		$field_model = static::$type.'_ProgrammeField';
+		$attribute_types = $field_model::get_api_data();
 
 		// init attributes array
 		$attributes = array();

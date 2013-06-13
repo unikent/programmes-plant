@@ -4,7 +4,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 	public $restful = true;
 	public $views = 'programmesettings';
-	protected $model = 'ProgrammeSetting';
+	protected $model = '';
 
 	public $required_permissions = array("edit_overridable_data");
 
@@ -90,8 +90,8 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	 */
 	public function post_create($year, $type)
 	{
-
-			$subject = new ProgrammeSetting;
+			$model = $this->model;
+			$subject = new $model;
 			$subject->year = Input::get('year');
 
 			// Save varible fields
@@ -119,8 +119,8 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	 */
 	public function post_edit($year, $type)
 	{
-
-			$subject = ProgrammeSetting::where('year', '=', $year)->first();
+			$model = $this->model;
+			$subject = $model::where('year', '=', $year)->first();
 
 			$subject->year = Input::get('year');
 
@@ -156,9 +156,9 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	 */
 	public function get_difference($year, $type, $revision_id = false)
 	{
-
+		$model = $this->model;
 		// Get revision specified
-		$programmesetting = ProgrammeSetting::where('year', '=', $year)->first();
+		$programmesetting = $model::where('year', '=', $year)->first();
 
 		if (!$programmesetting) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -186,7 +186,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 		$this->data['diff'] = $diff;
 		$this->data['new'] = $revision_for_diff;
 		$this->data['old'] = $revision_attributes;
-		$this->data['attributes'] = ProgrammeSetting::getAttributesList();
+		$this->data['attributes'] = $model::getAttributesList();
 
 		$this->data['revision'] = $revision;
 		$this->data['programmesetting'] = $programmesetting;
