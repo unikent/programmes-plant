@@ -30,6 +30,10 @@
                 <ul class="nav">
                     <li class="active"><a href="">Field setup</a></li>
                 </ul>
+
+                <?php elseif (URI::segment(1) == 'editor'): ?>
+
+                    <?php //Display no navigation (for now). The inbox should display everything accross all years and programme types?>
                 
                 <?php else: ?>
                   
