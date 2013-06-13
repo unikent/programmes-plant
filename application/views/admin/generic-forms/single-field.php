@@ -2,7 +2,7 @@
 <p><?php echo ( $create ? __($type . '.create_introduction') : __($type . '.edit_introduction') ); ?></p>
 
 <?php echo Messages::get_html()?>
-<?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/'. $type .'/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open($type .'/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 <?php if(! $create): ?> 
 <input type="hidden" name="id" value="<?php echo $item->id?>" />
 <?php endif; ?>

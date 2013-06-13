@@ -12,8 +12,8 @@ class Schools_Controller extends Simple_Admin_Controller {
 
 		if (! $model::is_valid())
 		{
-			Messages::add('error', $validation->errors->all());
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
+			Messages::add('error', $model::$validation->errors->all());
+			return Redirect::to($this->views.'/create')->with_input();
 		}
 		
 		$school = new School;
@@ -21,24 +21,18 @@ class Schools_Controller extends Simple_Admin_Controller {
 		$school->save();
  
 		Messages::add('success','New School Added');
-		return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+		return Redirect::to($this->views.'');
 	}
 
 	public function post_edit()
 	{
-		
-		$rules = array(
-			'id'  => 'required|exists:schools',
-			'name'  => 'required|max:255|unique:schools,name,'.Input::get('id'),
-			'faculty'  => 'required|exists:faculties,id'
-		);
 		
 		$validation = Validator::make(Input::all(), $rules);
 
 		if ($validation->fails())
 		{
 			Messages::add('error',$validation->errors->all());
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
+			return Redirect::to($this->views.'/edit/'.Input::get('id'));
 		}else{
 			$school = School::find(Input::get('id'));
    
@@ -48,7 +42,7 @@ class Schools_Controller extends Simple_Admin_Controller {
 			$school->save();
 
 			Messages::add('success','School updated');
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+			return Redirect::to($this->views.'');
 		}
 	}
 

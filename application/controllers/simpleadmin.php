@@ -44,7 +44,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	{
 		if (! $object_id)
 		{
-			Message::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
+			Messages::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
 			return Redirect::to($this->views);
 		}
 
@@ -54,7 +54,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		if (! $object)
 		{
-			Message::add('error', __($this->l . 'error.not_found'));
+			Messages::add('error', __($this->l . 'error.not_found'));
 			return Redirect::to($this->views);
 		}
 
@@ -103,7 +103,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', __($this->l . 'error.delete'));
 
-			return Redirect::to($this->views);
+			return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
 		}
 		else
 		{
