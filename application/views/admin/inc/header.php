@@ -6,64 +6,50 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="<?php echo url('/')?>">Programmes Plant</a>
+            <a class="brand" href="<?php echo url(URLParams::$mainpath)?>">Programmes Plant</a>
             <div class="nav-collapse collapse">
-            
-                <?php 
-                    $year = $selectedYear = '2014';
-                    $selectedType = 'ug';
-                ?>
-                
-                <?php if (strstr(URL::Current(), 'fields')): ?>
-                
-                <?php
-                
-                    if (URI::segment(1) == 'pg') $selectedType = URI::segment(1);
-                    $url = str_replace(URL::Base().'/'.$selectedType.'/', '', URL::Current()); 
-                
-                ?>
-                <ul class="nav">
-                    <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( '/ug/'.$url)?>">Undergraduate</a></li>
-                    <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( '/pg/'.$url)?>">Postgraduate</a></li>
-                </ul>
-                
-                <ul class="nav">
-                    <li class="active"><a href="">Field setup</a></li>
-                </ul>
 
-                <?php elseif (URI::segment(1) == 'editor'): ?>
+            <?php if (
+                    URI::segment(1) == 'editor' ||
+                    URI::segment(1) == 'campuses' ||
+                    URI::segment(1) == 'faculties' ||
+                    URI::segment(1) == 'awards' ||
+                    URI::segment(1) == 'leaflets' ||
+                    URI::segment(1) == 'schools' ||
+                    URI::segment(1) == 'subjects' ||
+                    URI::segment(1) == 'subjectcategories' ||
+                    URI::segment(1) == 'users' 
+                ): ?>
 
                     <?php //Display no navigation (for now). The inbox should display everything accross all years and programme types?>
-                
-                <?php else: ?>
-                  
-                <?php
-                    if (is_numeric(URI::segment(1))) $selectedYear = URI::segment(1);
-                    if (URI::segment(2) == 'pg') $selectedType = URI::segment(2);
-                    $url = str_replace(URL::Base().'/'.$selectedYear.'/'.$selectedType.'/', '', URL::Current().'/');
-                    
-                    $href1 = url($year.'/'.$selectedType.'/'.$url);
-                    $href2 = url(($year+1).'/'.$selectedType.'/'.$url);
-                    $href3 = url(($year+2).'/'.$selectedType.'/'.$url);
-                ?>
-                
+            
+            <?php //elseif (URI::segment(1) == 'globalsettings'): ?>
+
+
+            <?php elseif (URLParams::$fields): ?>
                 <ul class="nav">
-                    <li class="<?php echo (  $selectedType == 'ug' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/'.'ug'.'/'.$url)?>">Undergraduate</a></li>
-                    <li class="<?php echo (  $selectedType == 'pg' ? 'active' : false )?>"><a href="<?php echo url( $selectedYear.'/pg/'.$url)?>">Postgraduate</a></li>
+                    <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/programmes')?>">Undergraduate</a></li>
+                    <li class="<?php echo (  URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/programmes')?>">Postgraduate</a></li>
                 </ul>
 
-                <ul class="nav">
-                    <li class="divider-vertical"></li>
-                </ul>
+            <?php else: ?>
+
                 
                 <ul class="nav">
-                    <li class="<?php echo ( $selectedYear == $year ? 'active' : false ); ?>"><a href="<?php echo $href1; ?>"><?php echo $year; ?></a></li>
-                    <li class="<?php echo ( $selectedYear == ($year+1) ? 'active' : false ); ?>"><a href="<?php echo $href2; ?>"><?php echo $year+1 ?></a></li>
-                    <li class="<?php echo ( $selectedYear == ($year+2) ? 'active' : false ); ?>"><a href="<?php echo $href3; ?>"><?php echo $year+2 ?></a></li>
+                    <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url(URLParams::$year.'/ug/programmes')?>">Undergraduate</a></li>
+                    <li class="<?php echo (  URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url( URLParams::$year.'/pg/programmes')?>">Postgraduate</a></li>
                 </ul>
+            
                 
-                <?php endif ?>
+                <ul class="nav">
+                    <?php for ($year=URLParams::$current_year; $year<=(URLParams::$current_year+2); $year++): ?>
+                    <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/'. URLParams::$type . '/programmes'); ?>"><?php echo $year; ?></a></li>
+                    <?php endfor; ?>
+                </ul>
+            
                 
+            <?php endif; ?>
+
                 <ul class="nav pull-right">
                     <li><a href="#"><?php echo Auth::user()->username; ?></a></li>
                     <li><a href="<?php echo url('logout')?>">Logout</a></li>
