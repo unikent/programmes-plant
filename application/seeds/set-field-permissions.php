@@ -32,8 +32,8 @@ class Set_Field_Permissions {
 	 */
 	function add_specified_roles($fields){
 		foreach ($fields as $field) {
-			$read_permission = Permission::where_name('fields_read_' . $field->colname)->first();
-			$write_permission = Permission::where_name('fields_write_' . $field->colname)->first();
+			$read_permission = Permission::where_name('ug_fields_read_' . $field->colname)->first();
+			$write_permission = Permission::where_name('ug_fields_write_' . $field->colname)->first();
 			
 			$user_can_read = true;
 			$user_can_write = true;
