@@ -131,7 +131,7 @@ $(document).ready(function (){
       update: function(event, ui) {
         var order = $(this).sortable('toArray').toString();
         // post to our reorder route
-        $.post(base_url+"ug/sections/reorder", {
+        $.post(base_url+programme_sort_type+"/sections/reorder", {
             'order': order
         });
         
