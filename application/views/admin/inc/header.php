@@ -16,7 +16,7 @@
             <?php //elseif (URI::segment(1) == 'globalsettings'): ?>
 
 
-            <?php elseif (URLParams::$fields): ?>
+            <?php elseif (URLParams::$type_header_links_only): ?>
                 <ul class="nav">
                     <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/programmes')?>">Undergraduate</a></li>
                     <li class="<?php echo (  URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/programmes')?>">Postgraduate</a></li>

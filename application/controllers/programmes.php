@@ -253,17 +253,36 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		//Get diff data
+		
+		$live_revision = $programme->find_live_revision();
+		$revision = $programme->get_revision($revision_id);
 
-		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
-		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// if there is not yet a live revision get the difference with our modified revision only
+		if(empty($live_revision) && !empty($revision)){
 
-		$data = array(
-			'diff' => $diff,
-			'programme' => $programme
-		);
+			$diff = $model::revision_diff($revision, null);
 
- 		return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+			$data = array(
+				'programme' => $programme,
+				'diff' => $diff
+			);
+
+			return $this->layout->nest('content', 'admin.'.$this->views.'.review_pre_live', $data);
+		}
+		else{
+			//Get diff data
+			$diff = $model::revision_diff($live_revision,  $revision);
+			if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+			$data = array(
+				'diff' => $diff,
+				'programme' => $programme
+			);
+
+ 			return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+		}
+
+		
 	}
 
 
