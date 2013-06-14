@@ -11,7 +11,7 @@ class TestUser {
 	* @param $permissions array()
 	* @return $user object
 	*/
-	public static function create($permissions=array())
+	public static function create_with_permissions($permissions=array())
 	{
 		// create a new role
 		$role = new \Role;

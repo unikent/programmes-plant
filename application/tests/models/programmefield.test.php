@@ -79,7 +79,7 @@ class TestProgrammeField extends ModelTestCase {
 	public function testAssignFieldsShouldModifyTitleForStandardUser()
 	{
 
-		$user = Tests\TestUser::create(array('ug_fields_read_programme_title_1', 'ug_fields_write_programme_title_1'));
+		$user = Tests\TestUser::create_with_permissions(array('ug_fields_read_programme_title_1', 'ug_fields_write_programme_title_1'));
 
 		// create a programme
 		UG_Programme::create(array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user"));
