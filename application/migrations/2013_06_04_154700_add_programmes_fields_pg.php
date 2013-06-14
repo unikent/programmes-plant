@@ -74,11 +74,11 @@ class Add_Programmes_Fields_Pg {
         $field_object->view = 1;
         $field_object->section = $section;
         $field_object->programme_field_type = $programme_field_type;
-        $field_object->save();
+        $field_object->raw_save();
     	$colname .= '_'.$field_object->id;
     	$field_object->colname = $colname;
 
-    	$field_object->save();
+    	$field_object->raw_save();
 
 		
 		if(!is_array($tablename)){
