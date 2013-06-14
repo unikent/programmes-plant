@@ -40,9 +40,9 @@ Route::group(array('before' => ''), function(){
 
 	// Access fields systems
 	Route::any('(ug|pg)/fields/standard', 'programmefields@index');
-	Route::post('(ug|pg)/fields/standard/reorder', 'programmefields@reorder');
 	Route::any('(ug|pg)/fields/standard/(:any?)', 'programmefields@(:2)');
 	Route::any('(ug|pg)/fields/standard/(:any?)/(:num?)', 'programmefields@(:2)');
+	Route::post('(ug|pg)/fields/programmes/reorder', 'programmefields@reorder');
 	// Customised routing for immutable fields
 	Route::any('fields/immutable', 'globalsettingfields@index');
 	Route::any('fields/immutable/(:any?)/(:num?)', 'globalsettingfields@(:1)');
