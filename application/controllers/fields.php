@@ -167,41 +167,31 @@ abstract class Fields_Controller extends Admin_Controller {
 			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		}
 
-		/*
-		// If type changes, apply data type swapper.
-		if ($oldtype != Input::get('type')) 
-		{
-			$type_str = 'varchar(255)';
-			if($field->field_type=='textarea') $type_str = 'TEXT';
-			
-			DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-			DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-		}*/
-
 		Messages::add('success','Edited field.');
 
 		return Redirect::to(URI::current());
 	}
 
 
-	public function get_deactivate($type)
+	public function get_deactivate()
 	{
 		$model = $this->model;
 		$row = $model::find(Input::get('id'));
 		$row->active = 0;
 		$row->save();
 
-		return Redirect::to($type.'/fields/'.$this->view);
+
+		return Redirect::to(dirname(URI::current()));
 	}
 
-	public function get_reactivate($type)
+	public function get_reactivate()
 	{
 		$model = $this->model;
 		$row = $model::find(Input::get('id'));
 		$row->active = 1;
 		$row->save();
 
-		return Redirect::to($type.'/fields/'.$this->view);
+		return Redirect::to(dirname(URI::current()));
 	}
 	
 	/**

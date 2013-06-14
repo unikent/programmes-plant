@@ -117,7 +117,7 @@ class Field extends Eloquent
     		if($this->dirty())
     		{
     			$changes = $this->get_dirty();
-    			if($changes['field_type'] == 'textarea')
+    			if(isset($changes['field_type']) && $changes['field_type'] == 'textarea')
     			{
     				// Make this column text
     				$this->convertColumn(static::$schemas, 'TEXT');
