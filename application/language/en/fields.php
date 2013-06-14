@@ -47,8 +47,8 @@ return array(
 
     // used in the edit/add form
     'form' => array(
-        'globalsettings' => 'global settings',
-        'programmesettings' => 'programme settings',
+        'immutable' => 'immutable settings',
+        'standard' => 'standard',
         'programmes' => 'programmes',
         'add_title' => 'Add new :field_name field',
         'edit_title' => 'Edit :field_name field',

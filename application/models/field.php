@@ -99,19 +99,38 @@ class Field extends Eloquent
         return true;
     }
 
-
+    /**
+     * Save a field - creating or updating attached table schemas as required
+	 */
     public function save() {
     	$updateSchema = false;
 
-    	// if this is a new field, remeber to create db schema
-    	if(!$this->exists) $updateSchema = true;
+    	// if this is a new field, remeber to create db schema for it
+    	if(!$this->exists)
+    	{
+    		$updateSchema = true;
+    	}
+    	// If not, check to make sure we arn't converting this field in to a textarea - if we are, we want to
+    	// update the column type
+    	else
+    	{	
+    		if($this->dirty())
+    		{
+    			$changes = $this->get_dirty();
+    			if($changes['field_type'] == 'textarea')
+    			{
+    				// Make this column text
+    				$this->convertColumn(static::$schemas, 'TEXT');
+    			}
+    		}
+    	}
 
-    	// Save record
+    	// Save the field config
     	$saved = parent::save();
  
- 		// If save went okay, update the db schema
+ 		// If save went okay and this is a new field, create the db schema for it
     	if($saved && $updateSchema){
-
+    		// get values
     		$this->colname = Str::slug($this->field_name, '_').'_' . $this->id;
    			$type = URLParams::get_type();
 
@@ -120,13 +139,16 @@ class Field extends Eloquent
 
     		// Update relevent table schamas
 			$this->updateSchama(static::$schemas);
-	    	
+	    	// Save the colname
     		parent::save();
     	}
 
     	return $saved;
     }
 
+    /**
+     * Update configured tables schema to include new fields
+	 */
     private function updateSchama($models){
 
     	// Get values for schema creation
@@ -148,16 +170,29 @@ class Field extends Eloquent
 		}
     }
 
+    /**
+     * Convert a column to a new type, in all passed in tables.
+	 */
+    private function convertColumn($models, $type = 'VARCHAR(255)'){
+    	$column = $this->colname;
+    	foreach($models as $model){
+	    	$table = $model::$table;
+	    	DB::statement("alter table {$table} MODIFY {$column} {$type}';");
+	    }
+    }
+
+    /**
+     * Create permissions set for new field
+	 */
     private function create_field_permissions($colname, $type){
     	Permission::create(array('name' => "{$type}_fields_read_{$colname}"));
     	Permission::create(array('name' => "{$type}_fields_write_{$colname}"));
     }
 
+    /**
+     * Save without updating any table schemas
+	 */
     public function raw_save(){
     	parent::save();
     }
-
-
-
-
 }
