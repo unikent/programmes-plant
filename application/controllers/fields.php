@@ -47,7 +47,7 @@ abstract class Fields_Controller extends Admin_Controller {
 			'path' => URI::current(),
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
-
+			'model' => $this->model,
 			'field_type' => $this->view,
 			'type' => URLParams::get_type(),
 		);
@@ -62,26 +62,27 @@ abstract class Fields_Controller extends Admin_Controller {
 		$id = end($params);
 
 		$model = $this->model;
-		$model = $model::find($id);
+		$field = $model::find($id);
 
 		$data = array(
 			'path' => URI::current(),
-			'id' => $id,
-			'values' => $model,
-			'field_type' => $this->view,
 			'type' => URLParams::get_type(),
+			'model' => $model,
+			'id' => $id,
+			'values' => $field,
+			'field_type' => $this->view,
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
 		);
 
 		// Load existing permissions
-		$read_permissions = Permission::where_name(URLParams::get_type()."_fields_read_{$model->colname}")->first();
+		$read_permissions = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
 		foreach($read_permissions->roles as $role)
 		{
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = Permission::where_name(URLParams::get_type()."_fields_write_{$model->colname}")->first();
+		$write_permissions = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
 		foreach($write_permissions->roles as $role)
 		{
 			$data['permissions']['W'][] = $role->id;
@@ -104,11 +105,10 @@ abstract class Fields_Controller extends Admin_Controller {
 		// Add Row
 		$field = new $model;
 		$field->get_input();
+
 		// By default this is both active and visible.
 		$field->active = 1;
 		$field->view = 1;
-
-		if(isset($model::$types)) $field->programme_field_type = $model::$types['NORMAL'];
 			
 		$field->save();
 
