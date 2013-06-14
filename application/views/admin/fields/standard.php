@@ -21,7 +21,7 @@
             <div class="lead section_name">
 
               <?php echo $section->name ?>
-              <a class="btn btn-link toggleCollapse right" ><i class="icon-chevron-up"></i></a><a class="btn btn-link" href="<?php echo action($path.'/sections@edit', array($section->id)); ?>">Edit</a>
+              <a class="btn btn-link toggleCollapse right" ><i class="icon-chevron-up"></i></a><a class="btn btn-link" href="<?php echo action(URLParams::$type.'/sections@edit', array($section->id)); ?>">Edit</a>
             </div>
             
             <ul class='sortable_fields'>

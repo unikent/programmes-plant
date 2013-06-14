@@ -40,6 +40,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		);
 		
 		// Load existing permissions
+	
 		$permissions = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $object->get_slug())->first();
 		foreach($permissions->roles as $role){
 			$data['permissions']['AE'][] = $role->id;
@@ -136,14 +137,21 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		else
 		{
 			$section = $model::find(Input::get('id'));
+
+			$old_slug = $model::slugify($section->name);
+
 			$section->name = Input::get('name');
 			$section->save();
 
 			$permissions = Input::get('permissions');
 			if(isset($permissions['AE']))
 			{
-				$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $section->get_slug())->first();
+
+				$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $old_slug)->first();
+				$permission->name = URLParams::get_type().'_sections_autoexpand_'.$section->get_slug();
+				$permission->save();
 				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
+
 			}
 
 			Messages::add('success','Section updated');
