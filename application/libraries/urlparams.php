@@ -27,7 +27,10 @@ class URLParams {
 			static::$fields = true;
 			static::$type = URI::segment(1);
 		}
-
+		// or immutables
+		elseif (URI::segment(1) == 'fields'){
+			static::$fields = true;
+		}
 		// ug or pg?
 		elseif (URI::segment(2) == 'pg')
 		{
