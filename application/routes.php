@@ -43,7 +43,9 @@ Route::group(array('before' => ''), function(){
 	Route::post('(ug|pg)/fields/standard/reorder', 'programmefields@reorder');
 	Route::any('(ug|pg)/fields/standard/(:any?)', 'programmefields@(:2)');
 	Route::any('(ug|pg)/fields/standard/(:any?)/(:num?)', 'programmefields@(:2)');
-
+	// Customised routing for immutable fields
+	Route::any('fields/immutable', 'globalsettingfields@index');
+	Route::any('fields/immutable/(:any?)/(:num?)', 'globalsettingfields@(:1)');
 	
 	// Customised routing for sections
 	Route::any('(ug|pg)/sections', 'programmesections@index');
@@ -55,10 +57,6 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/globalsettings/(:any)', 'globalsettings@(:2)');
 	Route::any('([0-9]{4})/globalsettings/(:any)/(:num)', 'globalsettings@(:2)');
 	Route::any('([0-9]{4})/globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:3)');
-
-	// Customised routing for immutable fields
-	Route::any('fields/immutable', 'globalsettingfields@index');
-	Route::any('fields/immutable/(:any?)/(:num?)', 'globalsettingfields@(:1)');
 
 	// Customised routing for campuses
 	Route::any('campuses', 'campuses@index');

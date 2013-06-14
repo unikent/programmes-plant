@@ -1,6 +1,6 @@
 <?php
-
 use \Verify\Models\Permission;
+
 abstract class Fields_Controller extends Admin_Controller {
 
 	public $restful = true;
@@ -55,8 +55,12 @@ abstract class Fields_Controller extends Admin_Controller {
 		$this->layout->nest('content', 'admin.fields.form', $data);
 	}
 
-	public function get_edit($type, $id)
-	{
+	public function get_edit()
+	{	
+		// Get ID of item being edited
+		$params = func_get_args();
+		$id = end($params);
+
 		$model = $this->model;
 		$model = $model::find($id);
 
@@ -65,7 +69,7 @@ abstract class Fields_Controller extends Admin_Controller {
 			'id' => $id,
 			'values' => $model,
 			'field_type' => $this->view,
-			'type' => $type,
+			'type' => URLParams::get_type(),
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
 		);

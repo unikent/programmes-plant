@@ -113,9 +113,10 @@ class Field extends Eloquent
     	if($saved && $updateSchema){
 
     		$this->colname = Str::slug($this->field_name, '_').'_' . $this->id;
-   
+   			$type = URLParams::get_type();
+
     		// Create permissions for fields
-    		$this->create_field_permissions($this->colname);
+    		$this->create_field_permissions($this->colname, $type);
 
     		// Update relevent table schamas
 			$this->updateSchama(static::$schemas);
@@ -147,10 +148,13 @@ class Field extends Eloquent
 		}
     }
 
-    private function create_field_permissions($colname){
-    	$type = URLParams::get_type();
-    	Permission::create(array('name' => $type."_fields_read_{$colname}"));
-    	Permission::create(array('name' => $type."_fields_write_{$colname}"));
+    private function create_field_permissions($colname, $type){
+    	Permission::create(array('name' => "{$type}_fields_read_{$colname}"));
+    	Permission::create(array('name' => "{$type}_fields_write_{$colname}"));
+    }
+
+    public function raw_save(){
+    	parent::save();
     }
 
 
