@@ -177,7 +177,7 @@ class Field extends Eloquent
     	$column = $this->colname;
     	foreach($models as $model){
 	    	$table = $model::$table;
-	    	DB::statement("alter table {$table} MODIFY {$column} {$type}';");
+	    	DB::query("ALTER TABLE `{$table}` MODIFY `{$column}` {$type};");
 	    }
     }
 
