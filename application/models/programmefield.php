@@ -74,9 +74,12 @@ abstract class ProgrammeField extends Field
     * @param array $input_fields user input fields from the form
     * @return object $programme_obj modified programme object
     */
-    public static function assign_fields($programme_obj, $programme_fields, $input_fields)
+    public static function assign_fields($programme_obj, $programme_fields, $input_fields, $user=null)
     {
-        $user = Auth::user();
+        if ($user == null)
+        {
+           $user = Auth::user();
+        }
 
         foreach ($programme_fields as $programme_field)
         {
@@ -86,7 +89,8 @@ abstract class ProgrammeField extends Field
             if ($programme_field->section > 0)
             {
                 // if the field is being used add its value to the appropriate colname in the programme object
-                if (isset($input_fields[$colname]) && $user->can("fields_write_{$colname}")) {
+                //if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
+                if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
                     // if the field's value is an array, convert it into a comma-separated string
                     if (is_array($input_fields[$colname]))
                     {
@@ -114,7 +118,7 @@ abstract class ProgrammeField extends Field
     public function save()
     {
         $saved = parent::save();
-
+        
         if($saved){
             static::generate_api_data();
         }

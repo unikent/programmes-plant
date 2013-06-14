@@ -1,6 +1,6 @@
 <?php
 
-class TestProgrammeField extends PHPUnit_Framework_TestCase {
+class TestProgrammeField extends ModelTestCase {
 
 	/**
 	 * Set up the database.
@@ -76,4 +76,19 @@ class TestProgrammeField extends PHPUnit_Framework_TestCase {
 				
 	}
 
+	public function testAssignFieldsShouldModifyTitleForStandardUser()
+	{
+
+		$user = Tests\TestUser::create_with_permissions(array('ug_fields_read_programme_title_1', 'ug_fields_write_programme_title_1'));
+
+		// create a programme
+		UG_Programme::create(array('programme_title_1' => 'Thing', 'year'=> '2014' , 'created_by' => "test user"));
+		$programme = UG_Programme::find(1);
+		$programme_fields = UG_ProgrammeField::programme_fields();
+		
+		$programme_obj = UG_ProgrammeField::assign_fields($programme, $programme_fields, array('programme_title_1' => 'Thing 2'), $user);
+
+		$this->assertEquals($programme_obj->programme_title_1, 'Thing 2');
+	}
+    
 }
