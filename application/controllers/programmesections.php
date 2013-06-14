@@ -75,12 +75,12 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		if ($validation->fails())
 		{
 			Messages::add('error','You tried to delete a user that doesn\'t exist.');
-			return Redirect::to('/'.$type.'/fields/programmes');
+			return Redirect::to('/'.$type.'/fields/standard');
 		}else{
 			$section = $model::find(Input::get('id'));
 			$section->delete();
 			Messages::add('success','Section Removed');
-			return Redirect::to('/'.$type.'/fields/programmes');
+			return Redirect::to('/'.$type.'/fields/standard');
 		}
 	}
 
@@ -115,7 +115,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			}
  
 			Messages::add('success','New Section Added');
-			return Redirect::to('/'.$type.'/fields/programmes');
+			return Redirect::to('/'.$type.'/fields/standard');
 		}
 	}
 
@@ -144,18 +144,21 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			$section->save();
 
 			$permissions = Input::get('permissions');
-			if(isset($permissions['AE']))
-			{
+
+
+			
 
 				$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $old_slug)->first();
 				$permission->name = URLParams::get_type().'_sections_autoexpand_'.$section->get_slug();
 				$permission->save();
-				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
 
+			if(isset($permissions['AE']))
+			{
+				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
 			}
 
 			Messages::add('success','Section updated');
-			return Redirect::to('/'.$type.'/fields/programmes');
+			return Redirect::to('/'.$type.'/fields/standard');
 		}
 	}
 	
