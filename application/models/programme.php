@@ -524,7 +524,7 @@ abstract class Programme extends Revisionable {
 	public static function revision_diff($revision_1, $revision_2){
 
 		// Revisions are blank, return false
-		if($revision_1==null || $revision_2== null) return false;
+		if($revision_1==null) return false;
 
 		// Get programme data
 		$attribute_names = static::get_attributes_list();
@@ -551,18 +551,25 @@ abstract class Programme extends Revisionable {
 				$type = $attribute_types[$attribute];
 
 				$revision_1->{$attribute} = implode(',', $type::replace_ids_with_values($revision_1->{$attribute} , $revision_1->attributes['year'], true) );
-				$revision_2->{$attribute} =  implode(',', $type::replace_ids_with_values($revision_2->{$attribute} , $revision_2->attributes['year'], true) );
+				
+				if($revision_2 != null){
+					$revision_2->{$attribute} =  implode(',', $type::replace_ids_with_values($revision_2->{$attribute} , $revision_2->attributes['year'], true) );
+				}
+					
 			}	
 
 			// Apply diff highlighting to "revision_2" for this attribute
-			$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
+			if($revision_2 != null){
+				$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
+			}
+				
 			
 		}
 
 		// Return required data
 		return array(
 			'revision_1' => $revision_1,
-			'revision_2' => $revision_2,
+			'revision_2' => ($revision_2 != null) ? $revision_2 : null,
 			'attributes' => $attributes,
  		);
 
