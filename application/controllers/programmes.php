@@ -452,9 +452,10 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 			$title = $programme->{$model::get_title_field()};
+			$link = URL::to_action($year.'/'.$type.'/'.'programmes@edit', array($programme_id));
+			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link)) . $body;
 
 			$mailer = IoC::resolve('mailer');
-
 			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
