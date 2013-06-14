@@ -7,6 +7,7 @@
   <thead>
     <tr>
       <th>Programme title</th>
+      <th>Programme type</th>
       <th>Submitted by</th>
       <th>Updated</th>
       <th>Editor tools</th>
@@ -14,8 +15,14 @@
   </thead>
   <tbody>
   <?php foreach($for_review as $revision) : ?>
+    <?php
+      $revision_class = get_class($revision);
+      $model = $revision_class::$programme_model;
+      $title_field = $model::get_title_field();
+    ?>
     <tr>
-      <td><?php echo $revision->{Programme::get_title_field()} ?></td>
+      <td><?php echo $revision->$title_field ?></td>
+      <td><?php echo strstr($model, 'UG') ? "Undergraduate" : "Postgraduate"; ?></td>
       <td>
         <?php
         $user_details = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
@@ -29,10 +36,12 @@
           echo $user_details->fullname . ' (' .  HTML::mailto(Str::lower($user_details->email)) . ')';
         }
 
-        $view_link = action( $revision->year . '/ug/programmes/' . $revision->programme_id . '@view_revision', array($revision->id));
-        $diff_link = action( $revision->year . '/ug/programmes/' . $revision->programme_id . '@review', array($revision->id));
+        $type_for_url = strstr($model, 'UG') ? 'ug' : 'pg';
+
+        $view_link = action( $revision->year . '/' . $type_for_url . '/programmes/' . $revision->programme_id . '@view_revision', array($revision->id));
+        $diff_link = action( $revision->year . '/' . $type_for_url . '/programmes/' . $revision->programme_id . '@review', array($revision->id));
         ?>
-        </td>
+      </td>
       <td><?php echo Date::forge($revision->updated_at)->ago(); ?></td>
       <td>
         <a class="btn btn-primary" href="<?php echo $diff_link; ?>">Review</a>

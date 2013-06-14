@@ -2,16 +2,15 @@
 
 class ProgrammeFields_Controller extends Fields_Controller {
 
-	public $table = 'programmes';
-	public $view = 'programmes';
-	protected $model = 'ProgrammeField';
 	public $name = 'Programmes';
-	protected $where_clause;
+	public $view = 'standard';
 
-	function __construct(){
+	function __construct()
+	{
+		$type = URLParams::get_type();
+		$model = $this->model = $type.'_ProgrammeField';
+		
 		parent::__construct(); 
-		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['NORMAL']);
-		$this->where_clause[] = array('programme_field_type', '=', ProgrammeField::$types['OVERRIDABLE_DEFAULT']);
 	}
 
 }

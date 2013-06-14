@@ -325,10 +325,10 @@ class ModuleData_Task {
         if (is_object($programme))
         {
             // pull out the field names so we can call the appropriate fields on the programme object
-            $campus_id_field = Programme::get_location_field();
-            $pos_code_field = Programme::get_pos_code_field();
-            $institute_field = Programme::get_awarding_institute_or_body_field();
-            $module_session_field = Programme::get_module_session_field();
+            $campus_id_field = UG_Programme::get_location_field();
+            $pos_code_field = UG_Programme::get_pos_code_field();
+            $institute_field = UG_Programme::get_awarding_institute_or_body_field();
+            $module_session_field = UG_Programme::get_module_session_field();
             
             $programme_array['module_session'] = $programme->$module_session_field;
             $programme_array['pos_code'] = $programme->$pos_code_field;

@@ -40,11 +40,11 @@ class Simple_Admin_Controller extends Admin_Controller {
 	/**
 	 * Display an edit form for an item.
 	 */
-	public function get_edit($year, $type, $object_id = false)
+	public function get_edit($object_id = false)
 	{
 		if (! $object_id)
 		{
-			Message::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
+			Messages::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
 			return Redirect::to($this->views);
 		}
 
@@ -54,7 +54,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		if (! $object)
 		{
-			Message::add('error', __($this->l . 'error.not_found'));
+			Messages::add('error', __($this->l . 'error.not_found'));
 			return Redirect::to($this->views);
 		}
 
@@ -90,7 +90,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	/**
 	 * Route for deletion of an item.
 	 */
-	public function get_delete($year, $type, $id)
+	public function get_delete($id)
 	{
 		$model = $this->model;
 
@@ -111,7 +111,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 			$remove->delete();
 
 			Messages::add('success', __($this->l . 'success.delete'));
-			return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
+			return Redirect::to($this->views);
 		}
 	}
 
@@ -130,7 +130,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
+			return Redirect::to($this->views.'/create')->with_input();
 		}
 
 		$new = new $this->model;
@@ -141,7 +141,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.create'));
 
-		return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+		return Redirect::to($this->views.'');
 	}
 
 	/**
@@ -172,7 +172,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.edit'));
 
-		return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+		return Redirect::to($this->views.'');
 	}
 
 }

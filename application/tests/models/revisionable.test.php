@@ -22,7 +22,6 @@ class TestRevisionable extends ModelTestCase {
 			$table->string('name', 200);
 			$table->string('year', 4);
 			$table->integer('instance_id');
-			$table->integer('live');
 
 			$table->integer('current_revision');
 			$table->integer('live_revision');
@@ -388,7 +387,7 @@ class TestRevisionable extends ModelTestCase {
         $this->assertEquals("draft", $revision->status);
 	}
 
-	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
+	public function testMakeRevisionLiveSetsLiveRevisionField()
 	{
     	// set up some data
 		$this->populate();
@@ -400,7 +399,7 @@ class TestRevisionable extends ModelTestCase {
         
         // find programme #1 and check its 'live' value is 2
         $item = RevisionableThing::find(1);
-        $this->assertEquals(2, $item->live);
+        $this->assertEquals($item->live_revision, $revision->id);
 	}
 	
 	public function testUseRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
@@ -414,11 +413,11 @@ class TestRevisionable extends ModelTestCase {
         // use a revision
         $revisionable_item->use_revision($revision);
         
-        // find programme #1 again and now check its 'live' value is 0
+        // find programme #1 again and now check its 'live_revision' value is 0
         // it should be 0 because previously nothing was published and so everything should remain unpublished
         // ie we have only used a revision, not made anything live
         $revisionable_item_modified = RevisionableThing::find(1);
-        $this->assertEquals(0, $revisionable_item_modified->live);
+        $this->assertEquals(0, $revisionable_item_modified->live_revision);
 	}
 	
 	public function testUseRevisionSetsLiveFieldToLatestUnpublished()
@@ -437,46 +436,13 @@ class TestRevisionable extends ModelTestCase {
         $new->name = 'Widget B';
         $new->save();
         
-        // find programme #1 again and now check its 'live' value is now 1
+        // find programme #1 again and now check its 'live_revision' is defferent from the current revision
         // it should be 1 because previously the latest version was published, but then a newer version was made
         // ie there is something newer than the live version
         $modified = RevisionableThing::find(1);
-        $this->assertEquals(1, $modified->live);
+        $this->assertNotEquals($modified->current_revision, $modified->live_revision);
 	}
 
-	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
-	{
-    	// set up some data
-		$this->populate();
-    	$item = RevisionableThing::find(1);
-        $revision = $item->get_revision(1);
-        
-        // use a revision
-        $item->use_revision($revision);
-        
-        // find programme #1 again and now check its 'live' value is 0
-        // it should be 0 because previously nothing was published and so everything should remain unpublished
-        // ie we have only used a revision, not made anything live
-        $modified = RevisionableThing::find(1);
-        $this->assertEquals(0, $modified->live);
-	}
-
-	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
-	{
-    	// set up some data
-		$this->populate();
-    	$item = RevisionableThing::find(1);
-        $revision = $item->get_revision(1);
-        
-        // use a revision
-        $item->use_revision($revision);
-        
-        // find programme #1 again and now check its 'live' value is 0
-        // it should be 0 because previously nothing was published and so everything should remain unpublished
-        // ie we have only used a revision, not made anything live
-        $modified = RevisionableThing::find(1);
-        $this->assertEquals(0, $modified->live);
-	}
 /**	
 	
 	public function testMakeRevisionLiveGlobalSetting()

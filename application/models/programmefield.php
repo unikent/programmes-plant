@@ -1,7 +1,7 @@
 <?php
-class ProgrammeField extends Field
+abstract class ProgrammeField extends Field
 {
-    public static $table = 'programmes_fields';
+    public static $table = '';
 
     /**
      * Stores programme field types.
@@ -31,19 +31,22 @@ class ProgrammeField extends Field
      */
     public static function programme_fields_by_section()
     {
+        $fieldModel = static::$type.'_programmefields';
+        $sectionModel = static::$type.'_ProgrammeSection';
+
         // get the section and field data
-        $sections = ProgrammeSection::with('programmefields')->order_by('order','asc')->get();
+        $sections = $sectionModel::with("programmefields")->order_by('order','asc')->get();
 
         $sections_array = array();
 
         foreach ($sections as $section)
         {
-            foreach ($section->programmefields as $programmefield)
+            foreach ($section->$fieldModel as $programmefield)
             {
                 // make sure the section is active
                 // and user has permission to read the field
                 
-                if ($section->id > 0 && Auth::user()->can("fields_read_{$programmefield->colname}"))
+                if ($section->id > 0 && Auth::user()->can(URLParams::get_type()."_fields_read_{$programmefield->colname}"))
                 {
                     // build up the final array indexed by section name and programme field order
                     $sections_array[$section->name][$programmefield->order] = $programmefield;
@@ -57,7 +60,8 @@ class ProgrammeField extends Field
     
     public static function programme_fields()
     {
-        return ProgrammeField::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['NORMAL']))->order_by('order','asc')->get();
+        $fieldModel = URLParams::get_type()."_ProgrammeField";
+        return static::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $fieldModel::$types['NORMAL']))->order_by('order','asc')->get();
     }
     
     /**
@@ -70,9 +74,12 @@ class ProgrammeField extends Field
     * @param array $input_fields user input fields from the form
     * @return object $programme_obj modified programme object
     */
-    public static function assign_fields($programme_obj, $programme_fields, $input_fields)
+    public static function assign_fields($programme_obj, $programme_fields, $input_fields, $user=null)
     {
-        $user = Auth::user();
+        if ($user == null)
+        {
+           $user = Auth::user();
+        }
 
         foreach ($programme_fields as $programme_field)
         {
@@ -82,7 +89,8 @@ class ProgrammeField extends Field
             if ($programme_field->section > 0)
             {
                 // if the field is being used add its value to the appropriate colname in the programme object
-                if (isset($input_fields[$colname]) && $user->can("fields_write_{$colname}")) {
+                //if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
+                if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
                     // if the field's value is an array, convert it into a comma-separated string
                     if (is_array($input_fields[$colname]))
                     {
@@ -110,7 +118,7 @@ class ProgrammeField extends Field
     public function save()
     {
         $saved = parent::save();
-
+        
         if($saved){
             static::generate_api_data();
         }

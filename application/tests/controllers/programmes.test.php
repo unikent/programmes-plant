@@ -8,18 +8,17 @@ class TestProgrammes_Controller extends ControllerTestCase
 		// Setup something we can edit.
 		$input = array(
 			'year' => '2014',
-			'live' => '1',
 			'created_by' => 'aa',
 			'programme_title_1' => 'Test'
 		);
 
-		$programme = Programme::create($input);
+		$programme = UG_Programme::create($input);
 		$programme->save();
 	}
 
 	public static function tear_down()
 	{
-		$programmes = Programme::all();
+		$programmes = UG_Programme::all();
 
 		foreach ($programmes as $programme)
 		{
@@ -32,15 +31,14 @@ class TestProgrammes_Controller extends ControllerTestCase
 	public function testRemainOnTheSamePageWhenSavingProgrammes()
 	{
 		//Add a programme to the system.
-		Programme::create(array('programme_title_1' => 'A programme', 'year'=> '2014', 'id' => 1));
+		PG_Programme::create(array('programme_title_1' => 'A programme', 'year'=> '2014', 'id' => 1));
 
-		$edit_page = $this->get('programmes@edit', array('2014', 'undergraduate', '1'));
+		$edit_page = $this->get('programmes@edit', array('2014', 'undergraduate', 1));
 
 		// Edit what we have populated.
 		$input = array(
 			'programme_id' => 1,
 			'year' => '2014',
-			'live' => '1',
 			'created_by' => 'aa',
 			'programme_title_1' => 'Test Change'
 		);
