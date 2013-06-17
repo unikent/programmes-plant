@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<h1><?php echo $programme->{Programme::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<h1><?php echo $programme->{$model::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <h3><?php echo __("revisions.rollback_revisions"); ?></h3>
 <p><?php echo __("revisions.rollback_warning"); ?></p>
