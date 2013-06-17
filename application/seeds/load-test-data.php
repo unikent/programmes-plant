@@ -396,7 +396,8 @@ class Load_Test_Data {
 			SubjectCategory::create(array('name' => "subject_category_$i"))->save();
 		}
 		
-		$fields = ProgrammeField::all();
+		$ug_fields = UG_ProgrammeField::all();
+		$pg_fields = PG_ProgrammeField::all();
 		$ipsum = $this->generate_lorem_ipsum(2);
 		
 		// Populate three years worth of data.
@@ -405,8 +406,8 @@ class Load_Test_Data {
 			// Populate each year for all the programmes.
 			foreach (self::$title_list as $title_data)
 			{
-				$programme_ug = $this->generate_dummy_programme($year, $title_data['title'], 'UG_Programme', $fields, $ipsum);
-				$programme_pg = $this->generate_dummy_programme($year, $title_data['title'], 'PG_Programme', $fields, $ipsum);
+				$programme_ug = $this->generate_dummy_programme($year, $title_data['title'], 'UG_Programme', $ug_fields, $ipsum);
+				$programme_pg = $this->generate_dummy_programme($year, $title_data['title'], 'PG_Programme', $pg_fields, $ipsum);
 			}
 		}
 	}

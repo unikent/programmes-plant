@@ -142,8 +142,7 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	private function get_fields()
 	{
 		$model = $this->type.'_ProgrammeField';
-
-		return  $model::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], ProgrammeField::$types['DEFAULT']))->order_by('field_name','asc')->get();
+		return  $model::where('active','=','1')->where('programme_field_type', '=', ProgrammeField::$types['OVERRIDABLE_DEFAULT'])->order_by('field_name','asc')->get();
 	}
 
 	/**
