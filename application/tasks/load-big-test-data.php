@@ -1,6 +1,6 @@
 <?php
 
-class Load_Test_Data {
+class Load_Big_Test_Data_Task {
 
 	public static $title_list = array(
 			array('slug'=>'accounting-and-finance-and-economics', 'title'=>'Accounting and Finance and Economics'),
@@ -384,11 +384,9 @@ class Load_Test_Data {
 		// Increase PHP memory limit a great deal.
 		ini_set('memory_limit', '1024M');
 
+		// set up a logged in user
 		Auth::login(1);
-
-		// set up a user that these programmes will be added by
-		Auth::login(1);
-
+		
 		// Create some subjects and subject categories.
 		for ($i = 0; $i <= 30; $i++)
 		{
@@ -396,17 +394,19 @@ class Load_Test_Data {
 			SubjectCategory::create(array('name' => "subject_category_$i"))->save();
 		}
 		
+		// add in some test fields
+		self::addProgrammeFields();
+
 		$fields = ProgrammeField::all();
 		$ipsum = $this->generate_lorem_ipsum(2);
-		
-		// Populate three years worth of data.
-		for ($year = 2014; $year <= 2016; $year ++)
+
+		// Populate 1 years only at this stage (multiple years will be done separately)
+		for ($year = 2014; $year <= 2014; $year++)
 		{ 
 			// Populate each year for all the programmes.
 			foreach (self::$title_list as $title_data)
 			{
-				$programme_ug = $this->generate_dummy_programme($year, $title_data['title'], 'UG_Programme', $fields, $ipsum);
-				$programme_pg = $this->generate_dummy_programme($year, $title_data['title'], 'PG_Programme', $fields, $ipsum);
+				$programme = $this->generate_dummy_programme($year, $title_data['title'], $fields, $ipsum);
 			}
 		}
 	}
@@ -417,7 +417,7 @@ class Load_Test_Data {
 	 * @param string $title The title of the programme, if named.
 	 * @return bool The success or otherwise of saving the dummy programme.
 	 */
-	function generate_dummy_programme($year = 2014, $title = null, $type = 'UG_Programme', $fields, $ipsum)
+	function generate_dummy_programme($year = 2014, $title = null, $fields, $ipsum)
 	{
 		// If no title is specified grab a random one.
 		if (! $title)
@@ -427,13 +427,14 @@ class Load_Test_Data {
 		}
 
 		// Set up the new programme.
-		$programme = new $type;
+		$programme = new Programme;
 		$programme->year = $year;
 		$programme->created_by = 'at369';
+		$programme->live = 1;
 
 		$programme->programme_title_1 = $title;
 		$programme->slug_2 = Str::slug($title);
-
+		
 		// Provide dummy data for each field in turn.
 		foreach ($fields as $field)
 		{
@@ -534,4 +535,187 @@ class Load_Test_Data {
 	{
 		return substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", $number + 1)), 0, $number + 1);
 	}
+
+	public function addProgrammeFields(){
+		$programme_fields = array();
+
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+		$programme_fields[] = array('test field 1', 'textarea', 'blah blah blah', '', 1);
+
+
+		
+		// Add the fields in
+		foreach ($programme_fields as $field) {
+			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['NORMAL'], $field[4]);
+		}
+	}
+
+
+	/**
+	 * Adds a field to a fields table.
+	 * 
+	 * @param string $modelname the class of object we are creating. eg. 'ProgrammeSettingField' or 'Programme_Field'
+	 * @param string $tablename the table name we're creating a field for 
+	 * @param string $title the title of the field.
+	 * @param string $type the type of field.
+	 * @param string $hints the hints for the field.
+	 * @param string $options the options, particularly used when the field type is select.
+	 */
+	public function add_field($modelname, $tablename, $title, $type, $hints, $options, $programme_field_type = 0, $section = 0)
+	{
+        // define the column name
+    	$colname = Str::slug($title, '_');
+    	
+    	// set up the field object and save it to the _fields table
+    	// eg for a Programme_Setting object we set up the ProgrammeSettingField object and save it to the programme_settings_fields table
+    	$field_object = new $modelname;
+        $field_object->field_name = $title;
+        $field_object->field_type = $type;
+        $field_object->field_description = $hints;
+        $field_object->field_meta = $options;
+        $field_object->field_initval =  '';
+        $field_object->active = 1;
+        $field_object->view = 1;
+        $field_object->section = $section;
+        $field_object->programme_field_type = $programme_field_type;
+        $field_object->save();
+    	$colname .= '_'.$field_object->id;
+    	$field_object->colname = $colname;
+    	$field_object->save();
+		
+		if(!is_array($tablename)){
+			$tablename = array($tablename);
+		}
+
+		foreach ($tablename as $value) {
+			// modify the schema for the main table eg programme_settings
+			// by default columns are varchars unless they've been specified as textareas
+			Schema::table($value, function($table) use ($colname, $type) {
+			
+				if ($type=='textarea')
+				{
+	    			$table->text($colname);
+				}
+				else
+				{
+					$table->string($colname, 255);
+				}
+					
+			});
+			
+			// modify the schema for the revisions table eg programme_settings_revisions
+			// by default columns are varchars unless they've been specified as textareas
+			Schema::table($value.'_revisions', function($table) use ($colname, $type) {
+			
+				if ($type=='textarea')
+				{
+					$table->text($colname);
+				}
+				else
+				{
+					$table->string($colname,255);
+				}
+				
+			});
+		}
+	}
+
 }
