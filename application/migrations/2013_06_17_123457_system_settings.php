@@ -9,12 +9,14 @@ class System_Settings {
 	 */
 	public function up()
 	{
+
 		Schema::create('system_settings', function($table){
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('ug_current_year', 200);
 			$table->string('pg_current_year', 200);
 		});
+
 	}
 
 	/**
@@ -23,6 +25,9 @@ class System_Settings {
 	 * @return void
 	 */
 	public function down()
+	{
+
 		Schema::drop('system_settings');
+
 	}
 }
