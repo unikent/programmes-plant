@@ -109,6 +109,9 @@ abstract class Fields_Controller extends Admin_Controller {
 		// By default this is both active and visible.
 		$field->active = 1;
 		$field->view = 1;
+
+		// If has a type, ensure one gets set
+		if(isset($model::$types) && $field->programme_field_type === null)  $field->programme_field_type = 0;
 			
 		$field->save();
 
