@@ -150,8 +150,8 @@ class TestAPI_Controller extends ControllerTestCase
                 'id' => 1, 
                 UG_Programme::get_title_field() => 'Programme 1',
                 'year' => '2014',
-                'programme_suspended_53' => '',
-                'programme_withdrawn_54' => '',
+                UG_Programme::get_programme_suspended_field() => '',
+                UG_Programme::get_programme_withdrawn_field() => '',
             );
         }
 
@@ -204,8 +204,8 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => '',
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
             );
 
         $course = $this->create_programme($input);
@@ -230,8 +230,8 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => ''
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
         );
 
         $course = $this->create_programme($input);
@@ -272,8 +272,8 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => ''
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
         );
 
         $course = $this->create_programme($input);
