@@ -3,7 +3,7 @@
 
 
 
-<?php if(get_class($programme) == 'Programme'):?>
+<?php if(get_class($programme) == 'UG_Programme' || get_class($programme) == 'PG_Programme'):?>
       <?php
         $preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$programme->id.'@preview', array($revision->id));
         $diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));

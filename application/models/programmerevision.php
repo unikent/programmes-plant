@@ -1,5 +1,5 @@
 <?php
-class ProgrammeRevision extends Revision
+abstract class ProgrammeRevision extends Revision
 {
     public static $table = 'programmes_revisions';
     protected $data_type_id = 'programme_id';
@@ -11,7 +11,8 @@ class ProgrammeRevision extends Revision
      */
     public function award()
     {
-      return $this->belongs_to('Award', Programme::get_award_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('Award',  $model::get_award_field());
     }
 
     /**
@@ -21,7 +22,8 @@ class ProgrammeRevision extends Revision
      */
     public function subject_area_1()
     {
-      return $this->belongs_to('Subject', Programme::get_subject_area_1_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('Subject', $model::get_subject_area_1_field());
     }
 
     /**
@@ -31,7 +33,8 @@ class ProgrammeRevision extends Revision
      */
     public function administrative_school()
     {
-      return $this->belongs_to('School', Programme::get_administrative_school_field());
+        $model = static::$programme_model;
+       return $this->belongs_to('School', $model::get_administrative_school_field());
     }
 
     /**
@@ -41,7 +44,8 @@ class ProgrammeRevision extends Revision
      */
     public function additional_school()
     {
-      return $this->belongs_to('School', Programme::get_additional_school_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('School', $model::get_additional_school_field());
     }
 
     /**
@@ -51,7 +55,8 @@ class ProgrammeRevision extends Revision
      */
     public function location()
     {
-      return $this->belongs_to('Campus', Programme::get_location_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('Campus', $model::get_location_field());
     }
 
     

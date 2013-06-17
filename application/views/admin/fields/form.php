@@ -2,7 +2,7 @@
 
 <?php echo Messages::get_html()?>
 
-<?php echo Form::open_for_files('/'.$type.'/fields/'. $field_type . '/' . ( isset($id) ? 'edit' : 'add' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files($path, 'POST', array('class'=>'form-horizontal'));?>
 
 <fieldset>
   <div class="control-group">
@@ -66,12 +66,12 @@
       </div>
     </div>
 
-    <?php if(strcmp($field_type, 'programmes') == 0): ?>
+    <?php if(isset($model::$types)): ?>
     <div class="control-group">
 
       <?php echo Form::label('programme_field_type', __('fields.form.label_programme_field_type'), array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo  Form::checkbox('programme_field_type', ProgrammeField::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==ProgrammeField::$types['OVERRIDABLE_DEFAULT']) ? ProgrammeField::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
+        <?php echo  Form::checkbox('programme_field_type', $model::$types['OVERRIDABLE_DEFAULT'], (isset($values)) ? (($values->programme_field_type==$model::$types['OVERRIDABLE_DEFAULT']) ? $model::$types['OVERRIDABLE_DEFAULT'] : false) : false)?> <?php echo __('fields.form.label_programme_field_type_text') ?>
       </div>
     </div>
   <?php endif; ?>

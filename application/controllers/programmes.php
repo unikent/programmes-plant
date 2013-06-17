@@ -2,11 +2,21 @@
 
 class Programmes_Controller extends Revisionable_Controller {
 
-	public $restful = true;
+	protected $model = '';
 	public $views = 'programmes';
-	protected $model = 'Programme';
+	public $restful = true;
 
 	public $required_permissions = array("edit_own_programmes", "view_all_programmes", "edit_all_programmes");
+
+	// Determine correct model (PG / UG)
+	public function __construct()
+	{  	
+		$this->model = (URI::segment(2)=='ug') ? 'UG_Programme' : 'PG_Programme';
+
+		// Construct parent.
+		parent::__construct();
+	}
+	
 
 	/**
 	 * Routing for /$year/$type/programmes
@@ -16,20 +26,21 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_index($year, $type)
 	{
-		$title_field = Programme::get_programme_title_field();
-		$award_field = Programme::get_award_field();
-		$withdrawn_field = Programme::get_programme_withdrawn_field();
-		$suspended_field = Programme::get_programme_suspended_field();
-		$subject_to_approval_field = Programme::get_subject_to_approval_field();
-		$subject_area_1 = Programme::get_subject_area_1_field();
-
 		$model = $this->model;
+
+		// get fields
+		$title_field 		= 	$model::get_programme_title_field();
+		$award_field 		= 	$model::get_award_field();
+		$withdrawn_field 	= 	$model::get_programme_withdrawn_field();
+		$suspended_field 	= 	$model::get_programme_suspended_field();
+		$subject_to_approval_field = $model::get_subject_to_approval_field();
+		$subject_area_1 	= 	$model::get_subject_area_1_field();
 
 		// Get user
 		$user = Auth::user();
 
 		// get required fields
-		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'live', 'locked_to');
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision');
 
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
@@ -50,12 +61,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data[$this->views] = $programmes;
 
 		$this->data['title_field'] = $title_field;
-
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.index', $this->data);
+		$this->layout->nest('content', 'admin.programmes.index', $this->data);
 	}
 
 	/**
@@ -83,10 +93,12 @@ class Programmes_Controller extends Revisionable_Controller {
 			$this->data['clone'] = false;
 		}
 		
-		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-
+		$fieldModel = $this->model.'Field';
+		$this->data['sections'] = $fieldModel::programme_fields_by_section();
+		$this->data['model'] = $this->model;
 		$this->data['create'] = true;
 		$this->data['year'] = $year;
+
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
@@ -101,16 +113,21 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $item_id The ID of the programme to edit.
 	 */
 	public function get_edit($year, $type, $id = false)
-	{
+	{	
+		$fieldModel = $this->model.'Field';
+		$model = $this->model;
+
 		// Ensure we have a corresponding course in the database
-		$programme = Programme::find($id);
+		$programme = $model::find($id);
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
 		
 		// get the appropriate data to display on the programme form
 		$this->data['programme'] = $programme;
-		$this->data['sections'] = ProgrammeField::programme_fields_by_section();
-		$this->data['title_field'] = Programme::get_programme_title_field();
+		$this->data['model'] = $model;
+		$this->data['sections'] = $fieldModel::programme_fields_by_section();
+
+		$this->data['title_field'] = $model::get_programme_title_field();
 		$this->data['year'] = $year;
 
 		// get the active revision
@@ -130,6 +147,10 @@ class Programmes_Controller extends Revisionable_Controller {
 	public function post_create($year, $type)
 	{
 		
+		$fieldModel = $this->model.'Field';
+		$model = $this->model;
+
+
 		$this->check_user_can("create_programmes");
 
 		// placeholder for any future validation rules
@@ -143,15 +164,15 @@ class Programmes_Controller extends Revisionable_Controller {
 		} 
 		else 
 		{
-			$programme = new Programme;
+			$programme = new $model;
 			$programme->year = Input::get('year');
 			$programme->created_by = Auth::user()->username;
 			
 			// get the programme fields
-			$programme_fields = ProgrammeField::programme_fields();
+			$programme_fields = $fieldModel::programme_fields();
 			
 			// assign the input data to the programme fields
-			$programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 			
 			// save the modified programme data
 			$programme_modified->save();
@@ -174,6 +195,11 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function post_edit($year, $type)
 	{
+
+		$fieldModel = $this->model.'Field';
+		$model = $this->model;
+
+
 		// placeholder for any future validation rules
 		$rules = array(
 		);
@@ -185,20 +211,21 @@ class Programmes_Controller extends Revisionable_Controller {
 		} 
 		else 
 		{
-			$programme = Programme::find(Input::get('programme_id'));
+			$programme = $model::find(Input::get('programme_id'));
+		
 			$programme->year = Input::get('year');
-
-			// get the programme fields
-			$programme_fields = ProgrammeField::programme_fields();
 			
+			// get the programme fields
+			$programme_fields = $fieldModel::programme_fields();
+		
 			// assign the input data to the programme fields
-			$programme_modified = ProgrammeField::assign_fields($programme, $programme_fields, Input::all());
+			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 
 			// save the modified programme data
 			$programme_modified->save();
 			
 			// success message
-			$title_field = Programme::get_title_field();
+			$title_field = $model::get_title_field();
 			Messages::add('success', "Saved ".$programme->$title_field);
 			
 			// redirect back to the same page we were on
@@ -218,23 +245,44 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('recieve_edit_requests');
 
+		$model = $this->model ;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		//Get diff data
+		
+		$live_revision = $programme->find_live_revision();
+		$revision = $programme->get_revision($revision_id);
 
-		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
-		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		// if there is not yet a live revision get the difference with our modified revision only
+		if(empty($live_revision) && !empty($revision)){
 
-		$data = array(
-			'diff' => $diff,
-			'programme' => $programme
-		);
+			$diff = $model::revision_diff($revision, null);
 
- 		return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+			$data = array(
+				'programme' => $programme,
+				'diff' => $diff
+			);
+
+			return $this->layout->nest('content', 'admin.'.$this->views.'.review_pre_live', $data);
+		}
+		else{
+			//Get diff data
+			$diff = $model::revision_diff($live_revision,  $revision);
+			if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+			$data = array(
+				'diff' => $diff,
+				'programme' => $programme
+			);
+
+ 			return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+		}
+
+		
 	}
 
 
@@ -249,16 +297,17 @@ class Programmes_Controller extends Revisionable_Controller {
 	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
 	{
 		$this->check_user_can('recieve_edit_requests');
+		$model = $this->model;
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Get programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		//Get diff data
 
-		$diff = Programme::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
+		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
 		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$data = array(
@@ -277,11 +326,15 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $revision_id  The ID of the revision being submitted for editing.
 	 */
 	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
-	{
+	{	
 		$this->check_user_can('submit_programme_for_editing');
 
-		$programme = Programme::find($object_id);
-		$revision = ProgrammeRevision::find($revision_id);
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
+
+		$programme = $model::find($object_id);
+		$revision = $revision_model::find($revision_id);
 
 		if(!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 		$programme->submit_revision_for_editing($revision->id);
@@ -289,7 +342,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		// Send email notification to the approval list
 		if(Config::get('programme_revisions.notifications.on')){
 			$author = Auth::user();
-			$title = $programme->{Programme::get_title_field()};
+			$title = $programme->{$model::get_title_field()};
 
 			$mailer = IoC::resolve('mailer');
 
@@ -301,7 +354,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$mailer->send($message);
 		}
 
-		Messages::add('success', "Revision of " . $revision->{Programme::get_title_field()} . " been sent to EMS for editing, thank you.");
+		Messages::add('success', "Revision of " . $revision->{$model::get_title_field()} . " been sent to EMS for editing, thank you.");
 		return Redirect::to($year . '/' . $type . '/' . $this->views);
 	}
 
@@ -315,21 +368,24 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('make_programme_live');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
-		$revision = ProgrammeRevision::find($revision_id);
+		$programme = $model::find($programme_id);
+		$revision = $revision_model::find($revision_id);
 		if (!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->make_revision_live((int) $revision_id))
 		{
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-				$title = $programme->{Programme::get_title_field()};
-				$slug = $programme->{Programme::get_slug_field()};
+				$title = $programme->{$model::get_title_field()};
+				$slug = $programme->{$model::get_slug_field()};
 
 				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
@@ -375,16 +431,19 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$this->check_user_can('request_changes');
 
+		$model = $this->model;
+		$revision_model = $model::$revision_model;
+
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 		if (!$programme_id || !$revision_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Programme
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (empty($programme)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the Revision
-		$revision = ProgrammeRevision::find($revision_id);
+		$revision = $revision_model::find($revision_id);
 		if (empty($revision)) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		// Load the message
@@ -392,10 +451,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		if(!empty($body))
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
-			$title = $programme->{Programme::get_title_field()};
+			$title = $programme->{$model::get_title_field()};
+			$link = URL::to_action($year.'/'.$type.'/'.'programmes@edit', array($programme_id));
+			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link)) . $body;
 
 			$mailer = IoC::resolve('mailer');
-
 			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
@@ -421,9 +481,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme_id = Input::get('programme_id');
 		$revision_id = Input::get('revision_id');
 
+		$model = $this->model;
+
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$programme = Programme::find($programme_id);
+		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		if ($programme->revert_to_previous_revision((int) $revision_id))

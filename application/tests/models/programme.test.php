@@ -17,12 +17,12 @@ class TestProgramme extends ModelTestCase {
 	{	
 		Cache::flush(); // Flush the cache.
 		static::clear_models();
-		Programme::$list_cache = false;	
+		UG_Programme::$list_cache = false;	
 		parent::tear_down();
 	}
 
 
-	public function populate($model = 'Programme', $input = array())
+	public function populate($model = 'UG_Programme', $input = array())
 	{
 		if(empty($input))
 		{
@@ -34,14 +34,14 @@ class TestProgramme extends ModelTestCase {
 
 	public function populate_two_years()
 	{
-		$this->populate('Programme', array('year' => '2014', 'programme_title_1' => 'Thing 2014', 'id' => 1));
-		$this->populate('Programme', array('year' => '2015', 'programme_title_1' => 'Thing 2015', 'id' => 2));
+		$this->populate('UG_Programme', array('year' => '2014', 'programme_title_1' => 'Thing 2014', 'id' => 1));
+		$this->populate('UG_Programme', array('year' => '2015', 'programme_title_1' => 'Thing 2015', 'id' => 2));
 	}
 
 	public function populate_cache_and_resave()
 	{
 		$this->populate();
-		Programme::all_as_list(); // Warm cache.
+		UG_Programme::all_as_list(); // Warm cache.
 		$this->resave_entry();
 	}
 
@@ -55,7 +55,7 @@ class TestProgramme extends ModelTestCase {
 	 */
 	public function resave_entry()
 	{
-		$programme = Programme::find(1);
+		$programme = UG_Programme::find(1);
 		$programme->programme_title_1 = 'Thing 2';
 		$programme->save();
 	}
@@ -64,12 +64,12 @@ class TestProgramme extends ModelTestCase {
 	{
 		// set up some data
     	$this->populate();
-    	$programme = Programme::find(1);
+    	$programme = UG_Programme::find(1);
 
     	//delete the programme
         $programme->delete();
         
-        $programme = Programme::find(1);
+        $programme = UG_Programme::find(1);
         
         $this->assertNotNull($programme);
 	}
@@ -78,12 +78,12 @@ class TestProgramme extends ModelTestCase {
 	{
 		// set up some data
     	$this->populate();
-    	$programme = Programme::find(1);
+    	$programme = UG_Programme::find(1);
 
     	//delete the programme
         $programme->delete();
         
-        $programme = Programme::find(1);
+        $programme = UG_Programme::find(1);
         
         $this->assertEquals(true, $programme->hidden);
 	}
@@ -93,7 +93,7 @@ class TestProgramme extends ModelTestCase {
 	{
 		// set up some data
     	$this->populate();
-    	$programme = Programme::find(1);
+    	$programme = UG_Programme::find(1);
     	$revision = $programme->get_revision(1);
         
         // make the revision live
@@ -113,12 +113,12 @@ class TestProgramme extends ModelTestCase {
 
     	// set up some data (set one manually as this db table is not cleared in teardown)
     	$input =  array('programme_title_1' => 'Test programme title', 'year' => '2014', 'id' => 1);
-    	$this->populate('ProgrammeSetting', $input);
+    	$this->populate('UG_ProgrammeSetting', $input);
     	
-    	$revisionable_item = ProgrammeSetting::find(1);
+    	$revisionable_item = UG_ProgrammeSetting::find(1);
 	
     	// make a new revision
-        $new = ProgrammeSetting::find(1);
+        $new = UG_ProgrammeSetting::find(1);
         $new->programme_title_1 = 'The Music Programme';
         $new->save();
    
@@ -128,15 +128,15 @@ class TestProgramme extends ModelTestCase {
         $new->make_revision_live($revision);
         
         // find programme #1 and check its institution name is now 'UniKent'
-        $programme_setting = ProgrammeSetting::find(1);
+        $programme_setting = UG_ProgrammeSetting::find(1);
         $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
 	}
 
-	public function testApproveRevisionSetsStatusToPublished() {
+	public function testApproveRevisionSetsLiveRevisionId() {
 	
     	// set up some data and a revision
 		$this->populate();
-    	$item = Programme::find(1);
+    	$item = UG_Programme::find(1);
         $revision = $item->get_revision(1);
         
         // submit the revision for editing
@@ -145,8 +145,8 @@ class TestProgramme extends ModelTestCase {
         // make the revision live
         $item->make_revision_live($revision);
         
-        // find programme #1 and check its 'live' value is 2
-        $item = Programme::find(1);
-        $this->assertEquals(2, $item->live);
+        // find programme #1 and check its live_revision is the revision we've just made live
+        $item = UG_Programme::find(1);
+        $this->assertEquals($item->live_revision, $revision->id);
 	}
 }

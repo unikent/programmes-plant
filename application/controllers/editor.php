@@ -6,9 +6,26 @@ class Editor_Controller extends Admin_Controller {
 
 	public $required_permissions = array('recieve_edit_requests');
 
+	public function __construct()
+	{  
+		// Construct parent.
+		parent::__construct();
+	}
+
 	public function get_inbox()
-	{
-		return $this->layout->nest('content', 'admin.editor.index', array('for_review' => Programme::get_under_review()));
+	{	
+		$ug_for_review = UG_Programme::get_under_review();
+		$pg_for_review = PG_Programme::get_under_review();
+
+		//merge undergraduate and postgraduate together
+		$for_review = array_merge($ug_for_review, $pg_for_review);
+
+		//sort them by last updated date
+		usort($for_review, function($a, $b){
+			 return Date::forge($a->updated_at) > Date::forge($b->updated_at) ? -1 : 1;
+		});
+
+		return $this->layout->nest('content', 'admin.editor.index', array('for_review' => $for_review));
 	}
 
 }

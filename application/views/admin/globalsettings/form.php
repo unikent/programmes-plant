@@ -26,7 +26,7 @@
   </div>	
 
 
-   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array(''=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
+   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array(''=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create, 'model' => $model))->render(); ?>
 </fieldset>
 
 <div class="form-actions">
