@@ -90,6 +90,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		//Section: Overview
 		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters.  The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '', 2);//140 character limit
 		$programme_fields[] = array('Programme overview text', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '', 2);//max 300 words... shows users when they have reached word limit but does allow over-matter.
+		$programme_fields[] = array('Module session', 'text', '', '', 2);
  
 		//Section: Teaching and Assessment 
 		$programme_fields[] = array('Teaching and assessment', 'textarea', 'Please give details of how the programme is taught and assessed here. Max 200 words.', '', 4); // Function: Shows users when they have reached word limit but does allow over-matter. 
