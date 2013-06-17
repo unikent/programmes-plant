@@ -269,6 +269,8 @@ class Revisionable_Controller extends Admin_Controller {
 			$this->data['revisions'] =  $revisions;
 		}
 
+		$this->data['model'] = URLParams::get_type().'_Programme';
+
 		// Display view
 		$this->layout->nest('content', 'admin.revisions.rollback', $this->data);
 	}
