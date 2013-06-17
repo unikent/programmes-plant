@@ -57,8 +57,6 @@ class Add_Pg_Fields {
 		
 
 		// section: fees and funding
-		$programme_override_fields[] = array('Fees and Funding', 'textarea', '', '', 7);
-		$programme_override_fields[] = array('Find out more links', 'textarea', '', '', 7);
 		$programme_override_fields[] = array('Fees and funding', 'textarea', 'Some standard intro text about fees and funding will output on the web page. If the standard text is not applicable you can override it by writing in this field. Max 200 words.', '', 7);
 
 		// section: how to apply
@@ -102,10 +100,11 @@ E: information@kent.ac.uk*/
 			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['NORMAL'], $field[4]);
 		}
 
-		// Add the fields in
+		// Add the global fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg', 'programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0], $field[1], $field[2], $field[3], PG_ProgrammeField::$types['DEFAULT']);
+			$this->add_global_field('GlobalSettingField', 'global_settings', $field[0], $field[1], $field[2], $field[3]);
 		}
+
 
 		// Add the fields in
 		foreach ($programme_override_fields as $field) {
@@ -141,11 +140,11 @@ E: information@kent.ac.uk*/
         $field_object->view = 1;
         $field_object->section = $section;
         $field_object->programme_field_type = $programme_field_type;
-        $field_object->save();
+        $field_object->raw_save();
     	$colname .= '_'.$field_object->id;
     	$field_object->colname = $colname;
 
-    	$field_object->save();
+    	$field_object->raw_save();
 
 		
 		if(!is_array($tablename)){
@@ -180,6 +179,77 @@ E: information@kent.ac.uk*/
 		$permission->save();
 		$permission->roles()->sync(array(2, 3)); // Grant read rights to Admin and User as default
 	}
+
+
+
+
+
+
+
+
+
+/**
+	 * Adds a field to a fields table.
+	 * 
+	 * @param string $modelname the class of object we are creating. eg. 'GlobalSettingField' or 'Programme_Field'
+	 * @param string $tablename the table name we're creating a field for 
+	 * @param string $title the title of the field.
+	 * @param string $type the type of field.
+	 * @param string $hints the hints for the field.
+	 * @param string $options the options, particularly used when the field type is select.
+	 */
+	public function add_global_field($modelname, $tablename, $title, $type, $hints, $options)
+	{
+        // define the column name
+    	$colname = Str::slug($title, '_');
+    	
+    	// set up the field object and save it to the _fields table
+    	// eg for a Global_Setting object we set up the GlobalSettingField object and save it to the global_settings_fields table
+    	$field_object = new $modelname;
+        $field_object->field_name = $title;
+        $field_object->field_type = $type;
+        $field_object->field_description = $hints;
+        $field_object->field_meta = $options;
+        $field_object->field_initval =  '';
+        $field_object->active = 1;
+        $field_object->view = 1;
+        $field_object->raw_save();
+    	$colname .= '_'.$field_object->id;
+    	$field_object->colname = $colname;
+    	$field_object->raw_save();
+		
+		// modify the schema for the main table eg global_settings
+		// by default columns are varchars unless they've been specified as textareas
+		Schema::table($tablename, function($table) use ($colname, $type) {
+		
+			if ($type=='textarea')
+			{
+    			$table->text($colname);
+			}
+			else
+			{
+				$table->string($colname, 255);
+			}
+				
+		});
+		
+		// modify the schema for the revisions table eg global_settings_revisions
+		// by default columns are varchars unless they've been specified as textareas
+		Schema::table($tablename.'_revisions', function($table) use ($colname, $type) {
+		
+			if ($type=='textarea')
+			{
+				$table->text($colname);
+			}
+			else
+			{
+				$table->string($colname,255);
+			}
+			
+		});
+	}
+
+
 
 
 }
