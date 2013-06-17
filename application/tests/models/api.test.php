@@ -3,12 +3,15 @@
 class TestAPI extends ModelTestCase 
 {
 
-	public static $test_programme = array(
-		'programme_title_1' => 'Thing',
-		'year' => "2014",
-		'programme_suspended_53' => '',
-        'programme_withdrawn_54' => ''
-    );
+	public static function test_programme ()
+	{
+		return array(
+			'programme_title_1' => 'Thing',
+			'year' => "2014",
+			UG_Programme::get_programme_suspended_field() => '',
+	        UG_Programme::get_programme_withdrawn_field() => '',
+    	);
+    }
 
     public static $data_types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
 
@@ -35,7 +38,7 @@ class TestAPI extends ModelTestCase
 
 	// Test data
 	private function publish_programme(){
-		$programme = UG_Programme::create(static::$test_programme);
+		$programme = UG_Programme::create(static::test_programme());
         $revision = $programme->get_active_revision();
         $programme->make_revision_live($revision);
 
@@ -91,7 +94,7 @@ class TestAPI extends ModelTestCase
 		// Add first programme
 		$this->publish_programme();
 		// Add second
-		UG_Programme::create(static::$test_programme);
+		UG_Programme::create(static::test_programme());
 		// Wipe cache
 		Cache::flush();
 		$result = API::get_index('2014');
@@ -103,7 +106,7 @@ class TestAPI extends ModelTestCase
 		// Add first programme
 		$this->publish_programme();
 		// Add second
-		UG_Programme::create(static::$test_programme);
+		UG_Programme::create(static::test_programme());
 
 		$result = API::get_index('2014');
 
