@@ -15,31 +15,26 @@
             
             <?php //elseif (URI::segment(1) == 'globalsettings'): ?>
 
-
-            <?php elseif (URLParams::$fields): ?>
-
-                <?php if(URI::segment(1)!=='fields'): ?>
-                    <ul class="nav">
-                        <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/standard')?>">Undergraduate</a></li>
-                        <li class="<?php echo (  URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/standard')?>">Postgraduate</a></li>
-                    </ul>
-                <?php endif;?>
             <?php else: ?>
+                <?php if (URLParams::$year_header_links): ?>
 
-                
-                <ul class="nav">
-                    <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url(URLParams::$year.'/ug/programmes')?>">Undergraduate</a></li>
-                    <li class="<?php echo (  URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url( URLParams::$year.'/pg/programmes')?>">Postgraduate</a></li>
-                </ul>
-            
-                
-                <ul class="nav">
-                    <?php for ($year=URLParams::$current_year; $year<=(URLParams::$current_year+2); $year++): ?>
-                    <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/'. URLParams::$type . '/programmes'); ?>"><?php echo $year; ?></a></li>
-                    <?php endfor; ?>
-                </ul>
-            
-                
+                    <ul class="nav">
+                        <?php for ($year=URLParams::$current_year; $year<=(URLParams::$current_year+2); $year++): ?>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('year' => $year)) . URLParams::strip_year_and_type_from_url()); ?>"><?php echo $year; ?></a></li>
+                        <?php endfor; ?>
+                    </ul>
+
+                <?php endif;?>
+
+                <?php if (URLParams::$type_header_links): ?>
+
+                    <ul class="nav">
+                        <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('type' => 'ug')) . URLParams::strip_year_and_type_from_url())?>">Undergraduate</a></li>
+                        <li class="<?php echo ( URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('type' => 'pg')) . URLParams::strip_year_and_type_from_url())?>">Postgraduate</a></li>
+                    </ul>
+
+                <?php endif;?>
+
             <?php endif; ?>
 
                 <ul class="nav pull-right">
