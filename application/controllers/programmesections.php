@@ -69,7 +69,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		$model = $this->model;
 
 		$rules = array(
-			'id'  => 'required|exists:programmesections',
+			'id'  => 'required|exists:programmesections_'.$type,
 		);
 		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails())
@@ -89,7 +89,7 @@ class ProgrammeSections_Controller extends Admin_Controller {
 		$model = $this->model;
 
 		$rules = array(
-			'name'  => 'required|unique:programmesections|max:255',
+			'name'  => 'required|unique:programmesections_'.$type.'|max:255',
 		);
 		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails())
