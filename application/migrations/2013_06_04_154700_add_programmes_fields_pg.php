@@ -35,9 +35,9 @@ class Add_Programmes_Fields_Pg {
 		$programme_fields[] = array('Slug', 'text', '', '', 1);
 		$programme_fields[] = array('Award', 'table_select', '', 'Award', 2);
 		$programme_fields[] = array('Subject area 1', 'table_select', 'Please select the main subject area for this programme.  If the programme is joint honours, please ensure the subject selected is taught by the administrative school.', 'Subject', 2);
-		$programme_fields[] = array('Programme withdrawn', 'text', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', '', 10);
-		$programme_fields[] = array('Programme suspended', 'text', 'Only tick the box if the programme has been suspended. Please unpublish the programme if necessary or add a holding message.', '', 10);
-		$programme_fields[] = array('Subject to approval', 'text', 'Check the box if this programme has been approved for advertising subject to approval by PASC.', '', 10);
+		$programme_fields[] = array('Programme withdrawn', 'checkbox', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', '', 10);
+		$programme_fields[] = array('Programme suspended', 'checkbox', 'Only tick the box if the programme has been suspended. Please unpublish the programme if necessary or add a holding message.', '', 10);
+		$programme_fields[] = array('Subject to approval', 'checkbox', 'Check the box if this programme has been approved for advertising subject to approval by PASC.', '', 10);
 		
 		// Add the fields in
 		foreach ($programme_fields as $field) {
