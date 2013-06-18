@@ -31,7 +31,7 @@ return array(
 
 	'form' => array(
 		'login' => array(
-			'label' => 'Name',
+			'label' => 'Login',
 			'placeholder' => 'Staff login name',
 		),
 		'title' => array(
