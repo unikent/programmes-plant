@@ -145,6 +145,11 @@ $(document).ready(function (){
         $(this).find('i').toggleClass('icon-chevron-down');
     });
 
+
+    // overridable collapse
+    $('.overridable-badge > .btn').click(function(a){
+      $(this).parent().children('div.description').slideToggle();
+    });
   
     
     /**

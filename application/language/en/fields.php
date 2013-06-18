@@ -66,6 +66,7 @@ return array(
         'label_limit_help_text' => 'Leave blank if this field does not require a word limit. Use 200w (for 200 words) or just 500 for 500 characters.',
         'programme_overwrite_text' => 'If left blank, this field will inherit its value from its programmes setting counterpart.',
         'programme_overwrite_text_title' => 'An overridable field',
+        'programme_settings_overridable_tooltip' => 'Press the button to see the default value used when this field is left blank.',
         'programme_settings_overwrite_text' => 'This field can be overwritten in individual programmes.',
         'programme_settings_overwrite_text_title' => 'An overridable field',
         'btn' => array(
