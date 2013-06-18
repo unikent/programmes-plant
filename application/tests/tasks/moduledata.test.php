@@ -158,8 +158,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme['pos_code'] = 'ACCF-S:BA';
         $programme['campus_id'] = '1';
         $programme['module_session'] = '2014';
-        UG_Programme::$fields['module_session'] = 'module_session_86';
-       
+        UG_Programme::$fields['module_session'] = UG_Programme::get_module_session_field();
 
 
         $url_programme_modules = Config::get('module.programme_module_base_url');
@@ -198,11 +197,15 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->populate_campus();
         
         $programme = new stdClass();
-        $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '2';
-        $programme->module_session_86 = '2014';
-        $programme->awarding_institute_or_body_4 = '0122';
-        
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '2';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = '2014';
+
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
@@ -214,10 +217,15 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->populate_campus();
 		
         $programme = new stdClass();
-        $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '2';
-        $programme->module_session_86 = '2013';
-        $programme->awarding_institute_or_body_4 = '0122';
+
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '2';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = '2013';
 		
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
@@ -230,10 +238,14 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->populate_campus();
         
         $programme = new stdClass();
-        $programme->pos_code_44 = 'ACCF-S:BA';
-        $programme->location_11 = '2';
-        $programme->module_session_86 = 'None';
-        $programme->awarding_institute_or_body_4 = '0122';
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '2';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = 'None';
         
         $url_programme_modules = Config::get('module.programme_module_base_url');
         $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);

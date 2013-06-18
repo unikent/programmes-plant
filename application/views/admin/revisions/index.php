@@ -6,7 +6,7 @@
 <?php
  	$model = $programme->data_type;
 ?>
-<h1><?php echo $programme->{$model::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo $programme->{$model::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <h3><?php echo __("revisions.active_revisions"); ?></h3>
 

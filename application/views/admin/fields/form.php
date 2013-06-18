@@ -1,4 +1,9 @@
-<h1><?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?></h1>
+<h1>
+  <?php if (URI::segment(2) != 'immutable'): ?>
+    <?php echo View::make('admin.inc.partials.type_marker')->render(); ?>
+  <?php endif; ?>
+  <?php echo ( ! isset($values)) ? __('fields.form.add_title', array('field_name' => __('fields.form.'.$field_type))) : __('fields.form.edit_title', array('field_name' => __('fields.form.'.$field_type))); ?>
+</h1>
 
 <?php echo Messages::get_html()?>
 

@@ -37,6 +37,10 @@ class URLParams {
 		{
 			static::$type = 'pg';
 		}
+		elseif (URI::segment(1) == 'pg')
+		{
+			static::$type = 'pg';
+		}
 
 		// If on API url
 		if(URI::segment(1) == 'api'){
@@ -171,5 +175,3 @@ class URLParams {
 
 URLParams::init();
 
-// /2014/ug/
-// /ug/fields

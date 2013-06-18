@@ -5,7 +5,8 @@
 
          <?php if (Auth::user()->can(array("edit_own_programmes", "view_all_programmes", "edit_all_programmes"))): ?>
 
-        <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$mainpath.'programmes')?>"><i class="icon-home"></i> Programmes</a></li>
+        <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmes')?>"><i class="icon-home"></i> UG Programmes</a></li>
+        <li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmes')?>"><i class="icon-home"></i> PG Programmes</a></li>
        
         <?php endif; ?>
 
@@ -30,7 +31,8 @@
         <?php endif; ?>
 
         <?php if (Auth::user()->can("edit_overridable_data")): ?>
-            <li class="<?php echo ( (URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$mainpath.'programmesettings')?>"><i class="icon-list-alt"></i> Overridable fields</a></li>  
+            <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmesettings')?>"><i class="icon-list-alt"></i> UG Overridable fields</a></li>
+            <li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmesettings')?>"><i class="icon-list-alt"></i> PG Overridable fields</a></li> 
         <?php endif; ?>
 
         <?php if (Auth::user()->can("configure_fields")): ?>
@@ -38,14 +40,21 @@
 
             <li class="<?php echo ( (URI::segment(1) == 'fields' && URI::segment(2) == 'immutable') ? 'active' : false )?>"><a href="<?php echo url('fields/immutable')?>"><i class="icon-cog"></i> Immutable fields </a></li>
 
-            <li class="<?php echo ( (URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$type.'/fields/standard')?>"><i class="icon-cog"></i> Programme fields</a></li>
+            <li class="<?php echo ( (URI::segment(1) == 'ug' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/standard')?>"><i class="icon-cog"></i> UG Programme fields</a></li>
+
+            <li class="<?php echo ( (URI::segment(1) == 'pg' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/standard')?>"><i class="icon-cog"></i> PG Programme fields</a></li>
 
         <?php endif; ?>
 
         <?php if (Auth::user()->can("manage_users")): ?>
-            <li class="nav-header">User managment</li>
+            <li class="nav-header">Managment</li>
             <li class="<?php echo ( (URI::segment(1) == 'users' ) ? 'active' : false )?>"><a href="<?php echo url('users')?>"><i class="icon-user"></i> Users </a></li>
+           
         <?php endif; ?>
+        <?php if (Auth::user()->can("system_settings")): ?>
+             <li class="<?php echo ( (URI::segment(1) == 'settings' ) ? 'active' : false )?>"><a href="<?php echo url('settings')?>"><i class="icon-wrench"></i> System settings </a></li>
+        <?php endif; ?>
+       
 
 
 </ul>
