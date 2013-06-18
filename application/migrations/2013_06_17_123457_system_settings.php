@@ -17,11 +17,13 @@ class System_Settings {
 			$table->string('pg_current_year', 200);
 		});
 		// Add data
-		DB::table("system_settings")->insert(array('ug_current_year'=>'2013' ,'pg_current_year'=>'2013'));
+		DB::table("system_settings")->insert(array('ug_current_year'=>'2014' ,'pg_current_year'=>'2014'));
 
 		// Required perm "system_settings", is not added to any group at this point since only
 		// hyper admins (who have it by default) will want access anyway in the current setup.
 		Permission::create(array('name' => "system_settings"));
+
+
 	}
 
 	/**
