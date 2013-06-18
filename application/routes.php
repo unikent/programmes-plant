@@ -61,6 +61,10 @@ Route::group(array('before' => ''), function(){
 	// System settings
 	Route::any('settings', 'settings@index');
 
+	// Customised routing for research staff
+	Route::any('staff', 'staff@index');
+	Route::any('staff/(:any?)/(:num?)', 'staff@(:1)');
+	
 	// Customised routing for campuses
 	Route::any('campuses', 'campuses@index');
 	Route::any('campuses/(:any?)/(:num?)', 'campuses@(:1)');
