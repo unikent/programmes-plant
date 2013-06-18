@@ -3,7 +3,9 @@ body {
 }
 
 h1 {
-    padding-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    line-height: 60px;
 }
 
 .icon-link {
@@ -58,6 +60,21 @@ textarea {
 }
 div.alert { margin-top:10px; margin-bottom:10px; }
 div.alert p { margin:0; }
+
+.alert-type {
+    margin: 0px;
+    padding: 10px;
+    border-radius: 0px;
+    color: #fff;
+}
+.alert-ug {
+    background-color: rgb(0, 15, 66);
+}
+
+.alert-pg {
+    background-color: rgb(103, 17, 21);
+}
+
 .gallery_images .caption { text-align:center; }
 .gallery_images .caption small { font-style:italic; }
 .gallery_images .caption p { margin-bottom:0; }

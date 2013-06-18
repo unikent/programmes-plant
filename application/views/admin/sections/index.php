@@ -1,5 +1,5 @@
 
-                <?php echo View::make('admin.inc.meta')->render()?>
+    <?php echo View::make('admin.inc.meta')->render()?>
     <title>Programmes Plant</title>
   </head>
   <body>
