@@ -275,7 +275,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/{data_type}/rollback/{$itm_id}
+	 * Routing for GET /$year/{data_type}/view_revision/{$itm_id}
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $itm_id       The id of the item to show revisions for
@@ -283,7 +283,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 	*/
 	public function get_view_revision($year, $itm_id = false, $revision_id = false, $misc = false)
 	{
-		return parent::get_view_revision($year, URLParams::get_type(), $item_id, $revision_id);
+		return parent::get_view_revision($year, URLParams::get_type(), $itm_id, $revision_id);
 	}
 
 	/**

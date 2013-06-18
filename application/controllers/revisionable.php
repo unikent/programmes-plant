@@ -201,6 +201,7 @@ class Revisionable_Controller extends Admin_Controller {
 		// load revisions for item.
 	
 		$this->data['programme'] = $course ;
+		$this->data['revision_type'] = $this->views;
 	
 		if ($revisions = $course->get_revisions())
 		{
@@ -262,7 +263,8 @@ class Revisionable_Controller extends Admin_Controller {
 		if(!$course) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// load revisions for item.
-		$this->data['programme'] = $course ;
+		$this->data['programme'] = $course;
+		$this->data['revision_type'] = $this->views;
 
 		if ($revisions = $course->get_revisions())
 		{
