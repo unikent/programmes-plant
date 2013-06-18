@@ -58,6 +58,9 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/globalsettings/(:any)/(:num)', 'globalsettings@(:2)');
 	Route::any('([0-9]{4})/globalsettings/(:num?)/(:any?)/(:num?)', 'globalsettings@(:3)');
 
+	// System settings
+	Route::any('settings', 'settings@index');
+
 	// Customised routing for campuses
 	Route::any('campuses', 'campuses@index');
 	Route::any('campuses/(:any?)/(:num?)', 'campuses@(:1)');
@@ -89,6 +92,8 @@ Route::group(array('before' => ''), function(){
 	// Users system
 	Route::any('users', 'users@index');
 	Route::any('users/(add|edit|delete)/(:num?)', 'users@(:1)');
+
+
 
 	// Editing suite
 	Route::controller('editor');
