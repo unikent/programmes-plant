@@ -1,7 +1,7 @@
 <div style='padding:10px;height:30px;' class='alert <?php if($programme->get_publish_status() === 'published'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>    
   <div style='float:right;'>
-    <a class="btn btn-warning" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@revisions', array($programme->id))?>" ><?php echo __("revisions.revision_form"); ?></a>
-    <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
+    <a class="btn btn-warning" href="<?php echo  action(URLParams::get_variable_path_prefix().$revision_type.'@revisions', array($programme->id))?>" ><?php echo __("revisions.revision_form"); ?></a>
+    <a class="btn btn-info" href="<?php echo  action(URLParams::get_variable_path_prefix().$revision_type.'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
   </div>
 </div>
 
@@ -20,7 +20,7 @@ foreach ($revisions as $revision){
         $active_r=false;
       }
   }else{
-     echo View::make('admin.revisions.partials.previous_revision', array('revision' => $revision, 'programme' => $programme))->render();
+     echo View::make('admin.revisions.partials.previous_revision', array('revision' => $revision, 'programme' => $programme, 'revision_type' => $revision_type))->render();
   }
 }
 ?>
