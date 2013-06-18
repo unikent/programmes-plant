@@ -2,9 +2,9 @@
 
 class URLParams {
 
-	public static $year = '2014';
+	public static $year = '';
 	public static $type = 'ug';
-	public static $current_year = '2014';
+	public static $current_year = '';
 	public static $fields = false;
 	public static $mainpath = '';
 
@@ -16,11 +16,18 @@ class URLParams {
 
 	public static function init()
 	{
+		// Load defaults
+		$default_year = Setting::get_setting('ug_current_year');
+		//Ensure there is a default
+		if($default_year===null) $default_year = 2014;
+
+		static::$year = static::$current_year = $default_year;
+
 		// what year are we viewing currently?
-	    static::$year = (is_numeric(URI::segment(1))) ? URI::segment(1) : '2014';
+	    static::$year = (is_numeric(URI::segment(1))) ? URI::segment(1) : $default_year;
 
 	    // what's the base year?
-		static::$current_year = '2014';
+		static::$current_year = $default_year;
 		
 		// are we viewing programme fields?
 		if (URI::segment(2) == 'fields')
