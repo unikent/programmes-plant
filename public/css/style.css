@@ -44,7 +44,12 @@ textarea {
 }
 
 .overridable-badge {
-	margin: 10px 0 10px 0;;
+	margin: 10px 0 10px 0;
+}
+
+.overridable-badge .description {
+    display: none;
+    margin: 10px 10px 10px 0;
 }
 
 .container.loginwindow { width:500px; margin:0 auto; text-align:center; }
