@@ -20,7 +20,7 @@ abstract class ProgrammeSetting extends Revisionable
     {
 
         // If in memoery cache, return from there
-        if(isset(static::$settings_cache[$year])) return isset(static::$settings_cache[$year]->$colname) ? static::$settings_cache[$year]->$colname : '';
+        if(isset(static::$settings_cache[$year])) return isset(static::$settings_cache[$year][$colname]) ? static::$settings_cache[$year][$colname] : '';
 
         // Otherwise, get data
         $revision_model = static::$revision_model;
@@ -32,7 +32,7 @@ abstract class ProgrammeSetting extends Revisionable
 
         // Store in memoery cache & return
         static::$settings_cache[$year] = $settings->to_array();
-        return isset($settings->$colname) ? $settings->$colname : '';     
+        return isset($settings->$colname) ? $settings->$colname : '';    
     }
 
 }

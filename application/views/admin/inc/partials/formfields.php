@@ -109,18 +109,19 @@ foreach($section as $field):
 			<?php if(isset($field->programme_field_type) && $field->programme_field_type == $field_model::$types['OVERRIDABLE_DEFAULT']): ?>
 
 				<div class="overridable-badge">
-					<span class="badge badge-info" rel="tooltip" data-original-title="
-					<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
-					<?php echo __('fields.form.programme_overwrite_text_title')?>
-					<?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
-					<?php echo __('fields.form.programme_settings_overwrite_text_title')?>
+
+          <?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
+					<span class="btn btn-mini btn-primary" rel="tooltip" data-original-title="<?php echo __('fields.form.programme_settings_overridable_tooltip')?>">Overridable</span>
+					
+          <?php elseif (isset($from) && strcmp($from, 'programmesettings') == 0): ?>
+          <span class="badge badge-info" rel="tooltip" data-original-title="<?php echo __('fields.form.programme_settings_overwrite_text_title')?>">Overridable</span>
+
 					<?php endif; ?>
-					">Overridable</span>
 					
 					<div class="description">
 						<?php if(isset($from) && strcmp($from, 'programmes') == 0): ?>
 						<?php if($overwritable_model::get_setting($year, $field->colname) != null): ?>
-						<br />i.e. <br /> <pre><?php echo $overwritable_model::get_setting($year, $field->colname) ?></pre>
+						<pre><?php echo $overwritable_model::get_setting($year, $field->colname) ?></pre>
 						<?php endif; ?>
 						<?php endif; ?>
 					</div>
