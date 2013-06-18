@@ -24,6 +24,7 @@
             <li class="<?php echo ( URI::segment(1) == 'schools' ? 'active' : false )?>"><a href="<?php echo url('schools')?>"><i class="icon-list-alt"></i> Schools</a></li>
             <li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('subjects')?>"><i class="icon-list-alt"></i> Subjects</a></li>
             <li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('subjectcategories')?>"><i class="icon-list-alt"></i> Subject categories</a></li>
+            <li class="<?php echo ( URI::segment(1) == 'staff' ? 'active' : false )?>"><a href="<?php echo url('staff')?>"><i class="icon-list-alt"></i> Research Staff</a></li>
         <?php endif; ?>
 
         <?php if (Auth::user()->can("edit_immutable_data")): ?>
