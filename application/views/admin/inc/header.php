@@ -1,4 +1,4 @@
-<div class="navbar navbar-fixed-top">
+it doesn<div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -30,7 +30,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year-1; $year<=(URLParams::$current_year+1); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="/<?php echo $year; ?>/<?php echo URLParams::$type; ?>/programmes"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="/programmes/<?php echo $year; ?>/<?php echo URLParams::$type; ?>/programmes"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 
