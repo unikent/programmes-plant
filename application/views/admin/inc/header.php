@@ -14,7 +14,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year-1; $year<=(URLParams::$current_year+1); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="/<?php echo $year; ?>/globalsettings"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/' . '/globalsettings'); ?>"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 
@@ -22,7 +22,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year-1; $year<=(URLParams::$current_year+1); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="/<?php echo $year; ?>/<?php echo URLParams::$type; ?>/programmesettings"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/' . URLParams::$type . '/programmesettings'); ?>"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 
@@ -30,7 +30,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year-1; $year<=(URLParams::$current_year+1); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="/<?php echo $year; ?>/<?php echo URLParams::$type; ?>/programmes"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/' . URLParams::$type . '/programmes'); ?>"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 
