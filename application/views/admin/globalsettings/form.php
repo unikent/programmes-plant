@@ -1,6 +1,6 @@
 <?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
 
-<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files(URLParams::get_variable_path_prefix().'globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <div class="floating_save" data-spy="affix" data-offset-top="100">
   <div class='pull-right'>

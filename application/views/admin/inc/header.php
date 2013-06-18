@@ -20,8 +20,8 @@
                 <?php if (URLParams::$type_header_links): ?>
 
                     <ul class="nav">
-                        <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('type' => 'ug')) . URLParams::strip_year_and_type_from_url())?>">Undergraduate</a></li>
-                        <li class="<?php echo ( URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('type' => 'pg')) . URLParams::strip_year_and_type_from_url())?>">Postgraduate</a></li>
+                        <li class="<?php echo ( URLParams::$type == 'ug' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_variable_path_prefix(array('type' => 'ug')) . URLParams::strip_year_and_type_from_url())?>">Undergraduate</a></li>
+                        <li class="<?php echo ( URLParams::$type == 'pg' ? 'active' : false )?>"><a href="<?php echo url(URLParams::get_variable_path_prefix(array('type' => 'pg')) . URLParams::strip_year_and_type_from_url())?>">Postgraduate</a></li>
                     </ul>
 
                 <?php endif;?>
@@ -30,7 +30,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year; $year<=(URLParams::$current_year+2); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url(URLParams::get_header_path_prefix(array('year' => $year)) . URLParams::strip_year_and_type_from_url()); ?>"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url(URLParams::get_variable_path_prefix(array('year' => $year)) . URLParams::strip_year_and_type_from_url()); ?>"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 

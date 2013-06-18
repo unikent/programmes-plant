@@ -189,4 +189,112 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 
 		return View::make('admin.changes.index', $this->data);
 	}
+
+	/**
+	 * Routing for GET /$year/delete/$programme_id
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
+	 * @param int    $misc         Only here to satisfy rules of overriding parent methods, so it isn't used.
+	 *
+	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
+	 *	the revision id instead. (Object assumed to have id 1 in this case)
+	 */
+	public function get_delete($year, $revisionable_item_id = false, $misc = false)
+	{
+		return parent::get_delete($year, URLParams::get_type(), $revisionable_item_id);
+	}
+
+	/**
+	 * Routing for GET /$year/globalsettings/revisions/{$itm_id}
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $itm_id       The id of the item to show revisions for
+	 * @param int    $misc         Only here to satisfy rules of overriding parent methods, so it isn't used.
+	*/
+	public function get_revisions($year, $itm_id = false, $misc = false)
+	{
+		return parent::get_revisions($year, URLParams::get_type(), $itm_id);
+	}
+
+	/**
+	 * Routing for GET /$year/$object_id/make_live/$revision_id
+	 * Routing for GET /$year/make_live/$revision_id
+	 * 
+	 * revisionable_item_id id can be ommited, resulting in that variable containing 
+	 * the revision id instead. (Object assumed to have id 1 in this case)
+	 *
+	 * @param int    $year                  The year of the programme (not used, but to keep routing happy).
+	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
+	 * @param int    $revision_id           The revision ID we are putting live.
+	 * @param int    $misc         			Only here to satisfy rules of overriding parent methods, so it isn't used.
+	 */
+	public function get_make_live($year, $revisionable_item_id = false, $revision_id = false, $misc = false)
+	{
+		return parent::get_make_live($year, URLParams::get_type(), $revisionable_item_id, $revision_id);
+	}
+
+	/**
+	 * Routing for GET /$year/$object_id/revert_to_revision/$revision_id
+	 * Routing for GET /$year/revert_to_revision/$revision_id
+	 *
+	 * @param int    $year         			The year of the programme (not used, but to keep routing happy).
+	 * @param int    $revisionable_item_id  The object ID we are reverting to a revision on.
+	 * @param int    $revision_id  			The revision ID we are reverting to.
+	 * @param int    $misc         			Only here to satisfy rules of overriding parent methods, so it isn't used.
+	 *
+	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
+	 *	the revision id instead. (Object assumed to have id 1 in this case)
+	 */
+	public function get_use_revision($year, $revisionable_item_id = false, $revision_id = false, $misc = false)
+	{
+		return parent::get_use_revision($year, URLParams::get_type(), $revisionable_item_id, $revision_id);
+	}
+
+
+	public function get_revert_to_previous($year, $revisionable_item_id = false, $revision_id = false, $misc = false)
+	{
+		return parent::get_revert_to_previous($year, URLParams::get_type(), $revisionable_item_id, $revision_id);
+	}
+	
+	/**
+	 * Routing for GET /$year/$object_id/unpublish/$revision_id
+	 * Routing for GET /$year/unpublish/$revision_id
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param int    $revisionable_item_id  The object ID we are pushing a revision live on.
+	 * @param int    $revision_id  The revision ID we are putting live.
+	 * @param int    $misc         	Only here to satisfy rules of overriding parent methods, so it isn't used.
+	 *
+	 * @note revisionable_item_id id can be ommited, resulting in that varible containg 
+	 *	the revision id instead. (Object assumed to have id 1 in this case)
+	 */
+	public function get_unpublish($year, $revisionable_item_id = false, $revision_id = false, $misc = false)
+	{
+		return parent::get_unpublish($year, URLParams::get_type(), $revisionable_item_id, $revision_id);
+	}
+
+	/**
+	 * Routing for GET /$year/{data_type}/rollback/{$itm_id}
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $itm_id       The id of the item to show revisions for
+	 * @param int    $misc         	Only here to satisfy rules of overriding parent methods, so it isn't used.
+	*/
+	public function get_view_revision($year, $itm_id = false, $revision_id = false, $misc = false)
+	{
+		return parent::get_view_revision($year, URLParams::get_type(), $item_id, $revision_id);
+	}
+
+	/**
+	 * Routing for GET /$year/{data_type}/rollback/{$itm_id}
+	 *
+	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
+	 * @param string $itm_id       The id of the item to show revisions for
+	 * @param int    $misc         Only here to satisfy rules of overriding parent methods, so it isn't used.
+	*/
+	public function get_rollback($year, $itm_id = false, $misc = false)
+	{
+		return parent::get_rollback($year, URLParams::get_type(), $itm_id);
+	}
 }

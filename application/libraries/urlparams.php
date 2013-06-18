@@ -96,16 +96,32 @@ class URLParams {
         }
 	}
 
-
+	/*
+	 * Check that a segment of the URL is up or pg
+	 * @param (string) $segment A segment of the URL
+	 */
 	public static function url_segment_is_type($segment){
 		return strtolower($segment) == 'ug' || strtolower($segment) == 'pg';
 	}
 
+	/*
+	 * Check that a segment of the URL is a year
+	 * @param (string) $segment A segment of the URL
+	 */
 	public static function url_segment_is_year($segment){
-		return is_numeric($segment) && strlen($segment) == 4;
+		return is_numeric($segment) && 
+				strlen($segment) == 4 && 
+				intval($segment) > 2000 && 
+				intval($segment) < 2100;
 	}
 
-	public static function get_header_path_prefix($params = array()){
+	/*
+	 * Work out the prefix of the current URL, replacing any params that need replacing
+	 *
+	 * @param (array) $params Any params that need replacing (year or type)
+	 * @return 
+	 */
+	public static function get_variable_path_prefix($params = array()){
 		
 		if(empty(static::$header_path_params)){
         	return '';
@@ -126,6 +142,11 @@ class URLParams {
 		return $header_path_prefix;
 	}
 
+	/*
+	 * Strip the year and type from the current URL if there are any
+	 *
+	 * @return (string) URL with year and type stripped out
+	 */
 	public static function strip_year_and_type_from_url(){
 		
 		$new_url = '';
