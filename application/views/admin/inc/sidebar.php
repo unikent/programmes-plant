@@ -45,8 +45,12 @@
         <?php if (Auth::user()->can("manage_users")): ?>
             <li class="nav-header">Managment</li>
             <li class="<?php echo ( (URI::segment(1) == 'users' ) ? 'active' : false )?>"><a href="<?php echo url('users')?>"><i class="icon-user"></i> Users </a></li>
-            <li class="<?php echo ( (URI::segment(1) == 'settings' ) ? 'active' : false )?>"><a href="<?php echo url('settings')?>"><i class="icon-wrench"></i> System settings </a></li>
+           
         <?php endif; ?>
+        <?php if (Auth::user()->can("system_settings")): ?>
+             <li class="<?php echo ( (URI::segment(1) == 'settings' ) ? 'active' : false )?>"><a href="<?php echo url('settings')?>"><i class="icon-wrench"></i> System settings </a></li>
+        <?php endif; ?>
+       
 
 
 </ul>
