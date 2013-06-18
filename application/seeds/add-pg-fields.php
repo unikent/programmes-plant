@@ -53,7 +53,7 @@ class Add_Pg_Fields {
 
 		// section: research
 		$programme_fields[] = array('Research groups', 'textarea', 'Please enter details of research groups here.', '', 6);
-		$programme_fields[] = array('Staff research interests', 'textarea', '', '', 6);
+		$programme_fields[] = array('Staff research interests', 'table_multiselect', '', 'Staff', 6);
 		
 
 		// section: fees and funding
