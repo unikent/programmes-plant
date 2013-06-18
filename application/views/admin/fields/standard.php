@@ -5,7 +5,7 @@
 
 <div class='sortableUI'>
 
-<h1><?php echo __('fields.title', array('field_name' => __('fields.programmes'))); ?></h1>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo __('fields.title', array('field_name' => __('fields.programmes'))); ?></h1>
  <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('fields.introduction.programmes'); ?></p>
 
   <div style="margin-top:20px; margin-bottom:20px">

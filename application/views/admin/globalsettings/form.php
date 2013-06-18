@@ -7,7 +7,7 @@
     <input type="submit" class="btn btn-warning" value="Save">
      <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
   </div>
-   <strong><?php echo __('fields.globalsettings') ?> </strong>
+   <strong><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?> </strong>
 </div>
 
 <?php echo Messages::get_html()?>

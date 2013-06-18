@@ -1,5 +1,5 @@
 
-      <h1><?php echo ( $create ? 'New Section' : 'Edit Section' )?></h1>
+      <h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? 'New Section' : 'Edit Section' )?></h1>
       <?php echo Messages::get_html()?>
       <?php echo Form::open('/'.$type.'/sections/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
         
@@ -42,7 +42,7 @@
 
         <div class="form-actions">
           <input type="submit" class="btn btn-warning" value="<?php echo __('sections.save'); ?>" />
-          <a class="btn" href="<?php echo url('/'.$type.'/sections')?>"><?php echo __('sections.cancel'); ?></a>
+          <a class="btn" href="<?php echo url('/'.$type.'/fields/standard')?>"><?php echo __('sections.cancel'); ?></a>
         </div>
     
       <?php echo Form::close()?>
