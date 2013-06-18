@@ -5,16 +5,6 @@ class Staff extends SimpleData
 
 	public static $rules = array();
 
-	// place holder class for staff datamodel? may end up being built on WS or somthing rather than DB in PP itself?
-
-	//public static function get() {return array(); }
-	//public static function all_as_list() {return array(); }
-
-
-	public function get_name(){
-		return $this->title.' '.$this->forename.' '.$this->surname.' ('.$this->login.')';
-	}
-
 	public function load_from_ldap(){
 
 		echo $this->login;
@@ -35,5 +25,10 @@ class Staff extends SimpleData
 		$this->load_from_ldap();
 
 		parent::save();
+	}
+
+	public static function get_title_field(){return 'login';}
+	public function get_name(){
+		return $this->title.' '.$this->forename.' '.$this->surname.' ('.$this->login.')';
 	}
 }
