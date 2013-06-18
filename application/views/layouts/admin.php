@@ -15,7 +15,9 @@
         </div><!-- /Sidebar -->
         <div class="span9 crud">
           <!-- does this need to be crud all the time? -->
-          <?php echo $content ?>
+          <?php if(isset($content)): ?>
+            <?php echo $content ?>
+          <?php endif; ?>
         </div><!-- /span9 crud -->
       </div><!-- /row-fluid -->
     </div><!-- /container -->
