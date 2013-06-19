@@ -115,5 +115,5 @@
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
-  <a class="btn" href="<?php echo url('/'.$type.'/fields/'.$field_type.'/index')?>"><?php echo __('fields.form.btn.cancel') ?></a>
+  <a class="btn" href="<?php echo url(URLParams::get_variable_path_prefix().'fields/'.$field_type)?>"><?php echo __('fields.form.btn.cancel') ?></a>
 </div>
