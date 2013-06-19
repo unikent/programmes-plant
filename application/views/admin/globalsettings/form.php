@@ -31,6 +31,7 @@
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
+  <a class="btn" href="<?php echo url(URLParams::$year . '/' . URLParams::$type  . '/programmes')?>">Cancel</a>
 </div>
 
 <?php echo Form::close(); ?>
