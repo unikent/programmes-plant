@@ -247,7 +247,7 @@ class API_Controller extends Base_Controller {
 	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
 	 */
-	public function get_xcri_cap($year, $level)
+	public function get_xcri_cap($year)
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
@@ -258,7 +258,7 @@ class API_Controller extends Base_Controller {
 		}
 
 		// pull from cache or send a 404
-		$cache_key = "xcri-cap-ug-$year";
+		$cache_key = "xcri-cap-$year";
 		$xcri = (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
 
 		if(!$xcri){
@@ -270,6 +270,7 @@ class API_Controller extends Base_Controller {
 
 		// set the content-type header
 		static::$headers['Content-Type'] = 'text/xml';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 		
 		//send xcri-cap as our response
 		return Response::make($xcri, 200, static::$headers);

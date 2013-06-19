@@ -14,7 +14,7 @@
             <?php endforeach; ?>
           <?php endif; ?>
           <dc:title><![CDATA[<?php echo ($programme['programme_title']); ?>]]></dc:title>
-          <dc:type><?php echo "undergraduate"; ?></dc:type>
+          <dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
           <mlo:url><?php echo ($programme['url']); ?></mlo:url>
           <?php if (isset($programme['programme_abstract'])): ?>
             <abstract><![CDATA[<?php echo (strip_tags($programme['programme_abstract'])); ?>]]></abstract>

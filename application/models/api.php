@@ -67,9 +67,9 @@ class API {
 	 * @param year year to get index for
 	 * @return combined programme data array
 	 */
-	public static function get_programme($id, $year)
+	public static function get_programme($id, $year, $type = false)
 	{	
-		$type = URLParams::get_type();
+		$type = empty($type) ? URLParams::get_type() : $type;
 		$cache_key = "api-output-{$type}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
@@ -435,10 +435,10 @@ class API {
 	 * 
 	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
 	 */
-	public static function get_xcrified_programme($id, $year)
+	public static function get_xcrified_programme($id, $year, $type = false)
 	{
 		// get the programme
-		$programme = static::get_programme($id, $year);
+		$programme = static::get_programme($id, $year, $type);
 	
 		// format the programme appropriately
 		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
@@ -471,6 +471,9 @@ class API {
 
 		// Leave as is for the moment.
 		$programme['cost'] = $programme['tuition_fees'];
+
+		// Set the programme type
+		$programme['type'] = $type;
 
 		return $programme;
 	}

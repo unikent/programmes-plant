@@ -12,22 +12,29 @@ class XCRICAP_Task {
     public function run($arguments = array())
     {
         $year = isset($arguments[0]) ? $arguments[0] : "2014";
-        $level = isset($arguments[1]) ? $arguments[1] : "undergraduate";
 
-        // get a list of all out programmes through the API
-        $api_index = API::get_index($year, $level);
+        $types = array('ug', 'pg');
 
+        $api_index = array();
         $data = array();
 
-        // fetch each programme individually for our xcri feed
-        foreach (array_keys($api_index) as $programme_id) {
-            $data['programmes'][] = API::get_xcrified_programme($programme_id, $year);
+        // get a list of all our programmes through the API
+        foreach ($types as $type) {
+            $api_index[$type] = API::get_index($year, $type);
+            $api_index[$type] = API::get_index($year, $type);
+
+            // fetch each programme individually for our xcri feed
+            foreach (array_keys($api_index[$type]) as $programme_id) {
+                $data['programmes'][] = API::get_xcrified_programme($programme_id, $year, $type);
+            }
         }
+        
 
         // if there are no programmes throw a 501 error
-        if (! $data['programmes'])
+        if (empty($data))
         {
-            return Response::make('', 501);
+            echo "No programmes could be found!\n";
+            return;
         }
 
         // get the global settings for our xcri feed
@@ -36,7 +43,8 @@ class XCRICAP_Task {
         // if there are no global settings throw a 501 error
         if (! $globalsettings)
         {
-            return Response::make('', 501);
+            echo "No global settings could be found!\n";
+            return;
         }
 
         // neaten up the global settings
@@ -50,8 +58,10 @@ class XCRICAP_Task {
         $xcri_xml = View::make('xcri-cap.1-2', $data);
 
         // cache the xcri-cap xml before sending it
-        $cache_key = "xcri-cap-ug-$year";;
+        $cache_key = "xcri-cap-{$year}";
         Cache::put($cache_key, $xcri_xml->__toString(), 2628000);
+
+        echo "XCRIP-CAP for {$year} has been generated\n";
     }
     
 }
