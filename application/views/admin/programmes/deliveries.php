@@ -3,7 +3,7 @@
 	<title></title>
 	<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" rel="stylesheet">
 	<style>
-		table input {width:auto;}
+		table input, table select {width:auto;}
 	</style>
 </head>
 <body>
@@ -24,8 +24,8 @@
 					<form action="" method="post">
 						<td> <input name="award" type='text' value='<?php echo $delivery->award; ?>' /> </td>
 						<td> <input name="pos_code" type='text' value='<?php echo $delivery->pos_code; ?>' /> </td>
-						<td>  <input name="mcr" type='text' value='<?php echo $delivery->mcr; ?>' /> </td>
-						<td> <input name="attendance_pattern" type='text' value='<?php echo $delivery->attendance_pattern; ?>' /> </td>
+						<td> <?php echo Form::text('mcr', $delivery->mcr); ?>  </td>
+						<td> <?php echo Form::select('attendance_pattern',array('full-time'=>'Full time', 'part-time'=> 'Part time'),$delivery->attendance_pattern); ?></td>
 						<td>
 						 		<input type="hidden" name="id" value="<?php echo $delivery->id; ?>" />
 							 	<input type='submit' class='btn btn-primary' value='Save' /> 
@@ -39,8 +39,8 @@
 			<form action="" method="post">
 				<td> <input name="award" type='text' value='' /> </td>
 				<td> <input name="pos_code" type='text' value='' /> </td>
-				<td> <input name="mcr" type='text' value='' /> </td>
-				<td> <input name="attendance_pattern" type='text' value='' /> </td>
+				<td> <?php echo Form::text('mcr'); ?> </td>
+				<td> <?php echo Form::select('attendance_pattern',array('full-time'=>'Full time', 'part-time'=> 'Part time'),''); ?></td>
 				<td><input type='submit' class='btn btn-success' value='create' /></td>
 			</form>
 		</tr>
