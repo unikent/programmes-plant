@@ -78,6 +78,10 @@ class Add_Pg_Fields {
 
 		$programme_fields[] = array('Subject Categories', 'table_select', '', 'SubjectCategory', 10);
 		$programme_fields[] = array('Module Session', 'text', '', '', 10);
+		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters. The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '', 11); //max 140 characters
+		$programme_fields[] = array('Programme overview', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '', 11); //max 300 words
+		$programme_fields[] = array('School/subject overview', 'textarea', 'This text should give an overview of the school/subject and what it offers prospective students. Max 300 words. ', '', 11); //max 300 words
+		$programme_fields[] = array('Did you know? fact box', 'textarea', 'Please enter key facts about the school/programme such as RAE results, national ratings or other accolades. Max 40 words.', '', 11); //Shows users when they have reached word limit but does allow over-matter.
 
 
 		// immutable fields
