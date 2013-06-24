@@ -546,8 +546,35 @@ class Programmes_Controller extends Revisionable_Controller {
 		return View::make('admin.changes.index', $this->data);
 	}
 
-	public function get_deliveries($id){
-		die("ahoy");
+	/**
+	 * Show programme deliveries (PG only)
+	 */
+	public function get_deliveries($year, $type, $id){
+		$model = $this->model;
+		$deliveries = $model::find($id)->get_deliveries();
+		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
+	}
+	/**
+	 * update programme deliveries (PG only)
+	 */
+	public function post_deliveries($year, $type, $id){
+
+
+		if(Input::get('id')){
+			$delivery = PG_Deliveries::find(Input::get('id'));
+		}else{
+			$delivery = new PG_Deliveries;
+			$delivery->programme_id = $id;
+		}
+		
+		$delivery->award = Input::get('award');
+		$delivery->pos_code = Input::get('pos_code');
+		$delivery->mcr = Input::get('mcr');
+		$delivery->attendance_pattern = Input::get('attendance_pattern');
+		
+		$delivery->save();
+
+		return Redirect::to( URI::current());	
 	}
 
 }

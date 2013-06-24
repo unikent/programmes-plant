@@ -36,7 +36,7 @@
 
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'model' => $model, 'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
-<?php if (! $create): ?>
+<?php if (! $create && URLParams::$type == 'pg'): ?>
 <div class="section accordion accordion-group">
   <div class="accordion-heading">
     <legend>
