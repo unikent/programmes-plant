@@ -37,10 +37,10 @@
 		<?php endforeach; ?>
 		<tr>
 			<form action="" method="post">
-				<td> <input name="award" type='text' value='<?php echo $delivery->award; ?>' /> </td>
-				<td> <input name="pos_code" type='text' value='<?php echo $delivery->pos_code; ?>' /> </td>
-				<td>  <input name="mcr" type='text' value='<?php echo $delivery->mcr; ?>' /> </td>
-				<td> <input name="attendance_pattern" type='text' value='<?php echo $delivery->attendance_pattern; ?>' /> </td>
+				<td> <input name="award" type='text' value='' /> </td>
+				<td> <input name="pos_code" type='text' value='' /> </td>
+				<td> <input name="mcr" type='text' value='' /> </td>
+				<td> <input name="attendance_pattern" type='text' value='' /> </td>
 				<td><input type='submit' class='btn btn-success' value='create' /></td>
 			</form>
 		</tr>
