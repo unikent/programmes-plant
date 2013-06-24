@@ -37,6 +37,7 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
 	Route::any('([0-9]{4})/(ug|pg)/programmes/(:any?)/(:num?)', 'programmes@(:3)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
+	Route::get('([0-9]{4})/(ug|pg)/programmes/deliveries/(:num)', 'programmes@deliveries');
 
 	// Access fields systems
 	Route::any('(ug|pg)/fields/standard', 'programmefields@index');

@@ -546,4 +546,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		return View::make('admin.changes.index', $this->data);
 	}
 
+	public function get_deliveries($id){
+		die("ahoy");
+	}
+
 }
