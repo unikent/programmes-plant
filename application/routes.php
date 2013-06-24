@@ -79,8 +79,8 @@ Route::group(array('before' => ''), function(){
 	Route::any('faculties/(:any?)/(:num?)', 'faculties@(:1)');
 
 	// Customised routing for awards
-	Route::any('awards', 'awards@index');
-	Route::any('awards/(:any?)/(:num?)', 'awards@(:1)');
+	Route::any('(ug|pg)/awards', 'awards@index');
+	Route::any('(ug|pg)/awards/(:any?)/(:num?)', 'awards@(:2)');
 
 	// Customised routing for leaflets
 	Route::any('leaflets', 'leaflets@index');

@@ -15,6 +15,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	var $custom_form = false;
 
 	public $required_permissions = array("edit_data");
+	public $shared_data = true;
 
 	public function __construct()
 	{
@@ -33,15 +34,18 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$model = $this->model;
 
 		$this->data['items'] = $model::all_active();
-
+		$this->data['shared'] = $this->shared_data;
 		$this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
 	}
 	
 	/**
 	 * Display an edit form for an item.
 	 */
-	public function get_edit($object_id = false)
+	public function get_edit()
 	{
+		$params = func_get_args();
+		$object_id = end($params);
+
 		if (! $object_id)
 		{
 			Messages::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
@@ -90,9 +94,14 @@ class Simple_Admin_Controller extends Admin_Controller {
 	/**
 	 * Route for deletion of an item.
 	 */
-	public function get_delete($id)
+	public function get_delete()
 	{
+
+		$params = func_get_args();
+		$id = end($params);
+
 		$model = $this->model;
+		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 
 		$rules = array(
 			'id'  => 'required|integer|exists:' . $this->views,
@@ -103,7 +112,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', __($this->l . 'error.delete'));
 
-			return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
+			return Redirect::to($url_prefix . $this->views);
 		}
 		else
 		{
@@ -111,7 +120,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 			$remove->delete();
 
 			Messages::add('success', __($this->l . 'success.delete'));
-			return Redirect::to($this->views);
+			return Redirect::to($url_prefix.$this->views);
 		}
 	}
 
@@ -121,6 +130,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_create()
 	{
 		$model = $this->model;
+		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 
 		$rules = array(
 			'name'  => 'required|unique:' . $this->views . '|max:255',
@@ -130,7 +140,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to($this->views.'/create')->with_input();
+			return Redirect::to($url_prefix.$this->views.'/create')->with_input();
 		}
 
 		$new = new $this->model;
@@ -141,7 +151,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.create'));
 
-		return Redirect::to($this->views.'');
+		
+		return Redirect::to($url_prefix.$this->views.'');
 	}
 
 	/**
@@ -150,6 +161,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_edit()
 	{
 		$model = $this->model;
+		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
+
 		
 		$rules = array(
 			'id'  => 'required|exists:'. $this->views .',id',
@@ -160,7 +173,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
+			return Redirect::to($url_prefix.$this->views.'/edit/'.Input::get('id'));
 		}
 
 		$update = $model::find(Input::get('id'));
@@ -172,7 +185,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.edit'));
 
-		return Redirect::to($this->views.'');
+		
+		return Redirect::to($url_prefix.$this->views.'');
 	}
 
 }
