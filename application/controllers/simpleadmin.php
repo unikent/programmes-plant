@@ -24,6 +24,9 @@ class Simple_Admin_Controller extends Admin_Controller {
 		// Quick use variable for access to language files
 		$this->l = $this->views . '.';
 
+		// Prefix model if data model isn't shared
+		if(!$this->shared_data) $this->model = URLParams::$type.'_'.$this->model;
+
 		// Construct parent.
 		parent::__construct();
 	}
@@ -65,6 +68,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		}
 
 		$this->data['item'] = $object;
+		$this->data['shared'] = $this->shared_data;
 		
 		if ($this->custom_form)
 		{
@@ -82,6 +86,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function get_create()
 	{
 		$this->data['create'] = true;
+		$this->data['shared'] = $this->shared_data;
 
 		if ($this->custom_form)
 		{
