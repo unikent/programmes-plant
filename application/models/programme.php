@@ -16,7 +16,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public function award()
 	{
-	  return $this->belongs_to('Award', static::get_award_field());
+		$type = URLParams::get_type();
+	  	return $this->belongs_to($type.'_Award', static::get_award_field());
 	}
 
 	/**
@@ -26,7 +27,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public function subject_area_1()
 	{
-	  return $this->belongs_to('Subject', static::get_subject_area_1_field());
+		$type = URLParams::get_type();
+	  	return $this->belongs_to($type.'_Subject', static::get_subject_area_1_field());
 	}
 
 	/**
