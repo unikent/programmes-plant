@@ -109,10 +109,9 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			// Then assign the permissions as specified
 			$permissions = Input::get('permissions');
 
-			if(isset($permissions['AE']))
-			{
-				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
-			}
+			$permissions['AE'] = isset($permissions['AE']) ? $permissions['AE'] : array();
+			$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
+		
  
 			Messages::add('success','New Section Added');
 			return Redirect::to('/'.$type.'/fields/standard');
@@ -146,16 +145,12 @@ class ProgrammeSections_Controller extends Admin_Controller {
 			$permissions = Input::get('permissions');
 
 
-			
+			$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $old_slug)->first();
+			$permission->name = URLParams::get_type().'_sections_autoexpand_'.$section->get_slug();
+			$permission->save();
 
-				$permission = Permission::where_name(URLParams::get_type().'_sections_autoexpand_' . $old_slug)->first();
-				$permission->name = URLParams::get_type().'_sections_autoexpand_'.$section->get_slug();
-				$permission->save();
-
-			if(isset($permissions['AE']))
-			{
-				$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
-			}
+			$permissions['AE'] = isset($permissions['AE']) ? $permissions['AE'] : array();
+			$permission->roles()->sync(Role::sanitize_ids($permissions['AE']));
 
 			Messages::add('success','Section updated');
 			return Redirect::to('/'.$type.'/fields/standard');
