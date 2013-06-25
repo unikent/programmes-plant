@@ -97,13 +97,21 @@ class SimpleData extends Eloquent {
 
 			$title_field = $model::get_title_field();
 
+			// Get required list fields (if they are provided)
+			if(isset($model::$list_fields)){
+				$list_fields = $model::$list_fields;
+			}else{
+				// else just use id and title
+				$list_fields = array('id', $title_field);
+			}
+
 			if (! $year)
 			{
-				$data = $model::order_by($title_field,'asc')->get(array('id', $title_field));
+				$data = $model::order_by($title_field,'asc')->get($list_fields);
 			}
 			else 
 			{
-				$data = $model::where('year','=', $year)->order_by($title_field,'asc')->get(array('id',$title_field));
+				$data = $model::where('year','=', $year)->order_by($title_field,'asc')->get($list_fields);
 			}
 
 			foreach ($data as $record)

@@ -5,6 +5,9 @@ class Staff extends SimpleData
 
 	public static $rules = array();
 
+	// Use all these fields when producing a "list box"
+	public static $list_fields = array('id', 'login', 'forename', 'surname', 'title');
+
 	// Load user data from ldap, using users login name
 	public function load_from_ldap(){
 		// Attempt to load user from ldap
@@ -30,8 +33,12 @@ class Staff extends SimpleData
 	// use "Login" instead of name as title
 	public static function get_title_field(){return 'login';}
 
+
+	public function get_login(){return $this->get_name();}
+
+
 	// Pretty print name when requested
 	public function get_name(){
-		return $this->title.' '.$this->forename.' '.$this->surname.' ('.$this->login.')';
+		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].')';
 	}
 }
