@@ -13,7 +13,7 @@
     <div class="control-group">
       <?php echo Form::label('login', __('staff.form.login.label') , array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->login ),array('placeholder'=>__('staff.form.login.placeholder')))?>   
+        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->attributes['login'] ),array('placeholder'=>__('staff.form.login.placeholder')))?>   
       </div>
     </div>
 
