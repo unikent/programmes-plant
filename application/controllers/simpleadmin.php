@@ -8,17 +8,20 @@
  */
 class Simple_Admin_Controller extends Admin_Controller {
 
-	// Stores the shortcut variable for the language file
-	var $l = '';
-
 	// Whether to use a custom form here
-	var $custom_form = false;
-
-	public $required_permissions = array("edit_data");
-
+	public $custom_form = false;
 	// Is data shared between UG & PG (if false data is treated as being seperate using UG_* vs PG_* models)
 	public $shared_data = true;
+	// Requered permission
+	public $required_permissions = array("edit_data");
 
+	// Stores the shortcut variable for the language file
+	protected $l = '';
+
+	/**
+	 * Setup controller actions
+	 *
+	 */
 	public function __construct()
 	{
 		// Quick use variable for access to language files
@@ -48,13 +51,17 @@ class Simple_Admin_Controller extends Admin_Controller {
 	 */
 	public function get_edit()
 	{
+		// Get last paramater (the id)
 		$params = func_get_args();
 		$object_id = end($params);
+
+		// get site url
+		$url = $this->get_base_page();
 
 		if (! $object_id)
 		{
 			Messages::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
-			return Redirect::to($this->views);
+			return Redirect::to($url);
 		}
 
 		$model = $this->model;
@@ -72,7 +79,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		
 		if ($this->custom_form)
 		{
-			$this->layout->nest('content', 'admin.'.$this->views.'.form',$this->data);
+			$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 		}
 		else
 		{
@@ -103,12 +110,14 @@ class Simple_Admin_Controller extends Admin_Controller {
 	 */
 	public function get_delete()
 	{
-
+		// Get last paramater (the id)
 		$params = func_get_args();
-		$id = end($params);
+		$object_id = end($params);
+		
+		// get site url
+		$url = $this->get_base_page();
 
 		$model = $this->model;
-		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 
 		$rules = array(
 			'id'  => 'required|integer|exists:' . $model::$table,
@@ -119,7 +128,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', __($this->l . 'error.delete'));
 
-			return Redirect::to($url_prefix . $this->views);
+			return Redirect::to($url);
 		}
 		else
 		{
@@ -127,7 +136,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 			$remove->delete();
 
 			Messages::add('success', __($this->l . 'success.delete'));
-			return Redirect::to($url_prefix.$this->views);
+			return Redirect::to($url);
 		}
 	}
 
@@ -137,7 +146,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_create()
 	{
 		$model = $this->model;
-		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
+		$url = $this->get_base_page();
 
 		$rules = array(
 			'name'  => 'required|unique:' . $model::$table . '|max:255',
@@ -147,7 +156,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to($url_prefix.$this->views.'/create')->with_input();
+			return Redirect::to($url.'/create')->with_input();
 		}
 
 		$new = new $this->model;
@@ -159,7 +168,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		Messages::add('success', __($this->l . 'success.create'));
 
 		
-		return Redirect::to($url_prefix.$this->views.'');
+		return Redirect::to($url);
 	}
 
 	/**
@@ -170,19 +179,21 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$model = $this->model;
 		$url = $this->get_base_page();
 
+		$id = Input::get('id');
+
 		$rules = array(
 			'id'  => 'required|exists:'. $model::$table .',id',
-			'name'  => 'required|max:255|unique:'. $model::$table . ',name,'.Input::get('id'),
+			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id
 		);
 
 		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to($url.'/edit/'.Input::get('id'));
+			return Redirect::to($url . '/edit/' . $id);
 		}
 
-		$update = $model::find(Input::get('id'));
+		$update = $model::find($id);
 
 		$update->name = Input::get('name');
 		$update->populate_from_input();
@@ -196,7 +207,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 	/**
 	 * Get path to current "base" page
-	 * 
+	 * - ug/type or /type depending on if shared
 	 */
 	private function get_base_page(){
 		$prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
