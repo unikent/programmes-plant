@@ -11,7 +11,7 @@ class Add_Ug_Pg_Subjects_To_Users {
 	public function up()
 	{
 		if (Request::env() != 'test'){
-			DB::query("ALTER TABLE usersys_users CHANGE subjects ug_subjects");
+			DB::query("ALTER TABLE usersys_users CHANGE subjects ug_subjects varchar(255)");
 			DB::query("ALTER TABLE usersys_users ADD COLUMN pg_subjects varchar(255)");
 		}
 		else{
@@ -33,7 +33,7 @@ class Add_Ug_Pg_Subjects_To_Users {
 	public function down()
 	{
 		if (Request::env() != 'test'){
-			DB::query("ALTER TABLE usersys_users CHANGE ug_subjects subjects");
+			DB::query("ALTER TABLE usersys_users CHANGE ug_subjects subjects varchar(255)");
 			DB::query("ALTER TABLE usersys_users DROP COLUMN pg_subjects");
 		}
 		else{
