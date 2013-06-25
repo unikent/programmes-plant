@@ -10,11 +10,18 @@ class Add_Ug_Pg_Subjects_To_Users {
 	 */
 	public function up()
 	{
-		Schema::table('usersys_users', function($table)
-		{
-			$table->string('pg_subjects', 255);
-			$table->rename_column('subjects','ug_subjects');
-		});
+		if (Request::env() != 'test'){
+			DB::query("ALTER TABLE usersys_users CHANGE subjects ug_subjects");
+			DB::query("ALTER TABLE usersys_users ADD COLUMN pg_subjects varchar(255)");
+		}
+		else{
+			Schema::table('usersys_users', function($table)
+			{
+				$table->string('pg_subjects', 255);
+				$table->string('ug_subjects', 255);
+			
+			});
+		}
 		
 	}
 
@@ -25,11 +32,17 @@ class Add_Ug_Pg_Subjects_To_Users {
 	 */
 	public function down()
 	{
-		Schema::table('usersys_users', function($table)
-		{
-			$table->drop_column('pg_subjects');
-			$table->rename_column('ug_subjects','subjects');
-		});
+		if (Request::env() != 'test'){
+			DB::query("ALTER TABLE usersys_users CHANGE ug_subjects subjects");
+			DB::query("ALTER TABLE usersys_users DROP COLUMN pg_subjects");
+		}
+		else{
+			Schema::table('usersys_users', function($table)
+			{
+				$table->drop_column('pg_subjects');
+				$table->drop_column('ug_subjects');
+			});
+		}
 	}
 
 }
