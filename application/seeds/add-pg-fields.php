@@ -70,7 +70,6 @@ class Add_Pg_Fields {
 		$programme_fields[] = array('Staff profiles', 'text', '', '', 9);
 
 		// section: page administration
-		$programme_fields[] = array('Programme url', 'text', '', '', 10);
 		$programme_fields[] = array('Search keywords', 'text', 'Add search keywords, separated by a comma.', '', 10);
 		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'PG_Programme', 10);
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or removed.', '', 10);
