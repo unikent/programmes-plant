@@ -6,7 +6,7 @@ class Staff_Controller extends Simple_Admin_Controller {
 	public $custom_form = true;
 
 
-		/**
+	/**
 	 * Create a new item via POST.
 	 */
 	public function post_create()
@@ -27,7 +27,6 @@ class Staff_Controller extends Simple_Admin_Controller {
 		$new = new $this->model;
 
 		$new->populate_from_input();
-		//$new->load_from_ldap();
 
 		$new->save();
 

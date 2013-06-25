@@ -44,6 +44,12 @@
       </div>
     </div>
   
+    <div class="control-group">
+      <?php echo Form::label('profile_url', __('staff.form.subject.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::select('subject', PG_Subject::all_as_list(),  ( Input::old('subject') || $create ? Input::old('subject') : $item->subject ))?>
+      </div>
+    </div>
 
     <div class="control-group">
       <?php echo Form::label('profile_url', __('staff.form.profile_url.label'), array('class'=>'control-label'))?>
