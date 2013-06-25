@@ -49,7 +49,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->subjects))->get($fields_array);
+			$subject_field = URLparams::$type.'_subjects';
+			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
 		}
 		else
 		{

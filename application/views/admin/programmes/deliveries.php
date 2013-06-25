@@ -8,6 +8,14 @@
 </head>
 <body>
 
+<?php
+
+	if(!Auth::user()->can("view_pg_deliveries")) die();
+
+	$disabled = !Auth::user()->can("edit_pg_deliveries");
+
+?>
+
 <div class='row-fluid'>	
 	<table class='table table-striped'>
 		<tr>
@@ -22,27 +30,31 @@
 			
 				<tr>
 					<form action="" method="post">
-						<td> <input name="award" type='text' value='<?php echo $delivery->award; ?>' /> </td>
-						<td> <input name="pos_code" type='text' value='<?php echo $delivery->pos_code; ?>' /> </td>
+						<td> <?php echo Form::select('award', PG_Award::all_as_list(), $delivery->award); ?> </td>
+						<td> <?php echo Form::text('pos_code', $delivery->pos_code); ?> </td>
 						<td> <?php echo Form::text('mcr', $delivery->mcr); ?>  </td>
 						<td> <?php echo Form::select('attendance_pattern',array('full-time'=>'Full time', 'part-time'=> 'Part time'),$delivery->attendance_pattern); ?></td>
 						<td>
-						 		<input type="hidden" name="id" value="<?php echo $delivery->id; ?>" />
-							 	<input type='submit' class='btn btn-primary' value='Save' /> 
-								<a href='#' class='btn btn-danger'>Remove</a>
+						<?php if($disabled):?>
+						 	<input type="hidden" name="id" value="<?php echo $delivery->id; ?>" />
+							<input type='submit' class='btn btn-primary' value='Save' /> 
+							<a href='#' class='btn btn-danger' href=''>Remove</a>
+						<?php endif;?>
 						</td>
 					</form>
 				</tr>
 			
 		<?php endforeach; ?>
+		<?php if($disabled):?>
 		<tr>
 			<form action="" method="post">
-				<td> <input name="award" type='text' value='' /> </td>
-				<td> <input name="pos_code" type='text' value='' /> </td>
+				<td> <?php echo Form::select('award', PG_Award::all_as_list()); ?> </td>
+				<td> <?php echo Form::text('pos_code'); ?> </td>
 				<td> <?php echo Form::text('mcr'); ?> </td>
 				<td> <?php echo Form::select('attendance_pattern',array('full-time'=>'Full time', 'part-time'=> 'Part time'),''); ?></td>
 				<td><input type='submit' class='btn btn-success' value='create' /></td>
 			</form>
+			<?php endif;?>
 		</tr>
 	</table>
 </div>

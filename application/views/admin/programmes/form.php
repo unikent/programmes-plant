@@ -45,7 +45,7 @@
   </div>
   <div id="deliveries" class="accordion-body collapse in">
     <div class="control-group">
-      <iframe src="../deliveries/<?php echo $programme->id ?>" style='width:100%; height:300px; border:0;'></iframe>
+      <iframe src="../deliveries/<?php echo $programme->id ?>" style='width:100%; height:600px; border:0;'></iframe>
     </div>
   </div>
 </div>
