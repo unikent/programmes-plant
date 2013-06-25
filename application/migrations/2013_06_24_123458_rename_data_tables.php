@@ -1,6 +1,6 @@
 <?php
 
-class Rename_UG_Tables {
+class Rename_Data_Tables {
 
 	/**
 	 * Make changes to the database.
