@@ -6,4 +6,5 @@ class Subjects_Controller extends Simple_Admin_Controller {
 	public $views = 'subjects';
 	public $model = 'Subject';
 
+	public $shared_data = false;
 }
