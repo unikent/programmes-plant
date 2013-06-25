@@ -42,7 +42,6 @@ class Staff extends SimpleData
 	public function get_login()
 	{
 		if(sizeof($this->subjects_cache)===0)$this->subjects_cache = PG_Subject::all_as_list();
-		
 
 		return $this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
@@ -51,6 +50,7 @@ class Staff extends SimpleData
 	// Pretty print name when requested
 	public function get_name()
 	{
-		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].')';
+		if(sizeof($this->subjects_cache)===0)$this->subjects_cache = PG_Subject::all_as_list();
+		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
 }
