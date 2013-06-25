@@ -78,21 +78,22 @@ Route::group(array('before' => ''), function(){
 	Route::any('faculties', 'faculties@index');
 	Route::any('faculties/(:any?)/(:num?)', 'faculties@(:1)');
 
+
 	// Customised routing for awards
 	Route::any('(ug|pg)/awards', 'awards@index');
 	Route::any('(ug|pg)/awards/(:any?)/(:num?)', 'awards@(:2)');
 
 	// Customised routing for leaflets
-	Route::any('leaflets', 'leaflets@index');
-	Route::any('leaflets/(:any?)/(:num?)', 'leaflets@(:1)');
+	Route::any('(ug|pg)/leaflets', 'leaflets@index');
+	Route::any('(ug|pg)/leaflets/(:any?)/(:num?)', 'leaflets@(:2)');
 
 	// Customised routing for subjects
-	Route::any('subjects', 'subjects@index');
-	Route::any('subjects/(:any?)/(:num?)', 'subjects@(:1)');
+	Route::any('(ug|pg)/subjects', 'subjects@index');
+	Route::any('(ug|pg)/subjects/(:any?)/(:num?)', 'subjects@(:2)');
 
 	// Customised routing for subject categories
-	Route::any('subjectcategories', 'subjectcategories@index');
-	Route::any('subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:1)');
+	Route::any('(ug|pg)/subjectcategories', 'subjectcategories@index');
+	Route::any('(ug|pg)/subjectcategories/(:any?)/(:num?)', 'subjectcategories@(:2)');
 
 	// Users system
 	Route::any('users', 'users@index');
