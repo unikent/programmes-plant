@@ -15,6 +15,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 	var $custom_form = false;
 
 	public $required_permissions = array("edit_data");
+
+	// Is data shared between UG & PG (if false data is treated as being seperate using UG_* vs PG_* models)
 	public $shared_data = true;
 
 	public function __construct()
@@ -104,7 +106,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 
 		$rules = array(
-			'id'  => 'required|integer|exists:' . $this->views,
+			'id'  => 'required|integer|exists:' . $model::$table,
 		);
 
 		//Don't call core validator method or deletes will never pass (since they only ever have id)
@@ -133,7 +135,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 
 		$rules = array(
-			'name'  => 'required|unique:' . $this->views . '|max:255',
+			'name'  => 'required|unique:' . $model::$table . '|max:255',
 		);
 
 		if (! $model::is_valid($rules))
@@ -161,19 +163,18 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_edit()
 	{
 		$model = $this->model;
-		$url_prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
+		$url = $this->get_base_page();
 
-		
 		$rules = array(
-			'id'  => 'required|exists:'. $this->views .',id',
-			'name'  => 'required|max:255|unique:'. $this->views . ',name,'.Input::get('id'),
+			'id'  => 'required|exists:'. $model::$table .',id',
+			'name'  => 'required|max:255|unique:'. $model::$table . ',name,'.Input::get('id'),
 		);
 
 		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to($url_prefix.$this->views.'/edit/'.Input::get('id'));
+			return Redirect::to($url.'/edit/'.Input::get('id'));
 		}
 
 		$update = $model::find(Input::get('id'));
@@ -184,9 +185,17 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$update->save();
 
 		Messages::add('success', __($this->l . 'success.edit'));
-
 		
-		return Redirect::to($url_prefix.$this->views.'');
+		return Redirect::to($url);
+	}
+
+	/**
+	 * Get path to current "base" page
+	 * 
+	 */
+	private function get_base_page(){
+		$prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
+		return $prefix.$this->views;
 	}
 
 }
