@@ -9,7 +9,8 @@ class TestLeaflet extends ModelTestCase
 	 * Set up the database.
 	 */
 	public static function setUpBeforeClass()
-	{
+	{	
+		static::setURI('ug','2014');
 		Tests\Helper::migrate();
 
 		// Chuck all campuses to ensure clean database
@@ -72,7 +73,7 @@ class TestLeaflet extends ModelTestCase
 		}
 		$leaflet->save();
 
-		$return = DB::table('leaflets')
+		$return = DB::table('leaflets_ug')
 				  ->where(function($query) use ($input)
 				  {
 				  	$query->where('name', '=', $input['name']);

@@ -177,7 +177,8 @@ class TestAPI extends ModelTestCase
 	public function testget_subjects_index_course_mapping(){
 		$programme = $this->publish_programme();
 		$data_type_objects = $this->create_data_types();
-		$subject_area = $data_type_objects['subject'];
+
+		$subject_area = $data_type_objects['ug_subject'];
 		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -204,7 +205,7 @@ class TestAPI extends ModelTestCase
 	public function testget_subjects_index_course_mapping_without_cache(){
 		$programme = $this->publish_programme();
 		$data_type_objects = $this->create_data_types();
-		$subject_area = $data_type_objects['subject'];
+		$subject_area = $data_type_objects['ug_subject'];
 		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -351,21 +352,21 @@ class TestAPI extends ModelTestCase
 		$title_field = UG_Programme::get_title_field();
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 
-		$programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$programme->save();	
 		$programme->make_revision_live($programme->get_active_revision());
 
 		$related_programme->$title_field = "Related thing";
-		$related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$related_programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$related_programme->save();	
 		$related_programme->make_revision_live($related_programme->get_active_revision());
 
 		$another_related_programme->$title_field = "Another related thing";
-		$another_related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$another_related_programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$another_related_programme->save();	
 		$another_related_programme->make_revision_live($another_related_programme->get_active_revision());
 
-		$related_courses = UG_Programme::get_programmes_in($data_type_objects['subject']->id, null, $programme->year, $programme->id);
+		$related_courses = UG_Programme::get_programmes_in($data_type_objects['ug_subject']->id, null, $programme->year, $programme->id);
 		
 		$related_courses = API::merge_related_courses($related_courses, null);
 
