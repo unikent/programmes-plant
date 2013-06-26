@@ -4,27 +4,6 @@ abstract class ProgrammeRevision extends Revision
     public static $table = 'programmes_revisions';
     protected $data_type_id = 'programme_id';
 
-    /**
-     * Get this programme's award.
-     * 
-     * @return Award The award for this programme.
-     */
-    public function award()
-    {
-        $model = static::$programme_model;
-        return $this->belongs_to('Award',  $model::get_award_field());
-    }
-
-    /**
-     * Get this programme's first subject area.
-     * 
-     * @return Subject The first subject area for this programme.
-     */
-    public function subject_area_1()
-    {
-        $model = static::$programme_model;
-        return $this->belongs_to('Subject', $model::get_subject_area_1_field());
-    }
 
     /**
      * Get this programme's administrative school.

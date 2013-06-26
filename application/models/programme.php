@@ -295,11 +295,13 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_index($year)
 	{
-
+		$type = URLParams::get_type();
 		$revision_model = static::$revision_model;
 
+		$subject_cat_model = $type.'_SubjectCategory';
+
 		// Set cache keys
-		$type = URLParams::get_type();
+		
 		$cache_key_index = "api-index-{$type}.index-$year";
 		$cache_key_subject = "api-index-{$type}.api-programmes-$year-subject-relations";
 
@@ -350,8 +352,7 @@ abstract class Programme extends Revisionable {
 					 $subject_area_2_field
 		);
 		// If UG, add ucas field
-		if(URLParams::get_type() == 'ug') $field[] = $ucas_code_field;
-
+		if($type == 'ug') $field[] = $ucas_code_field;
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
@@ -368,13 +369,14 @@ abstract class Programme extends Revisionable {
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
 
+
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
 				'slug' 		=> 		$attributes[$slug_field],
 				'award' 	=> 		isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '',
 				'subject'	 => 	isset($relationships["subject_area_1"]) ? $relationships["subject_area_1"]->attributes["name"] : '',
-				'subject_categories' => isset($attributes[$subject_categories_field]) ? SubjectCategory::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
+				'subject_categories' => isset($attributes[$subject_categories_field]) ? $subject_cat_model::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
 				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
 				'secondary_school' =>  isset($relationships["additional_school"]) ? $relationships["additional_school"]->attributes["name"] : '',
 				'campus' 	=>  isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
