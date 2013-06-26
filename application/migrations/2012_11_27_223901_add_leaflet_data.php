@@ -9,12 +9,14 @@ class Add_Leaflet_Data {
 	 */
 	public function up()
 	{
-        $leaflet = new Leaflet;
-        $leaflet->name = 'Test leaflet';
-        $leaflet->campuses_id = 1;
-        $leaflet->tracking_code = 'http://www.kent.ac.uk';
-        $leaflet->main = 1;
-        $leaflet->save();
+
+        DB::table("leaflets")->insert(
+			array(
+				'name'=> 'Test leaflet',
+				'tracking_code' => 'http://www.kent.ac.uk',
+				'campuses_id' => '1'
+			 )
+		);
 	}
 	
 	/**
@@ -24,11 +26,8 @@ class Add_Leaflet_Data {
 	 */
 	public function down()
 	{
-    	$leaflets = Leaflet::all();
-		foreach ($leaflets as $leaflet)
-		{
-			$leaflet->delete();
-		}
+
+		DB::table("leaflets")->where(1,'=',1)->delete();
 	}
 
 }
