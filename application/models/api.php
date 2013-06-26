@@ -43,8 +43,9 @@ class API {
 		$cache_key = "api-output-{$level}.subjects_index-$year";
 
 		$model = $level.'_Programme';
+		$subjects_model = $level.'_Subject';
 		// Get subjects and course mappings
-		$subjects = Subject::get_api_data($year);
+		$subjects = $subjects_model::get_api_data($year);
 		$subjects_map = $model::get_api_related_programmes_map($year);
 		// Generate feed array
 		$subjects_array = array();

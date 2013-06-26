@@ -28,7 +28,7 @@ class TestLeaflet extends ModelTestCase
 	 */
 	public static function tear_down()
 	{
-		$leaflets = Leaflet::all();
+		$leaflets = UG_Leaflet::all();
 
 		foreach ($leaflets as $leaflet)
 		{
@@ -64,7 +64,7 @@ class TestLeaflet extends ModelTestCase
 			'tracking_code' => 'http://example.com/tracking'
 		);
 
-		$leaflet = new Leaflet;
+		$leaflet = new UG_Leaflet;
 
 		foreach($input as $key => $value)
 		{
@@ -103,7 +103,7 @@ class TestLeaflet extends ModelTestCase
 			'nonsense' => 'Rubbish'
 		);
 
-		$leaflet = new Leaflet;
+		$leaflet = new UG_Leaflet;
 		foreach($input as $key => $value) { $leaflet->$key = $value; }
 		$leaflet->save();
 	}
@@ -118,7 +118,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertTrue(Leaflet::is_valid());
+		$this->assertTrue(UG_Leaflet::is_valid());
 	}
 
 	public function testFailsToValidateWhenNoNameIsPresent() 
@@ -131,12 +131,12 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 	public function testFailsToValidateWhenNameIsNotUnique() 
 	{
-		$leaflet = new Leaflet;
+		$leaflet = new UG_Leaflet;
 		$leaflet->name = 'Some Leaflet';
 		$leaflet->save();
 
@@ -148,7 +148,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 	public function testFailsToValidateWhenNameIsLongerThan255Characters()
@@ -161,7 +161,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 	public function testFailsToValidateWhenCampusCodeIsNotPresent()
@@ -174,7 +174,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 	
 	public function testFailsToValidateWhenCampusCodeDoesNotExist() 
@@ -187,7 +187,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 	public function testFailsToValidateOnTrackingCodeIsNotPresent()
@@ -200,7 +200,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 	/**
@@ -217,7 +217,7 @@ class TestLeaflet extends ModelTestCase
 
 		Request::foundation()->request->add($input);
 
-		$this->assertFalse(Leaflet::is_valid());
+		$this->assertFalse(UG_Leaflet::is_valid());
 	}
 
 }

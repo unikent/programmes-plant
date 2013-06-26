@@ -83,7 +83,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Award::create(
+        UG_Award::create(
                 array(
                         'name' => 'Hello Award',
                         'longname' => 'Long hello award'
@@ -102,7 +102,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Leaflet::create(
+        UG_Leaflet::create(
                 array(
                         'name' => 'Hello Leaflet'
                     )
@@ -115,7 +115,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Subject::create(
+        UG_Subject::create(
                 array(
                         'name' => 'Hello Subject'
                     )

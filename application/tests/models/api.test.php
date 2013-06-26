@@ -13,7 +13,7 @@ class TestAPI extends ModelTestCase
     	);
     }
 
-    public static $data_types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
+    public static $data_types = array('campus', 'ug_award', 'faculty', 'ug_leaflet', 'school', 'ug_subject', 'ug_subjectcategory');
 
 	/**
 	 * Set up the database.
