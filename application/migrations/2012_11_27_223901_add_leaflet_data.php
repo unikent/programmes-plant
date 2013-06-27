@@ -27,7 +27,7 @@ class Add_Leaflet_Data {
 	public function down()
 	{
 
-		DB::table("leaflets")->where(1,'=',1)->delete();
+		DB::table("leaflets")->where('id','=','*')->delete();
 	}
 
 }

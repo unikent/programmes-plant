@@ -25,7 +25,7 @@ class Add_Subject_Data {
 	 */
 	public function down()
 	{
-		DB::table("subjects")->where(1,'=',1)->delete();
+		DB::table("subjects")->where('id','=','*')->delete();
 	}
 
 }

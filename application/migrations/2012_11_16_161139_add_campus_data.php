@@ -12,9 +12,7 @@ class Add_Campus_Data {
 		// Add campus demo data
 		foreach (array('Canterbury', 'Medway', 'Paris', 'Brussels', 'Tonbridge') as $campus)
 		{
-			$obj = new Campus;
-			$obj->name = $campus;
-			$obj->save();
+	        DB::table('campuses')->insert(array('name'=> $campus));
 		}
 	}
 
@@ -25,11 +23,7 @@ class Add_Campus_Data {
 	 */
 	public function down()
 	{
-    	$campuses = Campus::all();
-		foreach ($campuses as $campus)
-		{
-			$campus->delete();
-		}
+		DB::table('campuses')->where('id','=','*')->delete();
 	}
 
 }

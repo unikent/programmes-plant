@@ -23,7 +23,7 @@ class Create_Initial_Awards {
 	 */
 	public function down()
 	{	
-		DB::table("awards")->where(1, '=', 1)->delete();
+		DB::table("awards")->where('id', '=', '*')->delete();
 	}
 
 }

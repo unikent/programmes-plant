@@ -15,9 +15,8 @@ class Add_Permissions_To_Admin_User {
 	public function up()
 	{
 		$admin_user = Role::where_name('Admin')->first();
-		$permission = Permission::where_name('make_programme_live')->first(array('id'));
-
-		$admin_user->permissions()->attach($permission->id);
+		$permission = Permission::where_name('make_programme_live')->first();
+		$admin_user->permissions()->attach($permission);
 	}
 
 	/**
@@ -28,9 +27,8 @@ class Add_Permissions_To_Admin_User {
 	public function down()
 	{
 		$admin_user = Role::where_name('Admin')->first();
-		$permission = Permission::where_name('make_programme_live')->first(array('id'));
-
-		$this->admin_user->permissions()->detach($permission->id);
+		$permission = Permission::where_name('make_programme_live')->first();
+		$admin_user->permissions()->detach($permission);
 	}
 
 }
