@@ -12,6 +12,7 @@ class API {
 	public static function get_index($year, $level = 'ug')
 	{
 		// Get index of programmes
+		$level =  URLParams::get_type();
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
 	}
@@ -26,6 +27,7 @@ class API {
 	public static function get_subjects_index($year, $level = 'ug')
 	{
 		// api-output-ug gets wiped on every action.
+		$level =  URLParams::get_type();
 		$cache_key = "api-output-{$level}.subjects_index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_subjects_index($year, $level);
 	}
@@ -39,6 +41,7 @@ class API {
 	*/
 	public static function generate_subjects_index($year, $level = 'ug')
 	{
+		$level =  URLParams::get_type();
 		// api-output-ug gets wiped on every action.
 		$cache_key = "api-output-{$level}.subjects_index-$year";
 
@@ -71,6 +74,7 @@ class API {
 	public static function get_programme($id, $year)
 	{	
 		$type = URLParams::get_type();
+
 		$cache_key = "api-output-{$type}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
 	}
@@ -86,6 +90,7 @@ class API {
 	{	
 		$type = URLParams::get_type();
 		$cache_key = "api-output-{$type}.programme-$year-$id";
+
 
 		$settings_model = $type.'_ProgrammeSetting';
 		$programme_model = $type.'_Programme';

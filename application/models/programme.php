@@ -196,32 +196,34 @@ abstract class Programme extends Revisionable {
 	 * @param year  of programme
 	 * @return programmes index
 	 */
-	public static function get_api_programme($id, $year)
+	public static function get_api_programme($iid, $year)
 	{
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
+		$cache_key = "api-{$tbl}-$year-$iid";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($iid, $year);
 	}
 
 	/**
 	 * generate copy of programme data from live DB
 	 *
-	 * @param id of programme
+	 * @param iid (instance id) of programme
 	 * @param year  of programme
 	 * @param revsion data - store this to save reloading dbs when generating
 	 * @return programmes index
 	 */
-	public static function generate_api_programme($id, $year, $revision = false)
+	public static function generate_api_programme($iid, $year, $revision = false)
 	{
 
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-$id";
+		$cache_key = "api-{$tbl}-$year-$iid";
 
 		$revision_model = static::$revision_model;
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $revision_model::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
+
+			$p = static::where('instance_id', '=', $iid)->where('year', '=', $year)->first();
+			$revision = ($p !== null) ? $p->find_live_revision() : null;
 		}
 
 		// Return false if there is no live revision
@@ -296,6 +298,7 @@ abstract class Programme extends Revisionable {
 	public static function generate_api_index($year)
 	{
 		$type = URLParams::get_type();
+
 		$revision_model = static::$revision_model;
 
 		$subject_cat_model = $type.'_SubjectCategory';
