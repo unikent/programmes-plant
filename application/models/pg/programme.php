@@ -6,7 +6,8 @@ class PG_Programme extends Programme {
 	public static $type = 'pg';
 
 	// Get deliveries for this programme
-	public function get_deliveries(){
+	public function get_deliveries()
+	{
 		return PG_Deliveries::where('programme_id','=',$this->id)->get();
 	}
 }

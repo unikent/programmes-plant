@@ -86,10 +86,10 @@ class API {
 	 * @param year year to get index for
 	 * @return combined programme data array
 	 */
-	public static function generate_programme_data($id, $year)
+	public static function generate_programme_data($iid, $year)
 	{	
 		$type = URLParams::get_type();
-		$cache_key = "api-output-{$type}.programme-$year-$id";
+		$cache_key = "api-output-{$type}.programme-$year-$iid";
 
 
 		$settings_model = $type.'_ProgrammeSetting';
@@ -106,7 +106,7 @@ class API {
 		}
 
 		// Get programme itself
-		$programme 	= $programme_model::get_api_programme($id, $year);
+		$programme 	= $programme_model::get_api_programme($iid, $year);
 
 		// If programe does not exist/is not published.
 		if($programme === false){
@@ -114,6 +114,8 @@ class API {
 		}
 
 		$final = static::combine_programme($programme, $programme_settings, $globals);
+
+	//	$final['deliveries'] = static::attach_pg_deliveries($iid, $year);
 
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
@@ -480,7 +482,6 @@ class API {
 
 		return $programme;
 	}
-
 }
 
 class MissingDataException extends \Exception {}
