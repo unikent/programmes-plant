@@ -108,27 +108,18 @@ Route::group(array('before' => ''), function(){
 
 	// Routing for undergraduate API
 	Route::any(array(
-			'/api/([0-9]{4})/undergraduate',
-			'/api/([0-9]{4})/undergraduate/programmes', 
-			'/api/([0-9]{4})/undergraduate/programmes.(json|xml)'
+			'/api/([0-9]{4})/(undergraduate|postgraduate)',
+			'/api/([0-9]{4})/(undergraduate|postgraduate)/programmes', 
+			'/api/([0-9]{4})/(undergraduate|postgraduate)/programmes.(json|xml)'
 	), 'api@index');
 
-	Route::get(array('/api/([0-9]{4})/undergraduate/programmes/(:num?)','/api/([0-9]{4})/undergraduate/programmes/(:num?).(json|xml)'), 'api@programme');
-	Route::any(array('/api/([0-9]{4})/undergraduate/subjects','/api/([0-9]{4})/undergraduate/subjects.(json|xml)'), 'api@subject_index');
-	Route::get(array('/api/(:any).(json|xml)','/api/(:any)'), 'api@data');
-	
-	// Routing for postgraduate API
-	Route::any(array(
-			'/api/([0-9]{4})/postgraduate',
-			'/api/([0-9]{4})/postgraduate/programmes', 
-			'/api/([0-9]{4})/postgraduate/programmes.(json|xml)'
-	), 'api@index');
+	Route::get(array('/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
+	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects','/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml)'), 'api@subject_index');
 
-	Route::get(array('/api/([0-9]{4})/postgraduate/programmes/(:num?)','/api/([0-9]{4})/postgraduate/programmes/(:num?).(json|xml)'), 'api@programme');
-	Route::any(array('/api/([0-9]{4})/postgraduate/subjects','/api/([0-9]{4})/postgraduate/subjects.(json|xml)'), 'api@subject_index');
-	Route::get(array('/api/(:any).(json|xml)','/api/(:any)'), 'api@data');
+	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
 	Route::any('/api/preview/(:any?)', 'api@preview');
+	Route::get(array('/api/(:any).(json|xml)', '/api/(:any)'), 'api@data');
 	
 	// XCRI-CAP Feed
 	Route::any('/api/([0-9]{4})/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');
