@@ -456,7 +456,7 @@ class API {
 	public static function get_xcrified_programme($id, $year)
 	{
 		// get the programme
-		$programme = static::get_programme($id, $year);
+		$programme = static::get_programme(URLParams::get_type(), $year, $id);
 	
 		// format the programme appropriately
 		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
