@@ -47,6 +47,7 @@ class API {
 
 		$model = $level.'_Programme';
 		$subjects_model = $level.'_Subject';
+
 		// Get subjects and course mappings
 		$subjects = $subjects_model::get_api_data($year);
 		$subjects_map = $model::get_api_related_programmes_map($year);
@@ -68,15 +69,13 @@ class API {
 	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
-	 * @param year year to get index for
-	 * @return combined programme data array
+	 * @param year Year to get index for
+	 * @return combined Programme data array
 	 */
-	public static function get_programme($id, $year)
-	{	
-		$type = URLParams::get_type();
-
-		$cache_key = "api-output-{$type}.programme-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
+	public static function get_programme($level, $year, $id)
+	{
+		$cache_key = "api-output-{$level}.programme-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($level, $year, $id);
 	}
 
 	/**
@@ -86,14 +85,16 @@ class API {
 	 * @param year year to get index for
 	 * @return combined programme data array
 	 */
-	public static function generate_programme_data($iid, $year)
+
+	public static function generate_programme_data($level, $year, $iid)
 	{	
-		$type = URLParams::get_type();
-		$cache_key = "api-output-{$type}.programme-$year-$iid";
+		$cache_key = "api-output-{$level}.programme-$year-$iid";
 
 
-		$settings_model = $type.'_ProgrammeSetting';
-		$programme_model = $type.'_Programme';
+		$prefix = API::_get_prefix($level);
+
+		$settings_model = $prefix.'ProgrammeSetting';
+		$programme_model = $prefix.'Programme';
 
 		// Get basic data set
 		$globals 			= GlobalSetting::get_api_data($year);	
@@ -186,13 +187,16 @@ class API {
 	 * @throws NotFoundException on unknown datatype
 	 * @return array of data to return.
 	 */
-	public static function get_data($type){
-
+	public static function get_data($type, $level = null){
 		// Do some magic (ie. convert schools=>school & campuses to campus for models)
 		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
 		$type = $pluralizer->singular($type);
+
+		$prefix = API::_get_prefix($level);
+
 		// If type exists, return data
-		if(class_exists($type)){
+		if(class_exists($prefix.$type)){
+			$type = $prefix.$type;
 			return $type::get_api_data();
 		}
 		// Else throw 404
@@ -238,9 +242,15 @@ class API {
 		$final = static::remove_ids_from_field_names($final);
 
 		// Apply related courses
+		if(empty($final['subject_area_1'])){
+			throw new MissingMagicalUnicornFieldException('subject_area_1 should never be set null');
+		}
+
 		$subject_area_1 = $final['subject_area_1'][0]['id'];
+
 		// Get subject area two if its set
 		$subject_area_2 = null;
+
 		if(empty($final['subject_area_2'])){
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
@@ -482,7 +492,26 @@ class API {
 
 		return $programme;
 	}
+
+
+
+	public static function _get_prefix($level){
+		switch($level){
+			case 'ug':
+				$prefix = 'UG_';
+				break;
+			case 'pg':
+				$prefix = 'PG_';
+				break;
+			default:
+				$prefix = '';
+				break;
+		}
+
+		return $prefix;
+	}
 }
 
+class MissingMagicalUnicornFieldException extends \Exception {}
 class MissingDataException extends \Exception {}
 class NotFoundException extends \Exception {}
