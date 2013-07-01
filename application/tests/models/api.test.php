@@ -134,7 +134,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 	}
 	/**
 	* @expectedException MissingDataException
@@ -143,7 +143,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals(false, $result);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_cached(){
@@ -151,7 +151,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals('Thing', $result['programme_title']);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_not_cached(){
@@ -159,7 +159,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 		Cache::flush();
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals('Thing',  $result['programme_title']);
 	}
 
@@ -170,7 +170,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme_settings();
 
-		$result = API::get_programme(7, '2014');
+		$result = API::get_programme('ug', '2014', 7);
 	}
 
 	
