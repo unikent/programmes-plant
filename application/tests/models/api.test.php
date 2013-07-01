@@ -10,6 +10,7 @@ class TestAPI extends ModelTestCase
 			'year' => "2014",
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
+	        UG_Programme::get_subject_area_1_field()  => '1'
     	);
     }
 
@@ -24,7 +25,7 @@ class TestAPI extends ModelTestCase
 
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
-		
+
 		static::clear_models();
 	}
 
