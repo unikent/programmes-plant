@@ -9,9 +9,13 @@ class Add_Subject_Data {
 	 */
 	public function up()
 	{
-		$subject = new Subject;
-		$subject->name = 'Architecture';
-		$subject->save();
+
+		DB::table("subjects")->insert(
+			array(
+				'name'=> 'Architecture'
+			 )
+		);
+
 	}
 
 	/**
@@ -21,11 +25,7 @@ class Add_Subject_Data {
 	 */
 	public function down()
 	{
-		$subjects = Subject::all();
-		foreach ($subjects as $subject)
-		{
-			$subject->delete();
-		}
+		DB::table("subjects")->where('id','=','*')->delete();
 	}
 
 }

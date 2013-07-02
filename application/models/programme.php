@@ -16,7 +16,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public function award()
 	{
-	  return $this->belongs_to('Award', static::get_award_field());
+		$type = URLParams::get_type();
+	  	return $this->belongs_to($type.'_Award', static::get_award_field());
 	}
 
 	/**
@@ -26,7 +27,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public function subject_area_1()
 	{
-	  return $this->belongs_to('Subject', static::get_subject_area_1_field());
+		$type = URLParams::get_type();
+		return $this->belongs_to($type.'_Subject', static::get_subject_area_1_field());
 	}
 
 	/**
@@ -194,32 +196,34 @@ abstract class Programme extends Revisionable {
 	 * @param year  of programme
 	 * @return programmes index
 	 */
-	public static function get_api_programme($id, $year)
+	public static function get_api_programme($iid, $year)
 	{
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($id, $year);
+		$cache_key = "api-{$tbl}-$year-{$iid}";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($iid, $year);
 	}
 
 	/**
 	 * generate copy of programme data from live DB
 	 *
-	 * @param id of programme
+	 * @param iid (instance id) of programme
 	 * @param year  of programme
 	 * @param revsion data - store this to save reloading dbs when generating
 	 * @return programmes index
 	 */
-	public static function generate_api_programme($id, $year, $revision = false)
+	public static function generate_api_programme($iid, $year, $revision = false)
 	{
 
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-$id";
+		$cache_key = "api-{$tbl}-$year-{$iid}";
 
 		$revision_model = static::$revision_model;
 
 		// If revision not passed, get data
 		if(!$revision){
-			$revision = $revision_model::where('instance_id', '=', $id)->where('year', '=', $year)->where('status', '=', 'live')->first();
+
+			$p = static::where('instance_id', '=', $iid)->where('year', '=', $year)->first();
+			$revision = ($p !== null) ? $p->find_live_revision() : null;
 		}
 
 		// Return false if there is no live revision
@@ -293,11 +297,14 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_index($year)
 	{
+		$type = URLParams::get_type();
 
 		$revision_model = static::$revision_model;
 
+		$subject_cat_model = $type.'_SubjectCategory';
+
 		// Set cache keys
-		$type = URLParams::get_type();
+		
 		$cache_key_index = "api-index-{$type}.index-$year";
 		$cache_key_subject = "api-index-{$type}.api-programmes-$year-subject-relations";
 
@@ -348,8 +355,7 @@ abstract class Programme extends Revisionable {
 					 $subject_area_2_field
 		);
 		// If UG, add ucas field
-		if(URLParams::get_type() == 'ug') $field[] = $ucas_code_field;
-
+		if($type == 'ug') $field[] = $ucas_code_field;
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
@@ -366,13 +372,14 @@ abstract class Programme extends Revisionable {
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
 
+
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
 				'slug' 		=> 		$attributes[$slug_field],
 				'award' 	=> 		isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '',
 				'subject'	 => 	isset($relationships["subject_area_1"]) ? $relationships["subject_area_1"]->attributes["name"] : '',
-				'subject_categories' => isset($attributes[$subject_categories_field]) ? SubjectCategory::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
+				'subject_categories' => isset($attributes[$subject_categories_field]) ? $subject_cat_model::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
 				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
 				'secondary_school' =>  isset($relationships["additional_school"]) ? $relationships["additional_school"]->attributes["name"] : '',
 				'campus' 	=>  isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
@@ -389,7 +396,7 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Store index data in to cache
-		Cache::put($cache_key_index , $index_data, 2628000);
+		Cache::put($cache_key_index, $index_data, 2628000);
 
 		// Map relaated subjects.
 		$subject_relations = array();

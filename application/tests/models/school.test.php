@@ -88,7 +88,7 @@ class TestSchool extends ModelTestCase
 			'nonsense' => 'Rubbish'
 		);
 
-		$leaflet = new Leaflet;
+		$leaflet = new UG_Leaflet;
 		foreach($input as $key => $value) { $leaflet->$key = $value; }
 		$leaflet->save();
 	}

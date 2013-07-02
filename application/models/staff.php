@@ -5,11 +5,16 @@ class Staff extends SimpleData
 
 	public static $rules = array();
 
+	// Use all these fields when producing a "list box"
+	public static $list_fields = array('id', 'login', 'forename', 'surname', 'title','subject');
+
+	private $subjects_cache = array();
+
 	// Load user data from ldap, using users login name
 	public function load_from_ldap(){
 		// Attempt to load user from ldap
 		$ldap = LDAPConnect::instance();
-		$attributes = $ldap->getUserAnonymous($this->login);
+		$attributes = $ldap->getUserAnonymous($this->attributes['login']);
 		// If attributes were returned, use them
 		if($attributes != false){
 			// title?
@@ -28,10 +33,24 @@ class Staff extends SimpleData
 	}
 
 	// use "Login" instead of name as title
-	public static function get_title_field(){return 'login';}
+	public static function get_title_field()
+	{
+		return 'login';
+	}
+
+
+	public function get_login()
+	{
+		if(sizeof($this->subjects_cache)===0)$this->subjects_cache = PG_Subject::all_as_list();
+
+		return $this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
+	}
+
 
 	// Pretty print name when requested
-	public function get_name(){
-		return $this->title.' '.$this->forename.' '.$this->surname.' ('.$this->login.')';
+	public function get_name()
+	{
+		if(sizeof($this->subjects_cache)===0)$this->subjects_cache = PG_Subject::all_as_list();
+		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
 }

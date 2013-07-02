@@ -26,6 +26,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_index($year, $type)
 	{
+
 		$model = $this->model;
 
 		// get fields
@@ -49,7 +50,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->subjects))->get($fields_array);
+			$subject_field = URLparams::$type.'_subjects';
+			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
 		}
 		else
 		{
@@ -544,6 +546,37 @@ class Programmes_Controller extends Revisionable_Controller {
 			->get();
 
 		return View::make('admin.changes.index', $this->data);
+	}
+
+	/**
+	 * Show programme deliveries (PG only)
+	 */
+	public function get_deliveries($year, $type, $id){
+		$model = $this->model;
+		$deliveries = $model::find($id)->get_deliveries();
+		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
+	}
+	/**
+	 * update programme deliveries (PG only)
+	 */
+	public function post_deliveries($year, $type, $id){
+
+
+		if(Input::get('id')){
+			$delivery = PG_Deliveries::find(Input::get('id'));
+		}else{
+			$delivery = new PG_Deliveries;
+			$delivery->programme_id = $id;
+		}
+		
+		$delivery->award = Input::get('award');
+		$delivery->pos_code = Input::get('pos_code');
+		$delivery->mcr = Input::get('mcr');
+		$delivery->attendance_pattern = Input::get('attendance_pattern');
+		
+		$delivery->save();
+
+		return Redirect::to( URI::current());	
 	}
 
 }

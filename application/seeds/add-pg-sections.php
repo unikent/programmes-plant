@@ -7,7 +7,7 @@ class Add_Pg_Sections {
 	public function run()
 	{
 		// Add award demo data
-		foreach (array('Programme title', 'Key facts', 'Course structure', 'Key information', 'Careers and employability', 'Research', 'Fees and Funding', 'How to apply', 'Further information', 'Page administration') as $count => $section)
+		foreach (array('Programme title', 'Key facts', 'Course structure', 'Key information', 'Careers and employability', 'Research', 'Fees and Funding', 'How to apply', 'Further information', 'Page administration', 'Overview') as $count => $section)
 		{
 			$tmp = new PG_ProgrammeSection;
 			$tmp->name = $section;

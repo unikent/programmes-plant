@@ -26,8 +26,6 @@ class Add_Programmes_Fields_Pg {
 
 	public function addProgrammeFields(){
 		$programme_fields = array();
-		$programme_override_fields = array();
-		$programme_setting_fields = array();
 
 		// standard fields which are required by the system for it to work properly
 		// array format: title, type, hints, options, section (except setting_fields)
@@ -117,22 +115,11 @@ class Add_Programmes_Fields_Pg {
 
 
 	public function removeProgrammeFields(){
-		$programme_fields = array();
-		$programme_override_fields = array();
-		$programme_setting_fields = array();
+		$programme_fields = array('Programme title', 'Slug', 'Award', 'Subject area 1', 'Programme withdrawn', 'Programme suspended', 'Subject to approval');
 
-		// standard fields which are required by the system for it to work properly
-		// array format: title, type, hints, options, section (except setting_fields)
-		$programme_fields[] = array('Programme title', 'text', 'eg Accounting and Finance and Economics', '', 1);
-		$programme_fields[] = array('Award', 'table_select', '', 'Award', 2);
-		$programme_fields[] = array('Subject area 1', 'table_select', 'Please select the main subject area for this programme.  If the programme is joint honours, please ensure the subject selected is taught by the administrative school.', 'Subject', 2);
-		$programme_fields[] = array('Programme withdrawn', 'text', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', '', 10);
-		$programme_fields[] = array('Programme suspended', 'text', 'Only tick the box if the programme has been suspended. Please unpublish the programme if necessary or add a holding message.', '', 10);
-		$programme_fields[] = array('Subject to approval', 'text', 'Check the box if this programme has been approved for advertising subject to approval by PASC.', '', 10);
-		
 		// remove the fields
-		foreach ($programme_fields as $field) {
-			$this->remove_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg','programme_settings_revisions_pg', 'programmes_revisions_pg'), $field[0]);
+		foreach ($programme_fields as $key => $field) {
+			$this->remove_field('PG_ProgrammeField', array('programme_settings_pg', 'programmes_pg','programme_settings_revisions_pg', 'programmes_revisions_pg'), $field, $key + 1);
 		}
 	}
 
@@ -146,39 +133,31 @@ class Add_Programmes_Fields_Pg {
 	 * @param string $hints the hints for the field.
 	 * @param string $options the options, particularly used when the field type is select.
 	 */
-	public function remove_field($modelname, $tablename, $title)
+	public function remove_field($modelname, $tablename, $title, $i)
 	{
-        // define the column name
-    	$colname = Str::slug($title, '_');
-    	
-    	// delete all the fields
-    	$field_object = new $modelname;
-    	
-    	foreach($modelname::all() as $obj )$obj->delete();
- 
-
-		// delete all the fields from the programmes and programme settings tables too
-		if(!is_array($tablename)){
-			$tablename = array($tablename);
-		}
-		foreach ($tablename as $value) {
-			// modify the schema for the main table eg programme_settings
-			// by default columns are varchars unless they've been specified as textareas
-			Schema::table($value, function($table) use ($colname) {
-	    		$table->drop_column($colname);
-			});
-		}
+		$field = DB::table("programmes_fields_pg")->where('field_name', '=', $title)->first();
 
 		// revoke permissions
 		$permissions = array_merge(
-			Permission::where('name', '=', "fields_read_{$field_object->colname}")->get(),
-			Permission::where('name', '=', "fields_write_{$field_object->colname}")->get()
+			Permission::where('name', '=', "fields_read_{$field->colname}")->get(),
+			Permission::where('name', '=', "fields_write_{$field->colname}")->get()
 		);
+
 		foreach($permissions as $permission){
 			$permission->roles()->sync(array());
 			$permission->delete();
 		}
 
-	}
+		// Remove the column from the table
+		foreach ($tablename as $value) {
+			// modify the schema for the main table eg programme_settings
+			// by default columns are varchars unless they've been specified as textareas
+			Schema::table($value, function($table) use ($field){
+	    		$table->drop_column($field->colname);
+			});
+		}
 
+		// Delete the field itself
+		DB::table("programmes_fields_pg")->where('field_name', '=', $title)->delete();
+	}
 }

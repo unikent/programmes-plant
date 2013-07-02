@@ -83,7 +83,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Award::create(
+        UG_Award::create(
                 array(
                         'name' => 'Hello Award',
                         'longname' => 'Long hello award'
@@ -102,7 +102,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Leaflet::create(
+        UG_Leaflet::create(
                 array(
                         'name' => 'Hello Leaflet'
                     )
@@ -115,7 +115,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Subject::create(
+        UG_Subject::create(
                 array(
                         'name' => 'Hello Subject'
                     )
@@ -152,6 +152,7 @@ class TestAPI_Controller extends ControllerTestCase
                 'year' => '2014',
                 UG_Programme::get_programme_suspended_field() => '',
                 UG_Programme::get_programme_withdrawn_field() => '',
+                UG_Programme::get_subject_area_1_field()  => '1'
             );
         }
 
@@ -274,12 +275,13 @@ class TestAPI_Controller extends ControllerTestCase
             'year' => '2014',
             UG_Programme::get_programme_suspended_field() => '',
             UG_Programme::get_programme_withdrawn_field() => '',
+            UG_Programme::get_subject_area_1_field()  => '1'
         );
 
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
        
-        $response = $this->get('api@programme', array($course->year, $course->id));
+        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
        
         $this->assertEquals('200', $response->status());
     }
@@ -292,12 +294,13 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            UG_Programme::get_subject_area_1_field()  => '1'
         );
         
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@programme', array($course->year, $course->id));
+        $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id));
         $returned_data = json_decode($response->render());
         
         $this->assertEquals($input['programme_title_1'], $returned_data->programme_title);
@@ -399,7 +402,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -442,7 +445,7 @@ class TestAPI_Controller extends ControllerTestCase
             $course->make_revision_live($course->get_active_revision());
 
             // Ensure we get 200 not 301.
-            $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
+            $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
             $this->assertEquals('200', $response->status());
 
     }

@@ -20,7 +20,7 @@ class TestAwards_Controller extends ControllerTestCase
 	 */
 	public static function tear_down()
 	{
-		$awards = Award::all();
+		$awards = UG_Award::all();
 
 		foreach ($awards as $award)
 		{
@@ -37,7 +37,7 @@ class TestAwards_Controller extends ControllerTestCase
 	{
 		foreach ($awards as $position => $name)
 		{
-			$award = new Award;
+			$award = new UG_Award;
 			$award->id = $position;
 			$award->name = $name;
 			$award->hidden = false;
