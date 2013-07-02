@@ -10,4 +10,10 @@ class PG_Programme extends Programme {
 	{
 		return PG_Deliveries::where('programme_id','=',$this->id)->get();
 	}
+
+	public function deliveries()
+	{
+	  	return $this->has_many('pg_deliveries', 'programme_id');
+	}
+
 }

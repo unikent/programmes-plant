@@ -396,7 +396,7 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Store index data in to cache
-		Cache::put($cache_key_index , $index_data, 2628000);
+		Cache::put($cache_key_index, $index_data, 2628000);
 
 		// Map relaated subjects.
 		$subject_relations = array();

@@ -26,6 +26,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_index($year, $type)
 	{
+
 		$model = $this->model;
 
 		// get fields

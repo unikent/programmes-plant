@@ -264,6 +264,11 @@ class API {
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
 
+		// Add deliveries if PG
+		if(URLParams::get_type() == 'pg'){
+			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+		}
+
 		// Finally, try and add some module data
 		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
 		if($modules !== false){
