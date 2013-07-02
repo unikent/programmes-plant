@@ -21,7 +21,7 @@ class Add_Pg_Fields {
 		$programme_fields[] = array('Awarding institute or body', 'select', 'University of Kent', 'University of Kent,University of Kent and AUEB-GR', 2);
 		$programme_fields[] = array('Administrative school', 'table_select', 'Please select the school with the main administrative responsibility for this programme.', 'School', 2);
 		$programme_fields[] = array('Additional school', 'table_select', 'Please select any additional school that this programme is run in conjunction with.', 'School', 2);
-		$programme_fields[] = array('Subject area 2', 'table_select', 'Please select the main subject area for this programme if appropriate.', 'Subject', 2);
+		$programme_fields[] = array('Subject area 2', 'table_select', 'Please select the main subject area for this programme if appropriate.', 'PG_Subject', 2);
 		$programme_fields[] = array('Location', 'table_select', '', 'Campus', 2);
 		$programme_fields[] = array('Mode of study', 'select', '', 'Full-time only, Part-time only, Full-time or part-time', 2);
 		$programme_fields[] = array('Attendance mode', 'checkbox', 'Campus', 'Campus, Distance with attendance, Distance without attendance, Mixed', 2);
@@ -64,20 +64,23 @@ class Add_Pg_Fields {
 
 		// section: further information
 		$programme_fields[] = array('Enquiries', 'textarea', 'Please note the standard contact details for admissions enquiries will appear on the webpage. You can add additional contact information here.', '', 9);
-		$programme_fields[] = array('Programme leaflet', 'table_select', 'Please select the subject leaflet that contains information about this programme.', 'Leaflet', 9);
+		$programme_fields[] = array('Programme leaflet', 'table_select', 'Please select the subject leaflet that contains information about this programme.', 'PG_Leaflet', 9);
 		$programme_fields[] = array('Student profile', 'text', 'Please add a complete link to the student profile for this subject eg http://www.kent.ac.uk/courses/postgraduate/profiles/anthropology.html', '', 9);
 		$programme_fields[] = array('School website', 'text', '', '', 9);
 		$programme_fields[] = array('Staff profiles', 'text', '', '', 9);
 
 		// section: page administration
-		$programme_fields[] = array('Programme url', 'text', '', '', 10);
 		$programme_fields[] = array('Search keywords', 'text', 'Add search keywords, separated by a comma.', '', 10);
 		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'PG_Programme', 10);
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or removed.', '', 10);
 		$programme_fields[] = array('New programme', 'checkbox', 'Check the box if this is a new programme that has been added since the start of the prospectus cycle', '', 10);
 
-		$programme_fields[] = array('Subject Categories', 'table_select', '', 'SubjectCategory', 10);
+		$programme_fields[] = array('Subject Categories', 'table_select', '', 'PG_SubjectCategory', 10);
 		$programme_fields[] = array('Module Session', 'text', '', '', 10);
+		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters. The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '', 11); //max 140 characters
+		$programme_fields[] = array('Programme overview', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '', 11); //max 300 words
+		$programme_fields[] = array('School/subject overview', 'textarea', 'This text should give an overview of the school/subject and what it offers prospective students. Max 300 words. ', '', 11); //max 300 words
+		$programme_fields[] = array('Did you know? fact box', 'textarea', 'Please enter key facts about the school/programme such as RAE results, national ratings or other accolades. Max 40 words.', '', 11); //Shows users when they have reached word limit but does allow over-matter.
 
 
 		// immutable fields

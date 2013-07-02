@@ -17,7 +17,7 @@ class TestAward extends ModelTestCase
 
 	public static function tear_down()
 	{
-		$awards = Award::all();
+		$awards = UG_Award::all();
 
 		foreach ($awards as $award)
 		{
@@ -37,7 +37,7 @@ class TestAward extends ModelTestCase
 	{
 		foreach ($input as $position => $name)
 		{
-			$award = Award::create(array('id' => $position, 'name' => $name))->save();
+			$award = UG_Award::create(array('id' => $position, 'name' => $name))->save();
 		}
 	}
 
@@ -47,16 +47,16 @@ class TestAward extends ModelTestCase
 		$awards = array('BA (Hons)', 'MA', 'PhD');
 		$this->populate($awards);
 
-		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database.");
+		$this->assertEquals($awards, UG_Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database.");
 
 		// Remove an award from the database
-		$a = Award::first();
+		$a = UG_Award::first();
 		$a->delete_for_test();
 
 		//Wipe memory cache
-		Award::$list_cache = false;
+		UG_Award::$list_cache = false;
 
-		$this->assertEquals($awards, Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database when we removed an award.");
+		$this->assertEquals($awards, UG_Award::all_as_list(), "Award::all_as_list did not return the same as was added to the database when we removed an award.");
 	}
 	
 }

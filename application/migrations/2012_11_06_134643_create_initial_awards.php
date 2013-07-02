@@ -12,9 +12,7 @@ class Create_Initial_Awards {
 		// Add award demo data
 		foreach (array('BSc (Hons)', 'BA (Hons)', 'Msc', 'MA') as $award)
 		{
-			$tmp = new Award;
-			$tmp->name = $award;
-			$tmp->save();
+			DB::table("awards")->insert(array('name'=> $award));
 		}
 	}
 
@@ -24,13 +22,8 @@ class Create_Initial_Awards {
 	 * @return void
 	 */
 	public function down()
-	{
-		$awards = Award::all();
-
-		foreach ($awards as $award)
-		{
-			$award->delete();
-		}
+	{	
+		DB::table("awards")->where('id', '=', '*')->delete();
 	}
 
 }

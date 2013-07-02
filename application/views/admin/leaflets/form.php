@@ -1,6 +1,9 @@
 <h1><?php echo ( $create ? __('leaflets.form.new.header') : __('leaflets.form.edit.header') )?></h1>
 <?php echo Messages::get_html()?>
-<?php echo Form::open('/leaflets/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php 
+  $url_prefix = (!$shared) ? URLParams::$type.'/' : '';
+  echo Form::open( $url_prefix.'leaflets/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));
+?>
   
   <?php if(!$create): ?> <input type="hidden" name="id" value="<?php echo $item->id?>" /> <?php endif; ?>
    

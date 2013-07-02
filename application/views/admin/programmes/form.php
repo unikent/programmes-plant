@@ -36,6 +36,22 @@
 
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'model' => $model, 'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
+<?php if (! $create && URLParams::$type == 'pg'): ?>
+<div class="section accordion accordion-group">
+  <div class="accordion-heading">
+    <legend>
+      <a href="#deliveries" class="accordion-toggle" data-toggle="collapse">Programme Deliveries</a>
+    </legend>
+  </div>
+  <div id="deliveries" class="accordion-body collapse in">
+    <div class="control-group">
+      <iframe src="../deliveries/<?php echo $programme->id ?>" style='width:100%; height:600px; border:0;'></iframe>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
+
 
 <?php echo Form::actions('programmes', isset($programme) ? $programme : null) ?>
 

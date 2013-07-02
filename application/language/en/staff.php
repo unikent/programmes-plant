@@ -57,6 +57,9 @@ return array(
 		'blurb' => array(
 			'label' => 'Blurb'
 		),
+		'subject' => array(
+			'label' => 'Subject'
+		),
 	),
 
 	/**
