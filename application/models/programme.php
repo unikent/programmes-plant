@@ -352,7 +352,8 @@ abstract class Programme extends Revisionable {
 					 $pos_code_field,
 					 $awarding_institute_or_body_field,
 					 $module_session_field,
-					 $subject_area_2_field
+					 $subject_area_2_field,
+					 $ucas_code_field
 		);
 		// If UG, add ucas field
 		if($type == 'ug') $field[] = $ucas_code_field;
@@ -371,7 +372,6 @@ abstract class Programme extends Revisionable {
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
-
 
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
