@@ -25,9 +25,18 @@
             </div>
 
             <div class="control-group">
-              <?php echo Form::label('subjects', 'Can manage the following subjects',array('class'=>'control-label'))?>
+              <?php echo Form::label('ug_subjects', 'Can manage the following UG subjects',array('class'=>'control-label'))?>
               <div class="controls">
-                <?php echo  ExtForm::multiselect('subjects[]', Subject::all_as_list(), ($create ?  array() : explode(',',$user->subjects)), array('style'=>'height:200px;width:460px;'));?>
+                <?php echo  ExtForm::multiselect('ug_subjects[]', UG_Subject::all_as_list(), ($create ?  array() : explode(',',$user->ug_subjects)), array('style'=>'height:200px;width:460px;'));?>
+              </div>
+            </div>
+
+
+
+            <div class="control-group">
+              <?php echo Form::label('pg_subjects', 'Can manage the following PG subjects',array('class'=>'control-label'))?>
+              <div class="controls">
+                <?php echo  ExtForm::multiselect('pg_subjects[]', PG_Subject::all_as_list(), ($create ?  array() : explode(',',$user->pg_subjects)), array('style'=>'height:200px;width:460px;'));?>
               </div>
             </div>
 

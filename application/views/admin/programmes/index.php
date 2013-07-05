@@ -1,4 +1,4 @@
-<h1><?php echo  URI::segment(1) ?> <?php echo  __('programmes.' . URI::segment(2)) ?> programmes</h1>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?>Programmes</h1>
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('programmes.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
 
 <?php echo Messages::get_html()?>
@@ -21,12 +21,12 @@
           <tr>
             <td>
                               
-                <?php if ( $programme->attributes["live"] == 0 ): ?>
+                <?php if ( $programme->get_publish_status() === 'new' ): ?>
                     <span class="label label-important" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.new.tooltip') ?>"><?php echo __('programmes.traffic-lights.new.label') ?></span>
-                <?php elseif ( $programme->attributes["live"]== 1 ): ?>
-                    <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
-                <?php elseif ( $programme->attributes["live"] == 2 ): ?>
+                <?php elseif ( $programme->get_publish_status() === 'published' ): ?>
                     <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
+                <?php elseif ( $programme->get_publish_status() === 'editing' ): ?>
+                    <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
                 <?php endif; ?>
 
 

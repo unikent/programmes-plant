@@ -2,6 +2,15 @@
 
 class Field extends Eloquent 
 {
+	public $model = '';
+
+	public function __construct($attributes = array(), $exists = false)
+	{
+		$this->model = get_called_class();
+		// Pass to real constructor
+		parent::__construct($attributes, $exists);
+	}
+
 	/**
 	 * Validation object once it has been created.
 	 */
@@ -90,4 +99,100 @@ class Field extends Eloquent
         return true;
     }
 
+    /**
+     * Save a field - creating or updating attached table schemas as required
+	 */
+    public function save() {
+    	$updateSchema = false;
+
+    	// if this is a new field, remeber to create db schema for it
+    	if(!$this->exists)
+    	{
+    		$updateSchema = true;
+    	}
+    	// If not, check to make sure we arn't converting this field in to a textarea - if we are, we want to
+    	// update the column type
+    	else
+    	{	
+    		if($this->dirty())
+    		{
+    			$changes = $this->get_dirty();
+    			if(isset($changes['field_type']) && $changes['field_type'] == 'textarea')
+    			{
+    				// Make this column text
+    				$this->convertColumn(static::$schemas, 'TEXT');
+    			}
+    		}
+    	}
+
+    	// Save the field config
+    	$saved = parent::save();
+ 
+ 		// If save went okay and this is a new field, create the db schema for it
+    	if($saved && $updateSchema){
+    		// get values
+    		$this->colname = Str::slug($this->field_name, '_').'_' . $this->id;
+   			$type = URLParams::get_type();
+
+    		// Create permissions for fields
+    		$this->create_field_permissions($this->colname, $type);
+
+    		// Update relevent table schamas
+			$this->updateSchama(static::$schemas);
+	    	// Save the colname
+    		parent::save();
+    	}
+
+    	return $saved;
+    }
+
+    /**
+     * Update configured tables schema to include new fields
+	 */
+    private function updateSchama($models){
+
+    	// Get values for schema creation
+    	$column = $this->colname;
+    	$inital_value = $this->field_initval;
+    	$field_type = $this->field_type;
+
+    	// Update schema for each model
+    	foreach($models as $model){
+
+    		Schema::table($model::$table, function($table) use ($column, $inital_value, $field_type)
+			{
+				if ($field_type=='textarea') {
+					$table->text($column);
+				} else {
+					$table->string($column, 255)->default($inital_value);
+				}
+			});
+		}
+    }
+
+    /**
+     * Convert a column to a new type, in all passed in tables.
+	 */
+    private function convertColumn($models, $type = 'VARCHAR(255)'){
+    	$column = $this->colname;
+    	foreach($models as $model){
+	    	$table = $model::$table;
+	    	DB::query("ALTER TABLE `{$table}` MODIFY `{$column}` {$type};");
+	    }
+    }
+
+    /**
+     * Create permissions set for new field
+	 */
+    private function create_field_permissions($colname, $type){
+    	Permission::create(array('name' => "{$type}_fields_read_{$colname}"));
+    	Permission::create(array('name' => "{$type}_fields_write_{$colname}"));
+    }
+
+    /**
+     * Save without updating any table schemas
+	 */
+    public function raw_save(){
+    	parent::save();
+    }
 }

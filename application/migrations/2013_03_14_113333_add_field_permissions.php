@@ -2,6 +2,13 @@
 <?php
 Config::set('verify::verify.prefix', 'usersys');
 
+if ( ! class_exists('LegacyProgrammeField') )
+{
+	class LegacyProgrammeField extends ProgrammeField {
+		public static $table = 'programmes_fields';
+	}
+}
+
 class Add_Field_Permissions {
 
 	/**
@@ -11,7 +18,7 @@ class Add_Field_Permissions {
 	 */
 	public function up()
 	{
-		$fields = array_merge(GlobalSettingField::all(), ProgrammeField::all());
+		$fields = array_merge(GlobalSettingField::all(), LegacyProgrammeField::all());
 		foreach($fields as $field){
 			$permission = new Permission;
 			$permission->name = "fields_read_{$field->colname}";
@@ -34,7 +41,7 @@ class Add_Field_Permissions {
 	 */
 	public function down()
 	{
-		$fields = array_merge(GlobalSettingField::all(), ProgrammeField::all());
+		$fields = array_merge(GlobalSettingField::all(), LegacyProgrammeField::all());
 		foreach($fields as $field){
 			$permissions = array_merge(
 				Permission::where('name', '=', "fields_read_{$field->colname}")->get(),

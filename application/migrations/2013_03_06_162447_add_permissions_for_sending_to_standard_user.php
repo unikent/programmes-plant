@@ -16,8 +16,7 @@ class Add_Permissions_For_Sending_To_Standard_User {
 	{
 		$user_role = Role::where('name', '=', 'User')->first();
 		$permission = Permission::where('name', '=', 'submit_programme_for_editing')->first();
-
-		$user_role->permissions()->attach($permission->id);
+		$user_role->permissions()->attach($permission);
 	}
 
 	/**
@@ -27,10 +26,9 @@ class Add_Permissions_For_Sending_To_Standard_User {
 	 */
 	public function down()
 	{
-		$user_role = Role::where('name', '=', 'User');
-		$permission = Permission::where('name', '=', 'submit_programme_for_editing')->first();
-
-		$user_role->permissions()->detach($permission->id);
+		$user_role = Role::where_name('User')->first();
+		$permission = Permission::where_name('submit_programme_for_editing')->first();
+		$user_role->permissions()->detach($permission);
 	}
 
 }

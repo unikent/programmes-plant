@@ -2,8 +2,11 @@
 <p><?php echo __($type . '.introduction'); ?></p>
 <?php echo Messages::get_html()?>
 
+<?php
+  $url_prefix = (!$shared) ? URLParams::$type.'/' : '';
+?>  
 <div style="margin-top:20px; margin-bottom:20px">
-    <a href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
+    <a href="<?php echo action($url_prefix . $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
 </div>
 
 <?php if ($items) : ?>
@@ -19,8 +22,8 @@
     <tr>
       <td><?php echo $item->name ?></td>
         <td>
-          <a class="btn btn-primary" href="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/' . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
-           <a href="#remove" class="popup_toggler btn btn-danger" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'. $type . '@delete', array($item->id)); ?>"><?php echo __($type . '.delete') ?></a>
+          <a class="btn btn-primary" href="<?php echo action($url_prefix . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
+           <a href="#remove" class="popup_toggler btn btn-danger" rel="<?php echo action($url_prefix . $type . '@delete', array($item->id)); ?>"><?php echo __($type . '.delete') ?></a>
          </td>
     </tr>
   <?php endforeach; ?>

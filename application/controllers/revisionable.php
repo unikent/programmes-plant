@@ -19,6 +19,7 @@ class Revisionable_Controller extends Admin_Controller {
 		}
 
 		// Get model
+
 		$model = $this->model;
 
 		// Ensure item & revision id are supplied
@@ -45,7 +46,7 @@ class Revisionable_Controller extends Admin_Controller {
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
 
 		// If somthing went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$data) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// Get data & revert to revision
 		list($item, $revision) = $data;
@@ -55,7 +56,7 @@ class Revisionable_Controller extends Admin_Controller {
 		// Redirect to point of origin
 		Messages::add('success', "Reverted to previous revision.");
 
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+		return Redirect::to(URLParams::get_variable_path_prefix().$this->views.'/edit/'.$item->id);
 	}
 
 	/**
@@ -78,7 +79,7 @@ class Revisionable_Controller extends Admin_Controller {
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
 
 		// If somthing went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$data) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// Get data & revert to revision
 		list($item, $revision) = $data;
@@ -86,7 +87,7 @@ class Revisionable_Controller extends Admin_Controller {
 
 		// Redirect to point of origin
 		Messages::add('success', "using revision.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+		return Redirect::to(URLParams::get_variable_path_prefix().$this->views.'/edit/'.$item->id);
 	}
 
 	/**
@@ -109,7 +110,7 @@ class Revisionable_Controller extends Admin_Controller {
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
 
 		// If something went wrong
-		if (!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if (!$data) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// Get data & make revision live
 		list($item, $revision) = $data;
@@ -117,7 +118,7 @@ class Revisionable_Controller extends Admin_Controller {
 		
 		// Redirect to point of origin
 		Messages::add('success', "The selected revision has been made live.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+		return Redirect::to(URLParams::get_variable_path_prefix().$this->views.'/edit/'.$item->id);
 	}
 	
 	/**
@@ -139,7 +140,7 @@ class Revisionable_Controller extends Admin_Controller {
 		// Check to see we have what is required.
 		$data = $this->get_revision_data($revisionable_item_id, $revision_id);
 		// If somthing went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$data) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// Get data & make revision live
 		list($item, $revision) = $data;
@@ -147,7 +148,7 @@ class Revisionable_Controller extends Admin_Controller {
 		
 		// Redirect to point of origin
 		Messages::add('success', "The selected revision has been unpublished.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$item->id);
+		return Redirect::to(URLParams::get_variable_path_prefix().$this->views.'/edit/'.$item->id);
 	}
 
 	/**
@@ -169,14 +170,14 @@ class Revisionable_Controller extends Admin_Controller {
 		$data = $model::find($revisionable_item_id);
 
 		// If something went wrong
-		if(!$data) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$data) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// do the delete
 		$data->delete();
 		
 		// Redirect to point of origin
 		Messages::add('success', "The specified programme has been deleted.");
-		return Redirect::to($year.'/'.$type.'/'.$this->views);
+		return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 	}
 
 	/**
@@ -194,12 +195,13 @@ class Revisionable_Controller extends Admin_Controller {
 
 		// Ensure item exists (Redirect if it does not)
 		$course = $model::find($itm_id);
-	
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		if(!$course) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 	
 		// load revisions for item.
 	
 		$this->data['programme'] = $course ;
+		$this->data['revision_type'] = $this->views;
 	
 		if ($revisions = $course->get_revisions())
 		{
@@ -226,14 +228,14 @@ class Revisionable_Controller extends Admin_Controller {
 		// Ensure item exists (Redirect if it does not)
 		$course = $model::find($itm_id);
 
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$course) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// load revisions for item.
 		$revision = $course ->get_revision($revision_id);
-		if(!$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$revision) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		$data = array();
-		$data['attributes'] = Programme::get_attributes_list();
+		$data['attributes'] = $model::get_attributes_list();
 		$data['revision'] = $revision;
 		$data['programme'] = $course;
 
@@ -258,15 +260,18 @@ class Revisionable_Controller extends Admin_Controller {
 		// Ensure item exists (Redirect if it does not)
 		$course = $model::find($itm_id);
 
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		if(!$course) return Redirect::to(URLParams::get_variable_path_prefix().$this->views);
 
 		// load revisions for item.
-		$this->data['programme'] = $course ;
+		$this->data['programme'] = $course;
+		$this->data['revision_type'] = $this->views;
 
 		if ($revisions = $course->get_revisions())
 		{
 			$this->data['revisions'] =  $revisions;
 		}
+
+		$this->data['model'] = URLParams::get_type().'_Programme';
 
 		// Display view
 		$this->layout->nest('content', 'admin.revisions.rollback', $this->data);

@@ -1,81 +1,88 @@
 <?php
-
 use \Verify\Models\Permission;
-class Fields_Controller extends Admin_Controller {
+
+abstract class Fields_Controller extends Admin_Controller {
 
 	public $restful = true;
-	public $views = 'fields';
 
 	public $required_permissions = array('configure_fields');
 
 	/**
 	 * Display the fields index page.
 	 */
-	public function get_index($type)
+	public function get_index()
 	{
 		$model = $this->model;
-		$fields = $model::select('*');
-		
-		if($this->where_clause){
-			foreach ($this->where_clause as $clause) {
-				$fields = $fields->or_where($clause[0], $clause[1], $clause[2]);
-			}
-		}
-		
-		// Sections
-		$sections = "";
 
-		// Only show sections on the programme fields lising page ie we don't want them for globalsetting fields or programmesetting fields
-		if ($this->view == 'programmes')
+		// Sections
+		$sections = null;
+
+		// Get immutable fields if view is immutable
+		if($this->view == 'immutable')
 		{
-			$fields = $fields->order_by('order','asc')->get();
-			$sections = ProgrammeSection::order_by('order','asc')->get();
-			$view = "sortable_index";
+			$fields = $model::order_by('field_name','asc')->get();
 		}
-		// standard view, so order by field_name not order number
 		else
 		{
-			$fields = $fields->order_by('field_name','asc')->get();
-			$view = "index";
+			// Get programmes fields + sections
+			$sectionModel = $model::$sections_model;
+			$fields = $model::order_by('order','asc')->get();
+			$sections = $sectionModel::order_by('order','asc')->get();
 		}
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.'.$view , array('fields' => $fields, 'sections' => $sections, 'field_type' => $this->view, 'type'=>$type, 'from' => $this->view));
+		$this->layout->nest(
+			'content', 
+			'admin.fields.'.$this->view,
+			 array(
+			 	'fields' => $fields,
+			  	'sections' => $sections,
+			  	'path' => URI::current()
+			)
+		);
 	}
 
-	public function get_add($type)
+	public function get_add()
 	{
 		$data = array(
-			'field_type' => $this->view,
-			'type' => $type,
+			'path' => URI::current(),
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
+			'model' => $this->model,
+			'field_type' => $this->view,
+			'type' => URLParams::get_type(),
 		);
 
-		$this->layout->nest('content', 'admin.'.$this->views.'.form', $data);
+		$this->layout->nest('content', 'admin.fields.form', $data);
 	}
 
-	public function get_edit($type, $id)
-	{
+	public function get_edit()
+	{	
+		// Get ID of item being edited
+		$params = func_get_args();
+		$id = end($params);
+
 		$model = $this->model;
-		$model = $model::find($id);
+		$field = $model::find($id);
 
 		$data = array(
+			'path' => URI::current(),
+			'type' => URLParams::get_type(),
+			'model' => $model,
 			'id' => $id,
-			'values' => $model,
+			'values' => $field,
 			'field_type' => $this->view,
-			'type' => $type,
 			'roles' => Role::all(true),
 			'permissions' => array('R' => array(), 'W' => array()),
 		);
 
 		// Load existing permissions
-		$read_permissions = Permission::where_name("fields_read_{$model->colname}")->first();
+		$read_permissions = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
 		foreach($read_permissions->roles as $role)
 		{
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = Permission::where_name("fields_write_{$model->colname}")->first();
+		$write_permissions = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
 		foreach($write_permissions->roles as $role)
 		{
 			$data['permissions']['W'][] = $role->id;
@@ -84,7 +91,7 @@ class Fields_Controller extends Admin_Controller {
 		$this->layout->nest('content', 'admin.fields.form', $data);
 	}
 
-	public function post_add($type)
+	public function post_add()
 	{
 		$model = $this->model;
 		$name = $this->name;
@@ -97,74 +104,34 @@ class Fields_Controller extends Admin_Controller {
 
 		// Add Row
 		$field = new $model;
-
 		$field->get_input();
 
 		// By default this is both active and visible.
 		$field->active = 1;
 		$field->view = 1;
 
-		if(empty($field->programme_field_type)){
-			//check that this a kind of programme field before proceeding
-			if(strcmp($model, 'ProgrammeField') == 0){
-				//set the right value for the kind of field
-				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = ProgrammeField::$types['NORMAL'];
-				}
-				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = ProgrammeField::$types['DEFAULT'];
-				}
-			}
-		}
-
+		// If has a type, ensure one gets set
+		if(isset($model::$types) && $field->programme_field_type === null)  $field->programme_field_type = 0;
+			
 		$field->save();
-
-		// Now we have an ID, set it as the corresponding column name.
-		// to avoid risk of duplication
-		$colname = Str::slug(Input::get('title'), '_');
-		$colname .= '_' . $field->id;
-		$field->colname = $colname;
-		$field->save();
-
-		// Now that the field has been saved, create the permission objects
-		$read_permission = new Permission;
-		$read_permission->name = "fields_read_{$field->colname}";
-		$read_permission->save();
-
-		$write_permission = new Permission;
-		$write_permission->name = "fields_write_{$field->colname}";
-		$write_permission->save();
 
 		// Then assign the permissions as specified
 		$permissions = Input::get('permissions');
 
-		if(isset($permissions['R']))
-		{
-			$read_permission->roles()->sync(Role::sanitize_ids($permissions['R']));
-		}
+		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
+		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
-		if(isset($permissions['W']))
-		{
-			$write_permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
-		}
-
-		//we may want to update several tables, particularly in the case an OVERRIDABLE_DEFAULT field
-		$tables_to_update = array($this->table);
-		if(strcmp($model, 'ProgrammeField') == 0){
-			$tables_to_update = array(Programme::$table, ProgrammeSetting::$table);
-		}
-
-		//add relevant table columns
-		foreach ($tables_to_update as $table_to_update) {
-			$this->update_schema($field->colname, $field->field_initval, $field->field_type, $table_to_update);
-		}
+		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
+		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));
 
 		Messages::add('success','Row added to schema');
 
-		return Redirect::to('/'.$type.'/fields/'.$this->view);
+		return Redirect::to(URI::current());
 	}
 
-	public function post_edit($type)
+	public function post_edit()
 	{
 		$model = $this->model;
 		$name = $this->name;
@@ -181,101 +148,46 @@ class Fields_Controller extends Admin_Controller {
 		$oldtype = $field->field_type;
 
 		$field->get_input();
-
-		if(empty($field->programme_field_type)){
-			//check that this a kind of programme field before proceeding
-			if(strcmp($model, 'ProgrammeField') == 0){
-				//set the right value for the kind of field
-				if(strcmp($name, 'Programmes') == 0){
-					$field->programme_field_type = ProgrammeField::$types['NORMAL'];
-				}
-				elseif (strcmp($name, 'ProgrammeSettings') == 0) {
-					$field->programme_field_type = ProgrammeField::$types['DEFAULT'];
-				}
-			}
-		}
 	  
 		$field->save();
 
 		// Assign permissions
 		$permissions = Input::get('permissions');
 
-		$permission = Permission::where_name("fields_read_{$field->colname}")->first();
-		if(isset($permissions['R']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
-		}
+		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
+		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
-		$permission = Permission::where_name("fields_write_{$field->colname}")->first();
-		if(isset($permissions['W']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
-		}
-
-		// If type changes, apply data type swapper.
-		if ($oldtype != Input::get('type')) 
-		{
-			$type_str = 'varchar(255)';
-			if($field->field_type=='textarea') $type_str = 'TEXT';
-			
-			DB::statement("alter table {$this->table} MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-			DB::statement("alter table {$this->table}_revisions MODIFY {$field->colname} {$type_str}  DEFAULT '{$field->field_initval}';");
-		}
+		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
+		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
+		
 
 		Messages::add('success','Edited field.');
 
-		return Redirect::to('/'.$type.'/fields/'.$this->view);
+		return Redirect::to(URI::current());
 	}
 
-	// This needs to be moved to the model.
-	private function update_schema($colname, $init_val, $type, $table_to_update = null)
-	{
-		if(!$table_to_update){
-			$table_to_update = $this->table;
-		}
 
-		// Adjust Tables
-		Schema::table($table_to_update, function($table) use ($colname, $init_val, $type)
-		{
-			if ($type=='textarea') {
-				$table->text($colname);
-			} else {
-				$table->string($colname,255)->default($init_val);
-			}
-
-		});
-
-		Schema::table($table_to_update.'_revisions', function($table) use ($colname, $init_val, $type)
-		{
-			if ($type=='textarea')
-			{
-				$table->text($colname);
-			} 
-			else 
-			{
-				$table->string($colname,255)->default($init_val);
-			}
-		});
-	}
-
-	public function get_deactivate($type)
+	public function get_deactivate()
 	{
 		$model = $this->model;
 		$row = $model::find(Input::get('id'));
 		$row->active = 0;
 		$row->save();
 
-		return Redirect::to($type.'/fields/'.$this->view);
+
+		return Redirect::to(dirname(URI::current()));
 	}
 
-	public function get_reactivate($type)
+	public function get_reactivate()
 	{
 		$model = $this->model;
 		$row = $model::find(Input::get('id'));
 		$row->active = 1;
 		$row->save();
 
-		return Redirect::to($type.'/fields/'.$this->view);
+		return Redirect::to(dirname(URI::current()));
 	}
 	
 	/**
@@ -283,7 +195,7 @@ class Fields_Controller extends Admin_Controller {
 	 *
 	 * This allows fields to be reordered via an AJAX request from the UI
 	 */
-	public function post_reorder()
+	public function post_reorder($type)
 	{
 		$model = $this->model;
 
