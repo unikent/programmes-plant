@@ -12,10 +12,11 @@ class Add_Award_Long_Data {
 		// Add award demo data
 		foreach (array('Bachelor of Science with Honours', 'Bachelor of Arts with Honours', 'Master of Science', 'Master of Arts') as $key=>$value)
 		{
-    		$id = ($key+1);
-			$tmp = Award::find($id);
-			$tmp->longname = $value;
-			$tmp->save();
+    		DB::table("awards")->where('id','=',$key+1)->update(
+				array(
+					'longname'=> $value
+				 )
+			);
 		}
 	}
 
@@ -26,13 +27,7 @@ class Add_Award_Long_Data {
 	 */
 	public function down()
 	{
-		$awards = Award::all();
-
-		foreach ($awards as $award)
-		{
-			$award->longname = '';
-			$award->save();
-		}
+		// This column gets dropped in the next migration back + will be overwritten by this one
 	}
 
 }

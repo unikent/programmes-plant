@@ -1,10 +1,12 @@
 <div style='padding:10px;height:30px;' class='alert <?php if($programme->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>    
   <div style='float:right;'>
-    <a class="btn btn-info" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
+    <a class="btn btn-info" href="<?php echo  action(URLParams::get_variable_path_prefix().$revision_type.'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
   </div>
 </div>
-
-<h1><?php echo $programme->{Programme::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<?php
+ 	$model = $programme->data_type;
+?>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo $programme->{$model::get_title_field()}; ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <h3><?php echo __("revisions.active_revisions"); ?></h3>
 
@@ -13,7 +15,7 @@
 
 foreach ($revisions as $revision){
 
-    echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme))->render();
+    echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme, 'revision_type' => $revision_type))->render();
     //After live switch mode to "non-active"
     if($revision->status =='live'){
       break;
@@ -21,7 +23,7 @@ foreach ($revisions as $revision){
 }
 ?>
 
-<a class="btn btn-danger" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'@rollback', array($programme->id))?>" ><?php echo __("revisions.rollback_form"); ?></a>
+<a class="btn btn-danger" href="<?php echo  action(URLParams::get_variable_path_prefix().$revision_type.'@rollback', array($programme->id))?>" ><?php echo __("revisions.rollback_form"); ?></a>
 
 <p>&nbsp;</p>
 <h3><?php echo __("revisions.historical_revisions"); ?></h3>

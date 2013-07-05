@@ -1,9 +1,9 @@
 <?php
-	$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));
-	$live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
-	$use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
-	$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
-	$unpublish_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@unpublish', array($revision->id));
+	$diff_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@difference', array($revision->id));
+	$live_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@make_live', array($revision->id));
+	$use_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@use_revision', array($revision->id));
+	$revert_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@revert_to_previous', array($revision->id));
+	$unpublish_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@unpublish', array($revision->id));
 ?>
 <?php if($revision->status =='live'):?>
 
@@ -13,7 +13,7 @@
 
 		
 		<?php echo $revision->get_identifier_string() ?> <br/>
-		<?php if(get_class($programme) == 'Programme'):?>
+		<?php if(get_class($programme) == 'UG_Programme' || get_class($programme) == 'PG_Programme'):?>
 			<div style='float:right;'><a class="popup_toggler" href='#unpublish' rel="<?php echo $unpublish_link;?>"><?php echo __("revisions.unpublish"); ?></a> </div>
 		<?php endif?>
 	</div>

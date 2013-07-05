@@ -3,7 +3,7 @@
   </head>
   <body>
     <div class="container loginwindow">
-          <h1>Login To The Programmes Plant</h1>
+          <h1>Log in to the Programmes Plant</h1>
           <?php
           if(Session::has('flash')){
              echo '<div class="alert">'.Session::get('flash').'</div>';

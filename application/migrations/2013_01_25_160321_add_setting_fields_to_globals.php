@@ -52,10 +52,10 @@ class Add_Setting_Fields_To_Globals {
         $field_object->field_initval =  '';
         $field_object->active = 1;
         $field_object->view = 1;
-        $field_object->save();
+        $field_object->raw_save();
     	$colname .= '_'.$field_object->id;
     	$field_object->colname = $colname;
-    	$field_object->save();
+    	$field_object->raw_save();
 		
 		// modify the schema for the main table eg global_settings
 		// by default columns are varchars unless they've been specified as textareas

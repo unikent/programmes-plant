@@ -10,13 +10,14 @@
     <input type="submit" class="btn btn-warning" value="Save">
     <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
   </div>
+  <?php echo View::make('admin.inc.partials.type_marker')->render(); ?>
   <strong><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?> <?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></strong>
 </div>
 
 
 <?php echo Messages::get_html()?>
 
-<h1><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
 
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
 
@@ -33,7 +34,23 @@
   </div>
 </div>
 
-<?php echo View::make('admin.inc.partials.formfields', array('year' => $year,'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
+<?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'model' => $model, 'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
+
+<?php if (! $create && URLParams::$type == 'pg'): ?>
+<div class="section accordion accordion-group">
+  <div class="accordion-heading">
+    <legend>
+      <a href="#deliveries" class="accordion-toggle" data-toggle="collapse">Programme Deliveries</a>
+    </legend>
+  </div>
+  <div id="deliveries" class="accordion-body collapse in">
+    <div class="control-group">
+      <iframe src="../deliveries/<?php echo $programme->id ?>" style='width:100%; height:600px; border:0;'></iframe>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
 
 
 <?php echo Form::actions('programmes', isset($programme) ? $programme : null) ?>

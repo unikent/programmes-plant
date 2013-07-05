@@ -1,5 +1,12 @@
 <?php
 
+if ( ! class_exists('LegacyProgrammeField') )
+{
+	class LegacyProgrammeField extends ProgrammeField {
+		public static $table = 'programmes_fields';
+	}
+}
+
 class Refactor_Programmes_Fields_And_Settings {
 
 	/**
@@ -83,6 +90,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		//Section: Overview
 		$programme_fields[] = array('Programme abstract', 'textarea', 'Please write a concise abstract for this programme. Max 140 characters.  The abstract is not outputted on our course pages but is used for the xcri-cap feed.', '', 2);//140 character limit
 		$programme_fields[] = array('Programme overview text', 'textarea', 'This text should give an overview of the programme and what it offers prospective students. Max 300 words.', '', 2);//max 300 words... shows users when they have reached word limit but does allow over-matter.
+		$programme_fields[] = array('Module session', 'text', '', '', 2);
  
 		//Section: Teaching and Assessment 
 		$programme_fields[] = array('Teaching and assessment', 'textarea', 'Please give details of how the programme is taught and assessed here. Max 200 words.', '', 4); // Function: Shows users when they have reached word limit but does allow over-matter. 
@@ -146,7 +154,7 @@ class Refactor_Programmes_Fields_And_Settings {
 		$programme_fields[] = array('Search keywords', 'text', 'Add search keywords, separated by a comma', '', 11); //Type: text 
 		$programme_fields[] = array('Subject categories', 'table_multiselect', 'select the subject categories this programme falls into. The programme will appear under these category in the course finder. ', 'SubjectCategory', 11); //Type: Subject category multi-selection tool. Predefined subject categories. Function:Read only to users, editable by superusers. 
 			//NB: The groups will be the all-new broader subject categories that are going to be used in print prospectus. Approx. 30-40 categories. 
-		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'Programme', 11); //Type: multi-selection tool, auto-complete search or similar. Function: Must be able to select multiple related courses. IS to consider options.  Approx 400 programmes to choose from. 
+		$programme_fields[] = array('Related courses', 'table_multiselect', 'Please note, the related courses that appear will be all the other programmes related to the subject(s) selected in the ‘Programme title and key facts’ section. You can add additional related courses below.', 'UG_Programme', 11); //Type: multi-selection tool, auto-complete search or similar. Function: Must be able to select multiple related courses. IS to consider options.  Approx 400 programmes to choose from. 
 		$programme_fields[] = array('Holding message ', 'textarea', 'This field is only to be used when all the content on the page except for the programme title needs to be replaced by a single message. For example, if the course is suspended or withdrawn. ', '', 11); // Function: Read only to users, editable by superusers. 
 		$programme_fields[] = array('New programme', 'checkbox', 'Check the box if this is a new programme that has been added since the start of the prospectus cycle', '', 11); //Type: checkbox. Function: Read only to users, editable by superusers. 
 		$programme_fields[] = array('Prorgamme specification URL', 'text', '', '', 11); //Type: URL to programme spec. 
@@ -166,17 +174,17 @@ class Refactor_Programmes_Fields_And_Settings {
 
 		// Add the fields in
 		foreach ($programme_fields as $field) {
-			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['NORMAL'], $field[4]);
+			$this->add_field('LegacyProgrammeField', array('programme_settings', 'programmes', 'programme_settings_revisions', 'programmes_revisions'), $field[0], $field[1], $field[2], $field[3], UG_ProgrammeField::$types['NORMAL'], $field[4]);
 		}
 
 		// Add the fields in
 		foreach ($programme_setting_fields as $field) {
-			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['DEFAULT']);
+			$this->add_field('LegacyProgrammeField', array('programme_settings', 'programmes', 'programme_settings_revisions', 'programmes_revisions'), $field[0], $field[1], $field[2], $field[3], UG_ProgrammeField::$types['DEFAULT']);
 		}
 
 		// Add the fields in
 		foreach ($programme_override_fields as $field) {
-			$this->add_field('ProgrammeField', array('programme_settings', 'programmes'), $field[0], $field[1], $field[2], $field[3], ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
+			$this->add_field('LegacyProgrammeField', array('programme_settings', 'programmes', 'programme_settings_revisions', 'programmes_revisions'), $field[0], $field[1], $field[2], $field[3], UG_ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $field[4]);
 		}
 	}
 
@@ -208,10 +216,10 @@ class Refactor_Programmes_Fields_And_Settings {
         $field_object->view = 1;
         $field_object->section = $section;
         $field_object->programme_field_type = $programme_field_type;
-        $field_object->save();
+        $field_object->raw_save();
     	$colname .= '_'.$field_object->id;
     	$field_object->colname = $colname;
-    	$field_object->save();
+    	$field_object->raw_save();
 		
 		if(!is_array($tablename)){
 			$tablename = array($tablename);
@@ -231,21 +239,6 @@ class Refactor_Programmes_Fields_And_Settings {
 					$table->string($colname, 255);
 				}
 					
-			});
-			
-			// modify the schema for the revisions table eg programme_settings_revisions
-			// by default columns are varchars unless they've been specified as textareas
-			Schema::table($value.'_revisions', function($table) use ($colname, $type) {
-			
-				if ($type=='textarea')
-				{
-					$table->text($colname);
-				}
-				else
-				{
-					$table->string($colname,255);
-				}
-				
 			});
 		}
 	}

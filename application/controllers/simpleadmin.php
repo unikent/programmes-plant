@@ -8,18 +8,27 @@
  */
 class Simple_Admin_Controller extends Admin_Controller {
 
-	// Stores the shortcut variable for the language file
-	var $l = '';
-
 	// Whether to use a custom form here
-	var $custom_form = false;
-
+	public $custom_form = false;
+	// Is data shared between UG & PG (if false data is treated as being seperate using UG_* vs PG_* models)
+	public $shared_data = true;
+	// Requered permission
 	public $required_permissions = array("edit_data");
 
+	// Stores the shortcut variable for the language file
+	protected $l = '';
+
+	/**
+	 * Setup controller actions
+	 *
+	 */
 	public function __construct()
 	{
 		// Quick use variable for access to language files
 		$this->l = $this->views . '.';
+
+		// Prefix model if data model isn't shared
+		if(!$this->shared_data) $this->model = URLParams::$type.'_'.$this->model;
 
 		// Construct parent.
 		parent::__construct();
@@ -33,19 +42,26 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$model = $this->model;
 
 		$this->data['items'] = $model::all_active();
-
+		$this->data['shared'] = $this->shared_data;
 		$this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
 	}
 	
 	/**
 	 * Display an edit form for an item.
 	 */
-	public function get_edit($year, $type, $object_id = false)
+	public function get_edit()
 	{
+		// Get last paramater (the id)
+		$params = func_get_args();
+		$object_id = end($params);
+
+		// get site url
+		$url = $this->get_base_page();
+
 		if (! $object_id)
 		{
-			Message::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
-			return Redirect::to($this->views);
+			Messages::add('error', "No " . Str::lower($this->model) . "ID provided, so could not be loaded.");
+			return Redirect::to($url);
 		}
 
 		$model = $this->model;
@@ -54,15 +70,16 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		if (! $object)
 		{
-			Message::add('error', __($this->l . 'error.not_found'));
+			Messages::add('error', __($this->l . 'error.not_found'));
 			return Redirect::to($this->views);
 		}
 
 		$this->data['item'] = $object;
+		$this->data['shared'] = $this->shared_data;
 		
 		if ($this->custom_form)
 		{
-			$this->layout->nest('content', 'admin.'.$this->views.'.form',$this->data);
+			$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 		}
 		else
 		{
@@ -76,6 +93,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function get_create()
 	{
 		$this->data['create'] = true;
+		$this->data['shared'] = $this->shared_data;
 
 		if ($this->custom_form)
 		{
@@ -90,12 +108,19 @@ class Simple_Admin_Controller extends Admin_Controller {
 	/**
 	 * Route for deletion of an item.
 	 */
-	public function get_delete($year, $type, $id)
+	public function get_delete()
 	{
+		// Get last paramater (the id)
+		$params = func_get_args();
+		$object_id = end($params);
+		
+		// get site url
+		$url = $this->get_base_page();
+
 		$model = $this->model;
 
 		$rules = array(
-			'id'  => 'required|integer|exists:' . $this->views,
+			'id'  => 'required|integer|exists:' . $model::$table,
 		);
 
 		//Don't call core validator method or deletes will never pass (since they only ever have id)
@@ -103,7 +128,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		{
 			Messages::add('error', __($this->l . 'error.delete'));
 
-			return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
+			return Redirect::to($url);
 		}
 		else
 		{
@@ -111,7 +136,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 			$remove->delete();
 
 			Messages::add('success', __($this->l . 'success.delete'));
-			return Redirect::to(URI::segment(1) . '/' . URI::segment(2) . '/' . $this->views);
+			return Redirect::to($url);
 		}
 	}
 
@@ -121,16 +146,17 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_create()
 	{
 		$model = $this->model;
+		$url = $this->get_base_page();
 
 		$rules = array(
-			'name'  => 'required|unique:' . $this->views . '|max:255',
+			'name'  => 'required|unique:' . $model::$table . '|max:255',
 		);
 
 		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/create')->with_input();
+			return Redirect::to($url.'/create')->with_input();
 		}
 
 		$new = new $this->model;
@@ -141,7 +167,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.create'));
 
-		return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+		
+		return Redirect::to($url);
 	}
 
 	/**
@@ -150,20 +177,23 @@ class Simple_Admin_Controller extends Admin_Controller {
 	public function post_edit()
 	{
 		$model = $this->model;
-		
+		$url = $this->get_base_page();
+
+		$id = Input::get('id');
+
 		$rules = array(
-			'id'  => 'required|exists:'. $this->views .',id',
-			'name'  => 'required|max:255|unique:'. $this->views . ',name,'.Input::get('id'),
+			'id'  => 'required|exists:'. $model::$table .',id',
+			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id
 		);
 
 		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
-			return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'/edit/'.Input::get('id'));
+			return Redirect::to($url . '/edit/' . $id);
 		}
 
-		$update = $model::find(Input::get('id'));
+		$update = $model::find($id);
 
 		$update->name = Input::get('name');
 		$update->populate_from_input();
@@ -171,8 +201,17 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$update->save();
 
 		Messages::add('success', __($this->l . 'success.edit'));
+		
+		return Redirect::to($url);
+	}
 
-		return Redirect::to(URI::segment(1).'/'.URI::segment(2).'/'.$this->views.'');
+	/**
+	 * Get path to current "base" page
+	 * - ug/type or /type depending on if shared
+	 */
+	private function get_base_page(){
+		$prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
+		return $prefix.$this->views;
 	}
 
 }

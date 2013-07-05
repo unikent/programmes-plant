@@ -6,4 +6,6 @@ class Leaflets_Controller extends Simple_Admin_Controller {
 	protected $model = 'Leaflet';
 	public $custom_form = true;
 
+	public $shared_data = false;
+
 }

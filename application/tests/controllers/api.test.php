@@ -8,13 +8,16 @@ class TestAPI_Controller extends ControllerTestCase
 
     public function populate($input)
     {
-        Programme::create($input)->save();
+        UG_Programme::create($input)->save();
     }
 
     public static function setUpBeforeClass()
     {   
         Auth::login(1);
         Tests\Helper::migrate();
+
+        // SET URIs so tests don't attempt to add _bla classes (as URI::segments() arn't populated in tests)
+        static::setURI('ug','2014');
     }
 
     public static function tearDownAfterClass()
@@ -24,12 +27,12 @@ class TestAPI_Controller extends ControllerTestCase
 
     public static function tear_down()
     {
-        $programmes = Programme::all();
+        $programmes = UG_Programme::all();
         foreach ($programmes as $programme)
         {
             $programme->delete_for_test();
         }
-        $programme_revisions = ProgrammeRevision::all();
+        $programme_revisions = UG_ProgrammeRevision::all();
         foreach ($programme_revisions as $revision)
         {
             $revision->delete_for_test();
@@ -44,23 +47,23 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $revision->delete_for_test();
         }
-        $programme_settings = ProgrammeSetting::all();
+        $programme_settings = UG_ProgrammeSetting::all();
         foreach ($programme_settings as $setting)
         {
             $setting->delete_for_test();
         }
-        $programme_settings_revisions = ProgrammeSettingRevision::all();
+        $programme_settings_revisions = UG_ProgrammeSettingRevision::all();
         foreach ($programme_settings_revisions as $revision)
         {
             $revision->delete_for_test();
         }
         //Reset auto incriment sequences
-        DB::query('delete from sqlite_sequence where name="programmes"');
-        DB::query('delete from sqlite_sequence where name="programmes_revisions"');
+        DB::query('delete from sqlite_sequence where name="programmes_ug"');
+        DB::query('delete from sqlite_sequence where name="programmes_revisions_ug"');
         DB::query('delete from sqlite_sequence where name="global_settings"');
         DB::query('delete from sqlite_sequence where name="global_settings_revisions"');
-        DB::query('delete from sqlite_sequence where name="programme_settings"');
-        DB::query('delete from sqlite_sequence where name="programme_settings_revisions"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_ug"');
+        DB::query('delete from sqlite_sequence where name="programme_settings_revisions_ug"');
         // Since we now use the normal cache, we can just flush it
         Cache::flush();
 
@@ -70,7 +73,7 @@ class TestAPI_Controller extends ControllerTestCase
     public function generate_programme_dependancies(){
 
     
-        ProgrammeField::create(
+        UG_ProgrammeField::create(
                 array(
                         'field_name' => 'New field',
                         'field_type' => 'textarea',
@@ -80,7 +83,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Award::create(
+        UG_Award::create(
                 array(
                         'name' => 'Hello Award',
                         'longname' => 'Long hello award'
@@ -99,7 +102,7 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Leaflet::create(
+        UG_Leaflet::create(
                 array(
                         'name' => 'Hello Leaflet'
                     )
@@ -112,19 +115,19 @@ class TestAPI_Controller extends ControllerTestCase
                     )
             )->save();
 
-        Subject::create(
+        UG_Subject::create(
                 array(
                         'name' => 'Hello Subject'
                     )
             )->save();
 
-        ProgrammeSetting::create(
+        UG_ProgrammeSetting::create(
                 array(
                         'id' => 1,
                         'year' => '2014'
                     )
             )->save();
-        $ps = ProgrammeSetting::find(1);
+        $ps = UG_ProgrammeSetting::find(1);
         $revision = $ps->get_revision(1);
         $ps->make_revision_live($revision);
 
@@ -145,22 +148,23 @@ class TestAPI_Controller extends ControllerTestCase
         {
             $input = array(
                 'id' => 1, 
-                Programme::get_title_field() => 'Programme 1',
+                UG_Programme::get_title_field() => 'Programme 1',
                 'year' => '2014',
-                'programme_suspended_53' => '',
-                'programme_withdrawn_54' => '',
+                UG_Programme::get_programme_suspended_field() => '',
+                UG_Programme::get_programme_withdrawn_field() => '',
+                UG_Programme::get_subject_area_1_field()  => '1'
             );
         }
 
         $this->populate($input);
 
-        $course = Programme::find($input['id']);
+        $course = UG_Programme::find($input['id']);
         return $course;
     }
 
     public function make_programme_live($id = 1)
     {
-        $course = Programme::find($id);
+        $course = UG_Programme::find($id);
         
         if(!empty($course))
         {
@@ -201,8 +205,8 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => '',
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
             );
 
         $course = $this->create_programme($input);
@@ -227,8 +231,8 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => ''
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
         );
 
         $course = $this->create_programme($input);
@@ -245,6 +249,8 @@ class TestAPI_Controller extends ControllerTestCase
 
     public function testget_programmeReturns204WithNoCache()
     {
+
+
         $input = array(
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
@@ -267,14 +273,15 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
-            'programme_suspended_53' => '',
-            'programme_withdrawn_54' => ''
+            UG_Programme::get_programme_suspended_field() => '',
+            UG_Programme::get_programme_withdrawn_field() => '',
+            UG_Programme::get_subject_area_1_field()  => '1'
         );
 
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
        
-        $response = $this->get('api@programme', array($course->year, $course->id));
+        $response = $this->get('api@programme', array($course->year, 'undergraduate', $course->id));
        
         $this->assertEquals('200', $response->status());
     }
@@ -287,12 +294,13 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            UG_Programme::get_subject_area_1_field()  => '1'
         );
         
         $course = $this->create_programme($input);
         $course = $this->make_programme_live($input['id']);
 
-        $response = $this->get('api@programme', array($course->year, $course->id));
+        $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id));
         $returned_data = json_decode($response->render());
         
         $this->assertEquals($input['programme_title_1'], $returned_data->programme_title);
@@ -394,7 +402,7 @@ class TestAPI_Controller extends ControllerTestCase
 
         Cache::put('last_change', (time()+500), 10000);
 
-        $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
+        $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',time())));
         $this->assertEquals('200', $response->status());
     }
 
@@ -437,7 +445,7 @@ class TestAPI_Controller extends ControllerTestCase
             $course->make_revision_live($course->get_active_revision());
 
             // Ensure we get 200 not 301.
-            $response = $this->get('api@programme', array($course->year, $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
+            $response = $this->get('api@programme', array($course->year,'undergraduate', $course->id), array('if-modified-since'=>gmdate('D, d M Y H:i:s \G\M\T',$timestamp)));
             $this->assertEquals('200', $response->status());
 
     }

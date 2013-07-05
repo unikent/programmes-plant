@@ -81,6 +81,7 @@ return array(
 	'rev_table_live_header' => 'Live <div> :ident_str </div>',
 	'rev_table_proposed_header' => 'Proposed <div> :ident_str </div> ',
 
+	'rev_pre_live_intro' => 'The following shows the revision being proposed.',
 
 	'rev_edit_programme' => 'Edit this programme',
 	'rev_request_amends' => 'Request changes from author',

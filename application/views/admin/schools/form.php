@@ -1,6 +1,6 @@
 <h1><?php echo ( $create ? 'New School' : 'Edit School' )?></h1>
 <?php echo Messages::get_html()?>
-<?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/schools/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open('/schools/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 <?php if(!$create): ?> <input type="hidden" name="id" value="<?php echo $item->id?>" /> <?php endif; ?>
 <fieldset>
   <legend>School Details</legend>

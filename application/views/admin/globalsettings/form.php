@@ -1,13 +1,13 @@
 <?php if(!$create)  echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $globalsettings, 'type'=>'globalsettings'))->render();?>
 
-<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files(URLParams::get_variable_path_prefix().'globalsettings/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
 
 <div class="floating_save" data-spy="affix" data-offset-top="100">
   <div class='pull-right'>
     <input type="submit" class="btn btn-warning" value="Save">
-     <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
+     <a class="btn" href="<?php echo url(URLParams::$year . '/' . URLParams::$type  . '/programmes')?>">Cancel</a>
   </div>
-   <strong><?php echo __('fields.globalsettings') ?> </strong>
+   <strong><?php echo __('fields.globalsettings') ?> - <?php echo URI::segment(1)?> </strong>
 </div>
 
 <?php echo Messages::get_html()?>
@@ -26,11 +26,12 @@
   </div>	
 
 
-   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array(''=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create))->render(); ?>
+   <?php echo View::make('admin.inc.partials.formfields', array('sections' => array(''=>$fields), 'programme' => isset($globalsettings) ? $globalsettings : null,'create'=>$create, 'model' => $model))->render(); ?>
 </fieldset>
 
 <div class="form-actions">
   <input type="submit" class="btn btn-warning" value="<?php echo __('fields.form.btn.save') ?>" />
+  <a class="btn" href="<?php echo url(URLParams::$year . '/' . URLParams::$type  . '/programmes')?>">Cancel</a>
 </div>
 
 <?php echo Form::close(); ?>

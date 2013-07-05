@@ -15,8 +15,10 @@
 <?php endif; ?>
 
 <?php
- 	$revisions_link = action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'@revisions', array($instance->id));
+ 	$revisions_link = action(URLParams::get_variable_path_prefix().$type.'@revisions', array($instance->id));
 ?>
+
+
 <?php if($revision === null): ?>
 	<div style='padding:10px;height:30px;' class='alert alert-danger'>
 		<div style='float:right;'>
@@ -27,28 +29,27 @@
 		<span class="label label-important">Unknown</span> Publishing state unknown.
 	</div>
 <?php else: ?>
-<div style='padding:10px;height:30px;' class='alert <?php if($instance->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
+<div style='padding:10px;height:30px;' class='alert <?php if($instance->get_publish_status() === 'published'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>		
 	<div style='float:right;'>
+
 		<?php if($type == 'programmes'):?>
 			<?php
-				$preview_link =  action(URI::segment(1).'/'.URI::segment(2).'/programmes/'.$instance->id.'@preview', array($revision->id));
+				$preview_link =  action(URLParams::$mainpath.'/programmes/'.$instance->id.'@preview', array($revision->id));
 				$review_link = action( $revision->year . '/ug/programmes/' . $instance->id . '@review', array($revision->id));
 			?>
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
 
-		<?php if($instance->live != '2'):?>
-
-		<?php if (Auth::user()->can('make_programme_live')) : ?>
-			<?php if($instance->locked_to == ''):?>
-				<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@make_live', array($revision->id));?>"><?php echo __("revisions.make_live"); ?></a>
-			<?php else:?>
-				<a class="btn btn-success" target="_blank" href="<?php echo $review_link; ?>" >Review</a>
-			<?php endif;?>
-		<?php else : ?>
-			<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URI::segment(1).'/'.URI::segment(2).'/'.$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>"><?php echo __('revisions.send_for_editing'); ?></a>
-		<?php endif; ?>
-
+		<?php if($instance->get_publish_status() === 'editing' || $instance->get_publish_status() === 'new'):?>
+			<?php if (Auth::user()->can('make_programme_live')) : ?>
+				<?php if($instance->locked_to == ''):?>
+					<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URLParams::get_variable_path_prefix().$type.'.' . $instance->id . '@make_live', array($revision->id));?>"><?php echo __("revisions.make_live"); ?></a>
+				<?php else:?>
+					<a class="btn btn-success" target="_blank" href="<?php echo $review_link; ?>" >Review</a>
+				<?php endif;?>
+			<?php else : ?>
+				<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URLParams::get_variable_path_prefix().$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>"><?php echo __('revisions.send_for_editing'); ?></a>
+			<?php endif; ?>
 		<?php endif;?>
 
 		<?php if (Auth::user()->can('manage_revisions')) : ?>
@@ -57,7 +58,7 @@
 
 	</div>
     <?php if (Auth::user()->can('make_programme_live')) : ?>
-    	<?php if ($instance->live=='2'):?>
+    	<?php if ($instance->get_publish_status() === 'published'):?>
     		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span> 
     	<?php elseif ($revision->under_review == 1) : ?>
     		<span class="label label-important"><?php echo __("revisions.status_review"); ?></span>

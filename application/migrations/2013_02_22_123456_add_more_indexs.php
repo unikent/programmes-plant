@@ -25,7 +25,7 @@ class Add_more_indexs {
 	{
 		Schema::table('programmes_revisions', function($table)
 		{
-			$table->dropIndex(array('instance_id', 'year', 'status'));
+			$table->drop_index('programmes_revisions_instance_id_year_status_index');
 		});
 
 

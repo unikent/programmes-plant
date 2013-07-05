@@ -1,28 +1,9 @@
 <?php
-class ProgrammeRevision extends Revision
+abstract class ProgrammeRevision extends Revision
 {
     public static $table = 'programmes_revisions';
     protected $data_type_id = 'programme_id';
 
-    /**
-     * Get this programme's award.
-     * 
-     * @return Award The award for this programme.
-     */
-    public function award()
-    {
-      return $this->belongs_to('Award', Programme::get_award_field());
-    }
-
-    /**
-     * Get this programme's first subject area.
-     * 
-     * @return Subject The first subject area for this programme.
-     */
-    public function subject_area_1()
-    {
-      return $this->belongs_to('Subject', Programme::get_subject_area_1_field());
-    }
 
     /**
      * Get this programme's administrative school.
@@ -31,7 +12,8 @@ class ProgrammeRevision extends Revision
      */
     public function administrative_school()
     {
-      return $this->belongs_to('School', Programme::get_administrative_school_field());
+        $model = static::$programme_model;
+       return $this->belongs_to('School', $model::get_administrative_school_field());
     }
 
     /**
@@ -41,7 +23,8 @@ class ProgrammeRevision extends Revision
      */
     public function additional_school()
     {
-      return $this->belongs_to('School', Programme::get_additional_school_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('School', $model::get_additional_school_field());
     }
 
     /**
@@ -51,7 +34,8 @@ class ProgrammeRevision extends Revision
      */
     public function location()
     {
-      return $this->belongs_to('Campus', Programme::get_location_field());
+        $model = static::$programme_model;
+        return $this->belongs_to('Campus', $model::get_location_field());
     }
 
     
