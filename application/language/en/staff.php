@@ -60,6 +60,14 @@ return array(
 		'subject' => array(
 			'label' => 'Subject'
 		),
+		'role' => array(
+			'label' => 'Role',
+			'placeholder' => "e.g. 'Professor of Actuarial Science'",
+		),
+		'keywords' => array(
+			'label' => 'Keywords',
+			'placeholder' => 'Comma-separated list of keywords.',
+		),
 	),
 
 	/**

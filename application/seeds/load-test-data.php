@@ -384,21 +384,37 @@ class Load_Test_Data {
 		// Increase PHP memory limit a great deal.
 		ini_set('memory_limit', '1024M');
 
-		Auth::login(1);
-
 		// set up a user that these programmes will be added by
 		Auth::login(1);
 
 		// Create some subjects and subject categories.
 		for ($i = 0; $i <= 30; $i++)
 		{
-			Subject::create(array('name' => "subject_$i"))->save();
-			SubjectCategory::create(array('name' => "subject_category_$i"))->save();
+			UG_Subject::create(array('name' => "subject_$i"))->save();
+			UG_SubjectCategory::create(array('name' => "subject_category_$i"))->save();
+			PG_Subject::create(array('name' => "subject_$i"))->save();
+			PG_SubjectCategory::create(array('name' => "subject_category_$i"))->save();
 		}
 		
 		$ug_fields = UG_ProgrammeField::all();
 		$pg_fields = PG_ProgrammeField::all();
 		$ipsum = $this->generate_lorem_ipsum(2);
+
+		// add in a PG award
+		$award = new PG_Award;
+		$award->name = 'PhD';
+		$award->longname = 'Doctor of Philosophy';
+		$award->hidden = 0;
+		$award->save();
+
+		// add in a PG leaflet
+		$leaflet = new PG_Leaflet;
+		$leaflet->name = 'Test PG leaflet';
+		$leaflet->tracking_code = 'http://www.kent.ac.uk';
+		$leaflet->hidden = 0;
+		$leaflet->campus = 0;
+		$leaflet->save();
+		
 		
 		// Populate three years worth of data.
 		for ($year = 2014; $year <= 2016; $year ++)

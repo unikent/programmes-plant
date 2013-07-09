@@ -112,7 +112,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	{
 		// Get last paramater (the id)
 		$params = func_get_args();
-		$object_id = end($params);
+		$id = end($params);
 		
 		// get site url
 		$url = $this->get_base_page();
