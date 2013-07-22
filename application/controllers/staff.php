@@ -5,6 +5,17 @@ class Staff_Controller extends Simple_Admin_Controller {
 	public $model = 'Staff';
 	public $custom_form = true;
 
+	/**
+	 * Return all data and send to an index view.
+	 */
+	public function get_index()
+	{
+		$model = $this->model;
+
+		$this->data['items'] = $model::all_active('surname');
+		$this->data['shared'] = $this->shared_data;
+		$this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
+	}
 
 	/**
 	 * Create a new item via POST.
