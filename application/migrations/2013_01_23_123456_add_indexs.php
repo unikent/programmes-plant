@@ -36,19 +36,19 @@ class Add_indexs {
 	{
 		Schema::table('programmes_revisions', function($table)
 		{
-			$table->dropIndex(array('programme_id', 'year', 'status'));
+			$table->drop_index('programmes_revisions_programme_id_year_status_index');
 		});
 		Schema::table('global_settings_revisions', function($table)
 		{
-			$table->dropIndex(array('year', 'status'));
+			$table->drop_index('global_settings_revisions_year_status_index');
 		});
 		Schema::table('programme_settings_revisions', function($table)
 		{
-			$table->dropIndex(array('year', 'status'));
+			$table->drop_index('programme_settings_revisions_year_status_index');
 		});
 		Schema::table('programmes_fields', function($table)
 		{
-			$table->dropIndex('section');
+			$table->drop_index('programmes_fields_section_index');
 		});
 
 	}

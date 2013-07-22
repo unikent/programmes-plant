@@ -12,10 +12,7 @@ class Add_School_Data {
     	// Add school demo data
 		foreach (array('Architecture', 'Arts', 'English', 'European Culture and Languages', 'History') as $school)
 		{
-			$obj = new School;
-			$obj->name = $school;
-			$obj->faculties_id = 1;
-			$obj->save();
+	        DB::table('schools')->insert(array('name'=> $school, 'faculties_id' => 1));
 		}
 	}
 
@@ -26,11 +23,7 @@ class Add_School_Data {
 	 */
 	public function down()
 	{
-    	$schools = School::all();
-		foreach ($schools as $school)
-		{
-			$school->delete();
-		}
+		DB::table('schools')->where('id','=','*')->delete();
 	}
 
 }

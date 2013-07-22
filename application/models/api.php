@@ -12,6 +12,7 @@ class API {
 	public static function get_index($year, $level = 'ug')
 	{
 		// Get index of programmes
+		$level =  URLParams::get_type();
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
 	}
@@ -26,6 +27,7 @@ class API {
 	public static function get_subjects_index($year, $level = 'ug')
 	{
 		// api-output-ug gets wiped on every action.
+		$level =  URLParams::get_type();
 		$cache_key = "api-output-{$level}.subjects_index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_subjects_index($year, $level);
 	}
@@ -39,12 +41,15 @@ class API {
 	*/
 	public static function generate_subjects_index($year, $level = 'ug')
 	{
+		$level =  URLParams::get_type();
 		// api-output-ug gets wiped on every action.
 		$cache_key = "api-output-{$level}.subjects_index-$year";
 
 		$model = $level.'_Programme';
+		$subjects_model = $level.'_Subject';
+
 		// Get subjects and course mappings
-		$subjects = Subject::get_api_data($year);
+		$subjects = $subjects_model::get_api_data($year);
 		$subjects_map = $model::get_api_related_programmes_map($year);
 		// Generate feed array
 		$subjects_array = array();
@@ -64,14 +69,13 @@ class API {
 	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
-	 * @param year year to get index for
-	 * @return combined programme data array
+	 * @param year Year to get index for
+	 * @return combined Programme data array
 	 */
-	public static function get_programme($id, $year, $type = false)
-	{	
-		$type = empty($type) ? URLParams::get_type() : $type;
-		$cache_key = "api-output-{$type}.programme-$year-$id";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($id, $year);
+	public static function get_programme($level, $year, $id)
+	{
+		$cache_key = "api-output-{$level}.programme-$year-$id";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($level, $year, $id);
 	}
 
 	/**
@@ -81,13 +85,16 @@ class API {
 	 * @param year year to get index for
 	 * @return combined programme data array
 	 */
-	public static function generate_programme_data($id, $year)
-	{	
-		$type = URLParams::get_type();
-		$cache_key = "api-output-{$type}.programme-$year-$id";
 
-		$settings_model = $type.'_ProgrammeSetting';
-		$programme_model = $type.'_Programme';
+	public static function generate_programme_data($level, $year, $iid)
+	{	
+		$cache_key = "api-output-{$level}.programme-$year-$iid";
+
+
+		$prefix = API::_get_prefix($level);
+
+		$settings_model = $prefix.'ProgrammeSetting';
+		$programme_model = $prefix.'Programme';
 
 		// Get basic data set
 		$globals 			= GlobalSetting::get_api_data($year);	
@@ -100,7 +107,7 @@ class API {
 		}
 
 		// Get programme itself
-		$programme 	= $programme_model::get_api_programme($id, $year);
+		$programme 	= $programme_model::get_api_programme($iid, $year);
 
 		// If programe does not exist/is not published.
 		if($programme === false){
@@ -108,6 +115,8 @@ class API {
 		}
 
 		$final = static::combine_programme($programme, $programme_settings, $globals);
+
+	//	$final['deliveries'] = static::attach_pg_deliveries($iid, $year);
 
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
@@ -178,13 +187,16 @@ class API {
 	 * @throws NotFoundException on unknown datatype
 	 * @return array of data to return.
 	 */
-	public static function get_data($type){
-
+	public static function get_data($type, $level = null){
 		// Do some magic (ie. convert schools=>school & campuses to campus for models)
 		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
 		$type = $pluralizer->singular($type);
+
+		$prefix = API::_get_prefix($level);
+
 		// If type exists, return data
-		if(class_exists($type)){
+		if(class_exists($prefix.$type)){
+			$type = $prefix.$type;
 			return $type::get_api_data();
 		}
 		// Else throw 404
@@ -230,9 +242,15 @@ class API {
 		$final = static::remove_ids_from_field_names($final);
 
 		// Apply related courses
+		if(empty($final['subject_area_1'])){
+			throw new MissingMagicalUnicornFieldException('subject_area_1 should never be set null');
+		}
+
 		$subject_area_1 = $final['subject_area_1'][0]['id'];
+
 		// Get subject area two if its set
 		$subject_area_2 = null;
+
 		if(empty($final['subject_area_2'])){
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
@@ -245,6 +263,11 @@ class API {
 
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
+
+		// Add deliveries if PG
+		if(URLParams::get_type() == 'pg'){
+			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+		}
 
 		// Finally, try and add some module data
 		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
@@ -438,7 +461,7 @@ class API {
 	public static function get_xcrified_programme($id, $year, $type = false)
 	{
 		// get the programme
-		$programme = static::get_programme($id, $year, $type);
+		$programme = static::get_programme(URLParams::get_type(), $year, $id);
 	
 		// format the programme appropriately
 		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
@@ -478,7 +501,25 @@ class API {
 		return $programme;
 	}
 
+
+
+	public static function _get_prefix($level){
+		switch($level){
+			case 'ug':
+				$prefix = 'UG_';
+				break;
+			case 'pg':
+				$prefix = 'PG_';
+				break;
+			default:
+				$prefix = '';
+				break;
+		}
+
+		return $prefix;
+	}
 }
 
+class MissingMagicalUnicornFieldException extends \Exception {}
 class MissingDataException extends \Exception {}
 class NotFoundException extends \Exception {}

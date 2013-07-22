@@ -119,16 +119,12 @@ abstract class Fields_Controller extends Admin_Controller {
 		$permissions = Input::get('permissions');
 
 		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
-		if(isset($permissions['R']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
-		}
+		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
 		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
-		if(isset($permissions['W']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
-		}
+		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));
 
 		Messages::add('success','Row added to schema');
 
@@ -159,16 +155,13 @@ abstract class Fields_Controller extends Admin_Controller {
 		$permissions = Input::get('permissions');
 
 		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
-		if(isset($permissions['R']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
-		}
+		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
 		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
-		if(isset($permissions['W']))
-		{
-			$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
-		}
+		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
+		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
+		
 
 		Messages::add('success','Edited field.');
 

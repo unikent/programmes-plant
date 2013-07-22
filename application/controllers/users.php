@@ -71,8 +71,8 @@ class Users_Controller extends Admin_Controller {
 		// grab standard details
 		$username = Input::get('username');
 		$role = Input::get('role');
-		$subjects = Input::get('subjects');
-
+		$ug_subjects = Input::get('ug_subjects');
+		$pg_subjects = Input::get('pg_subjects');
 		if(!Auth::user()->is('Hyper Administrator')){
 			if(in_array($role, Role::get_protected())){
 				Messages::add('error', 'Unauthorised assignment of roles.');
@@ -80,7 +80,7 @@ class Users_Controller extends Admin_Controller {
 			}
 		}
 
-		$this->updateUser($username, $role, $subjects);
+		$this->updateUser($username, $role, $ug_subjects, $pg_subjects);
 		return Redirect::to('users');			
 	}
 	/**
@@ -92,7 +92,8 @@ class Users_Controller extends Admin_Controller {
 		// grab standard details
 		$username = Input::get('username');
 		$role = Input::get('role');
-		$subjects = Input::get('subjects');
+		$ug_subjects = Input::get('ug_subjects');
+		$pg_subjects = Input::get('pg_subjects');
 
 		if(!Auth::user()->is('Hyper Administrator')){
 			if(in_array($role, Role::get_protected())){
@@ -101,7 +102,7 @@ class Users_Controller extends Admin_Controller {
 			}
 		}
 
-		$this->updateUser($username, $role, $subjects);
+		$this->updateUser($username, $role, $ug_subjects, $pg_subjects);
 		return Redirect::to('users');
 	}
 
@@ -131,10 +132,11 @@ class Users_Controller extends Admin_Controller {
 	 * @param $role of user
 	 * @param $subjects array of subjects user can manage
 	 */
-	protected function updateUser($username, $role, $subjects){
+	protected function updateUser($username, $role, $ug_subjects,$pg_subjects){
 
 		// convert subjects to , seperated list (remove any blanks)
-		$subjects = is_array($subjects) ? implode(',', array_filter($subjects)) : '';
+		$ug_subjects = is_array($ug_subjects) ? implode(',', array_filter($ug_subjects)) : '';
+		$pg_subjects = is_array($pg_subjects) ? implode(',', array_filter($pg_subjects)) : '';
 
 		// Attempt to load user from ldap
 		$ldap = LDAPConnect::instance();
@@ -158,7 +160,8 @@ class Users_Controller extends Admin_Controller {
 			
 			$user->username = $username;
 			$user->fullname = $fullname;
-			$user->subjects = $subjects;
+			$user->ug_subjects = $ug_subjects;
+			$user->pg_subjects = $pg_subjects;
 			$user->email = $email;
 			$user->verified = 1;
 			$user->save();

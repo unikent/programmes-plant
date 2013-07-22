@@ -12,7 +12,7 @@ class UG_ProgrammeRevision extends ProgrammeRevision
      */
     public function award()
     {
-      return $this->belongs_to('Award', UG_Programme::get_award_field());
+      return $this->belongs_to('UG_Award', UG_Programme::get_award_field());
     }
 
     /**
@@ -22,7 +22,7 @@ class UG_ProgrammeRevision extends ProgrammeRevision
      */
     public function subject_area_1()
     {
-      return $this->belongs_to('Subject', UG_Programme::get_subject_area_1_field());
+      return $this->belongs_to('UG_Subject', UG_Programme::get_subject_area_1_field());
     }
 
     /**

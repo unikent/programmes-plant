@@ -12,9 +12,7 @@ class Add_Faculty_Data {
 		// Add faculty demo data
 		foreach (array('Humanities', 'Sciences', 'Social Sciences') as $faculty)
 		{
-			$obj = new Faculty;
-			$obj->name = $faculty;
-			$obj->save();
+	        DB::table('faculties')->insert(array('name'=> $faculty));
 		}
 	}
 
@@ -25,11 +23,7 @@ class Add_Faculty_Data {
 	 */
 	public function down()
 	{
-    	$faculties = Faculty::all();
-		foreach ($faculties as $faculty)
-		{
-			$faculty->delete();
-		}
+		DB::table('faculties')->where('id','=','*')->delete();
 	}
 
 }

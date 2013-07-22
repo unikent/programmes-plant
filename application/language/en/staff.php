@@ -19,9 +19,9 @@ return array(
 
 	// Modal On Deletion Attempt
 	'modal_header' => 'Are you sure?',
-	'modal_body' => 'This will remove this campus, are you sure you want to do this?',
-	'modal_keep' => 'No - Keep This Campus',
-	'modal_delete' => 'Remove This Campus',
+	'modal_body' => 'This will remove this staff member, are you sure you want to do this?',
+	'modal_keep' => 'No - Keep This staff member',
+	'modal_delete' => 'Remove This staff member',
 
 	/**
 	 * Forms
@@ -56,6 +56,17 @@ return array(
 		),
 		'blurb' => array(
 			'label' => 'Blurb'
+		),
+		'subject' => array(
+			'label' => 'Subject'
+		),
+		'role' => array(
+			'label' => 'Role',
+			'placeholder' => "e.g. 'Professor of Actuarial Science'",
+		),
+		'keywords' => array(
+			'label' => 'Keywords',
+			'placeholder' => 'Comma-separated list of keywords.',
 		),
 	),
 

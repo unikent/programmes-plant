@@ -1,6 +1,6 @@
 <h1><?php echo ( $create ? __('awards.form.new.header') : __('awards.form.edit.header') )?></h1>
 <?php echo Messages::get_html()?>
-<?php echo Form::open('/awards/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open( URLParams::$type.'/awards/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
   
   <?php if(!$create): ?> <input type="hidden" name="id" value="<?php echo $item->id?>" /> <?php endif; ?>
    

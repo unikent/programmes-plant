@@ -6,7 +6,7 @@ class Staff_Controller extends Simple_Admin_Controller {
 	public $custom_form = true;
 
 
-		/**
+	/**
 	 * Create a new item via POST.
 	 */
 	public function post_create()
@@ -14,7 +14,7 @@ class Staff_Controller extends Simple_Admin_Controller {
 		$model = $this->model;
 
 		$rules = array(
-			'login'  => 'required|unique:' . $model::$table . '|max:255',
+			'login'  => 'required|max:255',
 		);
 
 		if (! $model::is_valid($rules))
@@ -27,7 +27,6 @@ class Staff_Controller extends Simple_Admin_Controller {
 		$new = new $this->model;
 
 		$new->populate_from_input();
-		//$new->load_from_ldap();
 
 		$new->save();
 
@@ -45,7 +44,7 @@ class Staff_Controller extends Simple_Admin_Controller {
 		
 		$rules = array(
 			'id'  => 'required|exists:'. $model::$table .',id',
-			'login'  => 'required|max:255|unique:'. $model::$table . ',login,'.Input::get('id'),
+			'login'  => 'required|max:255',
 		);
 
 		if (! $model::is_valid($rules))

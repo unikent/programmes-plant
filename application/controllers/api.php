@@ -78,17 +78,27 @@ class API_Controller extends Base_Controller {
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200);
 	}
-	
+
 	/**
 	* Get data for the programme as JSON.
 	*
 	* @param string $year          The Year.
+	* @param string $level 		   undergraduate or postgraduate
 	* @param int    $programme_id  The programme we're pulling data for.
 	* @param string $format        Return in XML or JSON.      
 	* @return Response             json|xml data as a string or HTTP response.    
 	*/
-	public function get_programme($year, $programme_id, $format = 'json')
+	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
+		switch($level){
+			case 'postgraduate':
+				$level = 'pg';
+				break;
+			case 'undergraduate':
+				$level = 'ug';
+				break;
+		}
+
 		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
 
@@ -99,7 +109,7 @@ class API_Controller extends Base_Controller {
 
 		try 
 		{
-			$programme = API::get_programme($programme_id, $year);
+			$programme = API::get_programme($level, $year, $programme_id);
 		}
 		
 		// Required data is missing?
@@ -125,9 +135,14 @@ class API_Controller extends Base_Controller {
 		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200);
 	}
 
-
 	/**
 	 * get_data Return data from simpleData cache
+	 *
+	 * This is a wrapper around get_data_for_level to avoid
+	 * breaking changes to the public API. Some lookups require
+	 * a level, others do not. As Laravel 3 does not support named routes 
+	 * we can't make level an optional parameter and require different
+	 * endpoints for the router.
 	 *
 	 * @param string $type.   Type of data to return, ie. Campuses
 	 * @param string $format  Return in JSON or XML.
@@ -135,6 +150,27 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_data($type, $format = 'json')
 	{
+		return $this->get_data_for_level(null, $type, $format);
+	}
+
+	/**
+	 * get_data_for_level Return data from simpleData cache
+	 *
+	 * @param string $level   Undergraduate, Postgraduate 
+	 * @param string $type    Type of data to return, ie. Campuses
+	 * @param string $format  Return in JSON or XML.
+	 * @return Response       json|xml data as a string or HTTP response.    
+	 */
+	public function get_data_for_level($level, $type, $format = 'json'){
+		switch($level){
+			case 'undergraduate':
+				$level = 'ug';
+				break;
+			case 'postgraduate':
+				$level = 'pg';
+				break;
+		}
+
 		// If cache is valid, send 304
 		$last_modified = API::get_last_change_time();
 
@@ -148,7 +184,7 @@ class API_Controller extends Base_Controller {
 		// If data exists, send it, else 404
 		try
 		{
-			$data = API::get_data($type);
+			$data = API::get_data($type, $level);
 			return ($format=='xml') ? static::xml($data) : static::json($data, 200);
 		}
 		catch(NotFoundException $e)

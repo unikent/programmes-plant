@@ -10,10 +10,11 @@ class TestAPI extends ModelTestCase
 			'year' => "2014",
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
+	        UG_Programme::get_subject_area_1_field()  => '1'
     	);
     }
 
-    public static $data_types = array('campus', 'award', 'faculty', 'leaflet', 'school', 'subject', 'subjectcategory');
+    public static $data_types = array('campus', 'ug_award', 'faculty', 'ug_leaflet', 'school', 'ug_subject', 'ug_subjectcategory');
 
 	/**
 	 * Set up the database.
@@ -24,7 +25,7 @@ class TestAPI extends ModelTestCase
 
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
-		
+
 		static::clear_models();
 	}
 
@@ -134,7 +135,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 	}
 	/**
 	* @expectedException MissingDataException
@@ -143,7 +144,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals(false, $result);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_cached(){
@@ -151,7 +152,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals('Thing', $result['programme_title']);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_not_cached(){
@@ -159,7 +160,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme_settings();
 		$this->publish_programme();
 		Cache::flush();
-		$result = API::get_programme(1, '2014');
+		$result = API::get_programme( 'ug', '2014',1);
 		$this->assertEquals('Thing',  $result['programme_title']);
 	}
 
@@ -170,14 +171,15 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme_settings();
 
-		$result = API::get_programme(7, '2014');
+		$result = API::get_programme('ug', '2014', 7);
 	}
 
 	
 	public function testget_subjects_index_course_mapping(){
 		$programme = $this->publish_programme();
 		$data_type_objects = $this->create_data_types();
-		$subject_area = $data_type_objects['subject'];
+
+		$subject_area = $data_type_objects['ug_subject'];
 		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -204,7 +206,7 @@ class TestAPI extends ModelTestCase
 	public function testget_subjects_index_course_mapping_without_cache(){
 		$programme = $this->publish_programme();
 		$data_type_objects = $this->create_data_types();
-		$subject_area = $data_type_objects['subject'];
+		$subject_area = $data_type_objects['ug_subject'];
 		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
@@ -351,21 +353,21 @@ class TestAPI extends ModelTestCase
 		$title_field = UG_Programme::get_title_field();
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 
-		$programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$programme->save();	
 		$programme->make_revision_live($programme->get_active_revision());
 
 		$related_programme->$title_field = "Related thing";
-		$related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$related_programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$related_programme->save();	
 		$related_programme->make_revision_live($related_programme->get_active_revision());
 
 		$another_related_programme->$title_field = "Another related thing";
-		$another_related_programme->$subject_area_1_field = $data_type_objects['subject']->id;
+		$another_related_programme->$subject_area_1_field = $data_type_objects['ug_subject']->id;
 		$another_related_programme->save();	
 		$another_related_programme->make_revision_live($another_related_programme->get_active_revision());
 
-		$related_courses = UG_Programme::get_programmes_in($data_type_objects['subject']->id, null, $programme->year, $programme->id);
+		$related_courses = UG_Programme::get_programmes_in($data_type_objects['ug_subject']->id, null, $programme->year, $programme->id);
 		
 		$related_courses = API::merge_related_courses($related_courses, null);
 

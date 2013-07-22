@@ -14,10 +14,8 @@ class Add_Manage_Revisions_Permission {
 	public function up()
 	{
 		$admin_user = Role::where_name('Admin')->first();
-
 		$permission = new Permission(array('name' => 'delete_programmes'));
 		$permission->save();
-
 		$admin_user->permissions()->attach($permission);
 	}
 
@@ -29,11 +27,8 @@ class Add_Manage_Revisions_Permission {
 	public function down()
 	{
 		$admin_user = Role::where_name('Admin')->first();
-
 		$permission = Permission::where_name('delete_programmes')->first();
-		
 		$admin_user->permissions()->detach($permission);
-		
 		$permission->delete();
 	}
 

@@ -13,7 +13,7 @@
     <div class="control-group">
       <?php echo Form::label('login', __('staff.form.login.label') , array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->login ),array('placeholder'=>__('staff.form.login.placeholder')))?>   
+        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->attributes['login'] ),array('placeholder'=>__('staff.form.login.placeholder')))?>   
       </div>
     </div>
 
@@ -43,7 +43,20 @@
         <?php echo Form::text('email',  ( Input::old('email') || $create ? Input::old('email') : $item->email ),array('placeholder'=>__('staff.form.email.placeholder'), 'readonly' => 'true'))?>
       </div>
     </div>
+
+    <div class="control-group">
+      <?php echo Form::label('role', __('staff.form.role.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::text('role',  ( Input::old('role') || $create ? Input::old('role') : $item->role ),array('placeholder'=>__('staff.form.role.placeholder')))?>
+      </div>
+    </div>
   
+    <div class="control-group">
+      <?php echo Form::label('profile_url', __('staff.form.subject.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::select('subject', PG_Subject::all_as_list(),  ( Input::old('subject') || $create ? Input::old('subject') : $item->subject ))?>
+      </div>
+    </div>
 
     <div class="control-group">
       <?php echo Form::label('profile_url', __('staff.form.profile_url.label'), array('class'=>'control-label'))?>
@@ -56,6 +69,13 @@
       <?php echo Form::label('blurb',  __('staff.form.blurb.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::textarea('blurb',  ( Input::old('blurb') || $create ? Input::old('blurb') : $item->blurb ),array('placeholder'=>__('staff.form.blurb.placeholder')))?>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <?php echo Form::label('keywords', __('staff.form.keywords.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::text('keywords',  ( Input::old('keywords') || $create ? Input::old('keywords') : $item->keywords ),array('placeholder'=>__('staff.form.keywords.placeholder')))?>
       </div>
     </div>
 

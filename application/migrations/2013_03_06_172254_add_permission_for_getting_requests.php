@@ -14,10 +14,8 @@ class Add_Permission_For_Getting_Requests {
 	 */
 	public function up()
 	{
-		$admin_role = Role::where('name', '=', 'Admin')->first();
-		
+		$admin_role = Role::where_name('Admin')->first();
 		$permission = new Permission(array('name' => 'recieve_edit_requests'));
-
 		$admin_role->permissions()->insert($permission);
 	}
 
@@ -28,11 +26,9 @@ class Add_Permission_For_Getting_Requests {
 	 */
 	public function down()
 	{
-		$permission = Permission::where('name', '=', 'recieve_edit_requests')->first();
-		$admin_role = Role::where('name', '=', 'Admin')->first();
-
-		$admin_role->permissions()->detach($permission->id);
-		
+		$admin_role = Role::where_name('Admin')->first();
+		$permission = Permission::where_name('recieve_edit_requests')->first();
+		$admin_role->permissions()->detach($permission);
 		$permission->delete();
 	}
 
