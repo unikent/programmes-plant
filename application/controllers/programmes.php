@@ -509,12 +509,13 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $revision_id  The revision ID we are reverting to.
 	 *
 	 */
-	public function get_preview($year, $type, $programme_id, $revision_id)
+	public function get_preview($year, $level, $programme_id, $revision_id)
 	{
+		$level = ( $level == 'pg') ? 'postgraduate' : 'undergraduate';
 		// Create preview and grab hash
 		$hash = API::create_preview($programme_id, $revision_id);
 		if($hash !== false){
-			return Redirect::to(Config::get('application.front_end_url')."preview/".$hash);	
+			return Redirect::to(Config::get('application.front_end_url').$level."/preview/".$hash);	
 		}
 	}
 
