@@ -1,6 +1,8 @@
 <?php
 class Campus extends SimpleData {
 
+	public static $table = 'campuses';
+
 	public static $rules = array(
 		'name' => 'required|unique:campuses|max:255',
 		'identifier' => 'numeric',
