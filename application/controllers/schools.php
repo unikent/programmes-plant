@@ -10,7 +10,11 @@ class Schools_Controller extends Simple_Admin_Controller {
 	{
 		$model = $this->model;
 
-		if (! $model::is_valid())
+		$rules = array(
+			'name'  => 'required|unique:' . $model::$table . '|max:255',
+		);
+
+		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			return Redirect::to($this->views.'/create')->with_input();
@@ -27,8 +31,14 @@ class Schools_Controller extends Simple_Admin_Controller {
 	public function post_edit()
 	{
 		$model = $this->model;
+		$id = Input::get('id');
 
-		if (! $model::is_valid())
+		$rules = array(
+			'id'  => 'required|exists:'. $model::$table .',id',
+			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id,
+		);
+
+		if (! $model::is_valid($rules))
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			return Redirect::to($this->views.'/edit/'.Input::get('id'));
