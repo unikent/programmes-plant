@@ -198,6 +198,11 @@ class SimpleData extends Eloquent {
 		return parent::save();
 	}
 
+	public function raw_delete()
+	{
+		return parent::delete();
+	}
+
 	/**
 	 * get API Data
 	 * Return cached data from data type
