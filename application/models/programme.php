@@ -352,8 +352,7 @@ abstract class Programme extends Revisionable {
 					 $pos_code_field,
 					 $awarding_institute_or_body_field,
 					 $module_session_field,
-					 $subject_area_2_field,
-					 $ucas_code_field
+					 $subject_area_2_field
 		);
 		// If UG, add ucas field
 		if($type == 'ug') $field[] = $ucas_code_field;

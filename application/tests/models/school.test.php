@@ -97,14 +97,14 @@ class TestSchool extends ModelTestCase
 	{
 		Request::foundation()->request->add(array('name' => null, 'faculty' => 1));
 
-		$this->assertFalse(School::is_valid());
+		$this->assertFalse(School::is_valid(array('name'  => 'required|unique:schools|max:255')));
 	}
 
 	public function testFailsToValidateWhenNameIsLongerThan255Characters() 
 	{
 		Request::foundation()->request->add(array('name' => str_pad('', 260, 'a'), 'faculty' => 1));
 
-		$this->assertFalse(School::is_valid());
+		$this->assertFalse(School::is_valid(array('name'  => 'required|unique:schools|max:255')));
 	}
 
 	public function testFailsToValidateWhenNameIsNotUnique()
@@ -115,7 +115,7 @@ class TestSchool extends ModelTestCase
 
 		Request::foundation()->request->add(array('name' => 'Fun', 'faculty' => 1));
 
-		$this->assertFalse(School::is_valid());
+		$this->assertFalse(School::is_valid(array('name'  => 'required|unique:schools|max:255')));
 	}
 
 	public function testFailsToValidateWhenFacultyIsNotPresent() 

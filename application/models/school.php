@@ -1,9 +1,9 @@
 <?php
 class School extends SimpleData
 {
+	public static $table = 'schools';
 
 	public static $rules = array(
-		'name'  => 'required|unique:schools|max:255',
 		'faculty'  => 'required|exists:faculties,id'
 	);
 

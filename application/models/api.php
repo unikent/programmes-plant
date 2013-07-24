@@ -132,13 +132,12 @@ class API {
 	 */
 	public static function get_preview($hash)
 	{	
-		$key =  URLParams::get_type()."-programme-previews.preview-{$hash}";
+		$key = URLParams::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
 			throw new NotFoundException("Preview data not found");
 		}	
-		
 	}
 
 	/**
@@ -263,11 +262,13 @@ class API {
 
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
+		
+		$final['programme_level'] = $level = URLParams::get_type();
 
-		// Add deliveries if PG
-		if(URLParams::get_type() == 'pg'){
+		// Add deliveries if PG	
+		if($level == 'pg'){
 			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
-		}
+		}	
 
 		// Finally, try and add some module data
 		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
