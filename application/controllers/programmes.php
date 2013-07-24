@@ -553,10 +553,22 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Show programme deliveries (PG only)
 	 */
 	public function get_deliveries($year, $type, $id){
+
+		// Delete a programme is delete param is passed
+		if(isset($_GET['delete'])){
+			// ensure perms
+			if(Auth::user()->can("edit_pg_deliveries")){
+				PG_Deliveries::find(Input::get('id'))->delete();
+			}
+			
+			return Redirect::to(URI::current());
+		}
+
 		$model = $this->model;
 		$deliveries = $model::find($id)->get_deliveries();
 		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
 	}
+
 	/**
 	 * update programme deliveries (PG only)
 	 */
@@ -577,7 +589,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 		$delivery->save();
 
-		return Redirect::to( URI::current());	
+		return Redirect::to(URI::current());	
 	}
 
 }

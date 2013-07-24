@@ -39,7 +39,7 @@
 					<?php if(!$disabled):?>
 					 	<input type="hidden" name="id" value="<?php echo $delivery->id; ?>" />
 						<input type='submit' class='btn btn-primary' value='Save' /> 
-						<a href='#' class='btn btn-danger' href=''>Remove</a>
+						<a class='btn btn-danger' href='?delete&amp;id=<?php echo $delivery->id; ?>'>Remove</a>
 					<?php endif;?>
 					</td>
 				</form>
