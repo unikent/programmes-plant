@@ -266,16 +266,25 @@ class API {
 		
 		$final['programme_level'] = $level = URLParams::get_type();
 
-		// Add deliveries if PG	
+
+
+		// Add deliveries if PG, Then use to grab modules
 		if($level == 'pg'){
 			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
-		}	
-
-		// Finally, try and add some module data
-		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
-		if($modules !== false){
-			$final['modules'] = $modules;
+			// get modules
+			$modules = array();
+			foreach($final['deliveries'] as $delivery){
+				$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			}
+			if(sizeof($modules) != 0) $final['modules'] = $modules;
 		}
+		else
+		{ 
+			// if UG, grab modules normally
+			$modules = API::get_module_data($programme['instance_id'], $programme['pos_code'], $programme['year'], $level);
+			if($modules !== false)$final['modules'] = $modules;
+		}
+		
 
 		return $final;
 	}
@@ -315,9 +324,9 @@ class API {
 	 * 
 	 * @return Module data | false
 	 */
-	public static function get_module_data($id, $year, $level = 'ug')
+	public static function get_module_data($iid, $pos, $year, $level = 'ug')
 	{
-		$cache_key = "programme-modules.$level-$year-$id";
+		$cache_key = "programme-modules.$level-$year-".base64_encode($pos)."-$iid";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
 	}
 

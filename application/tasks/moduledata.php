@@ -63,7 +63,7 @@ class ModuleData_Task {
 
             // store complete dataset for this programme in our cache
             // in test mode we don't cache it
-            $cache_key = 'programme-modules.ug-' . $module_session . '-' .  base64_encode($programme['pos_code']) . '-' . $programme['id'];
+            $cache_key = 'programme-modules.ug-' . $parameters['programme_session'] . '-' .  base64_encode($programme['pos_code']) . '-' . $programme['id'];
             //print_r($cache_key);die();
             // Store if not in test mode
             if ( ! $parameters['test_mode'] ) Cache::put($cache_key, $programme_modules_new, 2628000);
@@ -104,7 +104,7 @@ class ModuleData_Task {
                 echo "{$delivery['pos_code']}  $institution $campus_id   $module_session \n";
                 $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
 
-                $cache_key = 'programme-modules.pg-' . $module_session . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
+                $cache_key = 'programme-modules.pg-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
                 if ( ! $parameters['test_mode'] ) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']); 
             }
