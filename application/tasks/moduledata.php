@@ -78,7 +78,6 @@ class ModuleData_Task {
 
     protected function load_pg_modules($parameters, $programmes = array()){
 
-        //print_r($programmes);die();
         // loop through each programme in the index and call the two web services for each
         $n = 0;
         foreach ($programmes as $id => $programme)
@@ -96,12 +95,8 @@ class ModuleData_Task {
             $module_session = $this->parse_module_session($programme['module_session']);
             if($module_session === null)continue;
 
-            echo "\n Programme: {$programme['id']} ---- \n";
             // cache modules for each delivery
             foreach($deliveries as $delivery){
-
-
-                echo "{$delivery['pos_code']}  $institution $campus_id   $module_session \n";
                 $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
 
                 $cache_key = 'programme-modules.pg-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];

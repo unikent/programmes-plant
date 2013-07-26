@@ -270,13 +270,19 @@ class API {
 
 		// Add deliveries if PG, Then use to grab modules
 		if($level == 'pg'){
-			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
-			// get modules
-			$modules = array();
-			foreach($final['deliveries'] as $delivery){
-				$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			// only get if has a programme_type and the type includes the string taught
+			if( isset($final['programme_type']) && (strpos($final['programme_type'], 'taught') !== false)){
+
+				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+				// get modules
+				$modules = array();
+				foreach($final['deliveries'] as $delivery){
+					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+				}
+				if(sizeof($modules) != 0) $final['modules'] = $modules;
+
 			}
-			if(sizeof($modules) != 0) $final['modules'] = $modules;
+
 		}
 		else
 		{ 
