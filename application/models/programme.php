@@ -365,6 +365,8 @@ abstract class Programme extends Revisionable {
 						->where($suspended_field,'!=','true')
 						->get($fields);
 
+		
+
 		// Build index array
 		foreach($programmes as $programme)
 		{
@@ -372,11 +374,22 @@ abstract class Programme extends Revisionable {
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
 
+			if($type == 'pg')
+			{
+				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
+				unset($awards[0]);
+				$awards = implode(', ', $awards);
+			}
+			else
+			{
+				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
+			}
+
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
 				'slug' 		=> 		$attributes[$slug_field],
-				'award' 	=> 		isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '',
+				'award' 	=> 		$awards,
 				'subject'	 => 	isset($relationships["subject_area_1"]) ? $relationships["subject_area_1"]->attributes["name"] : '',
 				'subject_categories' => isset($attributes[$subject_categories_field]) ? $subject_cat_model::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
 				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
