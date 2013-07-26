@@ -222,7 +222,7 @@ class API_Controller extends Base_Controller {
 	 * @param  string $hash   The hash of the preview.
 	 * @return string $format The format of the response, JSON or XML.
 	 */
-	public function get_preview($hash, $format='json')
+	public function get_preview($level, $hash, $format='json')
 	{
 		try 
 		{

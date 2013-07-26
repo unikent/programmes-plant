@@ -509,12 +509,13 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $revision_id  The revision ID we are reverting to.
 	 *
 	 */
-	public function get_preview($year, $type, $programme_id, $revision_id)
+	public function get_preview($year, $level, $programme_id, $revision_id)
 	{
+		$level = ( $level == 'pg') ? 'postgraduate' : 'undergraduate';
 		// Create preview and grab hash
 		$hash = API::create_preview($programme_id, $revision_id);
 		if($hash !== false){
-			return Redirect::to(Config::get('application.front_end_url')."preview/".$hash);	
+			return Redirect::to(Config::get('application.front_end_url').$level."/preview/".$hash);	
 		}
 	}
 
@@ -552,10 +553,22 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Show programme deliveries (PG only)
 	 */
 	public function get_deliveries($year, $type, $id){
+
+		// Delete a programme is delete param is passed
+		if(isset($_GET['delete'])){
+			// ensure perms
+			if(Auth::user()->can("edit_pg_deliveries")){
+				PG_Deliveries::find(Input::get('id'))->delete();
+			}
+			
+			return Redirect::to(URI::current());
+		}
+
 		$model = $this->model;
 		$deliveries = $model::find($id)->get_deliveries();
 		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
 	}
+
 	/**
 	 * update programme deliveries (PG only)
 	 */
@@ -576,7 +589,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 		$delivery->save();
 
-		return Redirect::to( URI::current());	
+		return Redirect::to(URI::current());	
 	}
 
 }
