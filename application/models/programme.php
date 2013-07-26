@@ -185,7 +185,7 @@ abstract class Programme extends Revisionable {
 		// we don't want to do this in a test or local environment
 		if ( Request::env() != 'test' && Request::env() != 'local' )
 		{
-			Command::run(array('moduledata:modules', $revision, $year, $type, false));
+			Command::run(array('moduledata:modules', $revision, $year, URLParams::get_type(), false));
 		}
 	}
 
@@ -245,7 +245,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_index($year)
 	{	
-		$type = URLParams::get_type();
+		$type = static::$type;
 		$cache_key = "api-index-{$type}.index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
@@ -258,7 +258,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_related_programmes_map($year)
 	{	
-		$type = URLParams::get_type();
+		$type = static::$type;
 		$cache_key = "api-index-{$type}.api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
@@ -281,7 +281,7 @@ abstract class Programme extends Revisionable {
 		if(Request::env() != 'test'){
 			// Pokémon expection handling, gotta catch em all.
 			try {
-				$type = URLParams::get_type();
+				$type = static::$type;
 				Cache::purge("api-index-{$type}");
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
@@ -297,7 +297,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_index($year)
 	{
-		$type = URLParams::get_type();
+		$type = static::$type;
 
 		$revision_model = static::$revision_model;
 

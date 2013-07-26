@@ -9,10 +9,11 @@ class API {
 	 * @param level ug|pg
 	 * @return array Index of programmes
 	 */
-	public static function get_index($year, $level = 'ug')
+	public static function get_index($year, $level = false)
 	{
 		// Get index of programmes
-		$level =  URLParams::get_type();
+		$level =  ($level === false) ? URLParams::get_type() : $level;
+
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
 	}

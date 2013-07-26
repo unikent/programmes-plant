@@ -20,9 +20,8 @@ class ModuleData_Task {
         }
 
         // load UG
-        $this->load_ug_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
-
-         // load PG
+        // $this->load_ug_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
+        // load PG
         $this->load_pg_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
         
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
@@ -62,7 +61,6 @@ class ModuleData_Task {
             // load data
             $programme_modules_new = $this->load_module_data($programme['pos_code'], $institution, $campus_id, $module_session);
 
-
             // store complete dataset for this programme in our cache
             // in test mode we don't cache it
             $cache_key = 'programme-modules.ug-' . $module_session . '-' .  base64_encode($programme['pos_code']) . '-' . $programme['id'];
@@ -80,6 +78,7 @@ class ModuleData_Task {
 
     protected function load_pg_modules($parameters, $programmes = array()){
 
+        //print_r($programmes);die();
         // loop through each programme in the index and call the two web services for each
         $n = 0;
         foreach ($programmes as $id => $programme)
@@ -89,21 +88,23 @@ class ModuleData_Task {
 
             // Get deliveries
             $deliveries =  PG_deliveries::get_programme_deliveries($programme['id'], $parameters['programme_session']);
-
+            if(sizeof($deliveries) === 0)continue;
             // Kent
             $institution = '0122';
             // get campus
             $campus_id = Campus::find($programme['campus_id'])->identifier;
-
             $module_session = $this->parse_module_session($programme['module_session']);
             if($module_session === null)continue;
 
-
+            echo "\n Programme: {$programme['id']} ---- \n";
             // cache modules for each delivery
             foreach($deliveries as $delivery){
+
+
+                echo "{$delivery['pos_code']}  $institution $campus_id   $module_session \n";
                 $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
 
-                $cache_key = 'programme-modules.pg-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
+                $cache_key = 'programme-modules.pg-' . $module_session . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
                 if ( ! $parameters['test_mode'] ) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']); 
             }
@@ -338,12 +339,11 @@ class ModuleData_Task {
         $pos_code_field = $model::get_pos_code_field();
         $module_session_field = $model::get_module_session_field();
 
-
         $tmp_programme['campus_id'] = $programme->$campus_id_field;
-        $tmp_programme['id'] = $programme->id;
+        $tmp_programme['id'] = $programme->instance_id;
         $tmp_programme['module_session'] = $programme->$module_session_field;
         $tmp_programme['pos_code'] = $programme->$pos_code_field;
-    
+
         $method = 'load_'.$type.'_modules';
 
         $this->$method($parameters, array($tmp_programme), false);
