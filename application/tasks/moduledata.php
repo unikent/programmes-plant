@@ -20,7 +20,7 @@ class ModuleData_Task {
         }
 
         // load UG
-        // $this->load_ug_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
+        $this->load_ug_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
         // load PG
         $this->load_pg_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
         
