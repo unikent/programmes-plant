@@ -327,7 +327,6 @@ class Revisionable extends SimpleData {
 		$revision->published_at = date('Y-m-d H:i:s');
 		$revision->made_live_by = Auth::user()->username;
 		$revision->save();
-
 		// Update feed file & kill output caches
 		static::generate_api_data($revision->year, $revision);
 		API::purge_output_cache();
