@@ -185,10 +185,9 @@ class ModuleData_Task {
     
 
     //$institution = '0122';
-    private function load_module_data($pos_code, $institution, $campus_id, $module_session){
+    public function load_module_data($pos_code, $institution, $campus_id, $module_session, $module = false){
 
-
-        $module = new ProgrammesPlant\ModuleData();
+        if(!$module) $module = new ProgrammesPlant\ModuleData();
 
         // build request
         $webservice_request = Config::get('module.programme_module_base_url') . 

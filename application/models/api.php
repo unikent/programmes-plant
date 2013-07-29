@@ -287,7 +287,7 @@ class API {
 		else
 		{ 
 			// if UG, grab modules normally
-			$modules = API::get_module_data($programme['instance_id'], $programme['pos_code'], $programme['year'], $level);
+			$modules = API::get_module_data($final['instance_id'], $final['pos_code'], $final['year'], $level);
 			if($modules !== false)$final['modules'] = $modules;
 		}
 		
