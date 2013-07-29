@@ -167,102 +167,84 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     
     public function testbuild_url_programme_modules_fullWithModuleSession2014()
     {
-        // $programme['pos_code'] = 'ACCF-S:BA';
-        // $programme['campus_id'] = '1';
-        // $programme['module_session'] = '2014';
-        // UG_Programme::$fields['module_session'] = UG_Programme::get_module_session_field();
 
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 2014);
 
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2014&format=json';
-        // $this->assertEquals($expected_url, $actual_url);
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2014&format=json';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckWithoutModuleSessionGives2013()
     {
-        // $programme['pos_code'] = 'ACCF-S:BA';
-        // $programme['campus_id'] = '1';
-        // $programme['module_session'] = '';
-        
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2013&format=json';
-        // $this->assertEquals($expected_url, $actual_url);
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 2013);
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2013&format=json';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckNoneModuleSessionGivesEmptyUrl()
     {
-        // $programme['pos_code'] = 'ACCF-S:BA';
-        // $programme['campus_id'] = '1';
-        // $programme['module_session'] = 'None';
-
-        
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = '';
-        // $this->assertEquals($expected_url, $actual_url);
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 'none');
+        $expected_url = '';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullWithModuleSession2014ProgrammeAsObject()
     {
-        // $this->populate_campus();
+        $this->populate_campus();
         
-        // $programme = new stdClass();
-        // $pos_code = UG_Programme::get_pos_code_field();
-        // $location = UG_Programme::get_location_field();
-        // $award = UG_Programme::get_awarding_institute_or_body_field();
-        // $module_session = UG_Programme::get_module_session_field();
-        // $programme->{$pos_code} = 'ACCF-S:BA';
-        // $programme->{$location} = '2';
-        // $programme->{$award} = '0122';
-        // $programme->{$module_session} = '2014';
+        $programme = new stdClass();
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '58';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = '2014';
 
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
-        // $this->assertEquals($expected_url, $actual_url);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+       
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckWithoutModuleSessionGives2013ProgrammeAsObject()
     {
-        // $this->populate_campus();
+        $this->populate_campus();
 		
-        // $programme = new stdClass();
+        $programme = new stdClass();
 
-        // $pos_code = UG_Programme::get_pos_code_field();
-        // $location = UG_Programme::get_location_field();
-        // $award = UG_Programme::get_awarding_institute_or_body_field();
-        // $module_session = UG_Programme::get_module_session_field();
-        // $programme->{$pos_code} = 'ACCF-S:BA';
-        // $programme->{$location} = '2';
-        // $programme->{$award} = '0122';
-        // $programme->{$module_session} = '2013';
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '58';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = '2013';
 		
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2013&format=json';
-        // $this->assertEquals($expected_url, $actual_url);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+        $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2013&format=json';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckNoneModuleSessionGivesEmptyUrlProgrammeAsObject()
     {
-        // $this->populate_campus();
+        $this->populate_campus();
         
-        // $programme = new stdClass();
-        // $pos_code = UG_Programme::get_pos_code_field();
-        // $location = UG_Programme::get_location_field();
-        // $award = UG_Programme::get_awarding_institute_or_body_field();
-        // $module_session = UG_Programme::get_module_session_field();
-        // $programme->{$pos_code} = 'ACCF-S:BA';
-        // $programme->{$location} = '2';
-        // $programme->{$award} = '0122';
-        // $programme->{$module_session} = 'None';
+        $programme = new stdClass();
+        $pos_code = UG_Programme::get_pos_code_field();
+        $location = UG_Programme::get_location_field();
+        $award = UG_Programme::get_awarding_institute_or_body_field();
+        $module_session = UG_Programme::get_module_session_field();
+        $programme->{$pos_code} = 'ACCF-S:BA';
+        $programme->{$location} = '2';
+        $programme->{$award} = '0122';
+        $programme->{$module_session} = 'None';
         
-        // $url_programme_modules = Config::get('module.programme_module_base_url');
-        // $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
-        // $expected_url = '';
-        // $this->assertEquals($expected_url, $actual_url);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+        $expected_url = '';
+        $this->assertEquals($expected_url, $actual_url);
     }
     
     

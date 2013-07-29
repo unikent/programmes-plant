@@ -190,12 +190,7 @@ class ModuleData_Task {
         if(!$module) $module = new ProgrammesPlant\ModuleData();
 
         // build request
-        $webservice_request = Config::get('module.programme_module_base_url') . 
-            Config::get('module.pos_code_param') . '=' . $pos_code . '&' .
-            Config::get('module.institution_param') . '=' . $institution . '&' .
-            Config::get('module.campus_param') . '=' . $campus_id . '&' .
-            Config::get('module.session_param') . '=' . $module_session . '&' .
-            'format=json';
+        $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session); 
 
         // auth 
         $module->login['username'] = Config::get('module.programme_module_user');
@@ -211,6 +206,17 @@ class ModuleData_Task {
         $data = $this->parse_module_data($data, $module);
 
         return $data;
+    }
+    public static function build_module_webservice_url( $pos_code, $institution, $campus_id, $module_session){
+
+        if($module_session == 'None' || $module_session == 'none') return '';
+
+        return Config::get('module.programme_module_base_url') . 
+            Config::get('module.pos_code_param') . '=' . $pos_code . '&' .
+            Config::get('module.institution_param') . '=' . $institution . '&' .
+            Config::get('module.campus_param') . '=' . $campus_id . '&' .
+            Config::get('module.session_param') . '=' . $module_session . '&' .
+            'format=json';
     }
 
     public function parse_module_data($programme_modules, $module_data_obj)
