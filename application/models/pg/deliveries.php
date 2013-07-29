@@ -48,6 +48,7 @@ class PG_Deliveries extends SimpleData
 		// Find programme id if none provided
 		if(!$pid){
 			$p = PG_Programme::where('instance_id','=',$iid)->where('year','=',$year)->first(array('id'));
+			if($p === null) return array();
 			$pid = $p->id;
 		}	
 		
