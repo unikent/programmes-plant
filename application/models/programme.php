@@ -332,6 +332,8 @@ abstract class Programme extends Revisionable {
 		$withdrawn_field = static::get_programme_withdrawn_field();
 		$suspended_field = static::get_programme_suspended_field();
 
+		$programme_type_field = static::get_programme_type_field();
+
 		$index_data = array();
 
 
@@ -352,10 +354,13 @@ abstract class Programme extends Revisionable {
 					 $pos_code_field,
 					 $awarding_institute_or_body_field,
 					 $module_session_field,
-					 $subject_area_2_field
+					 $subject_area_2_field,
+					 $programme_type_field
 		);
 		// If UG, add ucas field
-		if($type == 'ug') $field[] = $ucas_code_field;
+		if($type == 'ug') {
+			$fields[] = $ucas_code_field;
+		}
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
@@ -404,6 +409,8 @@ abstract class Programme extends Revisionable {
 				'pos_code' => $attributes[$pos_code_field],
 				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
+				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
+				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : ''
 			);
 		}
 
