@@ -54,6 +54,7 @@ class Staff extends SimpleData
 		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
 
+	// custom replace with ids function, since "name" doesn't exist for this type
 	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
 	{
 		// If nothing is set, return an empty array
