@@ -262,13 +262,8 @@ class SimpleData extends Eloquent {
 		$values = array();
 		foreach ($id_array as $id) 
 		{
-			if($titles_only)
-			{
-				$values[] = isset($cached_data[$id]) ? $cached_data[$id]['name'] : '';
-			}
-			else
-			{
-				$values[] = isset($cached_data[$id]) ? $cached_data[$id] : '';
+			if(isset($cached_data[$id])){
+				$values[] = ($titles_only) ? $cached_data[$id]['name'] : $cached_data[$id];
 			}
 		}
 
