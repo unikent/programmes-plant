@@ -65,17 +65,12 @@ class Staff extends SimpleData
 		// Create new array of actual values matching the ids from the cache
 		$values = array();
 		foreach ($id_array as $id) 
-		{
-			if($titles_only)
-			{
-				$values[] = isset($cached_data[$id]) ? $cached_data[$id]['forename'].' '.$cached_data[$id]['surname'] : '';
-			}
-			else
-			{
-				$values[] = isset($cached_data[$id]) ? $cached_data[$id] : '';
+		{	
+
+			if(isset($cached_data[$id])){
+				$values[] = ($titles_only) ? $cached_data[$id]['forename'].' '.$cached_data[$id]['surname'] : $cached_data[$id];
 			}
 		}
-
 		return $values;
 	}
 }

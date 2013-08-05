@@ -46,12 +46,12 @@ class Programmes_Controller extends Revisionable_Controller {
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
 		{
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->get($fields_array);
+			$programmes = $model::where('year', '=', $year)->where('hidden', '=', false)->get($fields_array);
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
 			$subject_field = URLparams::$type.'_subjects';
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
+			$programmes = $model::where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
 		}
 		else
 		{
@@ -62,7 +62,9 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 		$this->data[$this->views] = $programmes;
 
+		$this->data['year'] = $year;
 		$this->data['title_field'] = $title_field;
+		$this->data['award_field'] = $award_field;
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
