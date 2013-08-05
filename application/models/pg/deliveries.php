@@ -11,13 +11,17 @@ class PG_Deliveries extends SimpleData
 		return $success;
 	}
 
+	public function delete(){
+		$p = PG_Programme::where('id','=',$this->programme_id)->first(array('id','instance_id','year'));
+		// Clear caches
+		Cache::forget("api-output-pg/programme-{$p->year}-{$p->instance_id}");
+		// Remove value (actually remove via raw delete, not just hide)
+		return static::raw_delete();
+	}
 
 	public function award(){
 		return $this->belongs_to('PG_Award', 'award');
 	}
-
-
-
 
 
 	// Generate deliveries cache
@@ -44,6 +48,7 @@ class PG_Deliveries extends SimpleData
 		// Find programme id if none provided
 		if(!$pid){
 			$p = PG_Programme::where('instance_id','=',$iid)->where('year','=',$year)->first(array('id'));
+			if($p === null) return array();
 			$pid = $p->id;
 		}	
 		

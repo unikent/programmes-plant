@@ -9,10 +9,11 @@ class API {
 	 * @param level ug|pg
 	 * @return array Index of programmes
 	 */
-	public static function get_index($year, $level = 'ug')
+	public static function get_index($year, $level = false)
 	{
 		// Get index of programmes
-		$level =  URLParams::get_type();
+		$level =  ($level === false) ? URLParams::get_type() : $level;
+
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
 	}
@@ -132,13 +133,12 @@ class API {
 	 */
 	public static function get_preview($hash)
 	{	
-		$key =  URLParams::get_type()."-programme-previews.preview-{$hash}";
+		$key = URLParams::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
 			throw new NotFoundException("Preview data not found");
 		}	
-		
 	}
 
 	/**
@@ -263,17 +263,34 @@ class API {
 
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
+		
+		$final['programme_level'] = $level = URLParams::get_type();
 
-		// Add deliveries if PG
-		if(URLParams::get_type() == 'pg'){
-			$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
-		}
 
-		// Finally, try and add some module data
-		$modules = API::get_module_data($programme['instance_id'], $programme['year']);
-		if($modules !== false){
-			$final['modules'] = $modules;
+
+		// Add deliveries if PG, Then use to grab modules
+		if($level == 'pg'){
+			// only get if has a programme_type and the type includes the string taught
+			if( isset($final['programme_type']) && (strpos($final['programme_type'], 'taught') !== false)){
+
+				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+				// get modules
+				$modules = array();
+				foreach($final['deliveries'] as $delivery){
+					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+				}
+				if(sizeof($modules) != 0) $final['modules'] = $modules;
+
+			}
+
 		}
+		else
+		{ 
+			// if UG, grab modules normally
+			$modules = API::get_module_data($final['instance_id'], $final['pos_code'], $final['year'], $level);
+			if($modules !== false)$final['modules'] = $modules;
+		}
+		
 
 		return $final;
 	}
@@ -313,9 +330,9 @@ class API {
 	 * 
 	 * @return Module data | false
 	 */
-	public static function get_module_data($id, $year, $level = 'ug')
+	public static function get_module_data($iid, $pos, $year, $level = 'ug')
 	{
-		$cache_key = "programme-modules.$level-$year-$id";
+		$cache_key = "programme-modules.$level-$year-".base64_encode($pos)."-$iid";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
 	}
 

@@ -185,7 +185,7 @@ abstract class Programme extends Revisionable {
 		// we don't want to do this in a test or local environment
 		if ( Request::env() != 'test' && Request::env() != 'local' )
 		{
-			Command::run(array('moduledata:modules', $revision, $year, $type, false));
+			Command::run(array('moduledata:modules', $revision, $year, URLParams::get_type(), false));
 		}
 	}
 
@@ -245,7 +245,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_index($year)
 	{	
-		$type = URLParams::get_type();
+		$type = static::$type;
 		$cache_key = "api-index-{$type}.index-$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
@@ -258,7 +258,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function get_api_related_programmes_map($year)
 	{	
-		$type = URLParams::get_type();
+		$type = static::$type;
 		$cache_key = "api-index-{$type}.api-programmes-$year-subject-relations";
 
 		if(Cache::has($cache_key)){
@@ -281,7 +281,7 @@ abstract class Programme extends Revisionable {
 		if(Request::env() != 'test'){
 			// Pokémon expection handling, gotta catch em all.
 			try {
-				$type = URLParams::get_type();
+				$type = static::$type;
 				Cache::purge("api-index-{$type}");
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
@@ -297,7 +297,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_index($year)
 	{
-		$type = URLParams::get_type();
+		$type = static::$type;
 
 		$revision_model = static::$revision_model;
 
@@ -332,6 +332,8 @@ abstract class Programme extends Revisionable {
 		$withdrawn_field = static::get_programme_withdrawn_field();
 		$suspended_field = static::get_programme_suspended_field();
 
+		$programme_type_field = static::get_programme_type_field();
+
 		$index_data = array();
 
 
@@ -353,10 +355,12 @@ abstract class Programme extends Revisionable {
 					 $awarding_institute_or_body_field,
 					 $module_session_field,
 					 $subject_area_2_field,
-					 $ucas_code_field
+					 $programme_type_field
 		);
 		// If UG, add ucas field
-		if($type == 'ug') $field[] = $ucas_code_field;
+		if($type == 'ug') {
+			$fields[] = $ucas_code_field;
+		}
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
 		// @todo Use "with" to lazy load all related fields & speed this up a bit.
@@ -366,6 +370,8 @@ abstract class Programme extends Revisionable {
 						->where($suspended_field,'!=','true')
 						->get($fields);
 
+		
+
 		// Build index array
 		foreach($programmes as $programme)
 		{
@@ -373,11 +379,22 @@ abstract class Programme extends Revisionable {
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
 
+			if($type == 'pg')
+			{
+				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
+				unset($awards[0]);
+				$awards = implode(', ', $awards);
+			}
+			else
+			{
+				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
+			}
+
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
 				'slug' 		=> 		$attributes[$slug_field],
-				'award' 	=> 		isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '',
+				'award' 	=> 		$awards,
 				'subject'	 => 	isset($relationships["subject_area_1"]) ? $relationships["subject_area_1"]->attributes["name"] : '',
 				'subject_categories' => isset($attributes[$subject_categories_field]) ? $subject_cat_model::replace_ids_with_values($attributes[$subject_categories_field], false, true) : '',
 				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
@@ -392,6 +409,8 @@ abstract class Programme extends Revisionable {
 				'pos_code' => $attributes[$pos_code_field],
 				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
+				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
+				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : ''
 			);
 		}
 

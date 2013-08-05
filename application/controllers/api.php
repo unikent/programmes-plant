@@ -36,7 +36,7 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 
-		$index_data = API::get_index($year, 'ug');
+		$index_data = API::get_index($year);
 
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
 		if (! $index_data)
@@ -222,7 +222,7 @@ class API_Controller extends Base_Controller {
 	 * @param  string $hash   The hash of the preview.
 	 * @return string $format The format of the response, JSON or XML.
 	 */
-	public function get_preview($hash, $format='json')
+	public function get_preview($level, $hash, $format='json')
 	{
 		try 
 		{

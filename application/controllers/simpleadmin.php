@@ -180,7 +180,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$url = $this->get_base_page();
 
 		$id = Input::get('id');
-
+		
 		$rules = array(
 			'id'  => 'required|exists:'. $model::$table .',id',
 			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id

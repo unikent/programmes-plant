@@ -118,8 +118,11 @@ Route::group(array('before' => ''), function(){
 
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
-	Route::any('/api/preview/(:any?)', 'api@preview');
 	Route::get(array('/api/(:any).(json|xml)', '/api/(:any)'), 'api@data');
+
+
+	Route::any('/api/preview/(undergraduate|postgraduate)/(:any?)', 'api@preview');
+	
 	
 	// XCRI-CAP Feed
 	Route::any('/api/([0-9]{4})/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');

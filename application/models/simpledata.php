@@ -198,6 +198,11 @@ class SimpleData extends Eloquent {
 		return parent::save();
 	}
 
+	public function raw_delete()
+	{
+		return parent::delete();
+	}
+
 	/**
 	 * get API Data
 	 * Return cached data from data type
@@ -270,8 +275,12 @@ class SimpleData extends Eloquent {
 		return $values;
 	}
 	
-	public static function all_active()
+	public static function all_active($sort_by='')
 	{
+		if ($sort_by != '')
+		{
+			return static::where('hidden', '=', false)->order_by($sort_by, 'asc')->get();
+		}
 		return static::where('hidden', '=', false)->get();
 	}
 	
