@@ -238,15 +238,30 @@ class Programmes_Controller extends Revisionable_Controller {
 	/**
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
+	 */
+	public function get_review($year, $type, $programme_id = false, $revision_id = false)
+	{
+		$this->check_user_can('recieve_edit_requests');
+		return $this->diff_revisions($year, $type, $programme_id, $revision_id, 'review');
+	}
+	/**
+	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
+	 *
+	 */
+	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
+	{
+		$this->check_user_can('recieve_edit_requests');
+ 		return $this->diff_revisions($year, $type, $programme_id, $revision_id, 'difference');
+	}
+	/*
+	 * Shared route between  get_difference & get_review
+	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
-	public function get_review($year, $type, $programme_id = false, $revision_id = false)
-	{
-		$this->check_user_can('recieve_edit_requests');
-
+	protected function diff_revisions($year, $type, $programme_id = false, $revision_id = false, $view_name = 'difference'){
 		$model = $this->model ;
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
@@ -255,13 +270,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		
 		$live_revision = $programme->find_live_revision();
 		$revision = $programme->get_revision($revision_id);
 
 		// if there is not yet a live revision get the difference with our modified revision only
 		if(empty($live_revision) && !empty($revision)){
-
 			$diff = $model::revision_diff($revision, null);
 
 			$data = array(
@@ -269,7 +282,7 @@ class Programmes_Controller extends Revisionable_Controller {
 				'diff' => $diff
 			);
 
-			return $this->layout->nest('content', 'admin.'.$this->views.'.review_pre_live', $data);
+			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name.'_pre_live', $data);
 		}
 		else{
 			//Get diff data
@@ -281,43 +294,8 @@ class Programmes_Controller extends Revisionable_Controller {
 				'programme' => $programme
 			);
 
- 			return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+ 			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name, $data);
 		}
-
-		
-	}
-
-
-	/**
-	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
-	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
-	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
-	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
-	 */
-	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
-	{
-		$this->check_user_can('recieve_edit_requests');
-		$model = $this->model;
-
-		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		// Get programme
-		$programme = $model::find($programme_id);
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		//Get diff data
-
-		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
-		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$data = array(
-			'diff' => $diff,
-			'programme' => $programme
-		);
-
- 		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
 	/**
