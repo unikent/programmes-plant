@@ -326,12 +326,15 @@ class Programmes_Controller extends Revisionable_Controller {
 			$author = Auth::user();
 			$title = $programme->{$model::get_title_field()};
 
+			// get the awards
+			$awards = static::get_awards_string($programme, $type);
+
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title)))
+			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title, 'awards' => $awards)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'awards' => $awards, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -369,13 +372,16 @@ class Programmes_Controller extends Revisionable_Controller {
 				$title = $programme->{$model::get_title_field()};
 				$slug = $programme->{$model::get_slug_field()};
 
+				// get the awards
+				$awards = static::get_awards_string($programme, $type);
+
 				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
 
-				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
+				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title, 'awards' => $awards)))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
 					->addPart(
@@ -434,11 +440,15 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 			$title = $programme->{$model::get_title_field()};
+
+			// get the awards
+			$awards = static::get_awards_string($programme, $type);
+
 			$link = URL::to_action($year.'/'.$type.'/'.'programmes@edit', array($programme_id));
-			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link)) . $body;
+			$body = __('emails.user_notification.request.body', array('title' => $title, 'awards' => $awards, 'link' => $link)) . $body;
 
 			$mailer = IoC::resolve('mailer');
-			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title, 'awards' => $awards)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
@@ -570,6 +580,28 @@ class Programmes_Controller extends Revisionable_Controller {
 		$delivery->save();
 
 		return Redirect::to(URI::current());	
+	}
+
+	/**
+	* get the awards as a string
+	*/
+	public function get_awards_string($programme, $type)
+	{
+		
+		$awards = '';
+		if ($type == 'pg')
+		{
+			$award_field = PG_Programme::get_award_field();
+			$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
+			$awards = implode(', ', $awards);
+		}
+		else
+		{
+			$award_field = UG_Programme::get_award_field();
+			$awards = UG_Award::replace_ids_with_values($programme->$award_field, false, true);
+			$awards = $awards[0];
+		}
+		return $awards;
 	}
 
 }
