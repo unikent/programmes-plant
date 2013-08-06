@@ -124,16 +124,22 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['duration']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <?php if (strcmp($programme['mode_of_study'], 'Full-time only') == 0): ?>
+              <?php if (strpos($programme['mode_of_study'], 'Full-time only') !== false): ?>
                 <studyMode identifier="FT">Full time</studyMode>
-              <?php elseif (strcmp($programme['mode_of_study'], 'Full-time or part-time') == 0): ?>
+              <?php elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false): ?>
                 <studyMode identifier="FL">Flexible</studyMode>
-              <?php elseif (strcmp($programme['mode_of_study'], 'Part-time only') == 0): ?>
+              <?php elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false): ?>
                 <studyMode identifier="PT">Part time</studyMode>
               <?php else: ?>
                 <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
               <?php endif; ?>
-              <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
+              <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
+                <attendanceMode identifier="MM">Mixed mode</attendanceMode>
+              <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
+                <attendancemode identifier="CM">Campus</attendancemode>
+              <?php else: ?>
+                <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
+              <?php endif; ?>
               <?php if ($programme['attendance_pattern']): ?>
                 <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
               <?php endif; ?>
