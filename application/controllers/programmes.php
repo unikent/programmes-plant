@@ -375,7 +375,7 @@ class Programmes_Controller extends Revisionable_Controller {
 				// get the awards
 				$awards = static::get_awards_string($programme, $type);
 
-				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
+				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title . ' ' . $awards);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 

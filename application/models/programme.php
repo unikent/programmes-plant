@@ -353,7 +353,6 @@ abstract class Programme extends Revisionable {
 					 $administrative_school_field,
 					 $additional_school_field,
 					 $location_field,
-					 $additional_locations_field,
 					 $new_programme_field,
 					 $subject_to_approval_field,
 					 $mode_of_study_field,
@@ -365,8 +364,12 @@ abstract class Programme extends Revisionable {
 					 $programme_type_field
 		);
 		// If UG, add ucas field
-		if($type == 'ug') {
+		if ($type == 'ug') {
 			$fields[] = $ucas_code_field;
+		}
+		// if pg add additional locations field
+		if ($type == 'pg') {
+			$fields[] = $additional_locations_field;
 		}
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
