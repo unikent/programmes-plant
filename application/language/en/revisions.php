@@ -22,6 +22,7 @@ return array(
 
 	// Buttons
 	'manage_revisions' 	=> 'Manage revisions',
+	'review'			=> 'Review',
 	'make_live' 		=> 'Make live',
 	'use_previous' 		=> 'Use previous',
 	'use_revision' 		=> 'Use revision',
