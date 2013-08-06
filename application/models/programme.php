@@ -400,6 +400,7 @@ abstract class Programme extends Revisionable {
 			else
 			{
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
+				$additional_locations = '';
 			}
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
