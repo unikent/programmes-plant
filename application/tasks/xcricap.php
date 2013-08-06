@@ -25,7 +25,7 @@ class XCRICAP_Task {
 
             // fetch each programme individually for our xcri feed
             foreach (array_keys($api_index[$type]) as $programme_id) {
-                $data['programmes'][] = API::get_xcrified_programme($programme_id, $year, $type);
+                $data['programmes'][$type][] = API::get_xcrified_programme($programme_id, $year, $type);
             }
         }
         

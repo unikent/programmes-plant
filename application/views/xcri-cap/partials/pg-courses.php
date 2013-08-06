@@ -2,7 +2,7 @@
         <course>
           <dc:description>
             <div xmlns="http://www.w3.org/1999/xhtml">
-              <![CDATA[<?php echo (strip_tags($programme['programme_overview_text'])); ?>]]>
+              <![CDATA[<?php echo (strip_tags($programme['subject_overview'])); ?>]]>
             </div>
           </dc:description>
           <dc:identifier><![CDATA[<?php echo ($programme['url']); ?>]]></dc:identifier>
@@ -80,11 +80,11 @@
             </regulations>
           <?php endif; ?>
 
-          <?php if (isset($programme['award'])) : ?>
+          <?php foreach ($programme['award'] as $award) : ?>
             <mlo:qualification>
               <dc:identifier><![CDATA[<?php echo ($programme['url']) ?>]]></dc:identifier>
-              <dc:title><![CDATA[<?php echo ($programme['award']['name']); ?>]]> <?php echo ($programme['programme_title']); ?></dc:title>
-              <abbr><![CDATA[<?php echo ($programme['award']['name']); ?>]]></abbr>
+              <dc:title><![CDATA[<?php echo ($award['name']); ?>]]> <?php echo ($programme['programme_title']); ?></dc:title>
+              <abbr><![CDATA[<?php echo ($award['name']); ?>]]></abbr>
               <?php if (isset($programme['description'])): ?>
                 <dc:description>
                   <div xmlns="http://www.w3.org/1999/xhtml">
@@ -100,7 +100,7 @@
                 <accreditedBy><![CDATA[<?php echo ($programme['accredited_by']); ?>]]></accreditedBy>
               <?php endif; ?>
             </mlo:qualification>
-        <?php endif; ?>
+          <?php endforeach; ?>
 
           <?php if (isset($programme['credits'])) : ?>
           <?php foreach ($programme['credits'] as $credit): ?>
