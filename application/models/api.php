@@ -490,8 +490,8 @@ class API {
 		$programme = static::get_programme($type, $year, $id);
 	
 		// format the programme appropriately
-		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
-
+		$ug_pg_full = (strcmp($type, 'ug') == 0) ? 'undergraduate' : 'postgraduate';
+		$programme['url'] = Config::get('application.front_end_url') . $ug_pg_full . '/' . $id . '/' . $programme['slug'];
 		$programme['award'] = isset($programme['award'][0]) ? $programme['award'] : array();
 		$programme['administrative_school'] = isset($programme['administrative_school'][0]) ? $programme['administrative_school'][0] : array();
 		$programme['additional_school'] = isset($programme['additional_school'][0]) ? $programme['additional_school'][0] : array();
@@ -510,11 +510,11 @@ class API {
 			$programme['subjects'][] = $programme['subject_area_2'];
 		}
 
-		// Set campus as default while we are making a dummy.
-		$programme['attendance_mode_id'] = 'CM';
-		$programme['attendance_mode'] = 'Campus';
+		// Set identifiers to blank for now since we have none
+		$programme['mode_of_study_id'] = '';
+		$programme['attendance_mode_id'] = '';
 
-		// Also dummy attendence_pattern_id for now. Set to daytime.
+		// Dummy attendence_pattern_id for now since we dont have it in our data.
 		$programme['attendance_pattern'] = 'Daytime';
 		$programme['attendance_pattern_id'] = 'DT';
 
