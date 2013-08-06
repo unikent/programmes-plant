@@ -136,7 +136,7 @@
               <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
                 <attendanceMode identifier="MM">Mixed mode</attendanceMode>
               <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
-                <attendancemode identifier="CM">Campus</attendancemode>
+                <attendanceMode identifier="CM">Campus</attendanceMode>
               <?php else: ?>
                 <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
               <?php endif; ?>
