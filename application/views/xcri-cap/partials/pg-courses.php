@@ -124,10 +124,10 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['attendance_text']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <studyMode identifier="<?php echo ($programme['mode_of_study_id']); ?>"><?php echo ($programme['mode_of_study']); ?></studyMode>
-              <attendanceMode identifier="<?php echo ($programme['attendance_mode_id']); ?>"><?php echo ($programme['attendance_mode']); ?></attendanceMode>
+              <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
+              <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
               <?php if ($programme['attendance_pattern']): ?>
-                <attendancePattern identifier="<?php echo ($programme['attendance_pattern_id']); ?>"><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
+                <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
               <?php endif; ?>
               <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
               <languageOfAssessment>en</languageOfAssessment>
