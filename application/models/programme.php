@@ -163,7 +163,13 @@ abstract class Programme extends Revisionable {
 		foreach ($id_array as $id) 
 		{
 			// Only display relation IF programme is published
-			if(isset($cached_data[$id])) $values[] = $cached_data[$id];
+			if(isset($cached_data[$id])){
+				if($titles_only){
+					$values[] = $cached_data[$id]['name'];
+				}else{
+					$values[] = $cached_data[$id];
+				}
+			}
 		}
 
 		return $values;
@@ -588,7 +594,7 @@ abstract class Programme extends Revisionable {
 			if($revision_2 != null){
 				$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
 			}
-				
+			
 			
 		}
 

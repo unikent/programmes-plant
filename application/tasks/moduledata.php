@@ -224,6 +224,9 @@ class ModuleData_Task {
         // set up the output object
         $programme_modules_new = new stdClass;
         $programme_modules_new->stages = array();
+
+        // return blank if no valid modules found
+        if($programme_modules === null) return $programme_modules_new;
         
         // loop through each of the modules and get its synopsis, adding it to the object for output
         if ( isset($programme_modules->response->message) )

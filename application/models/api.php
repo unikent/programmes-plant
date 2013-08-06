@@ -254,7 +254,7 @@ class API {
 		// Get subject area two if its set
 		$subject_area_2 = null;
 
-		if(empty($final['subject_area_2'])){
+		if(!empty($final['subject_area_2'])){
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
 
@@ -279,7 +279,9 @@ class API {
 				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
 				// get modules
 				$modules = array();
-				foreach($final['deliveries'] as $delivery){
+				foreach($final['deliveries'] as &$delivery){
+					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
+					$delivery['award_name'] = $delivery_awards[0];
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 				}
 				if(sizeof($modules) != 0) $final['modules'] = $modules;
@@ -467,11 +469,11 @@ class API {
 			}
 			else
 			{	
-				$xml->addChild($key, $value);
+				$xml->addChild($key, str_replace('&', '&amp;', $value));
 			}
 		}
 		// Decode &chars; in XMl to ensure its valid.
-		return str_replace('&','&amp;',$xml->asXML());
+		return $xml->asXML();
 	}
 
 	/**

@@ -35,9 +35,12 @@
                 <?php endif; ?>
             </td>
             <td>
-                <?php echo $programme->attributes[$title_field]; ?>
-
-                <?php echo isset($programme->relationships["award"]->attributes["name"]) ? ' - <em>'.$programme->relationships["award"]->attributes["name"].'</em>' : '' ; ?>
+                <?php echo $programme->attributes[$title_field]; ?> - <em>
+                <?php 
+                  $model = $programme::$type.'_award'; 
+                  echo implode(', ', $model::replace_ids_with_values($programme->attributes[$award_field], $year, true)); ?>
+                </em>
+              
 
                 <?php if(strcmp($programme->attributes[$withdrawn_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.withdrawn_field_text')  ?></span>
