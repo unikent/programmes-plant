@@ -124,7 +124,15 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['duration']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
+              <?php if (strcmp($programme['mode_of_study'], 'Full-time only') == 0): ?>
+                <studyMode identifier="FT">Full time</studyMode>
+              <?php elseif (strcmp($programme['mode_of_study'], 'Full-time or part-time') == 0): ?>
+                <studyMode identifier="FL">Flexible</studyMode>
+              <?php elseif (strcmp($programme['mode_of_study'], 'Part-time only') == 0): ?>
+                <studyMode identifier="PT">Part time</studyMode>
+              <?php else: ?>
+                <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
+              <?php endif; ?>
               <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
               <?php if ($programme['attendance_pattern']): ?>
                 <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
