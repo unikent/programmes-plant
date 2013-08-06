@@ -35,7 +35,7 @@
 		<?php if($type == 'programmes'):?>
 			<?php
 				$preview_link =  action(URLParams::get_variable_path_prefix().'programmes/'.$instance->id.'@preview', array($revision->id));
-				$review_link = action( $revision->year . '/ug/programmes/' . $instance->id . '@review', array($revision->id));
+				$review_link = action( URLParams::get_variable_path_prefix() . 'programmes/' . $instance->id . '@review', array($revision->id));
 			?>
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
@@ -45,7 +45,7 @@
 				<?php if($instance->locked_to == ''):?>
 					<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URLParams::get_variable_path_prefix().$type.'.' . $instance->id . '@make_live', array($revision->id));?>"><?php echo __("revisions.make_live"); ?></a>
 				<?php else:?>
-					<a class="btn btn-success" target="_blank" href="<?php echo $review_link; ?>" >Review</a>
+					<a class="btn btn-success" target="_blank" href="<?php echo $review_link; ?>" ><?php echo __("revisions.review"); ?></a>
 				<?php endif;?>
 			<?php else : ?>
 				<a class="popup_toggler btn btn-success" href="#send_for_editing" rel="<?php echo action(URLParams::get_variable_path_prefix().$type.'.' . $instance->id . '@submit_programme_for_editing', array($revision->id));?>"><?php echo __('revisions.send_for_editing'); ?></a>
