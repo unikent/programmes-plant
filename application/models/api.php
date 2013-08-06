@@ -251,7 +251,7 @@ class API {
 		// Get subject area two if its set
 		$subject_area_2 = null;
 
-		if(empty($final['subject_area_2'])){
+		if(!empty($final['subject_area_2'])){
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
 
