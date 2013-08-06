@@ -318,9 +318,12 @@ class API {
 		}
 		
 		// Make alphabetical
-		usort($related_courses, function($a,$b){
-			 return strcmp($a["name"], $b["name"]);
-		});
+		if(isset($related_courses) && !empty($related_courses)){
+			usort($related_courses, function($a,$b){
+				return strcmp($a["name"], $b["name"]);
+			});
+		}
+		
 
 		return $related_courses;
 	}
