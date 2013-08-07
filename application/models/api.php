@@ -98,7 +98,7 @@ class API {
 		$programme_model = $prefix.'Programme';
 
 		// Get basic data set
-		$globals 			= GlobalSetting::get_api_data($year);	
+		$globals 			= GlobalSetting::get_api_data($year);
 		$programme_settings = $settings_model::get_api_data($year);
 		
 		// Do we have the required data to show a programme?
