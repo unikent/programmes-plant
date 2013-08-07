@@ -37,13 +37,13 @@ class PG_Deliveries extends SimpleData
 
 	// get data from cache (or make a new one)
 	public static function get_programme_deliveries($iid, $year){
-		$key = "pg-deliveries/{$iid}-{$year}";
+		$key = "pg-deliveries.{$iid}-{$year}";
 		return (Cache::has($key)) ? Cache::get($key) : static::generate_programme_deliveries($iid, $year); 
 	}
 
 	// generate new cache data
 	public static function generate_programme_deliveries($iid, $year, $pid = false){
-		$key = "pg-deliveries/{$iid}-{$year}";
+		$key = "pg-deliveries.{$iid}-{$year}";
 
 		// Find programme id if none provided
 		if(!$pid){

@@ -88,7 +88,7 @@ class API {
 	 */
 
 	public static function generate_programme_data($level, $year, $iid)
-	{	
+	{
 		$cache_key = "api-output-{$level}.programme-$year-$iid";
 
 
@@ -98,7 +98,7 @@ class API {
 		$programme_model = $prefix.'Programme';
 
 		// Get basic data set
-		$globals 			= GlobalSetting::get_api_data($year);	
+		$globals 			= GlobalSetting::get_api_data($year);
 		$programme_settings = $settings_model::get_api_data($year);
 		
 		// Do we have the required data to show a programme?
@@ -115,7 +115,7 @@ class API {
 			throw new NotFoundException("Programme either does not exist or has not been published.");
 		}
 
-		$final = static::combine_programme($programme, $programme_settings, $globals);
+		$final = static::combine_programme($programme, $programme_settings, $globals, $level);
 
 	//	$final['deliveries'] = static::attach_pg_deliveries($iid, $year);
 
@@ -211,7 +211,10 @@ class API {
 	 * @param $globals - basic global setting data
 	 * @return Combined programme data (fully linked)
 	 */
-	public static function combine_programme($programme, $programme_settings, $globals){
+	public static function combine_programme($programme, $programme_settings, $globals, $level = false){
+
+		// Initialise the level
+		$level = ($level == false) ? URLParams::get_type() : $level;
 
 		// Start combining to create final super object for output
 		// Use programme setttings as a base
@@ -219,7 +222,7 @@ class API {
 
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
 		// Loop through them, adding them to the $final object.
-		$programme = API::load_external_data($programme);
+		$programme = API::load_external_data($programme, $level);
 
 		// Add in all values from main programme
 		// Only overwrite values previously added from "settings" when they are not blank
@@ -264,7 +267,7 @@ class API {
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
 		
-		$final['programme_level'] = $level = URLParams::get_type();
+		$final['programme_level'] = $level;
 
 
 
@@ -315,9 +318,12 @@ class API {
 		}
 		
 		// Make alphabetical
-		usort($related_courses, function($a,$b){
-			 return strcmp($a["name"], $b["name"]);
-		});
+		if(isset($related_courses) && !empty($related_courses)){
+			usort($related_courses, function($a,$b){
+				return strcmp($a["name"], $b["name"]);
+			});
+		}
+		
 
 		return $related_courses;
 	}
@@ -363,11 +369,12 @@ class API {
 	 * @param $record The record
 	 * @return $new_record A new record with ids substituted
 	 */
-	public static function load_external_data($record)
-	{	
-		$field_model = URLParams::get_type().'_ProgrammeField';
+	public static function load_external_data($record, $level = false)
+	{
+		$level = ($level == false) ? URLParams::get_type() : $level;
+		$field_model = $level.'_ProgrammeField';
 		// get programme fields (mapping of columns to their datatypes)
-		$programme_fields =  $field_model::get_api_data();
+		$programme_fields = $field_model::get_api_data();
 
 		// For each column with a special data type, update its value in the record;
 		foreach($programme_fields as $field_name => $data_type){
@@ -473,19 +480,19 @@ class API {
 	}
 
 	/**
-	 * Creates a flat representation of the object for use in XCRI.
+	 * Creates a flat representation of a programme for use in XCRI.
 	 * 
 	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
 	 */
-	public static function get_xcrified_programme($id, $year)
+	public static function get_xcrified_programme($id, $year, $type = false)
 	{
 		// get the programme
-		$programme = static::get_programme(URLParams::get_type(), $year, $id);
+		$programme = static::get_programme($type, $year, $id);
 	
 		// format the programme appropriately
-		$programme['url'] = Config::get('application.front_end_url') . 'undergraduate/' . $id . '/' . $programme['slug'];
-
-		$programme['award'] = isset($programme['award'][0]) ? $programme['award'][0] : array();
+		$ug_pg_full = (strcmp($type, 'ug') == 0) ? 'undergraduate' : 'postgraduate';
+		$programme['url'] = Config::get('application.front_end_url') . $ug_pg_full . '/' . $id . '/' . $programme['slug'];
+		$programme['award'] = isset($programme['award'][0]) ? $programme['award'] : array();
 		$programme['administrative_school'] = isset($programme['administrative_school'][0]) ? $programme['administrative_school'][0] : array();
 		$programme['additional_school'] = isset($programme['additional_school'][0]) ? $programme['additional_school'][0] : array();
 		$programme['subject_area_1'] = isset($programme['subject_area_1'][0]) ? $programme['subject_area_1'][0] : array();
@@ -503,16 +510,19 @@ class API {
 			$programme['subjects'][] = $programme['subject_area_2'];
 		}
 
-		// Set campus as default while we are making a dummy.
-		$programme['attendance_mode_id'] = 'CM';
-		$programme['attendance_mode'] = 'Campus';
+		// Set identifiers to blank for now since we have none
+		$programme['mode_of_study_id'] = '';
+		$programme['attendance_mode_id'] = '';
 
-		// Also dummy attendence_pattern_id for now. Set to daytime.
+		// Dummy attendence_pattern_id for now since we dont have it in our data.
 		$programme['attendance_pattern'] = 'Daytime';
 		$programme['attendance_pattern_id'] = 'DT';
 
 		// Leave as is for the moment.
-		$programme['cost'] = $programme['tuition_fees'];
+		$programme['cost'] = (strcmp($type, 'ug') == 0) ? $programme['tuition_fees'] : $programme['fees_and_funding'];
+
+		// Set the programme type
+		$programme['type'] = $type;
 
 		return $programme;
 	}
