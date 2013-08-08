@@ -54,13 +54,12 @@ abstract class Programme extends Revisionable {
 	/**
 	 * Get this programme's campus.
 	 * 
-	 * @return School The additional school for this programme.
+	 * @return School The location for this programme.
 	 */
 	public function location()
 	{
 	  return $this->belongs_to('Campus', static::get_location_field());
 	}
-
 
 	/**
 	 * Save changes to programme
@@ -332,6 +331,7 @@ abstract class Programme extends Revisionable {
 		$subject_area_1_field = static::get_subject_area_1_field();
 		$subject_area_2_field = static::get_subject_area_2_field();
 		$location_field = static::get_location_field();
+		$additional_locations_field = static::get_additional_locations_field();
 		$administrative_school_field = static::get_administrative_school_field();
 		$additional_school_field = static::get_additional_school_field();
 
@@ -364,8 +364,12 @@ abstract class Programme extends Revisionable {
 					 $programme_type_field
 		);
 		// If UG, add ucas field
-		if($type == 'ug') {
+		if ($type == 'ug') {
 			$fields[] = $ucas_code_field;
+		}
+		// if pg add additional locations field
+		if ($type == 'pg') {
+			$fields[] = $additional_locations_field;
 		}
 
 		// Query all data for the current year that includes both a published revison & isn't suspended/withdrawn
@@ -390,12 +394,17 @@ abstract class Programme extends Revisionable {
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
 				unset($awards[0]);
 				$awards = implode(', ', $awards);
+
+				$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
+				unset($additional_locations[0]);
+				$additional_locations = implode(', ', $additional_locations);
+				$additional_locations = preg_replace("/, ([^,]+)$/", " and $1", $additional_locations);
 			}
 			else
 			{
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
+				$additional_locations = '';
 			}
-
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
@@ -406,6 +415,7 @@ abstract class Programme extends Revisionable {
 				'main_school' =>  isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
 				'secondary_school' =>  isset($relationships["additional_school"]) ? $relationships["additional_school"]->attributes["name"] : '',
 				'campus' 	=>  isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
+				'additional_locations' => $additional_locations,
 				'new_programme' => 	$attributes[$new_programme_field],
 				'subject_to_approval' => $attributes[$subject_to_approval_field],
 				'mode_of_study' => 	$attributes[$mode_of_study_field],

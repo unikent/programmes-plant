@@ -446,7 +446,7 @@ class TestAPI extends ModelTestCase
 	public function testget_xcrified_programme_no_globals_or_settings(){
 		$programme = $this->publish_programme();
 
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year);
+		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
 	}
 
 	public function testget_xcrified_programme(){
@@ -454,7 +454,7 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme_settings();
 
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year);
+		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
 		
 		$this->assertNotEmpty($xcrified_programme);
 
