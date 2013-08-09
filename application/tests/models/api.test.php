@@ -480,6 +480,11 @@ class TestAPI extends ModelTestCase
 		$programme1->save();	
 		$programme1->make_revision_live($programme1->get_active_revision());
 
+		// change programme2 title
+		$programme2->$title_field = "programme2";
+		$programme2->save();	
+		$programme2->make_revision_live($programme2->get_active_revision());
+
 		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
 		$programme1_api = API::load_external_data($programme1_api, 'ug');
 		$programme1_api = API::remove_ids_from_field_names($programme1_api);
@@ -487,7 +492,7 @@ class TestAPI extends ModelTestCase
 		$this->assertEquals($programme1_api['award'][0]['name'], 'API Test ug_award');
 		$this->assertEquals($programme1_api['location'][0]['name'], 'API Test campus');
 		$this->assertEquals($programme1_api['subject_area_1'][0]['name'], 'API Test ug_subject');
-		$this->assertEquals($programme1_api['related_courses'][0]['name'], 'Thing');
+		$this->assertEquals($programme1_api['related_courses'][0]['name'], 'programme2');
 
 	}
 
