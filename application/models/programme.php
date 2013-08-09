@@ -395,7 +395,6 @@ abstract class Programme extends Revisionable {
 				$awards = implode(', ', $awards);
 
 				$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
-				unset($additional_locations[0]);
 				$additional_locations = implode(', ', $additional_locations);
 				$additional_locations = preg_replace("/, ([^,]+)$/", " and $1", $additional_locations);
 			}
