@@ -392,7 +392,6 @@ abstract class Programme extends Revisionable {
 			if($type == 'pg')
 			{
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
-				unset($awards[0]);
 				$awards = implode(', ', $awards);
 
 				$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
@@ -405,6 +404,7 @@ abstract class Programme extends Revisionable {
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
 				$additional_locations = '';
 			}
+
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
