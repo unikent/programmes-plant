@@ -149,4 +149,10 @@ class TestProgramme extends ModelTestCase {
         $item = UG_Programme::find(1);
         $this->assertEquals($item->live_revision, $revision->id);
 	}
+
+	public function testget_programmes_in(){
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+	}
 }

@@ -520,7 +520,8 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
-	 * Find related programmes using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
+	 * Find related programmes using API. Returns array containing any course
+	 * in the given year that is in either subject_1 or subject_2.
 	 * 
 	 * @param $subject_1 is course part of subject 1
 	 * @param $subject_2 is course part of subject 2
@@ -541,13 +542,15 @@ abstract class Programme extends Revisionable {
 			$subject_2 = $subject_1;
 		} 
 
-		// Get all related programmes.
-		if($subject_1 != $subject_2){
-			$related_courses_array = array_merge($mapping[$subject_1], $mapping[$subject_2]);
-		}else{
-			// Empty array if subject 1 is empty
-			$related_courses_array = isset($mapping[$subject_1]) ? $mapping[$subject_1] : array();
+		if ($subject_1 != $subject_2)
+		{
+			foreach ($mapping[$subject_2] as $programme)
+			{
+				$mapping[$subject_1][$programme['id']] = $programme;
+			}
 		}
+
+		$related_courses_array = isset($mapping[$subject_1]) ? $mapping[$subject_1] : array();
 
 		// Remove self from list as theres no point it being related to itself
 		if($self_id) unset($related_courses_array[$self_id]);
