@@ -135,6 +135,12 @@
               <?php endif; ?>
               <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
                 <attendanceMode identifier="MM">Mixed mode</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Distance with attendance') !== false): ?>
+                <attendanceMode identifier="DA">Distance with attendance</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Distance without attendance') !== false): ?>
+                <attendanceMode identifier="DS">Distance without attendance</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Campus') !== false): ?>
+                <attendanceMode identifier="CM">Campus</attendanceMode>
               <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
                 <attendanceMode identifier="CM">Campus</attendanceMode>
               <?php else: ?>
