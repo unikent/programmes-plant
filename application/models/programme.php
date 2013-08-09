@@ -521,7 +521,8 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
-	 * Find related programmes using API. Returns array containing any course in the given year that is in either subject_1 or subject_2.
+	 * Find related programmes using API. Returns array containing any course
+	 * in the given year that is in either subject_1 or subject_2.
 	 * 
 	 * @param $subject_1 is course part of subject 1
 	 * @param $subject_2 is course part of subject 2
