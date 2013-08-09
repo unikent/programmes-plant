@@ -345,7 +345,7 @@ class TestAPI extends ModelTestCase
 
 	public function testmerge_related_courses(){
 
-		// create 5 programmes to use in out test
+		// create 5 programmes to use in our test
 		$programme1 = $this->publish_programme();
 		$programme2 = $this->publish_programme();
 		$programme3 = $this->publish_programme();
@@ -457,9 +457,38 @@ class TestAPI extends ModelTestCase
 
 
 	public function testload_external_data(){
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		// create 2 programmes to use in our test
+		$programme1 = $this->publish_programme();
+		$programme2 = $this->publish_programme();
+
+		// create a set of data types
+		$data_type_objects = $this->create_data_types();
+
+		// we'll need the names of some fields
+		$title_field = UG_Programme::get_title_field();
+		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
+		$related_courses_field = UG_Programme::get_related_courses_field();
+		$award_field = UG_Programme::get_award_field();
+		$campus_field = UG_Programme::get_location_field();
+
+		// set some values on programme1
+		$programme1->$title_field = "programme1";
+		$programme1->$award_field = $data_type_objects['ug_award']->id;
+		$programme1->$campus_field = $data_type_objects['campus']->id;
+		$programme1->$subject_area_1_field = $data_type_objects['ug_subject']->id;
+		$programme1->$related_courses_field = $programme2->id;
+		$programme1->save();	
+		$programme1->make_revision_live($programme1->get_active_revision());
+
+		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
+		$programme1_api = API::load_external_data($programme1_api, 'ug');
+		$programme1_api = API::remove_ids_from_field_names($programme1_api);
+
+		$this->assertEquals($programme1_api['award'][0]['name'], 'API Test ug_award');
+		$this->assertEquals($programme1_api['location'][0]['name'], 'API Test campus');
+		$this->assertEquals($programme1_api['subject_area_1'][0]['name'], 'API Test ug_subject');
+		$this->assertEquals($programme1_api['related_courses'][0]['name'], 'Thing');
+
 	}
 
 
