@@ -549,68 +549,13 @@ class Revisionable extends SimpleData {
 		return parent::__call($method, $parameters);
 	}
 
-	/**
-	 * Gives a flat array of id => item_title for all items.
-	 * 
-	 * Used generally to create select dropdowns.
-	 * 
-	 * This has two levels of caching. First a database lookup cache, then an in memory cache.
-	 * 
-	 * This is done for application performance.
-	 * 
-	 * @param string $year The year from which to get the array.
-	 *
-	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
-	 *
-	 * @return array $options List of items in the format id => item_title.
-	 */
-	public static function all_as_list($year = false, $empty_default_value = 0)
+	public static function all_active($sort_by='')
 	{
-		$model = get_called_class();
-
-		// If this datatype cannot be separated by year, make year false.
-		if (!static::$data_by_year) $year = false;
-		
-		// the 'defaulttonone' cache key is used for options lists which need 'none' in their select listings
-		$cache_key = ( $empty_default_value != 0 ) ? "$model-$year-defaulttonone-options-list" : "$model-$year-options-list";
-
-		if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
-		
-		return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model, $empty_default_value)
+		if ($sort_by != '')
 		{
-			$options = array();
-			// set the 'none' select value, as per the $empty_default_value param
-			if ( $empty_default_value != 0 )
-			{
-				$options[0] = __('fields.empty_default_value');
-			}
-
-			$title_field = $model::get_title_field();
-
-			// Get required list fields (if they are provided)
-			if(isset($model::$list_fields)){
-				$list_fields = $model::$list_fields;
-			}else{
-				// else just use id and title
-				$list_fields = array('id', $title_field);
-			}
-
-			if (! $year)
-			{
-				$data = $model::order_by($title_field,'asc')->get($list_fields);
-			}
-			else 
-			{
-				$data = $model::where('year','=', $year)->order_by($title_field,'asc')->get($list_fields);
-			}
-
-			foreach ($data as $record)
-			{
-				$options[$record->id] = $record->$title_field;
-			}
-
-			return $options;
-		}, 2628000); // Cache forever.
+			return static::order_by($sort_by, 'asc');
+		}
+		return static::where(true, '=', true);
 	}
 
 

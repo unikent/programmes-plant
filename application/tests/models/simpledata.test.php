@@ -479,21 +479,21 @@ class TestSimpleData extends ModelTestCase {
 	
 	public function testAllActiveReturnsOnlyActive()
 	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
+		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => 1);
 		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
+		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => 0);
 		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
+		$result = Thing::all_active()->get();
 		$this->assertEquals(1, count($result));
 	}
 	
 	public function testAllActiveReturnsOnlyHiddenIsFalse()
 	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
+		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => 1);
 		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
+		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => 0);
 		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
+		$result = Thing::all_active()->get();
 		$this->assertEquals('Thing2', $result[0]->name);
 	}
 	

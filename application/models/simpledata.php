@@ -107,11 +107,11 @@ class SimpleData extends Eloquent {
 
 			if (! $year)
 			{
-				$data = $model::where('hidden', '=', 0)->order_by($title_field,'asc')->get($list_fields);
+				$data = $model::all_active($title_field)->get($list_fields);
 			}
 			else 
 			{
-				$data = $model::where('hidden', '=', 0)->where('year','=', $year)->order_by($title_field,'asc')->get($list_fields);
+				$data = $model::all_active($title_field)->where('year','=', $year)->get($list_fields);
 			}
 
 			foreach ($data as $record)
@@ -274,9 +274,9 @@ class SimpleData extends Eloquent {
 	{
 		if ($sort_by != '')
 		{
-			return static::where('hidden', '=', false)->order_by($sort_by, 'asc')->get();
+			return static::where('hidden', '=', 0)->order_by($sort_by, 'asc');
 		}
-		return static::where('hidden', '=', false)->get();
+		return static::where('hidden', '=', 0);
 	}
 	
 	public function delete()
