@@ -24,5 +24,9 @@ return array(
 													'body' => "Your changes to <a href=':link'>:title :awards</a> have been reviewed but not yet published. Please see the following comments:<br /><br />"
 													),
 							),
+	'new_user_notification' => array(
+									'title' => "Programme-plant access",
+									'body' => "Dear :user,<br /><br />You have just been given access to the programme-plant (<a href='https://webtools.kent.ac.uk/programmes'>https://webtools.kent.ac.uk/programmes</a>).<br /><br />When you click the link above you will be asked to enter your University of Kent IT account username and password."
+							)
 		
 );
