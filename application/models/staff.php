@@ -35,7 +35,7 @@ class Staff extends SimpleData
 	// use "Login" instead of name as title
 	public static function get_title_field()
 	{
-		return 'login';
+		return 'surname';
 	}
 
 
@@ -46,6 +46,11 @@ class Staff extends SimpleData
 		return $this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
 
+	// Pretty print surname when requested
+	public function get_surname()
+	{
+		return $this->get_login();
+	}
 
 	// Pretty print name when requested
 	public function get_name()
