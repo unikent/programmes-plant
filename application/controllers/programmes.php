@@ -331,6 +331,9 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$mailer = IoC::resolve('mailer');
 
+			// append 'TEST' to email titles when on the test server environment
+			$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
+
 			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title, 'awards' => $awards)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
@@ -370,6 +373,10 @@ class Programmes_Controller extends Revisionable_Controller {
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 				$title = $programme->{$model::get_title_field()};
+
+				// append 'TEST' to email titles when on the test server environment
+				$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
+
 				$slug = $programme->{$model::get_slug_field()};
 
 				// get the awards
@@ -440,6 +447,9 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 			$title = $programme->{$model::get_title_field()};
+
+			// append 'TEST' to email titles when on the test server environment
+			$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
 
 			// get the awards
 			$awards = static::get_awards_string($programme, $type);
