@@ -10,7 +10,7 @@
 </div>
 
 <?php if ($items) : ?>
-<table class="table table-striped table-bordered">
+<table id="simpledata-list" class="table table-striped table-bordered">
   <thead>
     <tr>
       <th><?php echo Str::title(Str::singular($type)); ?></th>
