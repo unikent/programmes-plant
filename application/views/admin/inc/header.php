@@ -6,7 +6,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/">Programmes Plant</a>
+            <a class="brand" href="<?php echo url('/') ?>">Programmes Plant</a>
             <div class="nav-collapse collapse">
                 
 
