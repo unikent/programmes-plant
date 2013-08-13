@@ -12,7 +12,7 @@ class Staff_Controller extends Simple_Admin_Controller {
 	{
 		$model = $this->model;
 
-		$this->data['items'] = $model::all_active('surname');
+		$this->data['items'] = $model::all_active('surname')->get();
 		$this->data['shared'] = $this->shared_data;
 		$this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
 	}
