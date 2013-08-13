@@ -4,11 +4,11 @@
         <li class="nav-header">Core Data</li>
 
         <?php if (Auth::user()->can(array("edit_own_programmes", "view_all_programmes", "edit_all_programmes"))): ?>
-            <?php if(URLParams::get_type() == 'ug'): ?>
+
                 <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmes')?>"><i class="icon-home"></i> UG Programmes</a></li>
-            <?php elseif(URLParams::get_type() == 'pg'): ?>
+
                 <li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmes')?>"><i class="icon-home"></i> PG Programmes</a></li>
-            <?php endif; ?>
+
         <?php endif; ?>
 
         <?php if (Auth::user()->can("recieve_edit_requests")): ?>
