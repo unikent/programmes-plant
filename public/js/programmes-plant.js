@@ -311,6 +311,16 @@ $(document).ready(function (){
       checkLength($(this)); // so there is data initally.
     });
 
+    /* fades the scroll to top button in and out as you scroll away from/near to the top of the page */
+    $(window).bind('scroll', function(){
+      if($(this).scrollTop() >= 300) {
+          $(".scroll-to-top").fadeIn();
+      }
+      if($(this).scrollTop() < 300) {
+          $(".scroll-to-top").fadeOut();
+      }
+    });
+
 });
 
 function init_dataTable(){
