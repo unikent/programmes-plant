@@ -81,6 +81,20 @@ class Users_Controller extends Admin_Controller {
 		}
 
 		$this->updateUser($username, $role, $ug_subjects, $pg_subjects);
+
+		// Send email notification to the user
+		if(Config::get('programme_revisions.notifications.on')){
+			$user = User::where('username', '=', $username)->first();
+			$user_email = !empty($user) ? $user->email : '';
+
+			$mailer = IoC::resolve('mailer');
+			$message = Swift_Message::newInstance(__('emails.new_user_notification.title'))
+				->setFrom(Config::get('programme_revisions.notifications.from'))
+				->setTo($user_email)
+				->addPart(__('emails.new_user_notification.body', array('user'=>$user->fullname)), 'text/html');
+			$mailer->send($message);
+		}
+
 		return Redirect::to('users');			
 	}
 	/**
