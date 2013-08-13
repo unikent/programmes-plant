@@ -80,6 +80,18 @@ div.alert p { margin:0; }
     background-color: rgb(103, 17, 21);
 }
 
+h2.alert-ug, h2.alert-pg {
+    margin: 40px 0;
+    padding: 30px;
+    width: 200px;
+    text-align: center;
+}
+
+a.alert-type, a.alert-type:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
 .gallery_images .caption { text-align:center; }
 .gallery_images .caption small { font-style:italic; }
 .gallery_images .caption p { margin-bottom:0; }
