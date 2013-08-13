@@ -549,6 +549,15 @@ class Revisionable extends SimpleData {
 		return parent::__call($method, $parameters);
 	}
 
+	public static function all_active($sort_by='')
+	{
+		if ($sort_by != '')
+		{
+			return static::order_by($sort_by, 'asc');
+		}
+		return static::where(true, '=', true);
+	}
+
 
 
 }

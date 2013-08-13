@@ -41,7 +41,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 	{
 		$model = $this->model;
 
-		$this->data['items'] = $model::all_active();
+		$this->data['items'] = $model::all_active()->get();
 		$this->data['shared'] = $this->shared_data;
 		$this->layout->nest('content', 'admin.indexes.simple-index', $this->data);
 	}
