@@ -232,17 +232,25 @@ $(document).ready(function (){
         $('#activate_subject').modal('show');
       });
     });
+
+    /**
+    *
+    * data tables for simpledata index pages
+    *
+    */
+    init_simple_index_dataTable();
     
     /**
     *
     * data tables for programme index page
     *
     */
-
      init_dataTable();
     
-    $('.dataTables_filter input').attr("placeholder", "Search programmes").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
+    $('.dataTables_filter input').attr("placeholder", "Enter your search here").wrap($("<div class='input-prepend'></div>")).parent().prepend($('<span class="add-on"><i class="icon-search"></i></span>'));
     
+
+
     /*
     * invoke the jquery placeholder plugin for IE
     */
@@ -335,5 +343,49 @@ function init_dataTable(){
     // Dont kill the page on error...
   }
 }
-    
+
+function init_dataTable(){
+
+  try{
+
+    $('#programme-list').dataTable( {
+        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 20,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "aoColumns": [ 
+            { "bSortable": false, 'iDataSort': 1 },
+            { "bSortable": false},
+            { "bSortable": false }
+          ]
+    });
+
+  }catch(e){
+    // Dont kill the page on error...
+  }
+}
+
+function init_simple_index_dataTable(){
+
+  try{
+
+    $('#simpledata-list').dataTable( {
+        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+        "sPaginationType": "bootstrap",
+        "iDisplayLength": 20,
+        "oLanguage": {
+            "sSearch": ""
+        },
+        "aoColumns": [ 
+            { "bSortable": false, 'iDataSort': 0 },
+            { "bSortable": false}
+          ]
+    });
+
+  }catch(e){
+    // Dont kill the page on error...
+  }
+}
 
