@@ -58,10 +58,6 @@
 <?php echo Form::close(); ?>
 
 
-
-
-
-
-
+<a href='#' class='scroll-to-top'><i class="icon-chevron-up icon-white"></i></a>
 
 
