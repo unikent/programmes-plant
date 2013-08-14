@@ -66,30 +66,38 @@ textarea {
 div.alert { margin-top:10px; margin-bottom:10px; }
 div.alert p { margin:0; }
 
-.alert-type {
+.alert-year {
     margin: 0px;
     padding: 10px;
     border-radius: 0px;
     color: #fff;
 }
-.alert-ug {
+
+a.alert-year, a.alert-year:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.alert-ug a.alert-year{
     background-color: rgb(0, 15, 66);
 }
 
-.alert-pg {
+.alert-pg a.alert-year{
     background-color: rgb(103, 17, 21);
 }
 
 h2.alert-ug, h2.alert-pg {
     margin: 40px 0;
     padding: 30px;
-    width: 200px;
     text-align: center;
 }
 
-a.alert-type, a.alert-type:hover {
-    text-decoration: none;
-    color: #fff;
+h2.alert-ug a.alert-year, h2.alert-pg a.alert-year{
+    padding: 20px;
+}
+
+h2.alert-ug a.current-year, h2.alert-pg a.current-year{
+    padding: 40px;
 }
 
 .gallery_images .caption { text-align:center; }
