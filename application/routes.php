@@ -13,13 +13,13 @@ else {
 }
 
 Route::group(array('before' => ''), function(){
-	// Any page without a root goes to index
-	Route::any('/',function(){
-	       return Redirect::to('2014/ug/');
-	});
 
-	// Index
-	Route::any('([0-9]{4})/(ug|pg)', 'programmes@index');
+	// index
+	Route::any('/', 'programmes@index');
+	Route::any('([0-9]{4})', 'programmes@index');
+
+	// programme list
+	Route::any('([0-9]{4})/(ug|pg)', 'programmes@list');
 
 	// Roles managment
 	Route::get('([0-9]{4})/(ug|pg)/roles', 'roles@index');
@@ -34,7 +34,7 @@ Route::group(array('before' => ''), function(){
 	Route::get('([0-9]{4})/(ug|pg)/programmesettings/(:num)/(:any)/(:num)', 'programmesettings@(:4)');
 
 	// Do Programmes
-	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@index');
+	Route::any('([0-9]{4})/(ug|pg)/programmes', 'programmes@list');
 	Route::any('([0-9]{4})/(ug|pg)/programmes/(:any?)/(:num?)', 'programmes@(:3)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/deliveries/(:num)', 'programmes@deliveries');

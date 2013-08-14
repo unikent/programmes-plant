@@ -17,6 +17,10 @@ class Programmes_Controller extends Revisionable_Controller {
 		parent::__construct();
 	}
 	
+	public function get_index($year='')
+	{
+		$this->layout->nest('content', 'admin.index');
+	}
 
 	/**
 	 * Routing for /$year/$type/programmes
@@ -24,7 +28,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $year The year.
 	 * @param string $type Undergraduate or postgraduate.
 	 */
-	public function get_index($year, $type)
+	public function get_list($year, $type)
 	{
 
 		$model = $this->model;
