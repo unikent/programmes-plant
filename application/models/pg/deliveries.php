@@ -63,4 +63,30 @@ class PG_Deliveries extends SimpleData
 		return $cacheable;
 	}
 
+
+	/**
+	 * generate API data (overides copy in simpledata to avoid use of "Hidden")
+	 * Get live version of API data from database
+	 *
+	 * @param year (Unused - PHP requires signature not to change)
+	 * @param data (Unused - PHP requires signature not to change)
+	 */
+	public static function generate_api_data($year = false, $data = false)
+	{
+		// keys
+		$model = strtolower(get_called_class());
+		$cache_key = 'api-'.$model;
+		// make data
+		$data = array();
+		foreach (static::get() as $record) {
+			// Direct grab of attributes is faster than to_array 
+			// since don't need to worry about realtions & things like that
+			$data[$record->attributes["id"]] = $record->attributes;
+		}
+		// Store data in to cache
+		Cache::put($cache_key, $data, 2628000);
+		// return
+		return $data;
+	}
+
 }
