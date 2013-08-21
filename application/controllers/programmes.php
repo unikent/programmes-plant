@@ -589,6 +589,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$delivery->award = Input::get('award');
 		$delivery->pos_code = Input::get('pos_code');
 		$delivery->mcr = Input::get('mcr');
+		$delivery->description = Input::get('description');
 		$delivery->attendance_pattern = Input::get('attendance_pattern');
 		
 		$delivery->save();
