@@ -55,7 +55,7 @@ class ModuleData_Task {
             // Kent
             $institution = '0122';
             // get campus
-            $campus_id = Campus::find($programme['campus_id'])->identifier;
+            $campus_id = $programme['campus_id'];
 
             $module_session = $this->parse_module_session($programme['module_session'], $parameters);
             if($module_session === null)continue;
@@ -95,7 +95,7 @@ class ModuleData_Task {
             // Kent
             $institution = '0122';
             // get campus
-            $campus_id = Campus::find($programme['campus_id'])->identifier;
+            $campus_id = $programme['campus_id'];
             $module_session = $this->parse_module_session($programme['module_session'], $parameters);
             if($module_session === null)continue;
 
@@ -123,7 +123,10 @@ class ModuleData_Task {
         }  // otherwise use the config module session field  
         else {
             if ($parameters['type'] == 'ug') return Config::get('module.module_session');
-            elseif ($parameters['type'] == 'pg') return PG_ProgrammeSettings::get_setting($parameters['programme_session'], 'module_session');
+            elseif ($parameters['type'] == 'pg') {
+                $module_session_field = PG_Programme::get_module_session_field();
+                return PG_ProgrammeSetting::get_setting($parameters['programme_session'], $module_session_field);
+            }
         }
     }
 
