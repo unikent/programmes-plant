@@ -38,7 +38,9 @@ class ModuleData_Task {
 
     // Load UG
     protected function load_ug_modules($parameters, $programmes = array()){
- 
+
+        $parameters['type'] = 'ug';
+
         // loop through each programme in the index and call the two web services for each
         $n = 0;
         foreach ($programmes as $id => $programme)
@@ -55,7 +57,7 @@ class ModuleData_Task {
             // get campus
             $campus_id = Campus::find($programme['campus_id'])->identifier;
 
-            $module_session = $this->parse_module_session($programme['module_session']);
+            $module_session = $this->parse_module_session($programme['module_session'], $parameters);
             if($module_session === null)continue;
 
             // load data
@@ -78,6 +80,8 @@ class ModuleData_Task {
 
     protected function load_pg_modules($parameters, $programmes = array()){
 
+        $parameters['type'] = 'pg';
+
         // loop through each programme in the index and call the two web services for each
         $n = 0;
         foreach ($programmes as $id => $programme)
@@ -92,7 +96,7 @@ class ModuleData_Task {
             $institution = '0122';
             // get campus
             $campus_id = Campus::find($programme['campus_id'])->identifier;
-            $module_session = $this->parse_module_session($programme['module_session']);
+            $module_session = $this->parse_module_session($programme['module_session'], $parameters);
             if($module_session === null)continue;
 
             // cache modules for each delivery
@@ -107,7 +111,7 @@ class ModuleData_Task {
         }
     }
 
-    private function parse_module_session($module_session){
+    private function parse_module_session($module_session, $parameters){
          if ( $module_session != '' ){
             // is the module session like a year
             if ( preg_match( '/^20[0-9][0-9]$/', $module_session ) ){
@@ -118,7 +122,8 @@ class ModuleData_Task {
             }
         }  // otherwise use the config module session field  
         else {
-            return Config::get('module.module_session');
+            if ($parameters['type'] == 'ug') return Config::get('module.module_session');
+            elseif ($parameters['type'] == 'pg') return PG_ProgrammeSettings::get_setting($parameters['programme_session'], 'module_session');
         }
     }
 
