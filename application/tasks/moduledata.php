@@ -350,7 +350,7 @@ class ModuleData_Task {
         $pos_code_field = $model::get_pos_code_field();
         $module_session_field = $model::get_module_session_field();
 
-        $tmp_programme['campus_id'] = $programme->$campus_id_field;
+        $tmp_programme['campus_id'] = campus::find($programme->$campus_id_field)->identifier;
         $tmp_programme['id'] = $programme->instance_id;
         $tmp_programme['module_session'] = $programme->$module_session_field;
         $tmp_programme['pos_code'] = $programme->$pos_code_field;
