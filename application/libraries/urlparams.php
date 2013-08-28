@@ -68,7 +68,8 @@ class URLParams {
 		Session::put('last_type', static::$type);
 	}
 
-	public static function get_type(){
+	public static function get_type($model=''){
+		if ($model == 'GlobalSettingField') return 'ug';
 		return static::$type;
 
 	}
