@@ -49,7 +49,7 @@ abstract class Fields_Controller extends Admin_Controller {
 			'permissions' => array('R' => array(), 'W' => array()),
 			'model' => $this->model,
 			'field_type' => $this->view,
-			'type' => URLParams::get_type(),
+			'type' => URLParams::get_type($this->model),
 		);
 
 		$this->layout->nest('content', 'admin.fields.form', $data);
@@ -66,7 +66,7 @@ abstract class Fields_Controller extends Admin_Controller {
 
 		$data = array(
 			'path' => URI::current(),
-			'type' => URLParams::get_type(),
+			'type' => URLParams::get_type($this->model),
 			'model' => $model,
 			'id' => $id,
 			'values' => $field,
@@ -76,13 +76,13 @@ abstract class Fields_Controller extends Admin_Controller {
 		);
 
 		// Load existing permissions
-		$read_permissions = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
+		$read_permissions = Permission::where_name(URLParams::get_type($this->model)."_fields_read_{$field->colname}")->first();
 		foreach($read_permissions->roles as $role)
 		{
 			$data['permissions']['R'][] = $role->id;
 		}
 
-		$write_permissions = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
+		$write_permissions = Permission::where_name(URLParams::get_type($this->model)."_fields_write_{$field->colname}")->first();
 		foreach($write_permissions->roles as $role)
 		{
 			$data['permissions']['W'][] = $role->id;
@@ -118,11 +118,11 @@ abstract class Fields_Controller extends Admin_Controller {
 		// Then assign the permissions as specified
 		$permissions = Input::get('permissions');
 
-		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type($this->model)."_fields_read_{$field->colname}")->first();
 		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
 		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
-		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type($this->model)."_fields_write_{$field->colname}")->first();
 		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
 		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));
 
@@ -154,11 +154,11 @@ abstract class Fields_Controller extends Admin_Controller {
 		// Assign permissions
 		$permissions = Input::get('permissions');
 
-		$permission = Permission::where_name(URLParams::get_type()."_fields_read_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type($this->model)."_fields_read_{$field->colname}")->first();
 		$permissions['R'] = isset($permissions['R']) ? $permissions['R'] : array();
 		$permission->roles()->sync(Role::sanitize_ids($permissions['R']));
 
-		$permission = Permission::where_name(URLParams::get_type()."_fields_write_{$field->colname}")->first();
+		$permission = Permission::where_name(URLParams::get_type($this->model)."_fields_write_{$field->colname}")->first();
 		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
 		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));					
 		
