@@ -16,7 +16,11 @@ class PG_Deliveries extends SimpleData
 		// Clear caches
 		Cache::forget("api-output-pg/programme-{$p->year}-{$p->instance_id}");
 		// Remove value (actually remove via raw delete, not just hide)
-		return static::raw_delete();
+		$deleted = static::raw_delete();
+
+		$this->generate_cache();
+
+		return $deleted;
 	}
 
 	public function award(){
