@@ -181,6 +181,62 @@ class API {
 	}
 
 	/**
+	 * get a "simpleview" programme from the API based on hash
+	 *
+	 * @param $hash of simpleview
+	 * @return simpleview from cache
+	 * @throws NoFoundException if simpleview does not exist (or has expired)
+	 */
+	public static function get_simpleview($hash)
+	{	
+		$key = URLParams::get_type()."-programme-simpleviews.simpleview-{$hash}";
+		if(Cache::has($key)){
+			return Cache::get($key);
+		}else{
+			throw new NotFoundException("Simpleview data not found");
+		}	
+	}
+
+	/**
+	 * Create a new "simpleview" of a given revision
+	 *
+	 * @param $id of programme simpleview is for
+	 * @param $id of revision to create simpleview from
+	 * @return hash of simpleview.
+	 */
+	public static function create_simpleview($id, $revision_id)
+	{
+		$model =  URLParams::get_type().'_Programme';
+		$setting_model =  URLParams::get_type().'_ProgrammeSetting';
+
+		$p = $model::find($id);
+		$revision = $p->get_revision($revision_id);
+		
+		// If this revision exists
+		if($revision !== false){
+			// Grab additional data sets
+			$globals 			= GlobalSetting::get_api_data($revision->year);	
+			$programme_settings = $setting_model::get_api_data($revision->year);
+			// Fail if these arent set
+			if($globals === false || $programme_settings === false){
+				return false;	
+			} 
+			// Generate programme
+			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+			// Log revision identity
+			$final['revision_id'] = $revision->get_identifier();
+
+			// generate hash, use json_encode to make hashable (fastest encode method: http://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize )
+			$hash = sha1(json_encode($final));
+			// Store it, & return hash
+			Cache::put(URLParams::get_type()."-programme-simpleviews.simpleview-{$hash}", $final, 2419200);// 4 weeks
+			return $hash;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get "data" from specific datatype
 	 *
 	 * @param $type data type to return data for.
