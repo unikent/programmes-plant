@@ -34,9 +34,11 @@
 
 		<?php if($type == 'programmes'):?>
 			<?php
+				$simpleview_link =  action(URLParams::get_variable_path_prefix().'programmes/'.$instance->id.'@simpleview', array($revision->id));
 				$preview_link =  action(URLParams::get_variable_path_prefix().'programmes/'.$instance->id.'@preview', array($revision->id));
 				$review_link = action( URLParams::get_variable_path_prefix() . 'programmes/' . $instance->id . '@review', array($revision->id));
 			?>
+			<a class="btn btn-warning" target="_blank" href="<?php echo $simpleview_link; ?>" ><?php echo __("revisions.view_simpleview"); ?></a>
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
 

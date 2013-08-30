@@ -31,6 +31,7 @@ return array(
 	'cancel' 			=> 'Not right now',
 	'unpublish'         => 'Unpublish',
 	'view_preview'		=> 'Preview',
+	'view_simpleview'	=> 'Data for print view',
 	'send_for_editing'	=> 'Send to EMS',
 
 	//Links
