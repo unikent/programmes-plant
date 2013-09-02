@@ -307,6 +307,80 @@ class TestAPI extends ModelTestCase
 		$preview_hash = API::create_preview($programme->id, 500);
 	}
 
+	public function testcreate_get_simpleview(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$title_field = UG_Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		$revision = $programme->get_active_revision();
+
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
+
+		$this->assertFalse(empty($simpleview_hash));
+
+		$simpleview = API::get_preview($simpleview_hash);
+
+		$title_field_without_id = Revisionable::trim_id_from_field_name($title_field);
+
+		$this->assertEquals($simpleview[$title_field_without_id], $programme->$title_field);
+
+	}
+
+	public function testcreate_get_simpleview_without_globals_and_settings(){
+		$programme = $this->publish_programme();
+
+		$title_field = UG_Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		$revision = $programme->get_active_revision();
+
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
+
+		$this->assertFalse($simpleview_hash);
+	}
+
+	/**
+     * @expectedException NotFoundException
+     */
+	public function testget_simpleview_without_cache(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$title_field = UG_Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		$revision = $programme->get_active_revision();
+
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
+
+		Cache::flush("programme-simpleviews.simpleview-{$simpleview_hash}");
+
+		$simpleview = API::get_preview($simpleview_hash);
+
+	}
+
+	/**
+     * @expectedException RevisioningException
+     */
+	public function testcreate_simpleview_invalid_revision(){
+		$programme = $this->publish_programme();
+		$this->publish_globals();
+		$this->publish_programme_settings();
+
+		$title_field = UG_Programme::get_title_field();
+		$programme->$title_field = 'A new Title';
+		$programme->save();
+
+		// there is no revision with an id of 500
+		$simpleview_hash = API::create_preview($programme->id, 500);
+	}
 
 	public function testget_data_with_types(){
 		$this->create_data_types();

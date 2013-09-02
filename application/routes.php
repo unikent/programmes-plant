@@ -122,6 +122,8 @@ Route::group(array('before' => ''), function(){
 
 
 	Route::any('/api/preview/(undergraduate|postgraduate)/(:any?)', 'api@preview');
+
+	Route::any('/api/simpleview/(undergraduate|postgraduate)/(:any?)', 'api@simpleview');
 	
 	
 	// XCRI-CAP Feed
