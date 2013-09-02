@@ -548,7 +548,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		$level = ( $level == 'pg') ? 'postgraduate' : 'undergraduate';
 		// Create simpleview and grab hash
-		$hash = API::create_simpleview($programme_id, $revision_id);
+		$hash = API::create_preview($programme_id, $revision_id);
 		if($hash !== false){
 			return Redirect::to(Config::get('application.front_end_url').$level."/simpleview/".$hash);	
 		}
