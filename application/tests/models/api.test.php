@@ -318,11 +318,11 @@ class TestAPI extends ModelTestCase
 
 		$revision = $programme->get_active_revision();
 
-		$simpleview_hash = API::create_simpleview($programme->id, $revision->id);
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
 
 		$this->assertFalse(empty($simpleview_hash));
 
-		$simpleview = API::get_simpleview($simpleview_hash);
+		$simpleview = API::get_preview($simpleview_hash);
 
 		$title_field_without_id = Revisionable::trim_id_from_field_name($title_field);
 
@@ -339,7 +339,7 @@ class TestAPI extends ModelTestCase
 
 		$revision = $programme->get_active_revision();
 
-		$simpleview_hash = API::create_simpleview($programme->id, $revision->id);
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
 
 		$this->assertFalse($simpleview_hash);
 	}
@@ -358,11 +358,11 @@ class TestAPI extends ModelTestCase
 
 		$revision = $programme->get_active_revision();
 
-		$simpleview_hash = API::create_simpleview($programme->id, $revision->id);
+		$simpleview_hash = API::create_preview($programme->id, $revision->id);
 
 		Cache::flush("programme-simpleviews.simpleview-{$simpleview_hash}");
 
-		$simpleview = API::get_simpleview($simpleview_hash);
+		$simpleview = API::get_preview($simpleview_hash);
 
 	}
 
@@ -379,7 +379,7 @@ class TestAPI extends ModelTestCase
 		$programme->save();
 
 		// there is no revision with an id of 500
-		$simpleview_hash = API::create_simpleview($programme->id, 500);
+		$simpleview_hash = API::create_preview($programme->id, 500);
 	}
 
 	public function testget_data_with_types(){
