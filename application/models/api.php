@@ -272,7 +272,7 @@ class API {
 		// Add deliveries if PG, Then use to grab modules
 		if($level == 'pg'){
 
-			// only get if has a programme_type and the type includes the string taught
+			// only get if has a programme_type
 			if( isset($final['programme_type']) ){
 				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
 				// get modules
