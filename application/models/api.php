@@ -117,8 +117,6 @@ class API {
 
 		$final = static::combine_programme($programme, $programme_settings, $globals, $level);
 
-	//	$final['deliveries'] = static::attach_pg_deliveries($iid, $year);
-
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
 		return $final;
@@ -273,9 +271,9 @@ class API {
 
 		// Add deliveries if PG, Then use to grab modules
 		if($level == 'pg'){
-			// only get if has a programme_type and the type includes the string taught
-			if( isset($final['programme_type']) && (strpos($final['programme_type'], 'taught') !== false)){
 
+			// only get if has a programme_type and the type includes the string taught
+			if( isset($final['programme_type']) ){
 				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
 				// get modules
 				$modules = array();
