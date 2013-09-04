@@ -62,21 +62,6 @@ class Programmes_Controller extends Revisionable_Controller {
 			// Else empty list.
 			$programmes = array();
 		}
-
-
-		/**
-		* DIRTY HACK
-		*/
-		// ini_set('max_execution_time', 300);
-		// foreach ($programmes as $programme)
-		// {
-		// 	$revision_model = $model::$revision_model;
-		// 	$programme_id = $programme->id;
-		// 	$revision_id = $programme->live_revision;
-		// 	if ($revision_id != 0) $programme->make_revision_live((int) $revision_id);
-		// }
-		/**/
-
 		
 		$this->data[$this->views] = $programmes;
 
