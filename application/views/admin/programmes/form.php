@@ -1,7 +1,6 @@
-<?php $award_name = URLParams::$type == 'pg' ? $programme->get_award_names() : $programme->award->name?>
 <?php if (! $create)  : ?>
+  <?php $award_name = URLParams::$type == 'pg' ? $programme->get_award_names() : $programme->award->name?>
   <?php echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programme, 'type'=>'programmes'))->render(); ?>
-  <?php //endif; ?>
 <?php endif; ?>
 
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
