@@ -279,7 +279,7 @@ class API {
 				$modules = array();
 				foreach($final['deliveries'] as &$delivery){
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
-					$delivery['award_name'] = $delivery_awards[0];
+					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 				}
 				if(sizeof($modules) != 0) $final['modules'] = $modules;
