@@ -23,9 +23,23 @@ class PG_Programme extends Programme {
 	 */
 	public function awards()
 	{
+		$output_awards = array();
 		$award_field = static::get_award_field();
 		$ids = explode(',', $this->$award_field);
-		return PG_Award::where_in('id', $ids)->get();
+		$awards = PG_Award::where_in('id', $ids)->get();
+
+		// we need to get the awards back in the correct order as specified by the comma separated list
+		foreach ($ids as $id)
+		{
+			foreach ($awards as $award)
+			{
+				if ($award->id == $id)
+				{
+					$output_awards[] = $award;
+				}
+			}
+		}
+		return $output_awards;
 	}
 
 	/**
@@ -39,7 +53,7 @@ class PG_Programme extends Programme {
 		$award_string = '';
 		$count = 0;
 
-		foreach ($awards as $award) {
+		foreach ($awards as $id=>$award) {
 			$award_string .= (($count > 0) ? ', ' : '') . $award->name;
 			$count++;
 		}
