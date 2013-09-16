@@ -10,25 +10,25 @@ class Add_Hidden_Field_To_Simple_Data {
 	public function up()
 	{
 		Schema::table('awards', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('campuses', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('faculties', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('leaflets', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('schools', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('subjects', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 		Schema::table('subjectcategories', function($table){
-			$table->boolean('hidden');
+			$table->boolean('hidden')->default(0);
 		});
 	}
 

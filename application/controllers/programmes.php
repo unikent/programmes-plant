@@ -17,6 +17,10 @@ class Programmes_Controller extends Revisionable_Controller {
 		parent::__construct();
 	}
 	
+	public function get_index($year='')
+	{
+		$this->layout->nest('content', 'admin.index');
+	}
 
 	/**
 	 * Routing for /$year/$type/programmes
@@ -24,7 +28,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param int    $year The year.
 	 * @param string $type Undergraduate or postgraduate.
 	 */
-	public function get_index($year, $type)
+	public function get_list($year, $type)
 	{
 
 		$model = $this->model;
@@ -46,23 +50,24 @@ class Programmes_Controller extends Revisionable_Controller {
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
 		{
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->get($fields_array);
+			$programmes = $model::where('year', '=', $year)->where('hidden', '=', false)->get($fields_array);
 		}
 		elseif($user->can("edit_own_programmes"))
 		{
 			$subject_field = URLparams::$type.'_subjects';
-			$programmes = $model::with('award')->where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
+			$programmes = $model::where('year', '=', $year)->where('hidden', '=', false)->where_in($subject_area_1, explode(',', $user->{$subject_field} ))->get($fields_array);
 		}
 		else
 		{
 			// Else empty list.
 			$programmes = array();
 		}
-
 		
 		$this->data[$this->views] = $programmes;
 
+		$this->data['year'] = $year;
 		$this->data['title_field'] = $title_field;
+		$this->data['award_field'] = $award_field;
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
@@ -238,15 +243,30 @@ class Programmes_Controller extends Revisionable_Controller {
 	/**
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
+	 */
+	public function get_review($year, $type, $programme_id = false, $revision_id = false)
+	{
+		$this->check_user_can('recieve_edit_requests');
+		return $this->diff_revisions($year, $type, $programme_id, $revision_id, 'review');
+	}
+	/**
+	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
+	 *
+	 */
+	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
+	{
+		$this->check_user_can('recieve_edit_requests');
+ 		return $this->diff_revisions($year, $type, $programme_id, $revision_id, 'difference');
+	}
+	/*
+	 * Shared route between  get_difference & get_review
+	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
-	public function get_review($year, $type, $programme_id = false, $revision_id = false)
-	{
-		$this->check_user_can('recieve_edit_requests');
-
+	protected function diff_revisions($year, $type, $programme_id = false, $revision_id = false, $view_name = 'difference'){
 		$model = $this->model ;
 
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
@@ -255,13 +275,11 @@ class Programmes_Controller extends Revisionable_Controller {
 		$programme = $model::find($programme_id);
 		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		
 		$live_revision = $programme->find_live_revision();
 		$revision = $programme->get_revision($revision_id);
 
 		// if there is not yet a live revision get the difference with our modified revision only
 		if(empty($live_revision) && !empty($revision)){
-
 			$diff = $model::revision_diff($revision, null);
 
 			$data = array(
@@ -269,7 +287,7 @@ class Programmes_Controller extends Revisionable_Controller {
 				'diff' => $diff
 			);
 
-			return $this->layout->nest('content', 'admin.'.$this->views.'.review_pre_live', $data);
+			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name.'_pre_live', $data);
 		}
 		else{
 			//Get diff data
@@ -281,43 +299,8 @@ class Programmes_Controller extends Revisionable_Controller {
 				'programme' => $programme
 			);
 
- 			return $this->layout->nest('content', 'admin.'.$this->views.'.review', $data);
+ 			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name, $data);
 		}
-
-		
-	}
-
-
-	/**
-	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
-	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
-	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
-	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
-	 */
-	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
-	{
-		$this->check_user_can('recieve_edit_requests');
-		$model = $this->model;
-
-		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		// Get programme
-		$programme = $model::find($programme_id);
-		if (!$programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		//Get diff data
-
-		$diff = $model::revision_diff($programme->find_live_revision(),  $programme->get_revision($revision_id));
-		if ($diff==false) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$data = array(
-			'diff' => $diff,
-			'programme' => $programme
-		);
-
- 		return $this->layout->nest('content', 'admin.'.$this->views.'.difference', $data);
 	}
 
 	/**
@@ -346,12 +329,18 @@ class Programmes_Controller extends Revisionable_Controller {
 			$author = Auth::user();
 			$title = $programme->{$model::get_title_field()};
 
+			// get the awards
+			$awards = static::get_awards_string($programme, $type);
+
 			$mailer = IoC::resolve('mailer');
 
-			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title)))
+			// append 'TEST' to email titles when on the test server environment
+			$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
+
+			$message = Swift_Message::newInstance(__('emails.admin_notification.title', array('title' => $title, 'awards' => $awards)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo(Config::get('programme_revisions.notifications.to'))
-				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
+				->addPart(__('emails.admin_notification.body', array('author' => $author->fullname, 'title' => $title, 'awards' => $awards, 'link_to_inbox' => HTML::link_to_action('editor@inbox', __('emails.admin_notification.pending_approval_text')))), 'text/html');
 
 			$mailer->send($message);
 		}
@@ -387,15 +376,22 @@ class Programmes_Controller extends Revisionable_Controller {
 			if(Config::get('programme_revisions.notifications.on')){
 				$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 				$title = $programme->{$model::get_title_field()};
+
+				// append 'TEST' to email titles when on the test server environment
+				$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
+
 				$slug = $programme->{$model::get_slug_field()};
 
-				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title);
+				// get the awards
+				$awards = static::get_awards_string($programme, $type);
+
+				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title . ' ' . $awards);
 				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
 
-				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title)))
+				$message = Swift_Message::newInstance(__('emails.user_notification.approve.title', array('title' => $title, 'awards' => $awards)))
 					->setFrom(Config::get('programme_revisions.notifications.from'))
 					->setTo($author->email)
 					->addPart(
@@ -454,11 +450,18 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			$author = User::where('username', '=', $revision->edits_by)->first(array('email', 'fullname'));
 			$title = $programme->{$model::get_title_field()};
+
+			// append 'TEST' to email titles when on the test server environment
+			$title = (Request::env() == 'test') ? 'TEST - ' . $title : $title;
+
+			// get the awards
+			$awards = static::get_awards_string($programme, $type);
+
 			$link = URL::to_action($year.'/'.$type.'/'.'programmes@edit', array($programme_id));
-			$body = __('emails.user_notification.request.body', array('title' => $title, 'link' => $link)) . $body;
+			$body = __('emails.user_notification.request.body', array('title' => $title, 'awards' => $awards, 'link' => $link)) . $body;
 
 			$mailer = IoC::resolve('mailer');
-			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title)))
+			$message = Swift_Message::newInstance(__('emails.user_notification.request.title', array('title' => $title, 'awards' => $awards)))
 				->setFrom(Config::get('programme_revisions.notifications.from'))
 				->setTo($author->email)
 				->addPart(strip_tags($body), 'text/plain')
@@ -519,6 +522,22 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 	}
 
+	/**
+	 * Routing for GET /simpleview/$programme_id/simpleview/$revision_id
+	 *
+	 * @param int    $revisionable_item_id  The object ID we are reverting to a revision on.
+	 * @param int    $revision_id  The revision ID we are reverting to.
+	 *
+	 */
+	public function get_simpleview($year, $level, $programme_id, $revision_id)
+	{
+		$level = ( $level == 'pg') ? 'postgraduate' : 'undergraduate';
+		// Create simpleview and grab hash
+		$hash = API::create_preview($programme_id, $revision_id);
+		if($hash !== false){
+			return Redirect::to(Config::get('application.front_end_url').$level."/simpleview/".$hash);	
+		}
+	}
 
 
 	private function splitToText($list,$options)
@@ -585,11 +604,34 @@ class Programmes_Controller extends Revisionable_Controller {
 		$delivery->award = Input::get('award');
 		$delivery->pos_code = Input::get('pos_code');
 		$delivery->mcr = Input::get('mcr');
+		$delivery->description = Input::get('description');
 		$delivery->attendance_pattern = Input::get('attendance_pattern');
 		
 		$delivery->save();
 
 		return Redirect::to(URI::current());	
+	}
+
+	/**
+	* get the awards as a string
+	*/
+	public function get_awards_string($programme, $type)
+	{
+		
+		$awards = '';
+		if ($type == 'pg')
+		{
+			$award_field = PG_Programme::get_award_field();
+			$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
+			$awards = implode(', ', $awards);
+		}
+		else
+		{
+			$award_field = UG_Programme::get_award_field();
+			$awards = UG_Award::replace_ids_with_values($programme->$award_field, false, true);
+			$awards = $awards[0];
+		}
+		return $awards;
 	}
 
 }

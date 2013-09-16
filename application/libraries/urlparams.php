@@ -60,9 +60,16 @@ class URLParams {
 		static::$mainpath = static::$year . '/' . static::$type . '/';
 
 		static::set_header_links_params();
+
+		if(!static::$type_header_links){
+			static::$type = Session::get('last_type');
+		}
+
+		Session::put('last_type', static::$type);
 	}
 
-	public static function get_type(){
+	public static function get_type($model=''){
+		if ($model == 'GlobalSettingField') return 'ug';
 		return static::$type;
 
 	}

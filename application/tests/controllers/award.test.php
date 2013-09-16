@@ -40,7 +40,7 @@ class TestAwards_Controller extends ControllerTestCase
 			$award = new UG_Award;
 			$award->id = $position;
 			$award->name = $name;
-			$award->hidden = false;
+			$award->hidden = 0;
 			$award->save();
 		}
 	}

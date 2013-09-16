@@ -14,7 +14,7 @@
             <?php endforeach; ?>
           <?php endif; ?>
           <dc:title><![CDATA[<?php echo ($programme['programme_title']); ?>]]></dc:title>
-          <dc:type><?php echo "undergraduate"; ?></dc:type>
+          <dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
           <mlo:url><?php echo ($programme['url']); ?></mlo:url>
           <?php if (isset($programme['programme_abstract'])): ?>
             <abstract><![CDATA[<?php echo (strip_tags($programme['programme_abstract'])); ?>]]></abstract>
@@ -80,11 +80,11 @@
             </regulations>
           <?php endif; ?>
 
-          <?php if (isset($programme['award'])) : ?>
+          <?php foreach ($programme['award'] as $award) : ?>
             <mlo:qualification>
-              <dc:identifier><![CDATA[<?php echo ($programme['url']) ?>]]></dc:identifier>
-              <dc:title><![CDATA[<?php echo ($programme['award']['name']); ?>]]> <?php echo ($programme['programme_title']); ?></dc:title>
-              <abbr><![CDATA[<?php echo ($programme['award']['name']); ?>]]></abbr>
+              <dc:identifier><![CDATA[<?php echo ($award['name']) ?>]]></dc:identifier>
+              <dc:title><![CDATA[<?php echo ($award['name']); ?>]]> <?php echo ($programme['programme_title']); ?></dc:title>
+              <abbr><![CDATA[<?php echo ($award['name']); ?>]]></abbr>
               <?php if (isset($programme['description'])): ?>
                 <dc:description>
                   <div xmlns="http://www.w3.org/1999/xhtml">
@@ -100,7 +100,7 @@
                 <accreditedBy><![CDATA[<?php echo ($programme['accredited_by']); ?>]]></accreditedBy>
               <?php endif; ?>
             </mlo:qualification>
-        <?php endif; ?>
+          <?php endforeach; ?>
 
           <?php if (isset($programme['credits'])) : ?>
           <?php foreach ($programme['credits'] as $credit): ?>
@@ -124,48 +124,68 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['duration']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <studyMode identifier="<?php echo "FT"; ?>"><?php echo "Full time"; ?></studyMode>
-              <attendanceMode identifier="<?php echo ($programme['attendance_mode_id']); ?>"><?php echo ($programme['attendance_mode']); ?></attendanceMode>
+              <?php if (strpos($programme['mode_of_study'], 'Full-time only') !== false): ?>
+                <studyMode identifier="FT">Full time</studyMode>
+              <?php elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false): ?>
+                <studyMode identifier="FL">Flexible</studyMode>
+              <?php elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false): ?>
+                <studyMode identifier="PT">Part time</studyMode>
+              <?php else: ?>
+                <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
+              <?php endif; ?>
+              <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
+                <attendanceMode identifier="MM">Mixed mode</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Distance with attendance') !== false): ?>
+                <attendanceMode identifier="DA">Distance with attendance</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Distance without attendance') !== false): ?>
+                <attendanceMode identifier="DS">Distance without attendance</attendanceMode>
+              <?php elseif (strpos($programme['attendance_mode'], 'Campus') !== false): ?>
+                <attendanceMode identifier="CM">Campus</attendanceMode>
+              <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
+                <attendanceMode identifier="CM">Campus</attendanceMode>
+              <?php else: ?>
+                <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
+              <?php endif; ?>
               <?php if ($programme['attendance_pattern']): ?>
-                <attendancePattern identifier="<?php echo ($programme['attendance_pattern_id']); ?>"><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
+                <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
               <?php endif; ?>
               <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
               <languageOfAssessment>en</languageOfAssessment>
-              <mlo:cost><![CDATA[<?php echo (strip_tags($programme['cost'])); ?>]]></mlo:cost>
-                <venue>
-                  <provider>
-                    <?php if (isset($programme['location']['description'])): ?>
-                      <dc:description>
-                        <div xmlns="http://www.w3.org/1999/xhtml">
-                          <![CDATA[<?php echo ($programme['location']['description']); ?>]]>
-                        </div>
-                      </dc:description>
+              <mlo:cost><![CDATA[<?php echo ($programme['cost']); ?>]]></mlo:cost>
+              <venue>
+                <provider>
+                  <?php if (isset($programme['location']['description'])): ?>
+                    <dc:description>
+                      <div xmlns="http://www.w3.org/1999/xhtml">
+                        <![CDATA[<?php echo ($programme['location']['description']); ?>]]>
+                      </div>
+                    </dc:description>
+                  <?php endif; ?>
+                  <dc:identifier>asc:<?php echo ($programme['location']['name']); ?></dc:identifier>
+                  <dc:title><![CDATA[asc:<?php echo ($programme['location']['title']); ?>]]></dc:title>
+                  <mlo:location>
+                    <?php if(!empty($programme['location']['town'])): ?>
+                      <mlo:town><![CDATA[<?php echo ($programme['location']['town']); ?>]]></mlo:town>
                     <?php endif; ?>
-                    <dc:identifier>asc:<?php echo ($programme['location']['name']); ?></dc:identifier>
-                    <dc:title><![CDATA[asc:<?php echo ($programme['location']['title']); ?>]]></dc:title>
-                    <mlo:location>
-                      <?php if(!empty($programme['location']['town'])): ?>
-                        <mlo:town><![CDATA[<?php echo ($programme['location']['town']); ?>]]></mlo:town>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['postcode'])): ?>
-                        <mlo:postcode><![CDATA[<?php echo ($programme['location']['postcode']); ?>]]></mlo:postcode>
-                      <?php endif; ?>
-                      <mlo:address><![CDATA[<?php echo ($programme['location']['address_1']); ?>]]></mlo:address>
-                      <?php if(!empty($programme['location']['phone'])): ?>
-                        <mlo:phone><![CDATA[<?php echo ($programme['location']['phone']); ?>]]></mlo:phone>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['fax'])): ?>
-                        <mlo:fax><![CDATA[<?php echo ($programme['location']['fax']); ?>]]></mlo:fax>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['email'])): ?>
-                        <mlo:email><![CDATA[<?php echo ($programme['location']['email']); ?>]]></mlo:email>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['url'])): ?>
-                        <mlo:url><![CDATA[<?php echo ($programme['location']['url']); ?>]]></mlo:url>
-                      <?php endif; ?>
-                    </mlo:location>
-                  </provider>
-                </venue>
+                    <?php if(!empty($programme['location']['postcode'])): ?>
+                      <mlo:postcode><![CDATA[<?php echo ($programme['location']['postcode']); ?>]]></mlo:postcode>
+                    <?php endif; ?>
+                    <mlo:address><![CDATA[<?php echo ($programme['location']['address_1']); ?>]]></mlo:address>
+                    <?php if(!empty($programme['location']['phone'])): ?>
+                      <mlo:phone><![CDATA[<?php echo ($programme['location']['phone']); ?>]]></mlo:phone>
+                    <?php endif; ?>
+                    <?php if(!empty($programme['location']['fax'])): ?>
+                      <mlo:fax><![CDATA[<?php echo ($programme['location']['fax']); ?>]]></mlo:fax>
+                    <?php endif; ?>
+                    <?php if(!empty($programme['location']['email'])): ?>
+                      <mlo:email><![CDATA[<?php echo ($programme['location']['email']); ?>]]></mlo:email>
+                    <?php endif; ?>
+                    <?php if(!empty($programme['location']['url'])): ?>
+                      <mlo:url><![CDATA[<?php echo ($programme['location']['url']); ?>]]></mlo:url>
+                    <?php endif; ?>
+                  </mlo:location>
+                </provider>
+              </venue>
             </presentation>
         </course>
       <?php endforeach; ?>

@@ -90,7 +90,15 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme_modules = $this->loadProgrammeModuleData();
         $module_synopsis = $this->loadModuleSynopsisData();
         $module_data_obj = $this->buildMock($programme_modules, $module_synopsis);
-        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+
+
+
+        $programme_modules_new = $this->module_data_task->load_module_data('a','b','c','d',  $module_data_obj);
+
+
+       // $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+
+
         $output = json_encode($programme_modules_new);
         
         // assert that what's in the cache matches what we expect
@@ -104,7 +112,10 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme_modules = $this->loadProgrammeModuleDataFoundation();
         $module_synopsis = $this->loadModuleSynopsisData();
         $module_data_obj = $this->buildMock($programme_modules, $module_synopsis);
-        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+
+        $programme_modules_new = $this->module_data_task->load_module_data('a','b','c','d',  $module_data_obj);
+
+        
         $output = json_encode($programme_modules_new);
         
         // assert that what's in the cache matches what we expect
@@ -118,7 +129,8 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $return = $this->loadProgrammeModuleErrorData();
         $module_data_obj = $this->buildProgrammeModulesMock($return);
         $this->expectOutputString('no data');
-        $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+
+        $this->module_data_task->load_module_data('a','b','c','d',  $module_data_obj);
     }
     
     public function testbuild_programme_modulesNoDataWrittenWithEmptyCluster()
@@ -129,7 +141,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $message->response->rubric->cluster = array('test');
         
         $module_data_obj = $this->buildProgrammeModulesMock($message);
-        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, 'someurl', 'someotherurl');
+        $programme_modules_new = $this->module_data_task->load_module_data('a','b','c','d',  $module_data_obj);
         
         $expected = new stdClass();
         $expected->stages = array();
@@ -145,7 +157,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $message->response->rubric->cluster = array('test');
         
         $module_data_obj = $this->buildProgrammeModulesMock($message);
-        $programme_modules_new = $this->module_data_task->build_programme_modules($module_data_obj, '', 'someotherurl');
+        $programme_modules_new = $this->module_data_task->load_module_data('a','b','c','d',  $module_data_obj);
         
         $expected = new stdClass();
         $expected->stages = array();
@@ -155,39 +167,23 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
     
     public function testbuild_url_programme_modules_fullWithModuleSession2014()
     {
-        $programme['pos_code'] = 'ACCF-S:BA';
-        $programme['campus_id'] = '1';
-        $programme['module_session'] = '2014';
-        UG_Programme::$fields['module_session'] = UG_Programme::get_module_session_field();
 
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 2014);
 
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2014&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckWithoutModuleSessionGives2013()
     {
-        $programme['pos_code'] = 'ACCF-S:BA';
-        $programme['campus_id'] = '1';
-        $programme['module_session'] = '';
-        
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 2013);
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=1&sessionCode=2013&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
     
     public function testbuild_url_programme_modules_fullCheckNoneModuleSessionGivesEmptyUrl()
     {
-        $programme['pos_code'] = 'ACCF-S:BA';
-        $programme['campus_id'] = '1';
-        $programme['module_session'] = 'None';
-
-        
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', '0122', 1, 'none');
         $expected_url = '';
         $this->assertEquals($expected_url, $actual_url);
     }
@@ -202,12 +198,12 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $award = UG_Programme::get_awarding_institute_or_body_field();
         $module_session = UG_Programme::get_module_session_field();
         $programme->{$pos_code} = 'ACCF-S:BA';
-        $programme->{$location} = '2';
+        $programme->{$location} = '58';
         $programme->{$award} = '0122';
         $programme->{$module_session} = '2014';
 
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+       
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
@@ -223,12 +219,11 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $award = UG_Programme::get_awarding_institute_or_body_field();
         $module_session = UG_Programme::get_module_session_field();
         $programme->{$pos_code} = 'ACCF-S:BA';
-        $programme->{$location} = '2';
+        $programme->{$location} = '58';
         $programme->{$award} = '0122';
         $programme->{$module_session} = '2013';
 		
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2013&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
@@ -247,8 +242,7 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $programme->{$award} = '0122';
         $programme->{$module_session} = 'None';
         
-        $url_programme_modules = Config::get('module.programme_module_base_url');
-        $actual_url = $this->module_data_task->build_url_programme_modules_full($programme, $url_programme_modules, false);
+        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
         $expected_url = '';
         $this->assertEquals($expected_url, $actual_url);
     }

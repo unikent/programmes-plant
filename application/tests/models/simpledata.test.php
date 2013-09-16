@@ -7,7 +7,7 @@ class Thing extends SimpleData {
 
 class TestSimpleData extends ModelTestCase {
 
-	public $input =  array('name' => 'Thing', 'id' => 1);
+	public $input =  array('name' => 'Thing', 'id' => 1, 'hidden' => 0);
 
 	public static function tear_down()
 	{
@@ -116,10 +116,10 @@ class TestSimpleData extends ModelTestCase {
 
 	public function testall_as_listAlphabeticallyOrdered()
 	{
-		$this->populate('Thing', array('name' => 'BBB', 'id' => 1));
-		$this->populate('Thing', array('name' => 'DDD', 'id' => 2));
-		$this->populate('Thing', array('name' => 'AAA', 'id' => 3));
-		$this->populate('Thing', array('name' => 'CCC', 'id' => 4));
+		$this->populate('Thing', array('name' => 'BBB', 'id' => 1, 'hidden' => 0));
+		$this->populate('Thing', array('name' => 'DDD', 'id' => 2, 'hidden' => 0));
+		$this->populate('Thing', array('name' => 'AAA', 'id' => 3, 'hidden' => 0));
+		$this->populate('Thing', array('name' => 'CCC', 'id' => 4, 'hidden' => 0));
 
 		//check results are ordered as expected (and that arrays still assoc correctly to ids)
 		$this->assertEquals(array('3' => 'AAA','1' => 'BBB','4' => 'CCC','2' => 'DDD'), Thing::all_as_list());
@@ -275,7 +275,7 @@ class TestSimpleData extends ModelTestCase {
 	public function testall_as_listReturnsEmptyDefault()
 	{
 	    $empty_default_value = 1;
-	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1, 'hidden' => 0));
     	$options = Thing::all_as_list(false, $empty_default_value);
     	$this->assertNotNull($options[0]);
     	$this->assertEquals(__('fields.empty_default_value'), $options[0]);
@@ -287,17 +287,17 @@ class TestSimpleData extends ModelTestCase {
 	public function testall_as_listReturnsNoDefault()
 	{
 	    $empty_default_value = 0;
-	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1));
+	    $this->populate('Thing', array('name' => 'AAA', 'id' => 1, 'hidden' => 0));
     	$options = Thing::all_as_list(false, $empty_default_value);
     	$this->assertArrayNotHasKey(0, $options);
 	}
 
 	public function populate_two_years()
 	{
-		$first = array('year' => '2014', 'name' => 'Thing 2014', 'id' => 1);
+		$first = array('year' => '2014', 'name' => 'Thing 2014', 'id' => 1, 'hidden' => 0);
 		$this->populate('Thing', $first);
 
-		$second = array('year' => '2015', 'name' => 'Thing 2015', 'id' => 2);
+		$second = array('year' => '2015', 'name' => 'Thing 2015', 'id' => 2, 'hidden' => 0);
 		$this->populate('Thing', $second);
 	}
 
@@ -479,21 +479,21 @@ class TestSimpleData extends ModelTestCase {
 	
 	public function testAllActiveReturnsOnlyActive()
 	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
+		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => 1);
 		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
+		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => 0);
 		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
+		$result = Thing::all_active()->get();
 		$this->assertEquals(1, count($result));
 	}
 	
 	public function testAllActiveReturnsOnlyHiddenIsFalse()
 	{
-		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => true);
+		$input1 =  array('name' => 'Thing1', 'id' => 1, 'hidden' => 1);
 		$this->populate('Thing', $input1);
-		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => false);
+		$input2 =  array('name' => 'Thing2', 'id' => 2, 'hidden' => 0);
 		$this->populate('Thing', $input2);
-		$result = Thing::all_active();
+		$result = Thing::all_active()->get();
 		$this->assertEquals('Thing2', $result[0]->name);
 	}
 	

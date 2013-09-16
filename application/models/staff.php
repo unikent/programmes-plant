@@ -35,7 +35,7 @@ class Staff extends SimpleData
 	// use "Login" instead of name as title
 	public static function get_title_field()
 	{
-		return 'login';
+		return 'surname';
 	}
 
 
@@ -46,11 +46,36 @@ class Staff extends SimpleData
 		return $this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
 	}
 
+	// Pretty print surname when requested
+	public function get_surname()
+	{
+		return $this->get_login();
+	}
 
 	// Pretty print name when requested
 	public function get_name()
 	{
 		if(sizeof($this->subjects_cache)===0)$this->subjects_cache = PG_Subject::all_as_list();
 		return $this->attributes['title'].' '.$this->attributes['forename'].' '.$this->attributes['surname'].' ('.$this->attributes['login'].') - '.$this->subjects_cache[$this->attributes['subject']];
+	}
+
+	// custom replace with ids function, since "name" doesn't exist for this type
+	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
+	{
+		// If nothing is set, return an empty array
+		if(trim($ids) == '') return array();
+		// Get list of ids to swap out & grab api data from cache
+		$id_array = explode(',', $ids);
+		$cached_data = static::get_api_data();
+		// Create new array of actual values matching the ids from the cache
+		$values = array();
+		foreach ($id_array as $id) 
+		{	
+
+			if(isset($cached_data[$id])){
+				$values[] = ($titles_only) ? $cached_data[$id]['forename'].' '.$cached_data[$id]['surname'] : $cached_data[$id];
+			}
+		}
+		return $values;
 	}
 }

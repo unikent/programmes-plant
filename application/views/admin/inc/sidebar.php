@@ -3,11 +3,12 @@
         
         <li class="nav-header">Core Data</li>
 
-         <?php if (Auth::user()->can(array("edit_own_programmes", "view_all_programmes", "edit_all_programmes"))): ?>
+        <?php if (Auth::user()->can(array("edit_own_programmes", "view_all_programmes", "edit_all_programmes"))): ?>
 
-        <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmes')?>"><i class="icon-home"></i> UG Programmes</a></li>
-        <li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmes')?>"><i class="icon-home"></i> PG Programmes</a></li>
-       
+                <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmes')?>"><i class="icon-home"></i> UG Programmes</a></li>
+
+                <li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmes') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmes')?>"><i class="icon-home"></i> PG Programmes</a></li>
+
         <?php endif; ?>
 
         <?php if (Auth::user()->can("recieve_edit_requests")): ?>
@@ -24,26 +25,33 @@
 			<?php if (Auth::user()->can("edit_immutable_data")): ?>
 	            <li class="<?php echo ( (URI::segment(1) != 'fields' && URI::segment(2) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$year.'/globalsettings')?>"><i class="icon-list-alt"></i> Immutable fields</a></li>
 	        <?php endif; ?>
-			
-		  <li class="nav-header">UG Data</li>
-            <li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/ug/awards') ?>"><i class="icon-list-alt"></i> UG Awards</a></li>
-            <li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/ug/leaflets')?>"><i class="icon-list-alt"></i> UG Leaflets</a></li>
-            <li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjects')?>"><i class="icon-list-alt"></i> UG Subjects</a></li>
-            <li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjectcategories')?>"><i class="icon-list-alt"></i> UG Subject categories</a></li>
-            <?php if (Auth::user()->can("edit_overridable_data")): ?>
-                <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmesettings');?>"><i class="icon-list-alt"></i> UG Overridable fields</a></li>
+
+            <?php if(strcmp(URL::current(), URL::to('/')) !== 0): ?>
+                <?php if(URLParams::get_type() == 'ug'): ?>
+                    <li class="nav-header">UG Data</li>
+
+                    <li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/ug/awards') ?>"><i class="icon-list-alt"></i> UG Awards</a></li>
+                    <li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/ug/leaflets')?>"><i class="icon-list-alt"></i> UG Leaflets</a></li>
+                    <li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjects')?>"><i class="icon-list-alt"></i> UG Subjects</a></li>
+                    <li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjectcategories')?>"><i class="icon-list-alt"></i> UG Subject categories</a></li>
+                    <?php if (Auth::user()->can("edit_overridable_data")): ?>
+                        <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmesettings');?>"><i class="icon-list-alt"></i> UG Overridable fields</a></li>
+                    <?php endif; ?>
+
+                <?php elseif(URLParams::get_type() == 'pg'): ?>
+
+        			<li class="nav-header">PG Data</li>
+        			<li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/pg/awards') ?>"><i class="icon-list-alt"></i> PG Awards</a></li>
+        			<li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/pg/leaflets')?>"><i class="icon-list-alt"></i> PG Leaflets</a></li>
+        			<li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjects')?>"><i class="icon-list-alt"></i> PG Subjects</a></li>
+        			<li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjectcategories')?>"><i class="icon-list-alt"></i> PG Subject categories</a></li>
+        			<li class="<?php echo ( URI::segment(1) == 'staff' ? 'active' : false )?>"><a href="<?php echo url('staff')?>"><i class="icon-list-alt"></i> PG Research Staff</a></li>
+        			<?php if (Auth::user()->can("edit_overridable_data")): ?>
+                    	<li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmesettings');?>"><i class="icon-list-alt"></i> PG Overridable fields</a></li> 
+                	<?php endif; ?>
+                <?php endif; ?>
             <?php endif; ?>
 
-
-			<li class="nav-header">PG Data</li>
-			<li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/pg/awards') ?>"><i class="icon-list-alt"></i> PG Awards</a></li>
-			<li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/pg/leaflets')?>"><i class="icon-list-alt"></i> PG Leaflets</a></li>
-			<li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjects')?>"><i class="icon-list-alt"></i> PG Subjects</a></li>
-			<li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjectcategories')?>"><i class="icon-list-alt"></i> PG Subject categories</a></li>
-			<li class="<?php echo ( URI::segment(1) == 'staff' ? 'active' : false )?>"><a href="<?php echo url('staff')?>"><i class="icon-list-alt"></i> PG Research Staff</a></li>
-			<?php if (Auth::user()->can("edit_overridable_data")): ?>
-            	<li class="<?php echo ( (URI::segment(2) == 'pg' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/pg/programmesettings');?>"><i class="icon-list-alt"></i> PG Overridable fields</a></li> 
-        	<?php endif; ?>
     	<?php endif; ?>
 
         
@@ -54,11 +62,15 @@
             <li class="nav-header">Field setup</li>
 
             <li class="<?php echo ( (URI::segment(1) == 'fields' && URI::segment(2) == 'immutable') ? 'active' : false )?>"><a href="<?php echo url('fields/immutable')?>"><i class="icon-cog"></i> Immutable fields </a></li>
-
-            <li class="<?php echo ( (URI::segment(1) == 'ug' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/standard')?>"><i class="icon-cog"></i> UG Programme fields</a></li>
-
-            <li class="<?php echo ( (URI::segment(1) == 'pg' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/standard')?>"><i class="icon-cog"></i> PG Programme fields</a></li>
-
+            
+            <?php if(strcmp(URL::current(), URL::to('/')) !== 0): ?>
+                <?php if(URLParams::get_type() == 'ug'): ?>
+                    <li class="<?php echo ( (URI::segment(1) == 'ug' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/ug/fields/standard')?>"><i class="icon-cog"></i> UG Programme fields</a></li>
+                <?php elseif(URLParams::get_type() == 'pg'): ?>
+                    <li class="<?php echo ( (URI::segment(1) == 'pg' && URI::segment(2) == 'fields' && URI::segment(3) == 'standard') ? 'active' : false )?>"><a href="<?php echo url('/pg/fields/standard')?>"><i class="icon-cog"></i> PG Programme fields</a></li>
+                <?php endif; ?>
+            <?php endif; ?>
+            
         <?php endif; ?>
 
         <?php if (Auth::user()->can("manage_users")): ?>
