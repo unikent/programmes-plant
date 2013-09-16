@@ -86,38 +86,44 @@ class TestAPI_Controller extends ControllerTestCase
         UG_Award::create(
                 array(
                         'name' => 'Hello Award',
-                        'longname' => 'Long hello award'
+                        'longname' => 'Long hello award',
+                        'hidden' => 0
                     )
             )->save();
 
         Campus::create(
                 array(
-                        'name' => 'Hello Campus'
+                        'name' => 'Hello Campus',
+                        'hidden' => 0
                     )
             )->save();
 
         Faculty::create(
                 array(
-                        'name' => 'Hello Faculty'
+                        'name' => 'Hello Faculty',
+                        'hidden' => 0
                     )
             )->save();
 
         UG_Leaflet::create(
                 array(
-                        'name' => 'Hello Leaflet'
+                        'name' => 'Hello Leaflet',
+                        'hidden' => 0
                     )
             )->save();
 
         School::create(
                 array(
                         'name' => 'Hello School',
-                        'faculties_id' => 1
+                        'faculties_id' => 1,
+                        'hidden' => 0
                     )
             )->save();
 
         UG_Subject::create(
                 array(
-                        'name' => 'Hello Subject'
+                        'name' => 'Hello Subject',
+                        'hidden' => 0
                     )
             )->save();
 

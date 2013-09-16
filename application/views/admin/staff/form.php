@@ -13,7 +13,8 @@
     <div class="control-group">
       <?php echo Form::label('login', __('staff.form.login.label') , array('class'=>'control-label'))?>
       <div class="controls">
-        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->attributes['login'] ),array('placeholder'=>__('staff.form.login.placeholder')))?>   
+        <?php echo Form::text('login',  ( Input::old('login') || $create ? Input::old('login') : $item->attributes['login'] ),array('placeholder'=>__('staff.form.login.placeholder')))?>
+        <span class="help-block">login is used to automatically pull title, email and name data from LDAP.</span>
       </div>
     </div>
 
@@ -21,8 +22,6 @@
       <?php echo Form::label('title', __('staff.form.title.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::text('title',  ( Input::old('title') || $create ? Input::old('title') : $item->title ),array('placeholder'=>__('staff.form.title.placeholder')))?>
-     
-        <span class="help-block">Username is used to automatically pull title, email and name data from LDAP.</span>
      </div>
     </div>
      <div class="control-group">
@@ -52,7 +51,7 @@
     </div>
   
     <div class="control-group">
-      <?php echo Form::label('profile_url', __('staff.form.subject.label'), array('class'=>'control-label'))?>
+      <?php echo Form::label('subject', __('staff.form.subject.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::select('subject', PG_Subject::all_as_list(),  ( Input::old('subject') || $create ? Input::old('subject') : $item->subject ))?>
       </div>
@@ -62,6 +61,7 @@
       <?php echo Form::label('profile_url', __('staff.form.profile_url.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::text('profile_url',  ( Input::old('profile_url') || $create ? Input::old('profile_url') : $item->profile_url ),array('placeholder'=>__('staff.form.profile_url.placeholder')))?>
+        <span class="help-block">include http:// in the url.</span>
       </div>
     </div>
 

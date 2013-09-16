@@ -22,6 +22,7 @@ return array(
 
 	// Buttons
 	'manage_revisions' 	=> 'Manage revisions',
+	'review'			=> 'Review',
 	'make_live' 		=> 'Make live',
 	'use_previous' 		=> 'Use previous',
 	'use_revision' 		=> 'Use revision',
@@ -30,6 +31,7 @@ return array(
 	'cancel' 			=> 'Not right now',
 	'unpublish'         => 'Unpublish',
 	'view_preview'		=> 'Preview',
+	'view_simpleview'	=> 'Data for print view',
 	'send_for_editing'	=> 'Send to EMS',
 
 	//Links

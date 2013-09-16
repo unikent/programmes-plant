@@ -36,7 +36,8 @@
       <?php endif; ?>
       <dc:title><?php echo ($globalsettings->institution_name); ?></dc:title>
       <mlo:url><?php echo ($globalsettings->provider_url); ?></mlo:url>
-      <?php echo View::make('xcri-cap.partials.courses', array('programmes' => $programmes, 'globalsettings' => $globalsettings)); ?>
+      <?php echo View::make('xcri-cap.partials.ug-courses', array('programmes' => $programmes['ug'], 'globalsettings' => $globalsettings)); ?>
+      <?php echo View::make('xcri-cap.partials.pg-courses', array('programmes' => $programmes['pg'], 'globalsettings' => $globalsettings)); ?>
       <mlo:location>
         <?php if (!empty($globalsettings->town)): ?>
           <mlo:town><?php echo ($globalsettings->town); ?></mlo:town>

@@ -1,6 +1,6 @@
 <?php if (! $create)  : ?>
+  <?php $award_name = URLParams::$type == 'pg' ? $programme->get_award_names() : $programme->award->name?>
   <?php echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programme, 'type'=>'programmes'))->render(); ?>
-  <?php //endif; ?>
 <?php endif; ?>
 
 <?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
@@ -11,13 +11,13 @@
     <a class="btn" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Cancel</a>
   </div>
   <?php echo View::make('admin.inc.partials.type_marker')->render(); ?>
-  <strong><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?> <?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></strong>
+  <strong><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?> <?php echo isset($award_name) ? ' - <em>'.$award_name.'</em>' : '' ; ?></strong>
 </div>
 
 
 <?php echo Messages::get_html()?>
 
-<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($programme->award->name) ? ' - <em>'.$programme->award->name.'</em>' : '' ; ?></h1>
+<h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($award_name) ? ' - <em>'.$award_name.'</em>' : '' ; ?></h1>
 
 <p><?php echo ( $create ? __('programmes.create_introduction') : __('programmes.edit_introduction') ); ?></p>
 
@@ -58,10 +58,6 @@
 <?php echo Form::close(); ?>
 
 
-
-
-
-
-
+<a href='#' class='scroll-to-top'><i class="icon-chevron-up icon-white"></i></a>
 
 

@@ -5,6 +5,7 @@
 
 <?php if(get_class($programme) == 'UG_Programme' || get_class($programme) == 'PG_Programme'):?>
       <?php
+        $simpleview_link =  action(URLParams::get_variable_path_prefix().'programmes/'.$programme->id.'@simpleview', array($revision->id));
         $preview_link =  action(URLParams::get_variable_path_prefix().'programmes/'.$programme->id.'@preview', array($revision->id));
         $diff_link = action(URLParams::get_variable_path_prefix().URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));
       ?>
@@ -12,6 +13,7 @@
 
     <div style='clear:both;'>
       <a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a>
+      <a class="btn btn-warning "  target="_blank" href="<?php echo $simpleview_link; ?>" ><?php echo __("revisions.view_simpleview"); ?></a>
       <a class="btn btn-warning "  target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
     </div>
 <?php endif; ?> 
