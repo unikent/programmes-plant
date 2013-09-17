@@ -16,7 +16,7 @@ class API_Controller extends Base_Controller {
 		// turn off the profiler because this interferes with the web service
 		Config::set('application.profiler', false);
 
-		static::$headers['Cache-Control'] = 'public, max-age=3600'; 
+		static::$headers['Cache-Control'] = 'public, max-age=600'; 
 	}
 	
 	/**
