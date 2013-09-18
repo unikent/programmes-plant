@@ -243,73 +243,76 @@ class ModuleData_Task {
         }
         else
         {
-            // make sure the cluster set is an array. If there's only one item in a cluster the web service returns it as an object rather than an array (which is not really what we want)
-            if ( isset($programme_modules->response->rubric->cluster) && ! is_array($programme_modules->response->rubric->cluster) )
-            {
-                $programme_modules->response->rubric->cluster = array($programme_modules->response->rubric->cluster);
-            }
-            
-            // loop through each cluster and assign it to the appropriate cluster type
-            foreach ($programme_modules->response->rubric->cluster as $cluster)
-            {
-                if (is_object($cluster) && $cluster != null)
+            if(isset($programme_modules->response->rubric)){
+                // make sure the cluster set is an array. If there's only one item in a cluster the web service returns it as an object rather than an array (which is not really what we want)
+                if ( isset($programme_modules->response->rubric->cluster) && ! is_array($programme_modules->response->rubric->cluster) )
                 {
-                    // set the cluster type
-                    $cluster_type = '';
-                    if ($cluster->cluster_type == 'WILD')
+                    $programme_modules->response->rubric->cluster = array($programme_modules->response->rubric->cluster);
+                }
+                
+                // loop through each cluster and assign it to the appropriate cluster type
+                foreach ($programme_modules->response->rubric->cluster as $cluster)
+                {
+                    if (is_object($cluster) && $cluster != null)
                     {
-                        $cluster_type = 'wildcard';
-                    }
-                    elseif ($cluster->compulsory == 'Y')
-                    {
-                        $cluster_type = 'compulsory';
-                    }
-                    elseif ($cluster->compulsory == 'N')
-                    {
-                        $cluster_type = 'optional';
-                    }
-                    
-                    // make sure the modules list is always an array, even if there's only one module in the cluster
-                    if ( is_object($cluster->modules->module) )
-                    {
-                        $cluster->modules->module = array($cluster->modules->module);
-                    }
-                    
-                    // set the synopsis for each module (but don't bother with wildcards)
-                    if ($cluster_type != 'wildcard')
-                    {
-                        foreach ($cluster->modules->module as $module_index => $module)
+                        // set the cluster type
+                        $cluster_type = '';
+                        if ($cluster->cluster_type == 'WILD')
                         {
-                            if (is_object($module) && $module != null)
+                            $cluster_type = 'wildcard';
+                        }
+                        elseif ($cluster->compulsory == 'Y')
+                        {
+                            $cluster_type = 'compulsory';
+                        }
+                        elseif ($cluster->compulsory == 'N')
+                        {
+                            $cluster_type = 'optional';
+                        }
+                        
+                        // make sure the modules list is always an array, even if there's only one module in the cluster
+                        if ( is_object($cluster->modules->module) )
+                        {
+                            $cluster->modules->module = array($cluster->modules->module);
+                        }
+                        
+                        // set the synopsis for each module (but don't bother with wildcards)
+                        if ($cluster_type != 'wildcard')
+                        {
+                            foreach ($cluster->modules->module as $module_index => $module)
                             {
-                                $module->synopsis = '';
-                                if (isset($module->module_code))
+                                if (is_object($module) && $module != null)
                                 {
-                                    // set the url for this web service call
-                                    $url_synopsis_full = Config::get('module.module_data_url') . $module->module_code . '.xml';
-                                    // get the synopsis and add it to the programme_modules object
-                                    $module->synopsis = str_replace("\r\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
-                                }
-                            } // end module test
-                            
-                        } // endforeach
-                    } //endif
-                    
-                    // rebuild the structure of the programmes modules object to make things easier on the frontend
-                    // we now store modules in stages, with each stage broken into separate clusters
-                    // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
-                    $cluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
-                    
-                    // if a particular stage hasn't been set before, create it as a new object
-                    if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
-                    
-                    // set the stage name and stage cluster array
-                    $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
-                    $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
-                    
-                    
-                } // end cluster test
-            } // endforeach
+                                    $module->synopsis = '';
+                                    if (isset($module->module_code))
+                                    {
+                                        // set the url for this web service call
+                                        $url_synopsis_full = Config::get('module.module_data_url') . $module->module_code . '.xml';
+                                        // get the synopsis and add it to the programme_modules object
+                                        $module->synopsis = str_replace("\r\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
+                                    }
+                                } // end module test
+                                
+                            } // endforeach
+                        } //endif
+                        
+                        // rebuild the structure of the programmes modules object to make things easier on the frontend
+                        // we now store modules in stages, with each stage broken into separate clusters
+                        // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
+                        $cluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
+                        
+                        // if a particular stage hasn't been set before, create it as a new object
+                        if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
+                        
+                        // set the stage name and stage cluster array
+                        $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
+                        $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
+                        
+                        
+                    } // end cluster test
+                } // endforeach
+                
+            } // endif
         } // endif
         
         // sort the stages
