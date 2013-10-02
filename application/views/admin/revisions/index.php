@@ -1,4 +1,4 @@
-<div style='padding:10px;height:30px;' class='alert <?php if($programme->live=='2'):?>alert-success<?php else:?>alert-info<?php endif;?> alert-block'>    
+<div style='padding:10px;height:30px;' class='alert <?php if($programme->live_revision==$programme->current_revision):?>alert-success<?php else:?>alert-success<?php endif;?> alert-block'>    
   <div style='float:right;'>
     <a class="btn btn-info" href="<?php echo  action(URLParams::get_variable_path_prefix().$revision_type.'@edit', array($programme->id))?>" ><?php echo __("revisions.edit_form"); ?></a>
   </div>
