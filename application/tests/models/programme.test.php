@@ -155,4 +155,41 @@ class TestProgramme extends ModelTestCase {
           'This test has not been implemented yet.'
         );
 	}
+
+	public function testUnpublishLiveUGRevision()
+	{
+		// set up some data
+    	$this->populate();
+    	$programme = UG_Programme::find(1);
+    	$revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+
+    	//delete the programme
+        $programme->unpublish_revision($revision);
+
+        $revision = $programme->get_revision(1);
+        
+        $this->assertEquals('draft', $revision->status);
+	}
+
+	public function testUnpublishLivePGRevision()
+	{
+		// set up some data
+    	$this->populate('PG_Programme');
+    	$programme = PG_Programme::find(1);
+    	$revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+
+    	//delete the programme
+        $programme->unpublish_revision($revision);
+
+        $revision = $programme->get_revision(1);
+        
+        $this->assertEquals('draft', $revision->status);
+	}
+
 }

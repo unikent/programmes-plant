@@ -415,14 +415,14 @@ abstract class Programme extends Revisionable {
 				'secondary_school' =>  isset($relationships["additional_school"]) ? $relationships["additional_school"]->attributes["name"] : '',
 				'campus' 	=>  isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
 				'additional_locations' => $additional_locations,
-				'new_programme' => 	$attributes[$new_programme_field],
-				'subject_to_approval' => $attributes[$subject_to_approval_field],
-				'mode_of_study' => 	$attributes[$mode_of_study_field],
+				'new_programme' => 	isset($attributes[$new_programme_field]) ? $attributes[$new_programme_field] : '',
+				'subject_to_approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
+				'mode_of_study' => 	isset($attributes[$mode_of_study_field]) ? $attributes[$mode_of_study_field] : '',
 				'ucas_code' 	=> 	isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '',
-				'search_keywords' => $attributes[$search_keywords_field],
+				'search_keywords' => isset($attributes[$search_keywords_field]) ? $attributes[$search_keywords_field] : '',
 				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
-				'pos_code' => $attributes[$pos_code_field],
-				'awarding_institute_or_body' => $attributes[$awarding_institute_or_body_field],
+				'pos_code' => isset($attributes[$pos_code_field]) ? $attributes[$pos_code_field] : '',
+				'awarding_institute_or_body' => isset($attributes[$awarding_institute_or_body_field]) ? $attributes[$awarding_institute_or_body_field] : '',
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : ''
@@ -438,8 +438,8 @@ abstract class Programme extends Revisionable {
 		// For each programme in output
 		foreach($programmes as $programme){
 
-			$subject_area_1 = $programme->attributes[$subject_area_1_field];
-			$subject_area_2 = $programme->attributes[$subject_area_2_field];
+			$subject_area_1 = isset($programme->attributes[$subject_area_1_field]) ? $programme->attributes[$subject_area_1_field] : '';
+			$subject_area_2 = isset($programme->attributes[$subject_area_2_field]) ? $programme->attributes[$subject_area_2_field] : '';
 			$instance_id 	= $programme->attributes["instance_id"];
 			// Create arrays as needed.
 			if(!isset($subject_relations[$subject_area_1])) $subject_relations[$subject_area_1] = array();
@@ -484,7 +484,6 @@ abstract class Programme extends Revisionable {
 			$revision->save();
 		}
 		
-		$this->live = 0;
 		$this->live_revision = 0;
 		parent::save();
 		
