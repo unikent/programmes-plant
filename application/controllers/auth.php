@@ -50,12 +50,7 @@ class Auth_Controller extends Base_Controller {
 				Session::flash('flash', 'Login failed: '.$e->getMessage());
 				return Redirect::to('login');
 			}
-			// If user has a referrer, send them there
-			if(Session::has('referrer'))
-			{
-				return Redirect::to(Session::get('referrer'));
-			}
-			// else send em to the index
+			// send em to the index
 			return Redirect::to('/');
 		}
 		else
