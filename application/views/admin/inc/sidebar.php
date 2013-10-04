@@ -51,7 +51,7 @@
                 	<?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
-
+            <?php endif; ?>
         
 
         <?php if (Auth::user()->can("configure_fields")): ?>
