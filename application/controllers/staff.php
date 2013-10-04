@@ -5,6 +5,8 @@ class Staff_Controller extends Simple_Admin_Controller {
 	public $model = 'Staff';
 	public $custom_form = true;
 
+	public $required_permissions = array("edit_own_programmes", "edit_all_programmes");
+
 	/**
 	 * Return all data and send to an index view.
 	 */
