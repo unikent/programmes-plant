@@ -52,6 +52,8 @@
                 <?php endif; ?>
             <?php endif; ?>
 
+        <?php /* users who can't edit data but can edit their own courses should be able to edit staff */ elseif (Auth::user()->can("edit_own_programmes")): ?>
+            <li class="<?php echo ( URI::segment(1) == 'staff' ? 'active' : false )?>"><a href="<?php echo url('staff')?>"><i class="icon-list-alt"></i> PG Research Staff</a></li>
     	<?php endif; ?>
 
         
