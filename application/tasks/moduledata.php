@@ -122,7 +122,10 @@ class ModuleData_Task {
             }
         }  // otherwise use the config module session field  
         else {
-            if ($parameters['type'] == 'ug') return Config::get('module.module_session');
+            if ($parameters['type'] == 'ug') {
+                $module_session_field = UG_Programme::get_module_session_field();
+                return UG_ProgrammeSetting::get_setting($parameters['programme_session'], $module_session_field);
+            }
             elseif ($parameters['type'] == 'pg') {
                 $module_session_field = PG_Programme::get_module_session_field();
                 return PG_ProgrammeSetting::get_setting($parameters['programme_session'], $module_session_field);
