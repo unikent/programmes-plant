@@ -2,8 +2,6 @@
 
 ini_set('max_execution_time', 600);
 
-require_once path('base') . 'vendor/autoload.php';
-
 class Module_Session_Task {
 
 	/**
