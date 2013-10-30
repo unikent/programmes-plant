@@ -26,7 +26,7 @@ class API_Controller extends Base_Controller {
 	* @param  string  $format   Format, either XML or JSON.
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_index($year, $format = 'json')
+	public function get_index($year, $level, $format = 'json')
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
