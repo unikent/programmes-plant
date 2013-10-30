@@ -117,8 +117,11 @@ class API {
 
 		$final = static::combine_programme($programme, $programme_settings, $globals, $level);
 
+		$final['current_year'] = Setting::get_setting("{$level}_current_year");
+
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
+		
 		return $final;
 	}
 
