@@ -22,13 +22,7 @@ class Rollover_Task {
 	{
 		static::immutable($arguments);
 
-		$arguments_new = $arguments;
-		array_unshift($arguments_new, 'ug');
-		static::overridable($arguments_new);
-
-		$arguments_new = $arguments;
-		array_unshift($arguments_new, 'pg');
-		static::overridable($arguments_new);
+		static::overridable($arguments);
 
 		die("Rollover complete. \n");
 	}
@@ -106,12 +100,13 @@ class Rollover_Task {
 	*/
 	public function immutable($arguments = array())
 	{
-		if(sizeof($arguments) != 2) die("Please provide a from and to year. \n");
+		if(sizeof($arguments) != 3) die("Please provide a from and to year. \n");
 
 		Auth::login(1);
 
-		$from_year = $arguments[0];
-		$to_year = $arguments[1];
+		$type = $arguments[0];
+		$from_year = $arguments[1];
+		$to_year = $arguments[2];
 
 		// should only be one result but loop anyway
 		foreach(GlobalSetting::where('year', '=', $from_year)->get() as $global_settings){
