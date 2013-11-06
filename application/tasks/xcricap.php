@@ -11,7 +11,7 @@ class XCRICAP_Task {
      */
     public function run($arguments = array())
     {
-        $year = isset($arguments[0]) ? $arguments[0] : "2014";
+        $year = isset($arguments[0]) ? $arguments[0] : "current";
 
         $types = array('ug', 'pg');
 

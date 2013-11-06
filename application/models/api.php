@@ -13,6 +13,7 @@ class API {
 	{
 		// Get index of programmes
 		$level =  ($level === false) ? URLParams::get_type() : $level;
+		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
 
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
@@ -75,6 +76,9 @@ class API {
 	 */
 	public static function get_programme($level, $year, $id)
 	{
+
+		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
+		
 		$cache_key = "api-output-{$level}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($level, $year, $id);
 	}
@@ -117,8 +121,11 @@ class API {
 
 		$final = static::combine_programme($programme, $programme_settings, $globals, $level);
 
+		$final['current_year'] = Setting::get_setting("{$level}_current_year");
+
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
+
 		return $final;
 	}
 

@@ -17,7 +17,7 @@ class URLParams {
 	public static function init()
 	{
 		// Load defaults
-		$default_year = Setting::get_setting('ug_current_year');
+		$default_year = Setting::get_setting('ug_editing_year');
 		//Ensure there is a default
 		if($default_year===null) $default_year = 2014;
 
