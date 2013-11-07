@@ -108,13 +108,14 @@ Route::group(array('before' => ''), function(){
 
 	// Routing for undergraduate API
 	Route::any(array(
-			'/api/([0-9]{4})/(undergraduate|postgraduate)',
-			'/api/([0-9]{4})/(undergraduate|postgraduate)/programmes', 
-			'/api/([0-9]{4})/(undergraduate|postgraduate)/programmes.(json|xml)'
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes.(json|xml)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes'
+			
 	), 'api@index');
 
-	Route::get(array('/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
-	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects','/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml)'), 'api@subject_index');
+	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
+	Route::any(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects','/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml)'), 'api@subject_index');
 
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
@@ -127,8 +128,8 @@ Route::group(array('before' => ''), function(){
 	
 	
 	// XCRI-CAP Feed
-	Route::any('/api/([0-9]{4})/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');
-	Route::any('/api/([0-9]{4})/xcri-cap', 'api@xcri_cap');
+	Route::any('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');
+	Route::any('/api/([0-9]{4}|current)/xcri-cap', 'api@xcri_cap');
 });
 
 // Login/out
