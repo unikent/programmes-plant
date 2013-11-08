@@ -5,7 +5,7 @@
 	$revert_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@revert_to_previous', array($revision->id));
 	$unpublish_link = action(URLParams::get_variable_path_prefix().$revision_type.'.' . $programme->id . '@unpublish', array($revision->id));
 ?>
-<?php if($revision->status =='live'):?>
+<?php if($revision->id == $programme->live_revision):?>
 
 	<div style='padding:10px;' class='alert alert-success alert-block'>
 		<span class="label label-success" ><?php echo __("revisions.status_live"); ?></span>
@@ -18,7 +18,7 @@
 		<?php endif?>
 	</div>
 
-<?php elseif($revision->status =='selected'):?>
+<?php elseif($revision->id == $programme->current_revision):?>
 
 	<div style='padding:10px;' class='alert alert-info alert-block'>		
 		<div style='float:right;'>
