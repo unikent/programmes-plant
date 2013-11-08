@@ -83,7 +83,7 @@
           <?php foreach ($programme['award'] as $award) : ?>
             <mlo:qualification>
               <dc:identifier><![CDATA[<?php echo ($award['name']) ?>]]></dc:identifier>
-              <dc:title><![CDATA[<?php echo ($award['name']); ?>]]> <?php echo ($programme['programme_title']); ?></dc:title>
+              <dc:title><![CDATA[<?php echo ($award['name']); ?> <?php echo ($programme['programme_title']); ?>]]></dc:title>
               <abbr><![CDATA[<?php echo ($award['name']); ?>]]></abbr>
               <?php if (isset($programme['description'])): ?>
                 <dc:description>
