@@ -35,7 +35,7 @@ foreach ($revisions as $revision){
 
    if($showing) echo View::make('admin.revisions.partials.historical_revision', array('revision' => $revision, 'programme' => $programme))->render();
     //After live switch mode to "non-active"
-  if($revision->status =='live'){ $showing = true; }
+  if($revision->id == $programme->live_revision){ $showing = true; }
 }
 ?>
 
