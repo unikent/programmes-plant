@@ -1,6 +1,6 @@
 <?php
 
-require_once path('base') . 'vendor/autoload.php';
+//require_once path('base') . 'vendor/autoload.php';
 
 class XCRICAP_Task {
 
@@ -11,21 +11,35 @@ class XCRICAP_Task {
      */
     public function run($arguments = array())
     {
+
         $year = isset($arguments[0]) ? $arguments[0] : "current";
 
         $types = array('ug', 'pg');
 
         $api_index = array();
         $data = array();
-
+      
         // get a list of all our programmes through the API
         foreach ($types as $type) {
-            $api_index[$type] = API::get_index($year, $type);
-            $api_index[$type] = API::get_index($year, $type);
+
+            $tmp_year = ($year == 'current') ? Setting::get_setting($type."_current_year") : $year;
+
+            URLParams::$type = $type;
+            URLParams::$year = $tmp_year;
+
+            $api_index[$type] = API::get_index($tmp_year, $type);
 
             // fetch each programme individually for our xcri feed
             foreach (array_keys($api_index[$type]) as $programme_id) {
-                $data['programmes'][$type][] = API::get_xcrified_programme($programme_id, $year, $type);
+                $data['programmes'][$type][] = API::get_xcrified_programme($programme_id, $tmp_year, $type);
+            }
+
+            // get the global settings for our xcri feed
+            $data['globals'][$type] = new StdClass();
+            $globals = GlobalSetting::get_api_data($tmp_year) ;
+            foreach ($globals as $key => $value) {
+                $key = GlobalSetting::trim_id_from_field_name($key);
+                $data['globals'][$type]->$key = $value;
             }
         }
         
@@ -37,21 +51,13 @@ class XCRICAP_Task {
             return;
         }
 
-        // get the global settings for our xcri feed
-        $globalsettings = GlobalSetting::get_api_data($year);
+
 
         // if there are no global settings throw a 501 error
-        if (! $globalsettings)
+        if (! $data['globals']['ug'] ||  ! $data['globals']['pg']) 
         {
             echo "No global settings could be found!\n";
             return;
-        }
-
-        // neaten up the global settings
-        $data['globalsettings'] = new StdClass();
-        foreach ($globalsettings as $key => $value) {
-            $key = GlobalSetting::trim_id_from_field_name($key);
-            $data['globalsettings']->$key = $value;
         }
 
         // assemble the xcri-cap xml
