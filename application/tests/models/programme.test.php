@@ -171,7 +171,7 @@ class TestProgramme extends ModelTestCase {
 
         $revision = $programme->get_revision(1);
         
-        $this->assertEquals('draft', $revision->status);
+        $this->assertEquals('selected', $revision->status);
 	}
 
 	public function testUnpublishLivePGRevision()
@@ -189,7 +189,7 @@ class TestProgramme extends ModelTestCase {
 
         $revision = $programme->get_revision(1);
         
-        $this->assertEquals('draft', $revision->status);
+        $this->assertEquals('selected', $revision->status);
 	}
 
 }
