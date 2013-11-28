@@ -27,6 +27,9 @@ class Settings_Controller extends Admin_Controller {
 		$update->populate_from_input();
 		$update->raw_save();
 
+		//clear caches so changes can take effect
+		API::purge_output_cache();
+
 		Messages::add('success',"System settings updated");
 
 		return Redirect::to('settings');
