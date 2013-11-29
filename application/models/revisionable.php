@@ -290,6 +290,12 @@ class Revisionable extends SimpleData {
 			$revision = $this->get_revision($revision);
 		}
 
+		// Revision is already live
+		if($this->live_revision == $revision->id){
+			Messages::add('warning', "The selected revision is already live.");
+			return false;
+		}
+
 		// Get the currently "active/selected" revision.
 		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
 		// If the active revision is already current, leave it be
