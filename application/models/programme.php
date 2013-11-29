@@ -317,7 +317,6 @@ abstract class Programme extends Revisionable {
 		$title_field = static::get_title_field();
 		$slug_field = static::get_slug_field();
 		$subject_categories_field = static::get_subject_categories_field();
-		
 		$subject_to_approval_field = static::get_subject_to_approval_field();
 		$new_programme_field = static::get_new_programme_field();
 		$mode_of_study_field = static::get_mode_of_study_field();
@@ -326,7 +325,6 @@ abstract class Programme extends Revisionable {
 		$pos_code_field = static::get_pos_code_field();
 		$awarding_institute_or_body_field = static::get_awarding_institute_or_body_field();
 		$module_session_field = static::get_module_session_field();
-		
 		$award_field = static::get_award_field();
 		$subject_area_1_field = static::get_subject_area_1_field();
 		$subject_area_2_field = static::get_subject_area_2_field();
@@ -334,11 +332,10 @@ abstract class Programme extends Revisionable {
 		$additional_locations_field = static::get_additional_locations_field();
 		$administrative_school_field = static::get_administrative_school_field();
 		$additional_school_field = static::get_additional_school_field();
-
 		$withdrawn_field = static::get_programme_withdrawn_field();
 		$suspended_field = static::get_programme_suspended_field();
-
 		$programme_type_field = static::get_programme_type_field();
+		$study_abroad_options = static::get_study_abroad_options_field();
 
 		$index_data = array();
 
@@ -362,7 +359,6 @@ abstract class Programme extends Revisionable {
 					 $module_session_field,
 					 $subject_area_2_field,
 					 $programme_type_field,
-
 					 $withdrawn_field,
 					 $suspended_field
 
@@ -371,9 +367,10 @@ abstract class Programme extends Revisionable {
 		if ($type == 'ug') {
 			$fields[] = $ucas_code_field;
 		}
-		// if pg add additional locations field
+		// if pg add additional locations field and study abroad
 		if ($type == 'pg') {
 			$fields[] = $additional_locations_field;
+			$fields[] = $study_abroad_options_field;
 		}
 
 		// Find all programmes that have a live revision set (live_revision != 0)
@@ -436,7 +433,8 @@ abstract class Programme extends Revisionable {
 				'awarding_institute_or_body' => isset($attributes[$awarding_institute_or_body_field]) ? $attributes[$awarding_institute_or_body_field] : '',
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
-				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : ''
+				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
+				'study_abroad_options' => isset($attributes[$study_abroad_options_field]) ? $attributes[$study_abroad_options_field] : ''
 			);
 		}
 
