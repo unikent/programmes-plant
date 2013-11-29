@@ -335,7 +335,7 @@ abstract class Programme extends Revisionable {
 		$withdrawn_field = static::get_programme_withdrawn_field();
 		$suspended_field = static::get_programme_suspended_field();
 		$programme_type_field = static::get_programme_type_field();
-		$study_abroad_options = static::get_study_abroad_options_field();
+		$study_abroad_options_field = static::get_study_abroad_options_field();
 
 		$index_data = array();
 
