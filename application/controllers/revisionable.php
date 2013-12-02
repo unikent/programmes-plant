@@ -117,7 +117,7 @@ class Revisionable_Controller extends Admin_Controller {
 		$modified_revision = $item->make_revision_live($revision);
 		
 		// Redirect to point of origin
-		Messages::add('success', "The selected revision has been made live.");
+		if($modified_revision) Messages::add('success', "The selected revision has been made live.");
 		return Redirect::to(URLParams::get_variable_path_prefix().$this->views.'/edit/'.$item->id);
 	}
 	
