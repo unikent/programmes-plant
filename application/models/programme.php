@@ -335,7 +335,7 @@ abstract class Programme extends Revisionable {
 		$withdrawn_field = static::get_programme_withdrawn_field();
 		$suspended_field = static::get_programme_suspended_field();
 		$programme_type_field = static::get_programme_type_field();
-		$study_abroad_options_field = static::get_study_abroad_options_field();
+		$study_abroad_option_field = static::get_study_abroad_option_field();
 
 		$index_data = array();
 
@@ -370,7 +370,7 @@ abstract class Programme extends Revisionable {
 		// if pg add additional locations field and study abroad
 		if ($type == 'pg') {
 			$fields[] = $additional_locations_field;
-			$fields[] = $study_abroad_options_field;
+			$fields[] = $study_abroad_option_field;
 		}
 
 		// Find all programmes that have a live revision set (live_revision != 0)
@@ -434,7 +434,7 @@ abstract class Programme extends Revisionable {
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
-				'study_abroad_options' => isset($attributes[$study_abroad_options_field]) ? $attributes[$study_abroad_options_field] : ''
+				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : ''
 			);
 		}
 
