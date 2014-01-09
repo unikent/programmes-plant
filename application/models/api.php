@@ -282,23 +282,31 @@ class API {
 			// only get if has a programme_type
 			if( isset($final['programme_type']) ){
 				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+
+
+
 				// get modules
 				$modules = array();
 				foreach($final['deliveries'] as &$delivery){
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
+
+					// Add FAKE fee data
+					$delivery['fees'] = array('part-time' => '4000', 'full-time' => '9000', 'band'=> 'P1');
+
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 				}
 				if(sizeof($modules) != 0) $final['modules'] = $modules;
-
 			}
-
 		}
 		else
 		{ 
 			// if UG, grab modules normally
 			$modules = API::get_module_data($final['instance_id'], $final['pos_code'], $final['year'], $level);
 			if($modules !== false)$final['modules'] = $modules;
+
+			// Add FAKE fee data
+			$final['fees'] = array('part-time' => '4000', 'full-time' => '9000', 'band' => 'home');
 		}
 		
 
