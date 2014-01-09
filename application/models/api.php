@@ -292,7 +292,7 @@ class API {
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
 					// Add FAKE fee data
-					$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code']);
+					$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
 
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 				}
@@ -306,7 +306,7 @@ class API {
 			if($modules !== false)$final['modules'] = $modules;
 
 			// Add Fee data
-			$final['fees'] = Fees::getFeeInfoForPos($final['pos_code']);
+			$final['fees'] = Fees::getFeeInfoForPos($final['pos_code'], $final['year']);
 		}
 		
 
