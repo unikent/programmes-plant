@@ -33,7 +33,7 @@ class Fees {
 		if(static::$mapping) return static::$mapping;
 
 		// Else, load object from cache
-		return static::$mapping = Cache::get("{$year}-fee-mappings", function() use ($year){ 
+		return static::$mapping = Cache::get("fee-mappings-{$year}", function() use ($year){ 
 
 			$path = Config::get('fees.path');
 
