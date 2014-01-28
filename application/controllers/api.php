@@ -52,6 +52,50 @@ class API_Controller extends Base_Controller {
 		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200);
 	}
 
+
+	/**
+	 * Routing for /$year/$type/courses
+	 *
+	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/courses
+	 * Provides a list of courses in a simple csv format
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_simplelist($year, $type)
+	{
+
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
+		}
+
+		// get the list of courses
+		$data['programmes'] = API::get_index($year);
+		$data['type'] = $type;
+
+		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+		if (! $data['programmes'] )
+		{
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::make('', 501);
+		}
+
+		// set the headers for last-modified and to make sure the csv file gets downloaded
+		static::$headers['Content-Type'] = 'text/csv';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
+		static::$headers['Content-Disposition'] =  'attachment;filename=courses.csv';
+
+		// output the data
+		$view = View::make('admin.programmes.simplelist', $data)->render();
+		return Response::make($view, 200, static::$headers);
+	}
+
+
 	/**
 	* Get subjects index
 	*
