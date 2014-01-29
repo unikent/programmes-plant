@@ -36,6 +36,53 @@
 
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'model' => $model, 'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
 
+
+
+<div class="section accordion accordion-group">
+  <div class="accordion-heading">
+    <legend>
+      <a href="#feedata" class="accordion-toggle" data-toggle="collapse">Fee data</a>
+    </legend>
+  </div>
+  <div id="feedata" class="accordion-body collapse in">
+    <div class="control-group" style='padding:10px;'>
+
+
+
+    <?php if (! $create): ?>
+
+   <?php
+
+        $feesets = array();
+        $displayed = array();
+
+        if(URLParams::$type == 'pg'){
+            foreach($programme->get_deliveries() as $del){
+              // ignore duplicates
+              if(in_array($del->pos_code, $displayed)) continue;
+              // add to output
+               $feesets[] =  array('pos' => $del->pos_code, 'year'=> $programme->year);
+               $displayed[] = $del->pos_code;
+            }
+        }elseif(URLParams::$type == 'ug'){
+            $feesets[] = array('pos' => $programme->{$programme::get_pos_code_field()}, 'year'=> $programme->year);
+        }
+        // Show info
+        echo View::make('admin.inc.partials.feeblock', array('feesets' => $feesets))->render();
+
+        ?>
+
+   
+    <?php endif; ?>
+
+
+
+
+    </div>
+  </div>
+</div>
+<br/>
+
 <?php if (! $create && URLParams::$type == 'pg'): ?>
 <div class="section accordion accordion-group">
   <div class="accordion-heading">
