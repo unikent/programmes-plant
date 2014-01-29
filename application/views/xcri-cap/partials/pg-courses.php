@@ -151,7 +151,37 @@
               <?php endif; ?>
               <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
               <languageOfAssessment>en</languageOfAssessment>
-              <mlo:cost><![CDATA[<?php echo ($programme['cost']); ?>]]></mlo:cost>
+              <mlo:cost><![CDATA[
+                <?php echo ($programme['cost']); ?>
+                <?php foreach ($programme['deliveries'] as $delivery): ?>
+                <?php if ( ! in_array($delivery->pos_code, $pos_codes) ): ?>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th><strong><?php echo $delivery->award_name ?></strong></th>
+                        <th>UK/EU</th>
+                        <th>Overseas</th>
+                      </tr>
+                      <tr>
+                        <td colspan="3"><?php echo $delivery->description ?></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Full-time</strong></td>
+                          <td><?php echo empty($delivery->fees->home->{'full-time'}) ? 'TBC' : '&pound;' . $delivery->fees->home->{'full-time'}); ?></td>
+                          <td><?php echo empty($delivery->fees->int->{'full-time'}) ? 'TBC' : '&pound;' . $delivery->fees->int->{'full-time'}); ?></td>
+                        </tr>
+                        <tr>
+                          <td><strong>Part-time</strong></td>
+                          <td><?php echo empty($delivery->fees->home->{'part-time'}) ? 'TBC' : '&pound;' . $delivery->fees->home->{'part-time'}); ?></td>
+                          <td><?php echo empty($delivery->fees->int->{'part-time'}) ? 'TBC' : '&pound;' . $delivery->fees->int->{'part-time'}); ?></td>
+                        </tr>
+                    </tbody>
+                  </table>
+                <?php $pos_codes[] = $delivery->pos_code; endif; ?>
+                <?php endforeach; ?>
+              ]]></mlo:cost>
               <venue>
                 <provider>
                   <?php if (isset($programme['location']['description'])): ?>
