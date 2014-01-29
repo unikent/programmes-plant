@@ -46,9 +46,6 @@
   </div>
   <div id="feedata" class="accordion-body collapse in">
     <div class="control-group" style='padding:10px;'>
-
-
-
     <?php if (! $create): ?>
 
    <?php
@@ -71,12 +68,7 @@
         echo View::make('admin.inc.partials.feeblock', array('feesets' => $feesets))->render();
 
         ?>
-
-   
     <?php endif; ?>
-
-
-
 
     </div>
   </div>
