@@ -15,7 +15,7 @@ return array(
 	'user_notification' => array(
 								'approve' => array('title' => "programme-plant updates approved for :title :awards",
 													'body' => "Dear :author,<br /><br />
-												Regarding your recent updates to :link_to_edit_programme on the programmes-plant: these have now been approved and will shortly appear on the live website at :link_to_programme_frontend <br /><br />
+												Regarding your recent updates to :link_to_edit_programme on the programmes-plant: these have now been approved and will shortly appear on the live website at  :link_to_programme_frontend <br /><br />
 												Feel free to reply to this email if you have any questions about your updates.<br /><br />
 												Regards,<br /><br />
 												EMS Publishing Office<br /><br />"

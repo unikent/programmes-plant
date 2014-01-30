@@ -386,7 +386,10 @@ class Programmes_Controller extends Revisionable_Controller {
 				$awards = static::get_awards_string($programme, $type);
 
 				$link_to_edit_programme = HTML::link($year.'/'.$type.'/'.$this->views.'/'.'edit/'.$programme->id, $title . ' ' . $awards);
-				$link_to_programme_frontend = Config::get('application.front_end_url') . 'undergraduate/' . $programme->id . '/' . $slug;
+
+				$ugpg = ( $type == 'pg') ? 'postgraduate' : 'undergraduate';
+				
+				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $programme->id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
