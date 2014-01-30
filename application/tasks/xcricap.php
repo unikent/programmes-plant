@@ -67,7 +67,7 @@ class XCRICAP_Task {
         $cache_key = "xcri-cap-{$year}";
         Cache::put($cache_key, $xcri_xml->__toString(), 2628000);
 
-        echo "XCRIP-CAP for {$year} has been generated\n";
+        echo "XCRIP-CAP for year:{$year} has been generated and stored in cache file: {$cache_key}\n";
     }
     
 }
