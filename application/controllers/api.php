@@ -64,36 +64,34 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_simplelist($year, $type)
 	{
-
 		// get last generated date
 		$last_generated = API::get_last_change_time();
-		
 		// If cache is valid, send 304
-		if($this->cache_still_valid($last_generated)){
-			return Response::make('', '304');
-		}
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
 
 		// get the list of courses
-		$data['programmes'] = API::get_index($year);
-		$data['type'] = $type;
+		$programmes = API::get_index($year); $listing = array();
 
-		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		if (! $data['programmes'] )
-		{
-			// Considering 501 (server error) as more desciptive
-			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
-			return Response::make('', 501);
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+			$output['id'] = $programme['id'];
+			$output['title'] = $programme['name'];
+			$output['awards'] = $programme['award'];
+			$output['subject to approval'] = $programme['subject_to_approval'];
+
+			if($type == 'undergraduate') $output['ucas code'] = $programme['ucas_code'];
+			if($type == 'postgraduate') $output['taught/research'] = $programme['programme_type'];
+
+			$output['location'] = $programme['campus'];
+			$lising[] = $output;
 		}
 
-		// set the headers for last-modified and to make sure the csv file gets downloaded
-		static::$headers['Content-Type'] = 'text/csv';
-		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
-		static::$headers['Content-Disposition'] =  'attachment;filename=courses.csv';
-
 		// output the data
-		$view = View::make('admin.programmes.simplelist', $data)->render();
-		return Response::make($view, 200, static::$headers);
+		return static::csv_download($lising, "courses", $last_generated);
 	}
+
+	 
 
 
 	/**
@@ -318,6 +316,39 @@ class API_Controller extends Base_Controller {
 		}
 
 		return Response::json($data, $code, static::$headers);
+	}
+
+	/**
+	* Output as CSV
+	*
+	* @param mixed $data        To be shown as JSON.
+	* @param int   $code        HTTP code to return.
+	* @param array $add_headers Additional headers to add to output.
+	*/
+	public static function csv_download($output, $name, $last_generated) {
+		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+		if (! $output )
+		{
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::make('', 501);
+		}
+
+		// set the headers for last-modified and to make sure the csv file gets downloaded
+		static::$headers['Content-Type'] = 'text/csv';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
+		static::$headers['Content-Disposition'] =  'attachment;filename='.$name.'.csv';
+
+		// Header line
+		$headings = array_keys( current($output) );
+		$csv = API::array_to_csv($headings). "\r\n";
+		// csv body
+		foreach($output as $data){
+			$csv .= API::array_to_csv($data) . "\r\n";;
+		}
+
+		// output the data
+		return Response::make($csv, 200, static::$headers);
 	}
 
 	/**
