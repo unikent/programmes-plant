@@ -492,7 +492,7 @@ class API {
 		return $xml->asXML();
 	}
 
-
+	// http://stackoverflow.com/questions/3933668/convert-array-into-csv
 	public static function array_to_csv( array &$fields, $delimiter = ',', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false ) {
 	    $delimiter_esc = preg_quote($delimiter, '/');
 	    $enclosure_esc = preg_quote($enclosure, '/');
@@ -564,7 +564,9 @@ class API {
 		return $programme;
 	}
 
-
+	public static function get_programme_model(){
+		return static::_get_prefix(URLParams::get_type()).'Programme';
+	}
 
 	public static function _get_prefix($level){
 		switch($level){
