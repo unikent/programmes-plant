@@ -137,6 +137,7 @@ Route::group(array('before' => ''), function(){
 	// Exports
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist'); // Duplicate of above, but in export url space
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/kis', 'api@export_kisdata');
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/entry', 'api@export_entrydata');
 });
 
 // Login/out

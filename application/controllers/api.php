@@ -146,6 +146,80 @@ class API_Controller extends Base_Controller {
 		return static::csv_download($lising, "{$year} KIS Export", $last_generated);
 	}
 
+
+	/**
+	 * Routing for /export/$year/$type/entry
+	 *
+	 * Export CSV of Entry Data
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_entrydata($year, $type)
+	{
+		// UG only currently
+		if($type !== 'undergraduate') return 0;
+
+		// get last generated date 
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year); 
+		$model = API::get_programme_model();
+		$listing = array();
+	
+		// Additional Fields
+		$extra_cols = array(
+			"subject_to_approval", 
+			"homeeu_students_intro_text", 
+			"a_level", 
+			"cgse",
+			"access_to_he_diploma",
+			"btec_level_3_extended_diploma_formerly_btec_national_diploma",
+			"btec_level_5_hnd",
+			"international_baccalaureate"
+		);
+		$fields = array();
+		foreach($extra_cols as $col){
+			$tmp_f = "get_{$col}_field";
+			$fields[$col] = $model::$tmp_f();
+		}
+
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+
+			// pulled from "current" for speed, may have to be adjusted to use revisions if live & current are too out of sync.
+			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first($fields);
+
+			$output['URL ID'] = $programme['id'];
+			$output['Title'] = $programme['name'];
+			$output['STA'] = $extra->attributes[$fields["subject_to_approval"]];
+			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
+			$output['POS Code'] = $programme['pos_code'];
+
+			$output['Home/EU students intro text'] = strip_tags($extra->attributes[$fields["homeeu_students_intro_text"]]);
+			$output['A level'] = strip_tags($extra->attributes[$fields["a_level"]]);
+			$output['GCSE'] = strip_tags($extra->attributes[$fields["cgse"]]);
+			$output['Access to HE'] = strip_tags($extra->attributes[$fields["access_to_he_diploma"]]);
+			$output['BTEC3'] = strip_tags($extra->attributes[$fields["btec_level_3_extended_diploma_formerly_btec_national_diploma"]]);
+			$output['BETC 5'] = strip_tags($extra->attributes[$fields["btec_level_5_hnd"]]);
+			$output['IB'] = strip_tags($extra->attributes[$fields["international_baccalaureate"]]);
+
+			$lising[] = $output;
+		}
+
+		// output the data
+		return static::csv_download($lising, "{$year} entry data export", $last_generated);
+	}
+
+
+
 	/**
 	* Get subjects index
 	*
