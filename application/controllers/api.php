@@ -101,10 +101,13 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_export_kisdata($year, $type)
 	{
-		// get last generated date
+		// get last generated date 
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
 		// get the list of courses
 		$programmes = API::get_index($year); 
@@ -119,17 +122,17 @@ class API_Controller extends Base_Controller {
 		foreach($programmes as $programme) {
 			$output = array();
 			$output['POS'] = $programme['pos_code'];
-			$output['title'] = $programme['name'];
+			$output['Title'] = $programme['name'];
 
 			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
 
 			$output['Honours type'] = $programme['award'];
-			$output['location'] = $programme['campus'];
+			$output['Location'] = $programme['campus'];
 			$output['Mode of study'] = $programme['mode_of_study'];
 
 			// pulled from "current" for speed, may have to be adjusted to use revisions if live & current are too out of sync.
-			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first(array($kiscourseid_field,$total_credit_field));
-			$output['KISCOURSEID'] = $extra->attributes[$kiscourseid_field];
+			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first(array($kiscourseid_field, $total_credit_field));
+			$output['KIS Course ID'] = $extra->attributes[$kiscourseid_field];
 			$output['Total Kent credits'] = $extra->attributes[$total_credit_field];
 
 			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
