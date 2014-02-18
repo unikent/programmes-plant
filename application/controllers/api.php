@@ -84,6 +84,8 @@ class API_Controller extends Base_Controller {
 			if($type == 'postgraduate') $output['taught/research'] = $programme['programme_type'];
 
 			$output['location'] = $programme['campus'];
+			if($type == 'postgraduate') $output['additional locations'] = $programme['additional_locations'];
+			
 			$lising[] = $output;
 		}
 
