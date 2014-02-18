@@ -133,6 +133,10 @@ Route::group(array('before' => ''), function(){
 
 	// bare-bones programme list
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist');
+
+	// Exports
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist'); // Duplicate of above, but in export url space
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/kis', 'api@export_kisdata');
 });
 
 // Login/out
