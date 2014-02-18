@@ -132,7 +132,7 @@ class API_Controller extends Base_Controller {
 			$output['KISCOURSEID'] = $extra->attributes[$kiscourseid_field];
 			$output['Total Kent credits'] = $extra->attributes[$total_credit_field];
 
-			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}";
+			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
 		
 			$lising[] = $output;
 		}
@@ -368,9 +368,9 @@ class API_Controller extends Base_Controller {
 	/**
 	* Output as CSV
 	*
-	* @param mixed $data        To be shown as JSON.
-	* @param int   $code        HTTP code to return.
-	* @param array $add_headers Additional headers to add to output.
+	* @param mixed $data 	Data to be output
+	* @param string   $filename 	HTTP code to return.
+	* @param $last_generated 	Last generated timestamp
 	*/
 	public static function csv_download($output, $name, $last_generated) {
 		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.

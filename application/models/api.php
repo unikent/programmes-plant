@@ -492,7 +492,13 @@ class API {
 		return $xml->asXML();
 	}
 
-	// http://stackoverflow.com/questions/3933668/convert-array-into-csv
+	/**
+	 * Function to convert feed to CSV
+	 * 
+	 * @see http://stackoverflow.com/questions/3933668/convert-array-into-csv
+	 * @param $data Data to show as CSV
+	 * @return Raw CSV
+	 */  
 	public static function array_to_csv( array &$fields, $delimiter = ',', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false ) {
 	    $delimiter_esc = preg_quote($delimiter, '/');
 	    $enclosure_esc = preg_quote($enclosure, '/');
@@ -503,6 +509,8 @@ class API {
 	            $output[] = 'NULL';
 	            continue;
 	        }
+	        // trim
+	        $field = trim($field);
 
 	        // Enclose fields containing $delimiter, $enclosure or whitespace
 	        if ( $encloseAll || preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ) {
@@ -564,10 +572,21 @@ class API {
 		return $programme;
 	}
 
+	/**
+	 * Return programme model of correct type
+	 * 
+	 * @return UG/PG_Programme
+	 */
 	public static function get_programme_model(){
 		return static::_get_prefix(URLParams::get_type()).'Programme';
 	}
 
+	/**
+	 * Get correct prefix for model
+	 * 
+	 * @param $level
+	 * @return "UG_" / "PG_"
+	 */
 	public static function _get_prefix($level){
 		switch($level){
 			case 'ug':
@@ -585,6 +604,7 @@ class API {
 	}
 }
 
+// Exceptions
 class MissingMagicalUnicornFieldException extends \Exception {}
 class MissingDataException extends \Exception {}
 class NotFoundException extends \Exception {}
