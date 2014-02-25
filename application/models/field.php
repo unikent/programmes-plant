@@ -132,7 +132,7 @@ class Field extends Eloquent
     	if($saved && $updateSchema){
     		// get values
     		$this->colname = Str::slug($this->field_name, '_').'_' . $this->id;
-   			$type = URLParams::get_type();
+   			$type = URLParams::get_type($this->model);
 
     		// Create permissions for fields
     		$this->create_field_permissions($this->colname, $type);

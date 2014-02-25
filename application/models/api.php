@@ -493,6 +493,38 @@ class API {
 	}
 
 	/**
+	 * Function to convert feed to CSV
+	 * 
+	 * @see http://stackoverflow.com/questions/3933668/convert-array-into-csv
+	 * @param $data Data to show as CSV
+	 * @return Raw CSV
+	 */  
+	public static function array_to_csv( array &$fields, $delimiter = ',', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false ) {
+	    $delimiter_esc = preg_quote($delimiter, '/');
+	    $enclosure_esc = preg_quote($enclosure, '/');
+
+	    $output = array();
+	    foreach ( $fields as $field ) {
+	        if ($field === null && $nullToMysqlNull) {
+	            $output[] = 'NULL';
+	            continue;
+	        }
+	        // trim
+	        $field = trim($field);
+
+	        // Enclose fields containing $delimiter, $enclosure or whitespace
+	        if ( $encloseAll || preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ) {
+	            $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
+	        }
+	        else {
+	            $output[] = $field;
+	        }
+	    }
+
+	    return implode( $delimiter, $output );
+	}
+
+	/**
 	 * Creates a flat representation of a programme for use in XCRI.
 	 * 
 	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
@@ -540,8 +572,21 @@ class API {
 		return $programme;
 	}
 
+	/**
+	 * Return programme model of correct type
+	 * 
+	 * @return UG/PG_Programme
+	 */
+	public static function get_programme_model(){
+		return static::_get_prefix(URLParams::get_type()).'Programme';
+	}
 
-
+	/**
+	 * Get correct prefix for model
+	 * 
+	 * @param $level
+	 * @return "UG_" / "PG_"
+	 */
 	public static function _get_prefix($level){
 		switch($level){
 			case 'ug':
@@ -559,6 +604,7 @@ class API {
 	}
 }
 
+// Exceptions
 class MissingMagicalUnicornFieldException extends \Exception {}
 class MissingDataException extends \Exception {}
 class NotFoundException extends \Exception {}
