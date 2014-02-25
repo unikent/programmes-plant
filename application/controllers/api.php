@@ -64,36 +64,160 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_simplelist($year, $type)
 	{
-
 		// get last generated date
 		$last_generated = API::get_last_change_time();
-		
 		// If cache is valid, send 304
-		if($this->cache_still_valid($last_generated)){
-			return Response::make('', '304');
-		}
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
 
 		// get the list of courses
-		$data['programmes'] = API::get_index($year);
-		$data['type'] = $type;
+		$programmes = API::get_index($year); $listing = array();
 
-		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
-		if (! $data['programmes'] )
-		{
-			// Considering 501 (server error) as more desciptive
-			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
-			return Response::make('', 501);
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+			$output['id'] = $programme['id'];
+			$output['title'] = $programme['name'];
+			$output['awards'] = $programme['award'];
+			$output['subject to approval'] = $programme['subject_to_approval'];
+
+			if($type == 'undergraduate') $output['ucas code'] = $programme['ucas_code'];
+			if($type == 'postgraduate') $output['taught/research'] = $programme['programme_type'];
+
+			$output['location'] = $programme['campus'];
+			if($type == 'postgraduate') $output['additional locations'] = $programme['additional_locations'];
+			
+			$lising[] = $output;
 		}
 
-		// set the headers for last-modified and to make sure the csv file gets downloaded
-		static::$headers['Content-Type'] = 'text/csv';
-		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
-		static::$headers['Content-Disposition'] =  'attachment;filename=courses.csv';
+		// output the data
+		return static::csv_download($lising, "courses", $last_generated);
+	}
+
+	/**
+	 * Routing for /export/$year/$type/kis
+	 *
+	 * Export CSV of data for KIS
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_kisdata($year, $type)
+	{
+		// get last generated date 
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year); 
+		$model = API::get_programme_model();
+		$listing = array();
+
+		// Additional Fields
+		$kiscourseid_field = $model::get_kiscourseid_field();
+		$total_credit_field = $model::get_total_kent_credits_awarded_on_completion_field();
+		
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+			$output['POS'] = $programme['pos_code'];
+			$output['Title'] = $programme['name'];
+
+			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
+
+			$output['Honours type'] = $programme['award'];
+			$output['Location'] = $programme['campus'];
+			$output['Mode of study'] = $programme['mode_of_study'];
+
+			// pulled from "current" for speed, may have to be adjusted to use revisions if live & current are too out of sync.
+			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first(array($kiscourseid_field, $total_credit_field));
+			$output['KIS Course ID'] = $extra->attributes[$kiscourseid_field];
+			$output['Total Kent credits'] = $extra->attributes[$total_credit_field];
+
+			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+		
+			$lising[] = $output;
+		}
 
 		// output the data
-		$view = View::make('admin.programmes.simplelist', $data)->render();
-		return Response::make($view, 200, static::$headers);
+		return static::csv_download($lising, "{$year} KIS Export", $last_generated);
 	}
+
+
+	/**
+	 * Routing for /export/$year/$type/entry
+	 *
+	 * Export CSV of Entry Data
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_entrydata($year, $type)
+	{
+		// UG only currently
+		if($type !== 'undergraduate') return 0;
+
+		// get last generated date 
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year); 
+		$model = API::get_programme_model();
+		$listing = array();
+	
+		// Additional Fields
+		$extra_cols = array(
+			"subject_to_approval", 
+			"homeeu_students_intro_text", 
+			"a_level", 
+			"cgse",
+			"access_to_he_diploma",
+			"btec_level_3_extended_diploma_formerly_btec_national_diploma",
+			"btec_level_5_hnd",
+			"international_baccalaureate"
+		);
+		$fields = array();
+		foreach($extra_cols as $col){
+			$tmp_f = "get_{$col}_field";
+			$fields[$col] = $model::$tmp_f();
+		}
+
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+
+			// pulled from "current" for speed, may have to be adjusted to use revisions if live & current are too out of sync.
+			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first($fields);
+
+			$output['URL ID'] = $programme['id'];
+			$output['Title'] = $programme['name'];
+			$output['STA'] = $extra->attributes[$fields["subject_to_approval"]];
+			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
+			$output['POS Code'] = $programme['pos_code'];
+
+			$output['Home/EU students intro text'] = strip_tags($extra->attributes[$fields["homeeu_students_intro_text"]]);
+			$output['A level'] = strip_tags($extra->attributes[$fields["a_level"]]);
+			$output['GCSE'] = strip_tags($extra->attributes[$fields["cgse"]]);
+			$output['Access to HE'] = strip_tags($extra->attributes[$fields["access_to_he_diploma"]]);
+			$output['BTEC3'] = strip_tags($extra->attributes[$fields["btec_level_3_extended_diploma_formerly_btec_national_diploma"]]);
+			$output['BETC 5'] = strip_tags($extra->attributes[$fields["btec_level_5_hnd"]]);
+			$output['IB'] = strip_tags($extra->attributes[$fields["international_baccalaureate"]]);
+
+			$lising[] = $output;
+		}
+
+		// output the data
+		return static::csv_download($lising, "{$year} entry data export", $last_generated);
+	}
+
 
 
 	/**
@@ -318,6 +442,39 @@ class API_Controller extends Base_Controller {
 		}
 
 		return Response::json($data, $code, static::$headers);
+	}
+
+	/**
+	* Output as CSV
+	*
+	* @param mixed $data 	Data to be output
+	* @param string   $filename 	HTTP code to return.
+	* @param $last_generated 	Last generated timestamp
+	*/
+	public static function csv_download($output, $name, $last_generated) {
+		// 204 is the HTTP code for No Content - the result processed fine, but there was nothing to return.
+		if (! $output )
+		{
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::make('', 501);
+		}
+
+		// set the headers for last-modified and to make sure the csv file gets downloaded
+		static::$headers['Content-Type'] = 'text/csv';
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
+		static::$headers['Content-Disposition'] =  'attachment;filename='.$name.'.csv';
+
+		// Header line
+		$headings = array_keys( current($output) );
+		$csv = API::array_to_csv($headings). "\r\n";
+		// csv body
+		foreach($output as $data){
+			$csv .= API::array_to_csv($data) . "\r\n";;
+		}
+
+		// output the data
+		return Response::make($csv, 200, static::$headers);
 	}
 
 	/**

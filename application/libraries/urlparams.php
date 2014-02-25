@@ -50,7 +50,7 @@ class URLParams {
 		}
 
 		// If on API url
-		if(URI::segment(1) == 'api'){
+		if(URI::segment(1) == 'api' || URI::segment(1) == 'export'){
 			static::$year = URI::segment(2);
 			static::$type = (URI::segment(3) == 'postgraduate') ? 'pg' : 'ug';
 			return;
