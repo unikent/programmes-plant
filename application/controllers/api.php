@@ -94,6 +94,263 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
+	 * Routing for /$year/$type/print-courses
+	 *
+	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/print-courses
+	 * Provides a list of courses in a simple csv format customised for print output purposes
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_printlist($year, $type, $start)
+	{
+
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// get the list of courses
+		$api_index = API::get_index($year, 'pg');
+		$listing = array();
+		$data = array();
+        // fetch each programme individually for our xcri feed
+        foreach (array_keys($api_index) as $programme_id) {
+	        try {
+	            $data['programmes'][] = API::get_programme('pg', $year, $programme_id);
+	        }
+	        catch (Exception $e) {
+	        }
+    	}
+
+    	$start--;
+    	$slice = array_slice($data['programmes'], (int)$start, 50);
+
+    	$n = 0;
+		foreach($slice as $programme) {
+			$n++;
+
+			$output = array();
+
+			$id = $programme['instance_id'];
+
+			//$output['count'] = $start + $n;
+
+			// pull out awards and combine into a comma separated list
+			$programme['award_list'] = '';
+			foreach ($programme['award'] as $award) if (!empty($award['name'])) $programme['award_list'] .= $award['name'] . ', ';
+			$programme['award_list'] = substr($programme['award_list'], 0, -2); // cuts off the final comma+space
+
+			// now set the programme title which is title + awards
+			$output['title'] = $programme['programme_title'];
+			$output['title'] .= ' (' . $programme['award_list'] . ')';
+			$output['title'] .=  $programme['subject_to_approval'] == 'true' ? " (subject to approval)" : '';
+
+			if ($programme['programme_suspended'] == 'true' || $programme['programme_withdrawn'] == 'true') {
+				$output['overview'] = $programme['holding_message'];
+			}
+			else {
+				$output['overview'] = $programme['schoolsubject_overview'];
+
+				// course structure data
+				$output['course structure']  = 'Course structure' . "\r\n\r\n";
+ 				if (!empty($programme['programme_overview'])) {
+ 					$output['course structure'] .= $programme['programme_overview']; 
+ 				}
+
+ 				$output['course structure'] .= 'Modules' . "\r\n";
+
+ 				$emptystages = true;
+ 				if ( isset ($programme['modules']) ) {
+					foreach($programme['modules'] as $module){
+						if ( ! empty($module->stages) ) {
+							$emptystages = false;
+						}
+					}
+				}
+
+				if ((empty($programme['modules'][0])) || $emptystages) {
+					if ( !empty($programme['modules_intro_no_pos']) ) {
+						$output['course structure'] .= $programme['modules_intro_no_pos'];
+					}
+				}
+				else {
+					$output['course structure'] .= $programme['modules_intro'];
+				}
+
+				// get modules from all deliveries as unique lists
+				$module_list = array();
+				if (!empty($programme['modules'])) {
+					foreach($programme['modules'] as $delivery_modules) {
+						if (!empty($delivery_modules->stages)) {
+							foreach($delivery_modules->stages as $stage){
+								foreach($stage->clusters as $clusters){
+									foreach($clusters as $cluster){
+										foreach($cluster->modules as $modules){
+											foreach($modules as $module){
+												//skip blanks
+												if ($module->module_code=='') continue;
+												// index on module code, so duplicates will just overwrite each other
+												$module_list[$module->module_code] = $module;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				foreach($module_list as $module) {
+					$output['course structure'] .= "$module->module_code  -  $module->module_title" . "\r\n" . "Credits: $module->credit_amount credits ( $module->ects_credit ECTS credits)." . "\r\n";
+	            }
+	            $output['course structure'] .= 'Assessment' . "\r\n" . $programme['assessment'];
+
+	            // study support
+	            $output['study support'] = 'Study support' . "\r\n";
+				$output['study support'] = !empty($programme['key_information_miscellaneous']) ? $programme['key_information_miscellaneous'] . "\r\n" : "\r\n";
+
+				if ( !empty($programme['careers_and_employability']) || !empty($programme['globals']['careersemployability_text']) ) {
+					$output['study support'] .= "Careers and employability" . "\r\n" . $programme['careers_and_employability'] . "\r\n";
+					$output['study support'] .= $programme['globals']['careersemployability_text'] . "\r\n";
+				}
+
+				if(!empty($programme['professional_recognition'])) {
+					$output['study support'] .= "Professional recognition" . "\r\n";
+					$output['study support'] .= $programme['professional_recognition'] . "\r\n";
+				}
+
+				if( ! empty($programme['did_you_know_fact_box']) ) {
+					$output['study support'] .= "National ratings" . "\r\n";
+					$output['study support'] .= $programme['did_you_know_fact_box'] . "\r\n";
+				}
+
+				// entry requirements
+				$output['entry requirements'] = 'Entry requirements' . "\r\n";
+				$output['entry requirements'] .= $programme['entry_requirements'] . "\r\n";
+				$output['entry requirements'] .= "General entry requirements" . "\r\n";
+				$output['entry requirements'] .= $programme['globals']['pg_general_entry_requirements'] . "\r\n";
+				$output['entry requirements'] .= (!empty($programme['english_language_requirements_intro_text'])) ? "English language entry requirements" . "\r\n" . $programme['english_language_requirements_intro_text'] . "\r\n" : "\r\n";
+
+
+				// Research areas
+				$output['research areas'] = 'Research areas' . "\r\n";
+				$output['research areas'] .= $programme['research_groups'];
+
+				// Staff research interests
+				$output['staff research interests'] = "Staff research interests" . "\r\n";
+
+				if ( strstr($programme['programme_type'], 'research') ) {
+					$output['staff research interests'] .= $programme['staff_research_interests_intro']. "\r\n";
+				}
+
+				if (!empty($programme['staff_profile_links'])) {
+					$output['staff research interests'] .= $programme['staff_profile_links']. "\r\n";
+				}
+				elseif (!empty($programme['staff_profiles'])) {
+					$output['staff research interests'] .= "Full details of staff research interests can be found at {$programme['staff_profiles']}" . "\r\n";
+				}
+
+				if (!empty($programme['staff_research_interests'])) {
+					foreach ( $programme['staff_research_interests'] as $staff ) {
+					 	if ( $staff['hidden'] == 0 ) {
+							$output['staff research interests'] .= $staff['title'] != '' ? $staff['title'] . ' '  : '';
+							$output['staff research interests'] .= $staff['forename'] . " " . $staff['surname'];
+							$output['staff research interests'] .= $staff['role'] != '' ? ' : ' . $staff['role'] : '';
+							$output['staff research interests'] .= "\r\n";
+							
+							if ( ! empty ($staff['blurb']) ) {
+								$output['staff research interests'] .= $staff['blurb']. "\r\n";
+								if ($staff['profile_url'] != '') { 
+									$output['staff research interests'] .= $staff['profile_url']. "\r\n";
+								}
+							}
+						}
+					}
+				}
+
+				// key facts
+				$output['key facts'] = 'Key facts' . "\r\n";
+				if (!empty($programme['additional_school'][0]) && !empty($programme['administrative_school'][0])) { 
+					$output['key facts'] .= "Schools: " . $programme['school_website'] . " " . $programme['administrative_school'][0]['name'] . ", " . $programme['url_for_additional_school'] . " " . $programme['additional_school'][0]['name'] . "\r\n";
+				}
+				else if (!empty($programme['administrative_school'][0])) {
+					$output['key facts'] .= $programme['school_website'] . " " . $programme['administrative_school'][0]['name'] . "\r\n";
+				}
+
+				// is there a second subject area?
+				$second_subject = (isset($programme['subject_area_2'][0]) && $programme['subject_area_2'][0] != null);
+				$output['key facts'] .= "Subject area: ";
+				$output['key facts'] .= $second_subject ? 's' : '';
+				$output['key facts'] .= $programme['subject_area_1'][0]['name'];
+				$output['key facts'] .= $second_subject ? ', ' . $programme['subject_area_2'][0]['name'] : '';
+				$output['key facts'] .= "\n\n";
+				$output['key facts'] .= "Award: " . $programme['award_list'] . "\r\n";
+				
+				$output['key facts'] .= "Course type: ";
+				if(strpos($programme['programme_type'], 'research') === false ) $output['key facts'] .= "Taught";
+				elseif(strpos($programme['programme_type'], 'taught') === false) $output['key facts'] .= "Research";
+				else $output['key facts'] .= "Taught-research";
+				$output['key facts'] .=  "\r\n";
+
+				$output['key facts'] .= "Location: ";
+				$locations = "{$programme['location'][0]['url']}" . " " . $programme['location'][0]['name'];
+				$additional_locations = '';
+				if ($programme['additional_locations'] != "") {
+					foreach ($programme['additional_locations'] as $key=>$additional_location) {
+						if ($additional_location != '') {
+							if ( $key == (sizeof($programme['additional_locations'])-1) ) {
+								$additional_locations .= " and " . $additional_location['url'] . " " . $additional_location['name'];
+							}
+							else {
+								$additional_locations .= ", " . $additional_location['url'] . " " . $additional_location['name'];
+							}
+						}
+					}
+				}
+				$output['key facts'] .= $locations.$additional_locations . "\r\n";
+				
+
+				$output['key facts'] .= "Mode of study: {$programme['mode_of_study']}" . "\r\n";
+
+				if (!empty($programme['attendance_mode'])) {
+					$output['key facts'] .= "Attendance mode: {$programme['attendance_mode']}" . "\r\n";
+				}
+
+				if (!empty($programme['attendance_text'])) {
+					$output['key facts'] .= "Duration: {$programme['attendance_text']}" . "\r\n";
+				} 
+				
+				if (!empty($programme['start'])) {
+					$output['key facts'] .= "Start: {$programme['start']}" . "\r\n";
+				}
+				
+				if (!empty($programme['accredited_by'])) {
+					$output['key facts'] .= "Accredited by: {$programme['accredited_by']}" . "\r\n";
+				}
+				
+				if (!empty($programme['total_kent_credits_awarded_on_completion'])) { 
+					$output['key facts'] .= "Total Kent credits: {$programme['total_kent_credits_awarded_on_completion']}" . "\r\n";
+				}
+			
+				if (!empty($programme['total_ects_credits_awarded_on_completion'])) {
+					$output['key facts'] .= "Total ECTS credits: {$programme['total_ects_credits_awarded_on_completion']}" . "\r\n";
+				}
+
+				$output['key facts'] .= "Postgraduate fees and funding information: http://www.kent.ac.uk/courses/funding/postgraduate/index.html";
+
+			}
+
+			$listing[] = $output;
+		}
+
+		// output the data
+		return static::csv_download($listing, "courses", $last_generated);
+		
+		
+	}
+
+	/**
 	 * Routing for /export/$year/$type/kis
 	 *
 	 * Export CSV of data for KIS
@@ -467,10 +724,10 @@ class API_Controller extends Base_Controller {
 
 		// Header line
 		$headings = array_keys( current($output) );
-		$csv = API::array_to_csv($headings). "\r\n";
+		$csv = API::array_to_csv($headings). "\r\r\n";
 		// csv body
 		foreach($output as $data){
-			$csv .= API::array_to_csv($data) . "\r\n";;
+			$csv .= API::array_to_csv($data) . "\r\r\n";;
 		}
 
 		// output the data
