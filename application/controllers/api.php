@@ -238,36 +238,36 @@ class API_Controller extends Base_Controller {
 				$output['research areas'] .= $programme['research_groups'];
 
 				// Staff research interests
-				$output['staff research interests'] = "Staff research interests" . "\r\n";
+				// $output['staff research interests'] = "Staff research interests" . "\r\n";
 
-				if ( strstr($programme['programme_type'], 'research') ) {
-					$output['staff research interests'] .= $programme['staff_research_interests_intro']. "\r\n";
-				}
+				// if ( strstr($programme['programme_type'], 'research') ) {
+				// 	$output['staff research interests'] .= $programme['staff_research_interests_intro']. "\r\n";
+				// }
 
-				if (!empty($programme['staff_profile_links'])) {
-					$output['staff research interests'] .= $programme['staff_profile_links']. "\r\n";
-				}
-				elseif (!empty($programme['staff_profiles'])) {
-					$output['staff research interests'] .= "Full details of staff research interests can be found at {$programme['staff_profiles']}" . "\r\n";
-				}
+				// if (!empty($programme['staff_profile_links'])) {
+				// 	$output['staff research interests'] .= $programme['staff_profile_links']. "\r\n";
+				// }
+				// elseif (!empty($programme['staff_profiles'])) {
+				// 	$output['staff research interests'] .= "Full details of staff research interests can be found at {$programme['staff_profiles']}" . "\r\n";
+				// }
 
-				if (!empty($programme['staff_research_interests'])) {
-					foreach ( $programme['staff_research_interests'] as $staff ) {
-					 	if ( $staff['hidden'] == 0 ) {
-							$output['staff research interests'] .= $staff['title'] != '' ? $staff['title'] . ' '  : '';
-							$output['staff research interests'] .= $staff['forename'] . " " . $staff['surname'];
-							$output['staff research interests'] .= $staff['role'] != '' ? ' : ' . $staff['role'] : '';
-							$output['staff research interests'] .= "\r\n";
+				// if (!empty($programme['staff_research_interests'])) {
+				// 	foreach ( $programme['staff_research_interests'] as $staff ) {
+				// 	 	if ( $staff['hidden'] == 0 ) {
+				// 			$output['staff research interests'] .= $staff['title'] != '' ? $staff['title'] . ' '  : '';
+				// 			$output['staff research interests'] .= $staff['forename'] . " " . $staff['surname'];
+				// 			$output['staff research interests'] .= $staff['role'] != '' ? ' : ' . $staff['role'] : '';
+				// 			$output['staff research interests'] .= "\r\n";
 							
-							if ( ! empty ($staff['blurb']) ) {
-								$output['staff research interests'] .= $staff['blurb']. "\r\n";
-								if ($staff['profile_url'] != '') { 
-									$output['staff research interests'] .= $staff['profile_url']. "\r\n";
-								}
-							}
-						}
-					}
-				}
+				// 			if ( ! empty ($staff['blurb']) ) {
+				// 				$output['staff research interests'] .= $staff['blurb']. "\r\n";
+				// 				if ($staff['profile_url'] != '') { 
+				// 					$output['staff research interests'] .= $staff['profile_url']. "\r\n";
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				// }
 
 				// key facts
 				$output['key facts'] = 'Key facts' . "\r\n";
