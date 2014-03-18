@@ -120,14 +120,14 @@ class API_Controller extends Base_Controller {
         $start--;
     	$slice = array_slice($index_programmes, (int)$start, 50);
 
-        foreach (array_keys($api_index) as $programme_id) {
+        foreach ($slice as $programme_id) {
 	        try {
 	            $data['programmes'][] = API::get_programme('pg', $year, $programme_id);
 	        }
 	        catch (Exception $e) {
 	        }
     	}
-    	
+
 		foreach($data['programmes'] as $programme) {
 
 			$output = array();
