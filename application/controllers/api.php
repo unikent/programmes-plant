@@ -124,7 +124,7 @@ class API_Controller extends Base_Controller {
     	}
 
     	$start--;
-    	$slice = array_slice($data['programmes'], (int)$start, 30);
+    	$slice = array_slice($data['programmes'], (int)$start, 10);
 
     	$n = 0;
 		foreach($slice as $programme) {
