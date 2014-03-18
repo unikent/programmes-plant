@@ -115,7 +115,12 @@ class API_Controller extends Base_Controller {
 		$listing = array();
 		$data = array();
         // fetch each programme individually for our xcri feed
-        foreach (array_keys($api_index) as $programme_id) {
+        $index_programmes = array_keys($api_index);
+
+        $start--;
+    	$slice = array_slice($index_programmes, (int)$start, 50);
+
+        foreach ($slice as $programme_id) {
 	        try {
 	            $data['programmes'][] = API::get_programme('pg', $year, $programme_id);
 	        }
@@ -123,18 +128,11 @@ class API_Controller extends Base_Controller {
 	        }
     	}
 
-    	$start--;
-    	$slice = array_slice($data['programmes'], (int)$start, 10);
-
-    	$n = 0;
-		foreach($slice as $programme) {
-			$n++;
+		foreach($data['programmes'] as $programme) {
 
 			$output = array();
 
 			$id = $programme['instance_id'];
-
-			//$output['count'] = $start + $n;
 
 			// pull out awards and combine into a comma separated list
 			$programme['award_list'] = '';
