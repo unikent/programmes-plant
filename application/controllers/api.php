@@ -94,6 +94,39 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
+	 * Routing for /$year/$type/course-ids
+	 *
+	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/course-ids
+	 * Provides a list of courses and ids in a simple csv format
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_verysimplelist($year, $type)
+	{
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// get the list of courses
+		$programmes = API::get_index($year); $listing = array();
+
+		// Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+			$output['id'] = $programme['id'];
+			$output['title'] = $programme['name'] . ' (' . $programme['award'] . ')';
+			$output['subject to approval'] = $programme['subject_to_approval'];
+			
+			$lising[] = $output;
+		}
+
+		// output the data
+		return static::csv_download($lising, "course-ids", $last_generated);
+	}
+
+	/**
 	 * Routing for /$year/$type/print-courses
 	 *
 	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/print-courses
