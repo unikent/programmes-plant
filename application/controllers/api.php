@@ -116,8 +116,8 @@ class API_Controller extends Base_Controller {
 		foreach($programmes as $programme) {
 			$output = array();
 			$output['id'] = $programme['id'];
-			$output['title'] = $programme['name'] . ' (' . $programme['award'] . ')';
-			$output['subject to approval'] = $programme['subject_to_approval'];
+			$output['title'] = $programme['name'] . ' ' . $programme['award'];
+			$output['title'] .= $programme['subject_to_approval'] == 'TRUE' ? ' (subject to approval)' : '';
 			
 			$lising[] = $output;
 		}
