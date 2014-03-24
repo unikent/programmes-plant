@@ -117,7 +117,7 @@ class API_Controller extends Base_Controller {
 			$output = array();
 			$output['id'] = $programme['id'];
 			$output['title'] = $programme['name'] . ' ' . $programme['award'];
-			$output['title'] .= $programme['subject_to_approval'] == 'TRUE' ? ' (subject to approval)' : '';
+			$output['title'] .= $programme['subject_to_approval'] != '' ? ' (subject to approval)' : '';
 			
 			$lising[] = $output;
 		}
