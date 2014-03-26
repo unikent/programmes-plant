@@ -89,8 +89,8 @@
     <p><strong>Creating a school course page?</strong></p>
     <p>Find out how to implement:</p>
     <ul>
-        <li><a href="http://www.kent.ac.uk/web/knowledgebase/index.php?action=artikel&cat=87&id=623&artlang=en">Course content snippet</a></li>
-        <li><a href="http://www.kent.ac.uk/web/knowledgebase/index.php?action=artikel&cat=87&id=625">Course summary snippet</a></li>
+        <li><a href="http://www.kent.ac.uk/web/knowledgebase/index.php?action=artikel&cat=87&id=623&artlang=en" target="_blanc">Course content snippet</a></li>
+        <li><a href="http://www.kent.ac.uk/web/knowledgebase/index.php?action=artikel&cat=87&id=625" target="_blanc">Course summary snippet</a></li>
     </ul>
 </div>
 
