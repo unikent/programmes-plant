@@ -380,11 +380,16 @@ abstract class Programme extends Revisionable {
 		foreach($programmes_with_live_revisions as $programme_with_live_revisions){
 			$live_revisions_ids[] = $programme_with_live_revisions->attributes['live_revision'];
 		} 
+
+		// if nothing is live in $year, dont continue
+		if(empty($live_revisions_ids)){
+			return array();
+		}
+	
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
 						->where_in('id', $live_revisions_ids)
 						->get($fields);
-
 
 		// Build index array
 		foreach($programmes as $programme)
@@ -629,6 +634,25 @@ abstract class Programme extends Revisionable {
 			'attributes' => $attributes,
  		);
 
+	}
+
+	public function use_revision($revision){
+		$revision = parent::use_revision($revision);
+		
+		// if the revision being used was last edited by a user 
+		// who does not have the permission to approve revisions,
+		// lock this programme to that user, else no leed to lock the programme
+		$user = User::where('username', '=', $revision->edits_by)->first();
+		if($user->can('approve_revisions')){
+			$this->locked_to = '';
+			parent::save();
+		}
+		else{
+			$this->locked_to = $user->username;
+			parent::save();
+		}
+
+		return $revision;
 	}
 
 
