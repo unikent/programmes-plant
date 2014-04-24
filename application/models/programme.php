@@ -631,5 +631,24 @@ abstract class Programme extends Revisionable {
 
 	}
 
+	public function use_revision($revision){
+		$revision = parent::use_revision($revision);
+		
+		// if the revision being used was last edited by a user 
+		// who does not have the permission to approve revisions,
+		// lock this programme to that user, else no leed to lock the programme
+		$user = User::where('username', '=', $revision->edits_by)->first();
+		if($user->can('approve_revisions')){
+			$this->locked_to = '';
+			parent::save();
+		}
+		else{
+			$this->locked_to = $user->username;
+			parent::save();
+		}
+
+		return $revision;
+	}
+
 
 }
