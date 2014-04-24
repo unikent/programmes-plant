@@ -381,7 +381,7 @@ abstract class Programme extends Revisionable {
 			$live_revisions_ids[] = $programme_with_live_revisions->attributes['live_revision'];
 		} 
 
-		// if nothing is live in $year, dont continue
+		// if nothing is live in $year, don't continue
 		if(empty($live_revisions_ids)){
 			return array();
 		}
@@ -641,7 +641,7 @@ abstract class Programme extends Revisionable {
 		
 		// if the revision being used was last edited by a user 
 		// who does not have the permission to approve revisions,
-		// lock this programme to that user, else no leed to lock the programme
+		// lock this programme to that user, else no need to lock the programme
 		$user = User::where('username', '=', $revision->edits_by)->first();
 		if($user->can('approve_revisions')){
 			$this->locked_to = '';
