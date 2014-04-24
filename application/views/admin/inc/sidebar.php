@@ -82,3 +82,15 @@
 
 </ul>
 </div>
+
+<br />
+
+<div class="navwell">
+    <p><strong>Creating a school course page?</strong></p>
+    <p>Find out how to implement:</p>
+    <ul>
+        <li><a href="http://www.kent.ac.uk/web/knowledge/publishing/snippets/advanced/articles/courses.html" target="_blank">The Courses snippets</a></li>
+    </ul>
+</div>
+
+<br />
