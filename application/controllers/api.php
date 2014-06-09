@@ -434,6 +434,50 @@ class API_Controller extends Base_Controller {
 		return static::csv_download($lising, "{$year} KIS Export", $last_generated);
 	}
 
+	/**
+	 * Routing for /export/$year/$type/last-updated
+	 *
+	 * Export CSV of last updated
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_lastupdated($year, $type){
+
+		// get last generated date 
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year); 
+		$model = API::get_programme_model();
+
+		$lising = array();
+
+		foreach($programmes as $programme) {
+			$output = array();
+			$output['Title'] = $programme['name'];
+			$output['Award'] = $programme['award'];
+
+			$output['Campus'] = $programme['campus'];
+
+			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first(array("updated_at"));
+			$output['Last Updated'] = $extra->updated_at;
+
+			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+		
+			$lising[] = $output;
+		}
+
+		// output the data
+		return static::csv_download($lising, "{$type}-{$year} Last Updated", $last_generated);
+
+	}
+
 
 	/**
 	 * Routing for /export/$year/$type/entry
