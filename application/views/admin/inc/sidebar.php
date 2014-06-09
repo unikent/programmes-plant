@@ -86,10 +86,10 @@
 <br />
 
 <div class="navwell">
-    <p><strong>Creating a school course page?</strong></p>
-    <p>Find out how to implement:</p>
+    <p><strong>Help</strong></p>
     <ul>
-        <li><a href="http://www.kent.ac.uk/web/knowledge/publishing/snippets/advanced/articles/courses.html" target="_blank">The Courses snippets</a></li>
+    <li><a href="http://www.kent.ac.uk/ems/progsplant/" target="_blank">Programmes plant help &amp; guidance.</a></li>
+        <li><a href="http://www.kent.ac.uk/web/knowledge/publishing/snippets/advanced/articles/courses.html" target="_blank">Creating a school course page using the XCRI Snippets.</a></li>
     </ul>
 </div>
 
