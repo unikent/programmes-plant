@@ -51,8 +51,14 @@
                 <?php if(strcmp($programme->attributes[$subject_to_approval_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.subject_to_approval_field_text')  ?></span>
                 <?php endif; ?>
+
+                <span class='programmes-last-updated'>
+                    Last updated:<br/>
+                    <?php echo $programme->updated_at; ?>
+                </span>
+                
             </td>
-            <td><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->attributes["id"]))?>"><?php echo  __('programmes.edit_programme') ?></a>
+            <td style='width:130px;'><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->attributes["id"]))?>"><?php echo  __('programmes.edit_programme') ?></a>
               <?php if($can_create_programmes): ?>
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->attributes["id"]))?>"><?php echo  __('programmes.clone') ?></a>
               <?php endif; ?>

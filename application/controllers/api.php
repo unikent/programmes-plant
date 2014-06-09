@@ -550,6 +550,84 @@ class API_Controller extends Base_Controller {
 		return static::csv_download($lising, "{$year} entry data export", $last_generated);
 	}
 
+	/**
+	 * Routing for /export/$year/$type/courses-without-fees
+	 *
+	 * Export courses without fees
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_courses_without_fees($year, $type)
+	{
+		// get last generated date 
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year); 
+		$model = API::get_programme_model();
+		$listing = array();
+		$level = $type == 'undergraduate' ? 'ug' : 'pg';
+		
+		// // Generate data format
+		foreach($programmes as $programme) {
+			$output = array();
+
+			$output['ID'] = $programme['id'];
+			$output['Title'] = $programme['name'];
+
+			$programme_api = array();
+			try{
+				$programme_api = API::get_programme($level, $year, $programme['id']);
+			} catch(Exception $e) {
+				continue;
+			}
+			
+			// PG
+			if ($level == 'pg') {
+				if (isset($programme_api['deliveries'])) {
+
+					$pos_without_fees = "";
+
+					foreach ($programme_api['deliveries'] as $delivery) {
+						if (!isset($delivery['fees']) || empty($delivery['fees'])) {
+							$pos_without_fees .= empty($pos_without_fees) ?  $delivery['pos_code'] : ', ' . $delivery['pos_code'];
+							$pos_without_fees = trim($pos_without_fees);
+						}
+					}
+
+					if (empty($pos_without_fees)) {
+						continue;
+					}
+
+					$output['POS WITHOUT FEES'] = $pos_without_fees;
+				}
+			}
+
+			// UG
+			else {
+				if (!empty($programme_api['fees'])) {
+					continue; // this ug programme has fees so skip it
+				}
+				$output['POS'] = $programme['pos_code'];
+			}
+		
+
+			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
+
+			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+			$listing[] = $output;
+		}
+			
+		// output the data
+		return static::csv_download($listing, "{$year} {$type} courses without fees", $last_generated);
+	}
+
 
 
 	/**
