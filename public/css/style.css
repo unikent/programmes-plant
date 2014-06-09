@@ -212,3 +212,10 @@ a.scroll-to-top {
     opacity:0.8;
 }
 
+
+.programmes-last-updated {
+    font-size:0.9em; 
+    color:#aaa;
+    float:right; 
+}
+
