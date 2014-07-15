@@ -18,8 +18,6 @@ class SITSImport_Task {
             $course_id = substr($course->programmePlantID, 0, count($course->programmePlantID) - 3);
             $course_attendance_pattern = strtolower($course->attendanceType);
             $course_level = '';
-            $current_ipo = '';
-            $previous_ipo = '';
             $current_ipo_column_name = 'current_ipo';
             $previous_ipo_column_name = 'previous_ipo';
             $programme = false;
