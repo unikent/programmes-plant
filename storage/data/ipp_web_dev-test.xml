@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<courses xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<course>
+		<mcr>PIAF000101MS-FD</mcr>
+		<programmePlantID>24PG</programmePlantID>
+		<createdDate>26/Jun/2013 20:22:50.26</createdDate>
+		<updatedDate>26/Jun/2013 20:22:50.26</updatedDate> 
+		<description>International Accounting &amp; Finance - MSc - Full-time at Canterbury</description> 
+		<attendanceType>Full-time</attendanceType>
+		<award>Master of Science</award>
+		<pos>INTLACCF:MSC-T1</pos>
+
+		<ipo>
+			<sequence>0003</sequence>
+			<academicYear>2015</academicYear>
+			<startDate>29/Sep/2014</startDate>
+			<closingDate>29/Sep/2014</closingDate>
+		</ipo>
+
+		<ipo>
+			<sequence>0002</sequence>
+			<academicYear>2014</academicYear>
+			<startDate>29/Sep/2013</startDate>
+			<closingDate>29/Sep/2014</closingDate>
+		</ipo>
+
+
+	</course>
+	<course>
+		<mcr>PIAF000101MS-PD</mcr>
+		<programmePlantID>24PG</programmePlantID>
+		<createdDate>26/Jun/2013 20:22:50.27</createdDate>
+		<updatedDate>26/Jun/2013 20:22:50.27</updatedDate> 
+		<description>International Accounting &amp; Finance - MSc - Part-time at Canterbury</description> 
+		<attendanceType>Part-time</attendanceType>
+		<award>Master of Science</award>
+		<pos>INTLACCF:MSC-T1</pos>
+
+		<ipo>
+			<sequence>0002</sequence>
+			<academicYear>2015</academicYear>
+			<startDate>29/Sep/2014</startDate>
+			<closingDate>29/Sep/2014</closingDate>
+		</ipo>
+
+
+	</course>
+</courses>
