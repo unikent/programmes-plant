@@ -156,28 +156,29 @@ class SITSImport_Task {
                 }
             }
         }
+        // ug - only part-time is relevant here
         else {
             // go through all the ipos and get the first one in the current year
             foreach ($ipos as $ipo) {
+
+                // make sure we set the right ipo column for current and previous years
+                $colname = '';
                 if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                    $programme->$current_ipo_column_name = $ipo->sequence;
-                    foreach ($revisions as $revision) {
-                        $revision->$current_ipo_column_name = $ipo->sequence;
-                        $revision->parttime_mcr_code_87 = $mcr;
-                        $revision->pos_code_44 = $pos;
-                        $revision->save();
-                    }
+                    $colname = $current_ipo_column_name;
                     $current_ipo_is_set = true;
                 }
                 elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                    $programme->$previous_ipo_column_name = $ipo->sequence;
-                    foreach ($revisions as $revision) {
-                        $revision->$previous_ipo_column_name = $ipo->sequence;
-                        $revision->parttime_mcr_code_87 = $mcr;
-                        $revision->pos_code_44 = $pos;
-                        $revision->save();
-                    }
+                    $colname = $previous_ipo_column_name;
                     $previous_ipo_is_set = true;
+                }
+
+                // sort out all the revisions too
+                $programme->$colname = $ipo->sequence;
+                foreach ($revisions as $revision) {
+                    $revision->$colname = $ipo->sequence;
+                    $revision->parttime_mcr_code_87 = $mcr;
+                    $revision->pos_code_44 = $pos;
+                    $revision->save();
                 }
 
                 // if both IPOs are set the exit the loop
