@@ -12,14 +12,14 @@
 		<pos>INTLACCF:MSC-T1</pos>
 
 		<ipo>
-			<sequence>0003</sequence>
+			<sequence>0006</sequence>
 			<academicYear>2015</academicYear>
 			<startDate>29/Sep/2014</startDate>
 			<closingDate>29/Sep/2014</closingDate>
 		</ipo>
 
 		<ipo>
-			<sequence>0002</sequence>
+			<sequence>0005</sequence>
 			<academicYear>2014</academicYear>
 			<startDate>29/Sep/2013</startDate>
 			<closingDate>29/Sep/2014</closingDate>
@@ -38,7 +38,7 @@
 		<pos>INTLACCF:MSC-T1</pos>
 
 		<ipo>
-			<sequence>0002</sequence>
+			<sequence>0004</sequence>
 			<academicYear>2015</academicYear>
 			<startDate>29/Sep/2014</startDate>
 			<closingDate>29/Sep/2014</closingDate>
@@ -46,4 +46,54 @@
 
 
 	</course>
+
+<course>
+<mcr>UWIL000105BS-PD-xxpt</mcr>
+<programmePlantID>30UG</programmePlantID>
+<createdDate>26/Jun/2013 20:23:11.88</createdDate>
+<updatedDate>26/Jun/2013 20:23:11.88</updatedDate> 
+<description>Wildlife Conservation - BSc (Hons) - Part-time at Canterbury</description> 
+<attendanceType>Part-time</attendanceType>
+<award>Bachelor of Science with Honours</award>
+<pos>WILDCON:BSC1QQ</pos>
+
+<ipo>
+<sequence>0019</sequence>
+<academicYear>2014</academicYear>
+<startDate>29/Sep/2014</startDate>
+<closingDate>29/Sep/2014</closingDate>
+</ipo>
+
+<ipo>
+<sequence>0020</sequence>
+<academicYear>2015</academicYear>
+<startDate>29/Sep/2014</startDate>
+<closingDate>29/Sep/2014</closingDate>
+</ipo>
+
+<ipo>
+<sequence>0021</sequence>
+<academicYear>2016</academicYear>
+<startDate>29/Sep/2014</startDate>
+<closingDate>29/Sep/2014</closingDate>
+</ipo>
+
+
+</course>
+
+
+
+<course>
+<mcr>UWIL000105BS-FD-xxft</mcr>
+<programmePlantID>30UG</programmePlantID>
+<createdDate>26/Jun/2013 20:23:11.88</createdDate>
+<updatedDate>26/Jun/2013 20:23:11.88</updatedDate> 
+<description>Wildlife Conservation - BSc (Hons) - Full-time at Canterbury</description> 
+<attendanceType>Full-time</attendanceType>
+<award>Bachelor of Science with Honours</award>
+<pos>WILDCON:BSC1QQ</pos>
+</course>
+
+
+
 </courses>

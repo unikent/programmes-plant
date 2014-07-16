@@ -11,6 +11,17 @@ class SITSImport_Task {
      */
     public function run($arguments = array())
     {
+        // clear out the api output cache completely so we can regenerate the cache now including the new module data
+        try
+        {
+            Cache::purge('api-output-pg');
+            Cache::purge('api-output-ug');
+        }
+        catch(Exception $e)
+        {
+            echo 'No cache to purge';
+        }
+
         $courses = simplexml_load_file(path('base') . 'storage/data/ipp_web_dev-test.xml');
         $seen_programmes = array();
         
@@ -44,6 +55,8 @@ class SITSImport_Task {
             //get the associated programme
             $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', Setting::get_setting($course_level . "_current_year"))->first();
 
+            $year = Setting::get_setting($course_level . "_current_year");
+
             // only continue if the programme is found
             if (!empty($programme)) {
 
@@ -51,8 +64,22 @@ class SITSImport_Task {
                     case 'ug':
                         // this only applies to part time courses
                         if ($course_attendance_pattern == 'part-time') {
-                            $this->set_ipo($programme, $ipos, $current_ipo_column_name, $previous_ipo_column_name);
-                            $programme->save();
+                            $revisions = $programme->get_revisions();
+                            $this->set_ipo($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name);
+                            $programme->parttime_mcr_code_87 = "$course->mcr";
+                            $programme->pos_code_44 = "$course->pos";
+                            $programme->raw_save();
+                        }
+                        elseif ($course_attendance_pattern == 'full-time') {
+                            $programme->fulltime_mcr_code_88 = "$course->mcr";
+                            $programme->pos_code_44 = $course->pos;
+                            $programme->raw_save();
+                            $revisions = $programme->get_revisions();
+                            foreach ($revisions as $revision) {
+                                $revision->fulltime_mcr_code_88 = "$course->mcr";
+                                $revision->pos_code_44 = "$course->pos";
+                                $revision->save();
+                            }
                         }
                         
                         break;
@@ -77,7 +104,7 @@ class SITSImport_Task {
                         $delivery->description = $course->description;
                         $delivery->attendance_pattern = $course_attendance_pattern;
 
-                        $this->set_ipo($programme, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery);
+                        $this->set_ipo($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery);
 
                         $delivery->save();
 
@@ -86,6 +113,9 @@ class SITSImport_Task {
                         # code...
                         break;
                 }
+
+                $revision = $programme->find_live_revision();
+                $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
                 
             }
 
@@ -99,30 +129,64 @@ class SITSImport_Task {
         echo "Done!\n";
     }
 
-    public function set_ipo($programme, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery = false){
+    public function set_ipo($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery = false){
+
+        Auth::login(1);
+
         $current_ipo_is_set = false;
         $previous_ipo_is_set = false;
-        $mcr_object = !empty($delivery) ? $delivery : $programme;
 
-        foreach ($ipos as $ipo) {
-            if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                //print_r($mcr_object);
-                $mcr_object->$current_ipo_column_name = $ipo->sequence;
-                //$mcr_object->save();
-                $current_ipo_is_set = true;
-            }
-            elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                //print_r($mcr_object);
-                $mcr_object->$previous_ipo_column_name = $ipo->sequence;
-                //$mcr_object->save();
-                $previous_ipo_is_set = true;
-            }
+        // ug keeps mcr+ipo data at the programme level. pg keeps it in a delivery object
+        if (!empty($delivery)) {
 
-            // if both IPOs are set the exit the
-            if ($current_ipo_is_set && $previous_ipo_is_set) {
-                break;
+            // go through all the ipos and get the first one in the current year
+            foreach ($ipos as $ipo) {
+                if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
+                    $delivery->$current_ipo_column_name = $ipo->sequence;
+                    $current_ipo_is_set = true;
+                }
+                elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
+                    $delivery->$previous_ipo_column_name = $ipo->sequence;
+                    $previous_ipo_is_set = true;
+                }
+
+                // if both IPOs are set the exit the loop
+                if ($current_ipo_is_set && $previous_ipo_is_set) {
+                    break;
+                }
             }
         }
+        else {
+            // go through all the ipos and get the first one in the current year
+            foreach ($ipos as $ipo) {
+                if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
+                    $programme->$current_ipo_column_name = $ipo->sequence;
+                    foreach ($revisions as $revision) {
+                        $revision->$current_ipo_column_name = $ipo->sequence;
+                        $revision->parttime_mcr_code_87 = $mcr;
+                        $revision->pos_code_44 = $pos;
+                        $revision->save();
+                    }
+                    $current_ipo_is_set = true;
+                }
+                elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
+                    $programme->$previous_ipo_column_name = $ipo->sequence;
+                    foreach ($revisions as $revision) {
+                        $revision->$previous_ipo_column_name = $ipo->sequence;
+                        $revision->parttime_mcr_code_87 = $mcr;
+                        $revision->pos_code_44 = $pos;
+                        $revision->save();
+                    }
+                    $previous_ipo_is_set = true;
+                }
+
+                // if both IPOs are set the exit the loop
+                if ($current_ipo_is_set && $previous_ipo_is_set) {
+                    break;
+                }
+            }
+        }
+
     }
     
 }
