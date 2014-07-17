@@ -65,7 +65,7 @@ class SITSImport_Task {
                         // this only applies to part time courses
                         if ($course_attendance_pattern == 'part-time') {
                             $revisions = $programme->get_revisions();
-                            $this->set_ipo($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name);
+                            $this->set_values($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name);
                             $programme->parttime_mcr_code_87 = "$course->mcr";
                             $programme->pos_code_44 = "$course->pos";
                             $programme->raw_save();
@@ -104,7 +104,7 @@ class SITSImport_Task {
                         $delivery->description = $course->description;
                         $delivery->attendance_pattern = $course_attendance_pattern;
 
-                        $this->set_ipo($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery);
+                        $this->set_values($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery);
 
                         $delivery->save();
 
@@ -129,7 +129,7 @@ class SITSImport_Task {
         echo "Done!\n";
     }
 
-    public function set_ipo($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery = false){
+    public function set_values($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery = false){
 
         Auth::login(1);
 
