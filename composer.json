@@ -1,7 +1,8 @@
 {
     "require": {
         "phpunit/phpunit": "3.7.*@dev",
-        "unikent/programmes-plant-modules": "dev-master"
+        "unikent/programmes-plant-modules": "dev-master",
+		"mockery/mockery": "dev-master"
     },
     "repositories": [
         {

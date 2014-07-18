@@ -140,7 +140,8 @@ Route::group(array('before' => ''), function(){
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/kis', 'api@export_kisdata');
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/entry', 'api@export_entrydata');
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/print-courses/(:num?)', 'api@printlist'); // as per the simplelist csv output, but with fields that are more relevant for the printed prospectus
-
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/last-updated', 'api@export_lastupdated'); 
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses-without-fees', 'api@courses_without_fees'); // get courses that don't yet have fees data
 });
 
 // Login/out
