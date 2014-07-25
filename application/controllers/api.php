@@ -559,7 +559,13 @@ class API_Controller extends Base_Controller {
 	 * @param string $type Undergraduate or postgraduate.
 	 */
 	public function get_courses_without_fees($year, $type)
-	{
+	{	
+		// Since this a none-user facing report which will be run pretty irregularity,
+		// optimizing its at this point feels as if it will be a waste of effort that could
+		// be better spent optimizing other parts of the code base.
+		// Since this report being slow doesn't really matter, I've upped the timeout for this report to 60 seconds
+		set_time_limit(60);
+		
 		// get last generated date 
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
