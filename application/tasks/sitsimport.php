@@ -22,11 +22,15 @@ class SITSImport_Task {
             echo 'No cache to purge';
         }
 
-        $courses = simplexml_load_file(path('base') . 'storage/data/ipp_web_dev-test.xml');
+        //$courses = simplexml_load_file(path('base') . 'storage/data/ipp_web_dev-test.xml');
+        $courses = simplexml_load_file(path('base') . 'storage/data/sits.xml');
         $seen_programmes = array();
         
         foreach ($courses as $course) {
-            $course_id = substr($course->programmePlantID, 0, count($course->programmePlantID) - 3);
+            if ($course->progID == '' || !isset($course->ipo) || !isset($course->ari_code)) {
+                continue;
+            }
+            $course_id = substr($course->progID, 0, count($course->progID) - 3);
             $course_attendance_pattern = strtolower($course->attendanceType);
             $course_level = '';
             $current_ipo_column_name = 'current_ipo';
@@ -39,7 +43,7 @@ class SITSImport_Task {
             }
 
             // set ug specific vars
-            if (strpos(strtolower($course->programmePlantID), 'ug') !== false ) {
+            if (strpos(strtolower($course->progID), 'ug') !== false ) {
                 $course_level = 'ug';
                 $current_ipo_column_name = 'current_ipo_pt';
                 $previous_ipo_column_name = 'previous_ipo_pt';
@@ -47,7 +51,7 @@ class SITSImport_Task {
             }
 
             // set pg specific vars
-            elseif (strpos(strtolower($course->programmePlantID), 'pg') !== false ) {
+            elseif (strpos(strtolower($course->progID), 'pg') !== false ) {
                 $course_level = 'pg';
                 $programme_model = "PG_Programme";
             }
@@ -65,7 +69,7 @@ class SITSImport_Task {
                         // this only applies to part time courses
                         if ($course_attendance_pattern == 'part-time') {
                             $revisions = $programme->get_revisions();
-                            $this->set_values($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name);
+                            $this->set_values($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code");
                             $programme->parttime_mcr_code_87 = "$course->mcr";
                             $programme->pos_code_44 = "$course->pos";
                             $programme->raw_save();
@@ -129,7 +133,7 @@ class SITSImport_Task {
         echo "Done!\n";
     }
 
-    public function set_values($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery = false){
+    public function set_values($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $ari_code, $delivery = false){
 
         Auth::login(1);
 
@@ -139,15 +143,20 @@ class SITSImport_Task {
         // ug keeps mcr+ipo data at the programme level. pg keeps it in a delivery object
         if (!empty($delivery)) {
 
+            $delivery->ari_code = $ari_code;
+
             // go through all the ipos and get the first one in the current year
             foreach ($ipos as $ipo) {
                 if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                    $delivery->$current_ipo_column_name = $ipo->sequence;
+                    $delivery->$current_ipo_column_name = (string)$ipo->sequence;
                     $current_ipo_is_set = true;
                 }
                 elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                    $delivery->$previous_ipo_column_name = $ipo->sequence;
+                    $delivery->$previous_ipo_column_name = (string)$ipo->sequence;
                     $previous_ipo_is_set = true;
+                }
+                else {
+                    continue;
                 }
 
                 // if both IPOs are set the exit the loop
@@ -171,11 +180,16 @@ class SITSImport_Task {
                     $colname = $previous_ipo_column_name;
                     $previous_ipo_is_set = true;
                 }
+                else {
+                    continue;
+                }
 
                 // sort out all the revisions too
-                $programme->$colname = $ipo->sequence;
+                $programme->$colname = (string)$ipo->sequence;
+                $programme->ari_code = $ari_code;
                 foreach ($revisions as $revision) {
-                    $revision->$colname = $ipo->sequence;
+                    $revision->ari_code = $ari_code;
+                    $revision->$colname = (string)$ipo->sequence;
                     $revision->parttime_mcr_code_87 = $mcr;
                     $revision->pos_code_44 = $pos;
                     $revision->save();
