@@ -21,8 +21,7 @@ class SITSImport_Task {
         {
             echo 'No cache to purge';
         }
-
-        //$courses = simplexml_load_file(path('base') . 'storage/data/ipp_web_dev-test.xml');
+        
         $courses = simplexml_load_file(path('base') . 'storage/data/sits.xml');
         $seen_programmes = array();
         
@@ -108,7 +107,7 @@ class SITSImport_Task {
                         $delivery->description = $course->description;
                         $delivery->attendance_pattern = $course_attendance_pattern;
 
-                        $this->set_values($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $delivery);
+                        $this->set_values($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code", $delivery);
 
                         $delivery->save();
 
