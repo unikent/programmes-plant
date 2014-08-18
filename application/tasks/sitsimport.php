@@ -122,7 +122,7 @@ class SITSImport_Task {
                 }
 
                 $revision = $programme->find_live_revision();
-                if ( !empty($programme) && is_object($programme) ) $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
+                if ( !empty($revision) && is_object($revision) ) $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
                 
             }
 
