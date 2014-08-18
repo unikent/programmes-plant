@@ -142,6 +142,7 @@ class SITSImport_Task {
         // ug keeps mcr+ipo data at the programme level. pg keeps it in a delivery object
         if (!empty($delivery)) {
 
+            // we always need to set the ari code
             $delivery->ari_code = $ari_code;
 
             // go through all the ipos and get the first one in the current year
@@ -166,37 +167,51 @@ class SITSImport_Task {
         }
         // ug - only part-time is relevant here
         else {
-            // go through all the ipos and get the first one in the current year
-            foreach ($ipos as $ipo) {
 
-                // make sure we set the right ipo column for current and previous years
-                $colname = '';
-                if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                    $colname = $current_ipo_column_name;
-                    $current_ipo_is_set = true;
-                }
-                elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                    $colname = $previous_ipo_column_name;
-                    $previous_ipo_is_set = true;
-                }
-                else {
-                    continue;
-                }
-
-                // sort out all the revisions too
-                $programme->$colname = (string)$ipo->sequence;
+            // if there are no ipos for this course, we still want to set the ari_code and other bits
+            // sort out all the revisions too
+            if (empty($ipos)) {
                 $programme->ari_code = $ari_code;
                 foreach ($revisions as $revision) {
                     $revision->ari_code = $ari_code;
-                    $revision->$colname = (string)$ipo->sequence;
                     $revision->parttime_mcr_code_87 = $mcr;
                     $revision->pos_code_44 = $pos;
                     $revision->save();
                 }
+            }
+            else {
+                // go through all the ipos and get the first one in the current year
+                foreach ($ipos as $ipo) {
 
-                // if both IPOs are set the exit the loop
-                if ($current_ipo_is_set && $previous_ipo_is_set) {
-                    break;
+                    // make sure we set the right ipo column for current and previous years
+                    $colname = '';
+                    if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
+                        $colname = $current_ipo_column_name;
+                        $current_ipo_is_set = true;
+                    }
+                    elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
+                        $colname = $previous_ipo_column_name;
+                        $previous_ipo_is_set = true;
+                    }
+                    else {
+                        continue;
+                    }
+
+                    // sort out all the revisions too
+                    $programme->$colname = (string)$ipo->sequence;
+                    $programme->ari_code = $ari_code;
+                    foreach ($revisions as $revision) {
+                        $revision->ari_code = $ari_code;
+                        $revision->$colname = (string)$ipo->sequence;
+                        $revision->parttime_mcr_code_87 = $mcr;
+                        $revision->pos_code_44 = $pos;
+                        $revision->save();
+                    }
+
+                    // if both IPOs are set the exit the loop
+                    if ($current_ipo_is_set && $previous_ipo_is_set) {
+                        break;
+                    }
                 }
             }
         }
