@@ -22,7 +22,7 @@ class SITSImport_Task {
             echo 'No cache to purge';
         }
         
-        $courses = simplexml_load_file(path('base') . 'storage/data/sits.xml');
+        $courses = simplexml_load_file(path('storage') . 'data/sits.xml');
         $seen_programmes = array();
         
         foreach ($courses as $course) {
