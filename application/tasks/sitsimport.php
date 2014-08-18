@@ -26,7 +26,7 @@ class SITSImport_Task {
         $seen_programmes = array();
         
         foreach ($courses as $course) {
-            if ($course->progID == '' || !isset($course->ipo) || !isset($course->ari_code)) {
+            if ($course->progID == '') {
                 continue;
             }
             $course_id = substr($course->progID, 0, count($course->progID) - 3);
