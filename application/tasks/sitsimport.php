@@ -71,16 +71,19 @@ class SITSImport_Task {
                             $this->set_values($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code");
                             $programme->parttime_mcr_code_87 = "$course->mcr";
                             $programme->pos_code_44 = "$course->pos";
+                            $programme->ari_code = "$course->ari_code";
                             $programme->raw_save();
                         }
                         elseif ($course_attendance_pattern == 'full-time') {
                             $programme->fulltime_mcr_code_88 = "$course->mcr";
-                            $programme->pos_code_44 = $course->pos;
+                            $programme->pos_code_44 = "$course->pos";
+                            $programme->ari_code = "$course->ari_code";
                             $programme->raw_save();
                             $revisions = $programme->get_revisions();
                             foreach ($revisions as $revision) {
                                 $revision->fulltime_mcr_code_88 = "$course->mcr";
                                 $revision->pos_code_44 = "$course->pos";
+                                $revision->ari_code = "$course->ari_code";
                                 $revision->save();
                             }
                         }
@@ -102,9 +105,10 @@ class SITSImport_Task {
                         $award = PG_Award::where('longname', '=', $course->award)->first();
                         $delivery->award = !empty($award) ? $award->id : 0;
 
-                        $delivery->pos_code = $course->pos;
-                        $delivery->mcr = $course->mcr;
-                        $delivery->description = $course->description;
+                        $delivery->pos_code = "$course->pos";
+                        $delivery->mcr = "$course->mcr";
+                        $delivery->ari_code = "$course->ari_code";
+                        $delivery->description = "$course->description";
                         $delivery->attendance_pattern = $course_attendance_pattern;
 
                         $this->set_values($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code", $delivery);
@@ -118,7 +122,7 @@ class SITSImport_Task {
                 }
 
                 $revision = $programme->find_live_revision();
-                $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
+                if ( if ( !empty($programme) && is_object($programme) ) ) $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
                 
             }
 
@@ -141,9 +145,6 @@ class SITSImport_Task {
 
         // ug keeps mcr+ipo data at the programme level. pg keeps it in a delivery object
         if (!empty($delivery)) {
-
-            // we always need to set the ari code
-            $delivery->ari_code = $ari_code;
 
             // go through all the ipos and get the first one in the current year
             foreach ($ipos as $ipo) {
@@ -171,7 +172,6 @@ class SITSImport_Task {
             // if there are no ipos for this course, we still want to set the ari_code and other bits
             // sort out all the revisions too
             if (empty($ipos)) {
-                $programme->ari_code = $ari_code;
                 foreach ($revisions as $revision) {
                     $revision->ari_code = $ari_code;
                     $revision->parttime_mcr_code_87 = $mcr;
@@ -199,7 +199,6 @@ class SITSImport_Task {
 
                     // sort out all the revisions too
                     $programme->$colname = (string)$ipo->sequence;
-                    $programme->ari_code = $ari_code;
                     foreach ($revisions as $revision) {
                         $revision->ari_code = $ari_code;
                         $revision->$colname = (string)$ipo->sequence;
