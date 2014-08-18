@@ -61,7 +61,7 @@ class SITSImport_Task {
             $year = Setting::get_setting($course_level . "_current_year");
 
             // only continue if the programme is found
-            if (!empty($programme)) {
+            if ( !empty($programme) && is_object($programme) ) {
 
                 switch ($course_level) {
                     case 'ug':
