@@ -58,6 +58,8 @@ class SITSImport_Task {
             //get the associated programme
             $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', Setting::get_setting($course_level . "_current_year"))->first();
 
+            $programme_id = $programme->programme_id;
+
             $year = Setting::get_setting($course_level . "_current_year");
 
             // only continue if the programme is found
@@ -93,14 +95,14 @@ class SITSImport_Task {
                     case 'pg':
                         URLParams::$type = 'pg';
                         // blits the deliveries for this programme if its the first time we're encountering it
-                        if (!in_array($course_id, $seen_programmes)) {
+                        if (!in_array($programme_id, $seen_programmes)) {
                             foreach ($programme->get_deliveries() as $delivery) {
                                 $delivery->delete();
                             }
                         }
 
                         $delivery = new PG_Deliveries;
-                        $delivery->programme_id = $course_id;
+                        $delivery->programme_id = $programme_id;
 
                         $award = PG_Award::where('longname', '=', $course->award)->first();
                         $delivery->award = !empty($award) ? $award->id : 0;
@@ -127,8 +129,8 @@ class SITSImport_Task {
             }
 
             // add this programme to a list of seen programmes
-            if (!in_array($course_id, $seen_programmes)) {
-                $seen_programmes[] = $course_id;
+            if (!in_array($programme_id, $seen_programmes)) {
+                $seen_programmes[] = $programme_id;
             }
             
         }
