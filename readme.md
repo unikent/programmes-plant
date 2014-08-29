@@ -65,6 +65,13 @@ Want to consume the data from a Programmes Plant API? Consider using our [PHP li
 
 Want to see what a front-end to this data might look like using this library? See [Of Course](https://github.com/unikent/of-course).
 
+## Course data from SITS
+
+The task file `sitsimport.php` can be run manually on the server, but is set up to run as a cron every night at 4am (under user fm200). The task reads a SITS export XML file sitting in our shared `/data` folder. The task then reads in data from the file and creates entries in the current year of UG (in the programme and programme_revisions) and PG (in deliveries). The data imported is IPO, POS code, MCR code, ARI code, description, award, and full-time/part-time.
+
+The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS when the click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+
+
 ## Licensing
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
