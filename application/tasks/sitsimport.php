@@ -57,13 +57,13 @@ class SITSImport_Task {
 
             //get the associated programme
             $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', '2015'/*Setting::get_setting($course_level . "_current_year")*/)->first();
-
-            $programme_id = $programme->id;
-
+            
             $year = '2015';//Setting::get_setting($course_level . "_current_year");
 
             // only continue if the programme is found
             if ( !empty($programme) && is_object($programme) ) {
+
+                $programme_id = $programme->id;
 
                 switch ($course_level) {
                     case 'ug':
