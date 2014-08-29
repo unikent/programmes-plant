@@ -56,11 +56,11 @@ class SITSImport_Task {
             }
 
             //get the associated programme
-            $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', Setting::get_setting($course_level . "_current_year"))->first();
+            $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', '2015'/*Setting::get_setting($course_level . "_current_year")*/)->first();
 
             $programme_id = $programme->id;
 
-            $year = Setting::get_setting($course_level . "_current_year");
+            $year = '2015';//Setting::get_setting($course_level . "_current_year");
 
             // only continue if the programme is found
             if ( !empty($programme) && is_object($programme) ) {
@@ -94,8 +94,9 @@ class SITSImport_Task {
 
                     case 'pg':
                         URLParams::$type = 'pg';
-                        // blits the deliveries for this programme if its the first time we're encountering it
+                        // blitz the deliveries for this programme if its the first time we're encountering it
                         if (!in_array($programme_id, $seen_programmes)) {
+                            $seen_programmes[] = $programme_id;
                             foreach ($programme->get_deliveries() as $delivery) {
                                 $delivery->delete();
                             }
@@ -126,11 +127,6 @@ class SITSImport_Task {
                 $revision = $programme->find_live_revision();
                 if ( !empty($revision) && is_object($revision) ) $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
                 
-            }
-
-            // add this programme to a list of seen programmes
-            if (!in_array($programme_id, $seen_programmes)) {
-                $seen_programmes[] = $programme_id;
             }
             
         }
