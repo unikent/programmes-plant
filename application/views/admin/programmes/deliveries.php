@@ -16,10 +16,9 @@
 <body>
 
 <?php
-
-	//if(!Auth::user()->can("view_pg_deliveries")) die();
-
-	$disabled = !Auth::user()->can("edit_pg_deliveries");
+	
+	// deliveries section is always disabled now
+	$disabled = true;
 
 	$field_state = ($disabled) ? array('disabled'=>'disabled') : array();
 
@@ -33,7 +32,7 @@
 					<tr>
 						<th> Award </th>
 						<th> POS Code </th>
-						<th>  MCR Code </th>
+						<th> MCR Code </th>
 						<th> Attendence pattern  </th>
 						<th> Description</th>
 					</tr>
