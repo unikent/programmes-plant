@@ -21,7 +21,7 @@ class TestCampuses_Controller extends ControllerTestCase
 		$html = $this->get_create_page();
 
 		$document = new DOMDocument;
-		$document->loadHTML( $html );
+		@$document->loadHTML( $html );
 		$xpath    = new DOMXPath( $document );
 
 		$fields = array(
