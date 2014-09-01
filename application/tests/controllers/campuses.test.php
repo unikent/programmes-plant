@@ -20,6 +20,10 @@ class TestCampuses_Controller extends ControllerTestCase
 	{
 		$html = $this->get_create_page();
 
+		$document = new DOMDocument;
+		$document->loadHTML( $html );
+		$xpath    = new DOMXPath( $document );
+
 		$fields = array(
 			'description' => 'textarea',
 			'identifier' => 'input',
@@ -36,19 +40,17 @@ class TestCampuses_Controller extends ControllerTestCase
 
 		foreach($fields as $field => $tag)
 		{
-			$matcher = array(
-			'tag' => $tag,
-			'attributes' => array('name' => $field)
-			);
+			// Ensure input/textarea
+			$this->assertEquals(
+				1, $xpath->query( "//{$tag}[@name = \"{$field}\"]" )->length,
+				"$field (form element type $tag) is missing from the create form"
+		 	);
+			// ensure label
+			$this->assertEquals(
+				1, $xpath->query( "//label[@for = \"{$field}\"]" )->length,
+				"$field (form element type $tag) is missing from the create form"
+		 	);
 
-			$this->assertTag($matcher, $html, "$field (form element type $tag) is missing from the create form");
-
-			$matcher = array(
-				'tag' => 'label',
-				'attributes' => array('for' => $field)
-			);
-
-			$this->assertTag($matcher, $html, "$field (form element type $tag) is missing from the create form");
 		}
 	}
 
