@@ -80,7 +80,7 @@ class Fees {
 			$fee_map[$feeband["band"]] = $feeband;
 		}
 
-		// Map rest of for efficant lookups
+		// Map rest of for efficient lookups
 		$mapping = array();
 		foreach($courses as $course){
 
