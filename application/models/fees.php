@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Fees Object
  *
@@ -35,7 +36,7 @@ class Fees {
 		if(static::$mapping) return static::$mapping;
 
 		// Else, load object from cache
-		return static::$mapping = Cache::get("fee-mappings-{$year}", static::generate_fee_map($year) ); // 48 hour cache
+		return static::$mapping = Cache::get("fee-mappings-{$year}", static::generate_fee_map($year, false) );
 	}
 
 	/**
@@ -44,7 +45,7 @@ class Fees {
 	 * @param $year
 	 * @return Fee Data array
 	 */
-	public static function generate_fee_map($year){
+	public static function generate_fee_map($year, $cache_exists = true){
 
 		$path = Config::get('fees.path');
 
@@ -52,8 +53,26 @@ class Fees {
 		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
 		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 
+
 		// Ensure data was found
 		if(!$fees || !$courses) return array();
+
+		// Ensure data has actually changed (and its worth continuing (No point busting all our caches if we don't need to)
+		$mapping_hash_cache = "fee-mapping-hash-{$year}";
+
+		$unqiue_datahash = md5(json_encode($fees).json_encode($courses));
+		$old_datahash = Cache::get($mapping_hash_cache);
+
+		// If hash's match, data is the same, so theres no point in regenerating the file
+		// That said, if the cached data is broken/missing (cache_exists = false) we need to generate anyway
+		if($cache_exists && $unqiue_datahash == $old_datahash) return true;
+
+		// Update cache with new udh (unique data hash)
+		Cache::forever($mapping_hash_cache, $unqiue_datahash);
+
+		//
+		// Actually regenerate data (if we got this far, we need too.)
+		//
 
 		// Map fees to speed up lookups
 		$fee_map = array();
@@ -74,6 +93,19 @@ class Fees {
 		// Cache it
 		Cache::forever("fee-mappings-{$year}", $mapping);
 
+		// Flush output caches, so new data is reflected
+		 try
+        {
+            Cache::purge('api-output-pg');
+            Cache::purge('api-output-ug');
+        }
+        catch(Exception $e)
+        {
+            echo 'No cache to purge';
+        }
+
+
+		// return data
 		return $mapping;
 	}
 
