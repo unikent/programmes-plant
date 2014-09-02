@@ -48,6 +48,7 @@ class Fees {
 	public static function generate_fee_map($year, $cache_exists = true){
 
 		$path = Config::get('fees.path');
+		if($path == '') return false;
 
 		// If no cache, open up feedbands and mapping csv files for given year
 		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
