@@ -6,6 +6,7 @@ vendor/composer
 vendor/phpunit/
 vendor/unikent
 vendor/laravel
+vendor/mockery
 composer.phar
 composer.lock
 phpunit.xml
