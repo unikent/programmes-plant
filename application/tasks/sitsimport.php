@@ -19,16 +19,17 @@ class SITSImport_Task {
         }
         catch(Exception $e)
         {
-            echo 'No cache to purge';
+            echo "No cache to purge\n";
         }
         
         $courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
         $seen_programmes = array();
         
         foreach ($courses as $course) {
-            if ($course->progID == '') {
+            if ($course->progID == '' || $course->inUse != 'Y') {
                 continue;
             }
+
             $course_id = substr($course->progID, 0, count($course->progID) - 3);
             $course_attendance_pattern = strtolower($course->attendanceType);
             $course_level = '';
@@ -38,6 +39,10 @@ class SITSImport_Task {
             $programme_model = "";
             $ipos = array();
             foreach ($course->ipo as $ipo) {
+                if ($ipo->inUse != 'Y') {
+                    continue;
+                }
+
                 $ipos[] = $ipo;
             }
 
