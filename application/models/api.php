@@ -68,6 +68,23 @@ class API {
 	}
 
 	/**
+	 * Return the fees index
+	 *
+	 * @param year year to get index for
+	 * @param level ug|pg
+	 * @return array Index of fees data
+	 */
+	public static function get_fees_index($year, $level = false)
+	{
+		// Get index of programmes
+		$level =  ($level === false) ? URLParams::get_type() : $level;
+		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
+
+		$model =  $level.'_Programme';
+		return $model::get_api_fees($year);
+	}
+
+	/**
 	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
