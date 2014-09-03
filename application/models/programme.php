@@ -537,12 +537,12 @@ abstract class Programme extends Revisionable {
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
-					$description = str_replace($programme['name'],'', $delivery['description']);
-					$description = substr($description ,0, strpos($description, '-'));
+					$description = $delivery['description'];
+					$description = trim(substr($description ,0, strpos($description, ' - ')));
 
 					$programme_data = array(
 						'id' 				=> 		$programme['id'],
-						'name' 				=>		$delivery['description'],
+						'name' 				=>		$description,
 						'slug' 				=>		$programme['slug'],
 						'award' 			=>		$delivery['award_name'],
 						'mode_of_study'		=>		$programme['mode_of_study'],
@@ -554,11 +554,15 @@ abstract class Programme extends Revisionable {
 						'int_part_time'		=>		$fee['int']['part-time']
 					);
 
-					$fees_data[] = $programme_data;
+					$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
+
+					$fees_data[$key] = $programme_data;
 				}
 			}
 		}
 
+		$fees_data = array_values($fees_data);
+		
 		// Store index data in to cache
 		Cache::put($cache_key_index, $fees_data, 2628000);
 
