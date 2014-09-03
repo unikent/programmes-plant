@@ -410,10 +410,6 @@ abstract class Programme extends Revisionable {
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
-
-			// Ignore subject to approval / withdrawn programmes from search results
-			
-			if(isset($attributes[$withdrawn_field]) && ($attributes[$withdrawn_field] == 'true' || $attributes[$suspended_field] == 'true')) continue;
 		
 			if($type == 'pg')
 			{
