@@ -256,6 +256,19 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
+	 * get a copy of the programme fees listing (from cache if possible)
+	 *
+	 * @param $year year to get fees for
+	 * @return programmes fees
+	 */
+	public static function get_api_fees($year)
+	{	
+		$type = static::$type;
+		$cache_key = "api-index-{$type}.fees-$year";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year);
+	}
+
+	/**
 	 * get a copy of the subjects mapping data (from cache if possible)
 	 *
 	 * @param $year year to get index for
@@ -474,6 +487,84 @@ abstract class Programme extends Revisionable {
 
 		// return
 		return $index_data;
+	}
+
+
+	/**
+	 * generate new copy of programme fees data from live DB
+	 *
+	 * @param $year year to get fees index for
+	 * @return programmes fees index
+	 */
+	public static function generate_api_fees($year)
+	{
+		$type = static::$type;
+		$cache_key_index = "api-index-{$type}.fees-$year";
+
+		// use the api index as a starting point
+		$index_data = static::generate_api_index($year);
+		$fees_data = array();
+
+		// create fees data for each programme
+		foreach ($index_data as $programme) {
+			if($type == 'ug'){
+				$fee = Fees::getFeeInfoForPos($programme['pos_code'], $year);
+				$programme_data = array(
+					'id' 				=> 		$programme['id'],
+					'name' 				=> 		$programme['name'],
+					'slug' 				=> 		$programme['slug'],
+					'award' 			=> 		$programme['award'],
+					'mode_of_study'		=>		$programme['mode_of_study'],
+					'search_keywords' 	=> 		$programme['search_keywords'],
+					'pos_code'			=>		$programme['pos_code'],
+					'home_full_time'	=>		$fee['home']['full-time'],
+					'home_part_time'	=>		$fee['home']['part-time'],
+					'int_full_time'		=>		$fee['int']['full-time'],
+					'int_part_time'		=>		$fee['int']['part-time']
+				);
+
+				$fees_data[] = $programme_data;
+			}
+
+			else{
+				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
+				foreach ($deliveries as $delivery) {
+					if(empty($delivery['description'])){
+						continue;
+					}
+					$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $year);
+
+					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
+					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
+
+					$description = str_replace($programme['name'],'', $delivery['description']);
+					$description = substr($description ,0, strpos($description, '-'));
+
+					$programme_data = array(
+						'id' 				=> 		$programme['id'],
+						'name' 				=>		$delivery['description'],
+						'slug' 				=>		$programme['slug'],
+						'award' 			=>		$delivery['award_name'],
+						'mode_of_study'		=>		$programme['mode_of_study'],
+						'search_keywords' 	=>		$programme['search_keywords'],
+						'pos_code'			=>		$delivery['pos_code'],
+						'home_full_time'	=>		$fee['home']['full-time'],
+						'home_part_time'	=>		$fee['home']['part-time'],
+						'int_full_time'		=>		$fee['int']['full-time'],
+						'int_part_time'		=>		$fee['int']['part-time']
+					);
+
+					$fees_data[] = $programme_data;
+				}
+			}
+		}
+
+		// Store index data in to cache
+		Cache::put($cache_key_index, $fees_data, 2628000);
+
+		
+		// return
+		return $fees_data;
 	}
 	
 	
