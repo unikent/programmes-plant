@@ -139,7 +139,6 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		// get the active revision
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
-		
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
 
@@ -389,7 +388,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 				$ugpg = ( $type == 'pg') ? 'postgraduate' : 'undergraduate';
 				
-				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $programme->id . '/' . $slug;
+				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $programme->programme_id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
