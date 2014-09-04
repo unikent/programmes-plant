@@ -890,7 +890,16 @@ class API_Controller extends Base_Controller {
 			static::$headers = array_merge(static::$headers, $add_headers);
 		}
 
-		return Response::json($data, $code, static::$headers);
+		// Add JSONP support (if callback param)
+		if (isset($_GET['callback']))
+		{
+			return Response::jsonp($_GET['callback'], $data, $code, static::$headers);
+		} 
+		else 
+		{
+			return Response::json($data, $code, static::$headers);
+		}
+
 	}
 
 	/**
