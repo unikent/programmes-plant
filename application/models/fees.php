@@ -97,6 +97,9 @@ class Fees {
 		// Flush output caches, so new data is reflected
 		 try
         {
+        	Cache::forget('api-index-ug.fees-'.$year);
+            Cache::forget('api-index-pg.fees-'.$year);
+
             Cache::purge('api-output-pg');
             Cache::purge('api-output-ug');
         }
