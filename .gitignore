@@ -1,11 +1,6 @@
 .DS_Store
 bin/
-vendor/Symfony/yaml
-vendor/autoload.php
-vendor/composer
-vendor/phpunit/
-vendor/unikent
-vendor/laravel
+vendor/
 composer.phar
 composer.lock
 phpunit.xml

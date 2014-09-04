@@ -106,13 +106,20 @@ Route::group(array('before' => ''), function(){
 
 	// API
 
-	// Routing for undergraduate API
+	// Routing for API index
 	Route::any(array(
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes.(json|xml)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes'
 			
 	), 'api@index');
+
+	// Routing for API fees
+	Route::any(array(
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees'
+			
+	), 'api@fees_index');
 
 	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
 	Route::any(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects','/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml)'), 'api@subject_index');
