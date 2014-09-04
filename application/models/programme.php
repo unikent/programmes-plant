@@ -439,6 +439,8 @@ abstract class Programme extends Revisionable {
 				'additional_locations' => $additional_locations,
 				'new_programme' => 	isset($attributes[$new_programme_field]) ? $attributes[$new_programme_field] : '',
 				'subject_to_approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
+				'withdrawn' => isset($attributes[$withdrawn_field]) ? $attributes[$withdrawn_field] : '',
+				'suspended' => isset($attributes[$suspended_field]) ? $attributes[$suspended_field] : '',
 				'mode_of_study' => 	isset($attributes[$mode_of_study_field]) ? $attributes[$mode_of_study_field] : '',
 				'ucas_code' 	=> 	isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '',
 				'search_keywords' => isset($attributes[$search_keywords_field]) ? $attributes[$search_keywords_field] : '',
