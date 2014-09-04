@@ -60,6 +60,11 @@ class SITSImport_Task {
                 $programme_model = "PG_Programme";
             }
 
+            // Remove number from end of POS code 
+            // (SITs adds a POS version ID to the end - although these do not exist for fees/other systems so need to be removed)
+            // Regex just finds a digit (or number of digits) at the end of the line & removes them
+            $course->pos = preg_replace("/\d+$/", "", $course->pos);
+           
             //get the associated programme
             $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', Setting::get_setting($course_level . "_current_year"))->first();
 
