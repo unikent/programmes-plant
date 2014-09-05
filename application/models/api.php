@@ -140,6 +140,20 @@ class API {
 
 		$final['current_year'] = Setting::get_setting("{$level}_current_year");
 
+		// combine statuses
+		$statuses = '(';
+		if($final['subject_to_approval'] == 'true'){
+			$statuses .= "subject to approval";
+		}
+		if($final['programme_withdrawn'] == 'true'){
+			$statuses .= $statuses == '(' ? "withdrawn" : ", withdrawn";
+		}
+		if ($final['programme_suspended'] == 'true') {
+			$statuses .= $statuses == '(' ? "suspended" : ", suspended";
+		}
+		$statuses = $statuses == '(' ? '' : $statuses . ')';
+		$final['programmme_status_text'] = $statuses;
+
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
 

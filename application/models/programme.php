@@ -465,7 +465,7 @@ abstract class Programme extends Revisionable {
 			}
 			$statuses = $statuses == '(' ? '' : $statuses . ')';
 
-			$index_data[$attributes['instance_id']]['status_text'] = $statuses;
+			$index_data[$attributes['instance_id']]['programmme_status_text'] = $statuses;
 
 		}
 
