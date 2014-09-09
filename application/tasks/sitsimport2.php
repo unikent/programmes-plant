@@ -28,33 +28,25 @@ class SITSImport2_Task {
           continue;
         }
 
-        $this->ipos[] = $ipo;
+        $this->ipos[] = $ipo; 
       }
 
       $course->pos = $this->trimPOSCode($course->pos);
       $courseLevel = $this->getCourseLevel($course);
       $programme   = $this->getProgramme($course, $courseLevel);
+      $year = $this->currentYears[$courseLevel];
 
       if (empty($programme) || !is_object($programme)) {
         continue;
       }
 
-      /**
-       * @todo - If programme is UG
-       *    - Check if course is FT/PT
-       *      - Set MCR code
-       *      - Set POS code
-       *      - Set ARI code
-       *      - GET/SET revisions
-       *      - Save programme & revisions to db
-       */
 
       if ($courseLevel === "pg") {
         URLParams::$type = "pg";
 
-        $delivery = $this->createDelivery($course, $programme);
-
-        
+        $delivery = $this->createDelivery($course, $programme, $year);
+      } elseif ($courseLevel === "ug") {
+          $this->updateUGSITSData($course, $programme, $year);
       }
     }
     /**
@@ -86,8 +78,8 @@ class SITSImport2_Task {
 
   private function loadXML() {
 
-    //$courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
-    $courses = simplexml_load_file('/Library/WebServer/Documents/SITSCourseData.xml');
+    $courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
+    //$courses = simplexml_load_file('/Library/WebServer/Documents/SITSCourseData.xml');
 
     if ($courses === false) {
       throw new Exception('XML file does not exist in this location');
@@ -137,7 +129,7 @@ class SITSImport2_Task {
     )->first();
   }
 
-  private function createDelivery($course, $programme) {
+  private function createDelivery($course, $programme, $year) {
     $delivery = new PG_Deliveries;
     $delivery->programme_id = $programme->id;
 
@@ -153,35 +145,58 @@ class SITSImport2_Task {
     $delivery->description = (string)$course->description;
     $delivery->attendance_pattern = strtolower($course->attendanceType);
 
-    $delivery->current_ipo='';
+    $delivery->current_ipo = $this->extractCurrentIPO($course, $year);
     $delivery->previous_ipo='';
-    // This could probably be refactored further
-    foreach ($this->ipos as $ipo) {
-      if (isset($this->ipos["curr"])
-        && isset($this->ipos["prev"])) {
-        break;
-      }
 
-      if (!isset($this->ipos["curr"])
-        && intval($ipo->academicYear - 1) === intval($programme->year)) {
-        $delivery->current_ipo = (string)$ipo->sequence;
-        $this->ipos["curr"] = $ipo;
-        continue;
-      }
-
-      if (!isset($this->ipos["curr"])
-        && intval($ipo->academicYear - 1) === intval($programme->year) - 1) {
-        $delivery->previous_ipo = (string)$ipo->sequence;
-        $this->ipos["prev"] = $ipo;
-        continue;
-      }
-    }
     $delivery->save();
     
     return $delivery;
   }
 
-    private function purgeCache() {
+  private function updateUGSITSData($course, $programme, $year) {
+
+    $type = strtolower($course->attendanceType);
+
+    $revisions = $programme->get_revisions();
+
+    $sequenceNumber = $this->extractCurrentIPO($course, $programme->year);
+
+    // update all the revisions
+    foreach ($revisions as $revision) {
+      $this->updateUGRecord($course, $revision, $type, $sequenceNumber);
+    }
+    // update real programme
+    $this->updateUGRecord($course, $programme, $type, $sequenceNumber);
+  }
+
+  private function updateUGRecord($course, $programme, $type, $sequenceNumber) {
+
+    $programme->pos_code_44 = "$course->pos";
+    $programme->ari_code = "$course->ari_code";
+
+    if ($type == "part-time") {
+      $programme->parttime_mcr_code_87 = "$course->mcr";
+      $programme->current_ipo_pt = $sequenceNumber;
+    } elseif ($type == "full-time") {
+        $programme->fulltime_mcr_code_88 = "$course->mcr";
+    }
+    
+    $programme->raw_save();
+  }
+
+  private function extractCurrentIPO($course, $year) {
+
+    foreach($course->ipo as $ipo) {
+      if (intval($ipo->academicYear) - 1 === intval($year) && $ipo->inUse == 'Y') {
+        return (string)$ipo->sequence;
+      }
+    }
+
+    return "";
+
+  }
+
+  private function purgeCache() {
     try {
       Cache::purge('api-output-pg');
       Cache::purge('api-output-ug');
