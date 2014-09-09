@@ -52,13 +52,9 @@ class SITSImport2_Task {
       if ($courseLevel === "pg") {
         URLParams::$type = "pg";
 
-        $this->deleteDeliveries($programme);
         $delivery = $this->createDelivery($course, $programme);
 
-        // This is instead of set_values() fn
-        $delivery = $this->setUpIPOs($programme, $delivery, $courseLevel);
-
-        $delivery->save();
+        
       }
     }
     /**
@@ -103,7 +99,7 @@ class SITSImport2_Task {
   }
 
   private function checkCourseIsValid($course) {
-    if ($course->progID == '' || $course->inUse != 'Y') {
+    if ($course->progID == '') {
       return false;
     }
     return true;
@@ -136,14 +132,6 @@ class SITSImport2_Task {
     )->where(
       "year", "=", $this->currentYears[$level]
     )->first();
-  }
-
-  private function deleteDeliveries($programme) {
-    if (!in_array($programme->id, $this->seenProgrammes)) {
-      foreach ($programme->get_deliveries() as $d) {
-        $d->delete();
-      }
-    }
   }
 
   private function createDelivery($course, $programme) {
@@ -183,7 +171,8 @@ class SITSImport2_Task {
         continue;
       }
     }
-
+    $delivery->save();
+    
     return $delivery;
   }
 
