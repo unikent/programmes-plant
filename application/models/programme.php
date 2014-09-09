@@ -452,6 +452,21 @@ abstract class Programme extends Revisionable {
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : ''
 			);
+			
+			$statuses = '(';
+			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
+				$statuses .= "subject to approval";
+			}
+			if($index_data[$attributes['instance_id']]['withdrawn'] == 'true'){
+				$statuses .= $statuses == '(' ? "withdrawn" : ", withdrawn";
+			}
+			if ($index_data[$attributes['instance_id']]['suspended'] == 'true') {
+				$statuses .= $statuses == '(' ? "suspended" : ", suspended";
+			}
+			$statuses = $statuses == '(' ? '' : $statuses . ')';
+
+			$index_data[$attributes['instance_id']]['programmme_status_text'] = $statuses;
+
 		}
 
 
