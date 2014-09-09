@@ -7,11 +7,14 @@ class SITSImport2_Task {
   private $ipos = array();
 
   public function run($args = array()) {
-    $this->purgeCache();
-    $xml = $this->loadXML();
 
-    $currentYears["ug"] => $this->getCurrentYear("ug");
-    $currentYears["pg"] => $this->getCurrentYear("pg");
+    $currentYears["ug"] = $this->getCurrentYear("ug");
+    $currentYears["pg"] = $this->getCurrentYear("pg");
+
+    $this->purgeOldPGData();
+    $this->purgeOldUGData($currentYears["ug"]);
+    
+    $xml = $this->loadXML();
 
     foreach ($xml as $course) {
       if (!checkCourseIsValid($course)){
@@ -63,14 +66,26 @@ class SITSImport2_Task {
      *        - If live revision exists
      *          - Call generate_api_programme
      */
+    $this->purgeCache();
 
   }
 
-  private function purgeCache() {
-    try {
-      Cache::purge('api-output-pg');
-      Cache::purge('api-output-ug');
-    } catch(Exception $e) { }
+  private function purgeOldPGData() {
+    return DB::query('TRUNCATE TABLE pg_programme_deliveries');
+  }
+
+  private function purgeOldUGData($year) {
+    foreach (array('programmes_ug', 'programmes_revisions_ug') AS $table) {
+      DB::table($table)
+      ->where('year', '=', $year)
+      ->update(array(
+        'fulltime_mcr_code_88' => '',
+        'parttime_mcr_code_87' => '',
+        'pos_code_44' => '',
+        'ari_code' => '',
+        'current_ipo_pt' => '',
+        'previous_ipo_pt' => ''));
+    }
   }
 
   private function loadXML() {
@@ -106,7 +121,7 @@ class SITSImport2_Task {
   }
 
   private function getCourseLevel($course) {
-    if (stripos($course->progID), 'ug') !== false) {
+    if (stripos($course->progID, 'ug') !== false) {
       return 'ug';
     }
     return 'pg';
@@ -170,6 +185,13 @@ class SITSImport2_Task {
     }
 
     return $delivery;
+  }
+
+    private function purgeCache() {
+    try {
+      Cache::purge('api-output-pg');
+      Cache::purge('api-output-ug');
+    } catch(Exception $e) { }
   }
 
 }
