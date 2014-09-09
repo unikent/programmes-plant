@@ -8,23 +8,23 @@ class SITSImport2_Task {
 
   public function run($args = array()) {
 
-    $currentYears["ug"] = $this->getCurrentYear("ug");
-    $currentYears["pg"] = $this->getCurrentYear("pg");
+    $this->currentYears["ug"] = $this->getCurrentYear("ug");
+    $this->currentYears["pg"] = $this->getCurrentYear("pg");
 
     $this->purgeOldPGData();
-    $this->purgeOldUGData($currentYears["ug"]);
+    $this->purgeOldUGData($this->currentYears["ug"]);
     
     $xml = $this->loadXML();
 
     foreach ($xml as $course) {
-      if (!checkCourseIsValid($course)){
+      if (!$this->checkCourseIsValid($course)){
         continue;
       }
 
       $this->ipos = array();
 
       foreach ($course->ipo as $ipo) {
-        if (!checkIPOIsValid($ipo)){
+        if (!$this->checkIPOIsValid($ipo)){
           continue;
         }
 
@@ -85,7 +85,10 @@ class SITSImport2_Task {
   }
 
   private function loadXML() {
-    $courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
+
+    //$courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
+    $courses = simplexml_load_file('/Library/WebServer/Documents/SITSCourseData.xml');
+
     if ($courses === false) {
       throw new Exception('XML file does not exist in this location');
       exit;
@@ -150,6 +153,8 @@ class SITSImport2_Task {
     $delivery->description = (string)$course->description;
     $delivery->attendance_pattern = strtolower($course->attendanceType);
 
+    $delivery->current_ipo='';
+    $delivery->previous_ipo='';
     // This could probably be refactored further
     foreach ($this->ipos as $ipo) {
       if (isset($this->ipos["curr"])
