@@ -79,7 +79,6 @@ class SITSImport2_Task {
   private function loadXML() {
 
     $courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
-    //$courses = simplexml_load_file('/Library/WebServer/Documents/SITSCourseData.xml');
 
     if ($courses === false) {
       throw new Exception('XML file does not exist in this location');
@@ -180,11 +179,15 @@ class SITSImport2_Task {
     } elseif ($type == "full-time") {
         $programme->fulltime_mcr_code_88 = "$course->mcr";
     }
-    
+
     $programme->raw_save();
   }
 
   private function extractCurrentIPO($course, $year) {
+
+    if($course->inUse == 'N') {
+      return "";
+    }
 
     foreach($course->ipo as $ipo) {
       if (intval($ipo->academicYear) - 1 === intval($year) && $ipo->inUse == 'Y') {
