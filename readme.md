@@ -2,7 +2,7 @@
 
 The Programmes Plant is part of the [XCRI-CAP project](http://www.kent.ac.uk/is/projects/xcri/) at the University of Kent, and is a replacement for the existing Programmes Factory.
 
-It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
+It is written in [Laravel3](http://three.laravel.com/) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
 ![Programmes plant homepage screenshot](https://raw.github.com/unikent/programmes-plant/master/screenshot.jpg "Programmes plant homepage screenshot")
 
