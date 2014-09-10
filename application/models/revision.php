@@ -70,4 +70,13 @@ class Revision extends Eloquent {
         return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
     }
     
+    /**
+     * Raw_save: Call eloquents save method directly to save an item with no special logic.
+     * 
+     */
+    public function raw_save()
+    {
+        return parent::save();
+    }
+    
 }
