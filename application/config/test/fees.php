@@ -1,5 +1,5 @@
 <?php
 
 return array(
-	'path' 	=> path('app').'storage/example-feedata'
+	'path' 	=> path('app').'../storage/example-feedata'
 );
