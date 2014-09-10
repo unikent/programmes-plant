@@ -24,7 +24,7 @@ class TestSITSImport_Task extends PHPUnit_Framework_TestCase {
 
 		$this->fullCourse = (object)$this->fullCourse;
 
-		$this->task = new SITSImport2_Task();
+		$this->task = new SITSImport_Task();
 	}
 
 	public function testCurrentYear() {
