@@ -95,7 +95,7 @@ class Fees {
 		Cache::forever("fee-mappings-{$year}", $mapping);
 
 		// Flush output caches, so new data is reflected
-		 try
+		try
         {
         	Cache::forget('api-index-ug.fees-'.$year);
             Cache::forget('api-index-pg.fees-'.$year);
@@ -105,7 +105,7 @@ class Fees {
         }
         catch(Exception $e)
         {
-            echo 'No cache to purge';
+            // echo 'No cache to purge';
         }
 
 

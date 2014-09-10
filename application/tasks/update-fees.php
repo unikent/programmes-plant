@@ -3,7 +3,7 @@
 class Update_fees_Task {
 
     /**
-     * Generate the xcri-cap
+     * Generate the fee data
      * 
      * @param array  $arguments The arguments sent to the moduledata command.
      */
