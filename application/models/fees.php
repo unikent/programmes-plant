@@ -105,7 +105,7 @@ class Fees {
         }
         catch(Exception $e)
         {
-            echo 'No cache to purge';
+            // echo 'No cache to purge';
         }
 
 
