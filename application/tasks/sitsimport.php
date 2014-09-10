@@ -73,7 +73,7 @@ class SITSImport_Task {
    * truncate the data in this table
    */
   public function purgeOldPGData() {
-    return DB::query( 'TRUNCATE TABLE pg_programme_deliveries' );
+    return DB::query( 'DELETE FROM pg_programme_deliveries' );
   }
 
   /**
