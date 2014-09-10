@@ -1,230 +1,258 @@
 <?php
 
-//require_once path('base') . 'vendor/autoload.php';
-
+/**
+ * This task file is used to load an XML feed provided from SITS
+ * and import the data into the Programmes Plant
+ *
+ * Data imported is IPO, POS code, MCR code, ARI code, description,
+ * award and attendance type (full-time or part-time)
+ *
+ * The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS
+ * when they click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+ */
 class SITSImport_Task {
 
-    /**
-     * Import programme data from SITS
-     * 
-     * @param array  $arguments The arguments sent to the moduledata command.
-     */
-    public function run($arguments = array())
-    {
-        // clear out the api output cache completely so we can regenerate the cache now including the new module data
-        try
-        {
-            Cache::purge('api-output-pg');
-            Cache::purge('api-output-ug');
-        }
-        catch(Exception $e)
-        {
-            echo "No cache to purge\n";
-        }
-        
-        $courses = simplexml_load_file('/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml');
-        $seen_programmes = array();
-        
-        foreach ($courses as $course) {
-            if ($course->progID == '' || $course->inUse != 'Y') {
-                continue;
-            }
+  public $currentYears = array();
+  public $seenProgrammes = array();
+  public $ipos = array();
 
-            $course_id = substr($course->progID, 0, count($course->progID) - 3);
-            $course_attendance_pattern = strtolower($course->attendanceType);
-            $course_level = '';
-            $current_ipo_column_name = 'current_ipo';
-            $previous_ipo_column_name = 'previous_ipo';
-            $programme = false;
-            $programme_model = "";
-            $ipos = array();
-            foreach ($course->ipo as $ipo) {
-                if ($ipo->inUse != 'Y') {
-                    continue;
-                }
+  public function run( $args = array() ) {
 
-                $ipos[] = $ipo;
-            }
+    $this->currentYears["ug"] = $this->getCurrentYear( "ug" );
+    $this->currentYears["pg"] = $this->getCurrentYear( "pg" );
 
-            // set ug specific vars
-            if (strpos(strtolower($course->progID), 'ug') !== false ) {
-                $course_level = 'ug';
-                $current_ipo_column_name = 'current_ipo_pt';
-                $previous_ipo_column_name = 'previous_ipo_pt';
-                $programme_model = "UG_Programme";
-            }
+    //Delete old data before loading the XML file
+    $this->purgeOldPGData();
+    $this->purgeOldUGData( $this->currentYears["ug"] );
 
-            // set pg specific vars
-            elseif (strpos(strtolower($course->progID), 'pg') !== false ) {
-                $course_level = 'pg';
-                $programme_model = "PG_Programme";
-            }
+    $xml = $this->loadXML();
 
-            // Remove number from end of POS code 
-            // (SITs adds a POS version ID to the end - although these do not exist for fees/other systems so need to be removed)
-            // Regex just finds a digit (or number of digits) at the end of the line & removes them
-            $course->pos = preg_replace("/\d+$/", "", $course->pos);
-           
-            //get the associated programme
-            $programme = $programme_model::where('instance_id', '=', $course_id)->where('year', '=', Setting::get_setting($course_level . "_current_year"))->first();
+    foreach ( $xml as $course ) {
+      //make sure it has a programme ID in the progsplant
+      if ( !$this->checkCourseIsValid( $course ) ) {
+        continue;
+      }
 
-            $year = Setting::get_setting($course_level . "_current_year");
+      $this->ipos = array();
 
-            // only continue if the programme is found
-            if ( !empty($programme) && is_object($programme) ) {
-
-                $programme_id = $programme->id;
-
-                switch ($course_level) {
-                    case 'ug':
-                        // this only applies to part time courses
-                        if ($course_attendance_pattern == 'part-time') {
-                            $revisions = $programme->get_revisions();
-                            $this->set_values($programme, $revisions, "$course->mcr", "$course->pos", $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code");
-                            $programme->parttime_mcr_code_87 = "$course->mcr";
-                            $programme->pos_code_44 = "$course->pos";
-                            $programme->ari_code = "$course->ari_code";
-                            $programme->raw_save();
-                        }
-                        elseif ($course_attendance_pattern == 'full-time') {
-                            $programme->fulltime_mcr_code_88 = "$course->mcr";
-                            $programme->pos_code_44 = "$course->pos";
-                            $programme->ari_code = "$course->ari_code";
-                            $programme->raw_save();
-                            $revisions = $programme->get_revisions();
-                            foreach ($revisions as $revision) {
-                                $revision->fulltime_mcr_code_88 = "$course->mcr";
-                                $revision->pos_code_44 = "$course->pos";
-                                $revision->ari_code = "$course->ari_code";
-                                $revision->save();
-                            }
-                        }
-                        
-                        break;
-
-                    case 'pg':
-                        URLParams::$type = 'pg';
-                        // blitz the deliveries for this programme if its the first time we're encountering it
-                        if (!in_array($programme_id, $seen_programmes)) {
-                            $seen_programmes[] = $programme_id;
-                            foreach ($programme->get_deliveries() as $delivery) {
-                                $delivery->delete();
-                            }
-                        }
-
-                        $delivery = new PG_Deliveries;
-                        $delivery->programme_id = $programme_id;
-
-                        $award = PG_Award::where('longname', '=', $course->award)->first();
-                        $delivery->award = !empty($award) ? $award->id : 0;
-
-                        $delivery->pos_code = "$course->pos";
-                        $delivery->mcr = "$course->mcr";
-                        $delivery->ari_code = "$course->ari_code";
-                        $delivery->description = "$course->description";
-                        $delivery->attendance_pattern = $course_attendance_pattern;
-
-                        $this->set_values($programme, array(), $course->mcr, $course->pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, "$course->ari_code", $delivery);
-
-                        $delivery->save();
-
-                        break;
-                    default:
-                        # code...
-                        break;
-                }
-
-                $revision = $programme->find_live_revision();
-                if ( !empty($revision) && is_object($revision) ) $programme_model::generate_api_programme($revision->instance_id, $year, $revision);
-                
-            }
-            
+      foreach ( $course->ipo as $ipo ) {
+        //only get IPOs that are in use in SITS
+        if ( !$this->checkIPOIsValid( $ipo ) ) {
+          continue;
         }
 
-        echo "Done!\n";
+        $this->ipos[] = $ipo;
+      }
+
+      //get rid of 'UG'/'PG' that SITS concat to our progsplant ID
+      $course->pos = $this->trimPOSCode( $course->pos );
+      $courseLevel = $this->getCourseLevel( $course );
+      $programme   = $this->getProgramme( $course, $courseLevel );
+      $year = $this->currentYears[$courseLevel];
+
+      if ( empty( $programme ) || !is_object( $programme ) ) {
+        continue;
+      }
+
+
+      if ( $courseLevel === "pg" ) {
+        URLParams::$type = "pg";
+
+        $delivery = $this->createDelivery( $course, $programme, $year );
+      } elseif ( $courseLevel === "ug" ) {
+        $this->updateUGSITSData( $course, $programme, $year );
+      }
     }
 
-    public function set_values($programme, $revisions, $mcr, $pos, $year, $ipos, $current_ipo_column_name, $previous_ipo_column_name, $ari_code, $delivery = false){
+    $this->purgeCache();
 
-        Auth::login(1);
+  }
 
-        $current_ipo_is_set = false;
-        $previous_ipo_is_set = false;
+  /**
+   * Deliveries table is separate for PG so we can
+   * truncate the data in this table
+   */
+  public function purgeOldPGData() {
+    return DB::query( 'TRUNCATE TABLE pg_programme_deliveries' );
+  }
 
-        // ug keeps mcr+ipo data at the programme level. pg keeps it in a delivery object
-        if (!empty($delivery)) {
-
-            // go through all the ipos and get the first one in the current year
-            foreach ($ipos as $ipo) {
-                if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                    $delivery->$current_ipo_column_name = (string)$ipo->sequence;
-                    $current_ipo_is_set = true;
-                }
-                elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                    $delivery->$previous_ipo_column_name = (string)$ipo->sequence;
-                    $previous_ipo_is_set = true;
-                }
-                else {
-                    continue;
-                }
-
-                // if both IPOs are set the exit the loop
-                if ($current_ipo_is_set && $previous_ipo_is_set) {
-                    break;
-                }
-            }
-        }
-        // ug - only part-time is relevant here
-        else {
-
-            // if there are no ipos for this course, we still want to set the ari_code and other bits
-            // sort out all the revisions too
-            if (empty($ipos)) {
-                foreach ($revisions as $revision) {
-                    $revision->ari_code = $ari_code;
-                    $revision->parttime_mcr_code_87 = $mcr;
-                    $revision->pos_code_44 = $pos;
-                    $revision->save();
-                }
-            }
-            else {
-                // go through all the ipos and get the first one in the current year
-                foreach ($ipos as $ipo) {
-
-                    // make sure we set the right ipo column for current and previous years
-                    $colname = '';
-                    if (!$current_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year)) {
-                        $colname = $current_ipo_column_name;
-                        $current_ipo_is_set = true;
-                    }
-                    elseif (!$previous_ipo_is_set && intval($ipo->academicYear) - 1 === intval($programme->year) - 1) {
-                        $colname = $previous_ipo_column_name;
-                        $previous_ipo_is_set = true;
-                    }
-                    else {
-                        continue;
-                    }
-
-                    // sort out all the revisions too
-                    $programme->$colname = (string)$ipo->sequence;
-                    foreach ($revisions as $revision) {
-                        $revision->ari_code = $ari_code;
-                        $revision->$colname = (string)$ipo->sequence;
-                        $revision->parttime_mcr_code_87 = $mcr;
-                        $revision->pos_code_44 = $pos;
-                        $revision->save();
-                    }
-
-                    // if both IPOs are set the exit the loop
-                    if ($current_ipo_is_set && $previous_ipo_is_set) {
-                        break;
-                    }
-                }
-            }
-        }
-
+  /**
+   * For UG we need to delete fields from the 2 relevant tables
+   * that will be replaced as part of this task
+   */
+  public function purgeOldUGData( $year ) {
+    foreach ( array( 'programmes_ug', 'programmes_revisions_ug' ) as $table ) {
+      DB::table( $table )
+      ->where( 'year', '=', $year )
+      ->update( array(
+          'fulltime_mcr_code_88' => '',
+          'parttime_mcr_code_87' => '',
+          'pos_code_44' => '',
+          'ari_code' => '',
+          'current_ipo_pt' => '',
+          'previous_ipo_pt' => '' ) );
     }
-    
+  }
+
+  public function loadXML() {
+
+    $courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
+
+    if ( $courses === false ) {
+      throw new Exception( 'XML file does not exist in this location' );
+      exit;
+    }
+
+    return $courses;
+  }
+
+  /**
+   * Get the live Programmes Plant Year for each level
+   */
+  public function getCurrentYear( $level ) {
+    return Setting::get_setting( $level . "_current_year" );
+  }
+
+  public function checkCourseIsValid( $course ) {
+    if ( $course->progID == '' ) {
+      return false;
+    }
+    return true;
+  }
+
+  public function checkIPOIsValid( $ipo ) {
+    if ( $ipo->inUse != 'Y' ) {
+      return false;
+    }
+    return true;
+  }
+
+  public function trimPOSCode( $pos ) {
+    return preg_replace( "/\d+$/", "", $pos );
+  }
+
+  /**
+   * Use the concatenated XML progID element from SITS
+   * to determine whether we update UG or PG
+   */
+  public function getCourseLevel( $course ) {
+    if ( stripos( $course->progID, 'ug' ) !== false ) {
+      return 'ug';
+    }
+    return 'pg';
+  }
+
+  public function getProgramme( $course, $level, $currentYears = null ) {
+    if ($currentYears === null) {
+      $currentYears = $this->currentYears;
+    }
+
+    $model = $level === "ug" ? "UG_Programme" : "PG_Programme";
+    $courseID = substr( $course->progID, 0, count( $course->progID ) - 3 );
+
+    return $model::where(
+      "instance_id", "=", $courseID
+    )->where(
+      "year", "=", $currentYears[$level]
+    )->first();
+  }
+
+  /**
+   * Create deliveries for Postgraduate courses
+   * We add a number of fields from the XML to the database in
+   * this function.
+   */
+  public function createDelivery( $course, $programme, $year, $delivery = null ) {
+    // Quick dependency injector
+    if ($delivery === null) {
+      $delivery = new PG_Deliveries;
+    }
+
+    $delivery->programme_id = $programme->id;
+
+    $award = PG_Award::where(
+      "longname", "=", $course->award
+    )->first();
+
+    $delivery->award = empty( $award ) ? 0 : $award->id;
+
+    $delivery->pos_code = (string)$course->pos;
+    $delivery->mcr = (string)$course->mcr;
+    $delivery->ari_code = (string)$course->ari_code;
+    $delivery->description = (string)$course->description;
+    $delivery->attendance_pattern = strtolower( $course->attendanceType );
+
+    $delivery->current_ipo = $this->extractCurrentIPO( $course, $year );
+    $delivery->previous_ipo='';
+
+    $delivery->save();
+
+    return $delivery;
+  }
+
+  /**
+   * Get the attendanceType (full-time or part-time)
+   * Call to various functions to update the IPO data
+   */
+  public function updateUGSITSData( $course, $programme, $year ) {
+
+    $type = strtolower( $course->attendanceType );
+
+    $revisions = $programme->get_revisions();
+
+    $sequenceNumber = $this->extractCurrentIPO( $course, $programme->year );
+
+    // update all the revisions
+    foreach ( $revisions as $revision ) {
+      $this->updateUGRecord( $course, $revision, $type, $sequenceNumber );
+    }
+    // update real programme
+    $this->updateUGRecord( $course, $programme, $type, $sequenceNumber );
+  }
+
+  /**
+   * Update the UG fields in both the programmes_ug and revisions tables
+   */
+  public function updateUGRecord( $course, $programme, $type, $sequenceNumber ) {
+
+    $programme->pos_code_44 = "$course->pos";
+    $programme->ari_code = "$course->ari_code";
+
+    if ( $type == "part-time" ) {
+      $programme->parttime_mcr_code_87 = "$course->mcr";
+      $programme->current_ipo_pt = $sequenceNumber;
+    } elseif ( $type == "full-time" ) {
+      $programme->fulltime_mcr_code_88 = "$course->mcr";
+    }
+
+    $programme->raw_save();
+  }
+
+  /**
+   * Get the IPOs that are inUse in SITS
+   * We use this function to get the sequence number for the relevant academicYear
+   */
+  public function extractCurrentIPO( $course, $year ) {
+
+    if ( $course->inUse == 'N' ) {
+      return "";
+    }
+
+    foreach ( $course->ipo as $ipo ) {
+      if ( intval( $ipo->academicYear ) - 1 === intval( $year ) && $ipo->inUse == 'Y' ) {
+        return (string)$ipo->sequence;
+      }
+    }
+
+    return "";
+
+  }
+
+  public function purgeCache() {
+    try {
+      Cache::purge( 'api-output-pg' );
+      Cache::purge( 'api-output-ug' );
+    } catch( Exception $e ) { }
+  }
+
 }
-    
-    
