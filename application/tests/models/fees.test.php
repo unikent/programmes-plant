@@ -114,8 +114,6 @@ class TestFees extends ModelTestCase
 		$year = 2015;
 		$result = Fees::generate_fee_map($year);
 
-		$first_result = array();
-
 		foreach ($result as $key => $value) {
 			$this->assertNotEmpty($key);
 			$this->assertNotEmpty($value);
