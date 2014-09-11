@@ -559,7 +559,13 @@ class API_Controller extends Base_Controller {
 	 * @param string $type Undergraduate or postgraduate.
 	 */
 	public function get_courses_without_fees($year, $type)
-	{
+	{	
+		// Since this a none-user facing report which will be run pretty irregularity,
+		// optimizing its at this point feels as if it will be a waste of effort that could
+		// be better spent optimizing other parts of the code base.
+		// Since this report being slow doesn't really matter, I've upped the timeout for this report to 60 seconds
+		set_time_limit(60);
+		
 		// get last generated date 
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
@@ -655,6 +661,39 @@ class API_Controller extends Base_Controller {
 
 		// output
 		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200);
+	}
+
+	/**
+	* Get the fees data
+	*
+	* @param  int     $year     Year of index to get.
+	* @param  string  $format   Format, either XML or JSON.
+	* @return string  json|xml  Data as a string or HTTP response.
+	*/
+	public function get_fees_index($year, $level, $format = 'json')
+	{
+
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
+		}
+
+		$fees_data = API::get_fees_index($year);
+
+		if (! $fees_data)
+		{
+			// Considering 501 (server error) as more desciptive
+			// The server either does not recognize the request method, or it lacks the ability to fulfill the request
+			return Response::make('', 501);
+		}
+
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
+
+		// Return the cached index file with the correct headers.
+		return ($format=='xml') ? static::xml($fees_data) : static::json($fees_data, 200);
 	}
 
 	/**
@@ -851,7 +890,16 @@ class API_Controller extends Base_Controller {
 			static::$headers = array_merge(static::$headers, $add_headers);
 		}
 
-		return Response::json($data, $code, static::$headers);
+		// Add JSONP support (if callback param)
+		if (isset($_GET['callback']))
+		{
+			return Response::jsonp($_GET['callback'], $data, $code, static::$headers);
+		} 
+		else 
+		{
+			return Response::json($data, $code, static::$headers);
+		}
+
 	}
 
 	/**

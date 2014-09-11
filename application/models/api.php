@@ -68,6 +68,23 @@ class API {
 	}
 
 	/**
+	 * Return the fees index
+	 *
+	 * @param year year to get index for
+	 * @param level ug|pg
+	 * @return array Index of fees data
+	 */
+	public static function get_fees_index($year, $level = false)
+	{
+		// Get index of programmes
+		$level =  ($level === false) ? URLParams::get_type() : $level;
+		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
+
+		$model =  $level.'_Programme';
+		return $model::get_api_fees($year);
+	}
+
+	/**
 	 * Return fully combined programme item from the API
 	 *
 	 * @param id ID of programme
@@ -122,6 +139,20 @@ class API {
 		$final = static::combine_programme($programme, $programme_settings, $globals, $level);
 
 		$final['current_year'] = Setting::get_setting("{$level}_current_year");
+
+		// combine statuses
+		$statuses = '(';
+		if($final['subject_to_approval'] == 'true'){
+			$statuses .= "subject to approval";
+		}
+		if($final['programme_withdrawn'] == 'true'){
+			$statuses .= $statuses == '(' ? "withdrawn" : ", withdrawn";
+		}
+		if ($final['programme_suspended'] == 'true') {
+			$statuses .= $statuses == '(' ? "suspended" : ", suspended";
+		}
+		$statuses = $statuses == '(' ? '' : $statuses . ')';
+		$final['programmme_status_text'] = $statuses;
 
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);

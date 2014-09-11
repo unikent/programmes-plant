@@ -256,6 +256,19 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
+	 * get a copy of the programme fees listing (from cache if possible)
+	 *
+	 * @param $year year to get fees for
+	 * @return programmes fees
+	 */
+	public static function get_api_fees($year)
+	{	
+		$type = static::$type;
+		$cache_key = "api-index-{$type}.fees-$year";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year);
+	}
+
+	/**
 	 * get a copy of the subjects mapping data (from cache if possible)
 	 *
 	 * @param $year year to get index for
@@ -397,10 +410,6 @@ abstract class Programme extends Revisionable {
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
-
-			// Ignore subject to approval / withdrawn programmes from search results
-			
-			if(isset($attributes[$withdrawn_field]) && ($attributes[$withdrawn_field] == 'true' || $attributes[$suspended_field] == 'true')) continue;
 		
 			if($type == 'pg')
 			{
@@ -430,6 +439,8 @@ abstract class Programme extends Revisionable {
 				'additional_locations' => $additional_locations,
 				'new_programme' => 	isset($attributes[$new_programme_field]) ? $attributes[$new_programme_field] : '',
 				'subject_to_approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
+				'withdrawn' => isset($attributes[$withdrawn_field]) ? $attributes[$withdrawn_field] : '',
+				'suspended' => isset($attributes[$suspended_field]) ? $attributes[$suspended_field] : '',
 				'mode_of_study' => 	isset($attributes[$mode_of_study_field]) ? $attributes[$mode_of_study_field] : '',
 				'ucas_code' 	=> 	isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '',
 				'search_keywords' => isset($attributes[$search_keywords_field]) ? $attributes[$search_keywords_field] : '',
@@ -441,6 +452,21 @@ abstract class Programme extends Revisionable {
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : ''
 			);
+			
+			$statuses = '(';
+			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
+				$statuses .= "subject to approval";
+			}
+			if($index_data[$attributes['instance_id']]['withdrawn'] == 'true'){
+				$statuses .= $statuses == '(' ? "withdrawn" : ", withdrawn";
+			}
+			if ($index_data[$attributes['instance_id']]['suspended'] == 'true') {
+				$statuses .= $statuses == '(' ? "suspended" : ", suspended";
+			}
+			$statuses = $statuses == '(' ? '' : $statuses . ')';
+
+			$index_data[$attributes['instance_id']]['programmme_status_text'] = $statuses;
+
 		}
 
 
@@ -452,8 +478,6 @@ abstract class Programme extends Revisionable {
 
 		// For each programme in output
 		foreach($programmes as $programme){
-
-			if(isset($programme->attributes[$withdrawn_field]) && ($programme->attributes[$withdrawn_field] == 'true' || $programme->attributes[$suspended_field] == 'true')) continue;
 
 			$subject_area_1 = isset($programme->attributes[$subject_area_1_field]) ? $programme->attributes[$subject_area_1_field] : '';
 			$subject_area_2 = isset($programme->attributes[$subject_area_2_field]) ? $programme->attributes[$subject_area_2_field] : '';
@@ -474,6 +498,91 @@ abstract class Programme extends Revisionable {
 
 		// return
 		return $index_data;
+	}
+
+
+	/**
+	 * generate new copy of programme fees data from live DB
+	 *
+	 * @param $year year to get fees index for
+	 * @return programmes fees index
+	 */
+	public static function generate_api_fees($year)
+	{
+		$type = static::$type;
+		$cache_key_index = "api-index-{$type}.fees-$year";
+
+		// use the api index as a starting point
+		$index_data = static::generate_api_index($year);
+		$fees_data = array();
+
+		// create fees data for each programme
+		foreach ($index_data as $programme) {
+			if($type == 'ug'){
+				$fee = Fees::getFeeInfoForPos($programme['pos_code'], $year);
+				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
+				$programme_data = array(
+					'id' 				=> 		$programme['id'],
+					'name' 				=> 		$programme['name'],
+					'slug' 				=> 		$programme['slug'],
+					'award' 			=> 		$programme['award'],
+					'mode_of_study'		=>		$programme['mode_of_study'],
+					'search_keywords' 	=> 		$programme['search_keywords'],
+					'pos_code'			=>		$programme['pos_code'],
+					'currency'			=>		$currency,
+					'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
+					'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
+					'int_full_time'		=>		$currency == 'pound' ? $fee['int']['full-time'] : $fee['int']['euro-full-time'],
+					'int_part_time'		=>		$currency == 'pound' ? $fee['int']['part-time'] : $fee['int']['euro-part-time']
+				);
+
+				$fees_data[] = $programme_data;
+			}
+
+			else{
+				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
+				foreach ($deliveries as $delivery) {
+					if(empty($delivery['description'])){
+						continue;
+					}
+					$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $year);
+					$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
+					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
+					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
+
+					$description = $delivery['description'];
+					$description = trim(substr($description ,0, strpos($description, ' - ')));
+
+					$programme_data = array(
+						'id' 				=> 		$programme['id'],
+						'name' 				=>		$description,
+						'slug' 				=>		$programme['slug'],
+						'award' 			=>		$delivery['award_name'],
+						'mode_of_study'		=>		$programme['mode_of_study'],
+						'search_keywords' 	=>		$programme['search_keywords'],
+						'pos_code'			=>		$delivery['pos_code'],
+						'currency'			=>		$currency,
+						'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
+						'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
+						'int_full_time'		=>		$currency == 'pound' ? $fee['int']['full-time'] : $fee['int']['euro-full-time'],
+						'int_part_time'		=>		$currency == 'pound' ? $fee['int']['part-time'] : $fee['int']['euro-part-time']
+					);
+
+					$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
+
+					$fees_data[$key] = $programme_data;
+				}
+			}
+		}
+
+		$fees_data = array_values($fees_data);
+		
+		// Store index data in to cache
+		Cache::put($cache_key_index, $fees_data, 2628000);
+
+		
+		// return
+		return $fees_data;
 	}
 	
 	

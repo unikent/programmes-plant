@@ -2,7 +2,7 @@
 
 The Programmes Plant is part of the [XCRI-CAP project](http://www.kent.ac.uk/is/projects/xcri/) at the University of Kent, and is a replacement for the existing Programmes Factory.
 
-It is written in [Laravel](http://laravel.com) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
+It is written in [Laravel3](http://three.laravel.com/) and using [Twitter Bootstrap](http://twitter.github.com/bootstrap/).
 
 ![Programmes plant homepage screenshot](https://raw.github.com/unikent/programmes-plant/master/screenshot.jpg "Programmes plant homepage screenshot")
 
@@ -64,6 +64,13 @@ Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The 
 Want to consume the data from a Programmes Plant API? Consider using our [PHP library for this](https://github.com/unikent/of-course).
 
 Want to see what a front-end to this data might look like using this library? See [Of Course](https://github.com/unikent/of-course).
+
+## Course data from SITS
+
+The task file `sitsimport.php` can be run manually on the server, but is set up to run as a cron every night at 4am (under user fm200). The task reads a SITS export XML file sitting in our shared `/data` folder. The task then reads in data from the file and creates entries in the current year of UG (in the programme and programme_revisions) and PG (in deliveries). The data imported is IPO, POS code, MCR code, ARI code, description, award, and full-time/part-time.
+
+The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS when the click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+
 
 ## Licensing
 
