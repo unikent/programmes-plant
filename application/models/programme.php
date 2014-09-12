@@ -243,6 +243,20 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
+	 * purge internal cache for Programme type in a given year (called as UG_Programe::purge_internal_cache(2015); )
+	 *
+	 * @param year - year to purge
+	 * @return true/false
+	 */
+	public static function purge_internal_cache($year){
+		try {
+			return Cache::purge("api-programmes_ug.{$year}");
+		} catch( Exception $e ) {
+			return false;
+		}
+	}
+
+	/**
 	 * get a copy of the programmes listing data (from cache if possible)
 	 *
 	 * @param $year year to get index for

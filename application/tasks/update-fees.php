@@ -38,7 +38,7 @@ class Update_fees_Task {
         foreach($years as $year){
             $state = Fees::generate_fee_map($year);
 
-            echo "- {$year}"
+            echo "- {$year}";
             // report state
             if($state === true){
                 echo " (no change)";
