@@ -35,10 +35,20 @@ class Update_fees_Task {
         echo "\nGenerating fee mappings for: \n\n";
 
         // Regen fee data for year
-        foreach($years as $y){
-            Fees::generate_fee_map($y);
+        foreach($years as $year){
+            $state = Fees::generate_fee_map($year);
 
-            echo "- {$y} \n";
+            echo "- {$year}";
+            // report state
+            if($state === true){
+                echo " (no change)";
+            }elseif($state === true){
+               echo " (update failed)";
+            }else{
+                echo " (updated)";
+            }
+
+            echo " \n";
         }
 
         echo "\nDone :)";

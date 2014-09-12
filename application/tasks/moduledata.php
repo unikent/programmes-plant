@@ -25,15 +25,7 @@ class ModuleData_Task {
         $this->load_pg_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
         
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
-        try
-        {
-            Cache::purge('api-output-pg');
-            Cache::purge('api-output-ug');
-        }
-        catch(Exception $e)
-        {
-            echo 'No cache to purge';
-        }
+         API::purge_output_cache();
     }
 
     // Load UG

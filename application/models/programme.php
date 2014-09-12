@@ -204,7 +204,7 @@ abstract class Programme extends Revisionable {
 	public static function get_api_programme($iid, $year)
 	{
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-{$iid}";
+		$cache_key = "api-{$tbl}.{$year}.{$iid}";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_programme($iid, $year);
 	}
 
@@ -220,7 +220,7 @@ abstract class Programme extends Revisionable {
 	{
 
 		$tbl = static::$table;
-		$cache_key = "api-{$tbl}-$year-{$iid}";
+		$cache_key = "api-{$tbl}.{$year}.{$iid}";
 
 		$revision_model = static::$revision_model;
 
@@ -240,6 +240,20 @@ abstract class Programme extends Revisionable {
 
 		// return
 		return $revision_data;
+	}
+
+	/**
+	 * purge internal cache for Programme type in a given year (called as UG_Programe::purge_internal_cache(2015); )
+	 *
+	 * @param year - year to purge
+	 * @return true/false
+	 */
+	public static function purge_internal_cache($year){
+		try {
+			return Cache::purge("api-programmes_ug.{$year}");
+		} catch( Exception $e ) {
+			return false;
+		}
 	}
 
 	/**
