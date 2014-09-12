@@ -36,7 +36,7 @@ class Fees {
 		if(static::$mapping) return static::$mapping;
 
 		// Else, load object from cache
-		return static::$mapping = Cache::get("fee-mappings-{$year}", static::generate_fee_map($year, false) );
+		return static::$mapping = Cache::get("fee-mappings-{$year}", function(){ return Fees::generate_fee_map($year, false); });
 	}
 
 	/**
