@@ -100,14 +100,12 @@ class Fees {
         	Cache::forget('api-index-ug.fees-'.$year);
             Cache::forget('api-index-pg.fees-'.$year);
 
-            Cache::purge('api-output-pg');
-            Cache::purge('api-output-ug');
+            API::purge_output_cache();
         }
         catch(Exception $e)
         {
-            // echo 'No cache to purge';
-        }
 
+        }
 
 		// return data
 		return $mapping;
