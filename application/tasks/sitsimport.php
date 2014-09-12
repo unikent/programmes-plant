@@ -62,9 +62,13 @@ class SITSImport_Task {
       } elseif ( $courseLevel === "ug" ) {
         $this->updateUGSITSData( $course, $programme, $year );
       }
-    }
 
-    $this->purgeCache();
+      // Clear UG programme cache (PG doesnt need this clearing as it uses deliveries)
+      ug_programme::purge_internal_cache($year);
+    }
+    
+    // clear output cache
+    API::purge_output_cache();
 
   }
 
@@ -246,13 +250,6 @@ class SITSImport_Task {
 
     return "";
 
-  }
-
-  public function purgeCache() {
-    try {
-      Cache::purge( 'api-output-pg' );
-      Cache::purge( 'api-output-ug' );
-    } catch( Exception $e ) { }
   }
 
 }
