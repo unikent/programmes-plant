@@ -61,15 +61,15 @@ class Fees {
 		// Ensure data has actually changed (and its worth continuing (No point busting all our caches if we don't need to)
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
 
-		$unqiue_datahash = md5(json_encode($fees).json_encode($courses));
+		$unique_datahash = md5(json_encode($fees).json_encode($courses));
 		$old_datahash = Cache::get($mapping_hash_cache);
 
 		// If hash's match, data is the same, so theres no point in regenerating the file
 		// That said, if the cached data is broken/missing (cache_exists = false) we need to generate anyway
-		if($cache_exists && $unqiue_datahash == $old_datahash) return true;
+		if($cache_exists && $unique_datahash == $old_datahash) return true;
 
 		// Update cache with new udh (unique data hash)
-		Cache::forever($mapping_hash_cache, $unqiue_datahash);
+		Cache::forever($mapping_hash_cache, $unique_datahash);
 
 		//
 		// Actually regenerate data (if we got this far, we need too.)
