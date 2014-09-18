@@ -220,13 +220,17 @@ class SITSImport_Task {
   public function updateUGRecord( $course, $programme, $type, $sequenceNumber ) {
 
     $programme->pos_code_44 = "$course->pos";
-    $programme->ari_code = "$course->ari_code";
-
-    if ( $type == "part-time" ) {
+    
+    if ( $type == "part-time" ) 
+    {
       $programme->parttime_mcr_code_87 = "$course->mcr";
       $programme->current_ipo_pt = $sequenceNumber;
-    } elseif ( $type == "full-time" ) {
+      $programme->ari_code = "$course->ari_code";
+    }
+    elseif ( $type == "full-time" ) 
+    {
       $programme->fulltime_mcr_code_88 = "$course->mcr";
+      $programme->ft_ari_code = "$course->ari_code";
     }
 
     $programme->raw_save();
