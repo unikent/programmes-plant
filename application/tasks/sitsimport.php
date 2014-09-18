@@ -21,11 +21,12 @@ class SITSImport_Task {
     $this->currentYears["ug"] = $this->getCurrentYear( "ug" );
     $this->currentYears["pg"] = $this->getCurrentYear( "pg" );
 
-    //Delete old data before loading the XML file
+    // Load XML file
+    $xml = $this->loadXML();
+
+    // If XML file is good, purge old caches before starting import
     $this->purgeOldPGData();
     $this->purgeOldUGData( $this->currentYears["ug"] );
-
-    $xml = $this->loadXML();
 
     foreach ( $xml as $course ) {
       //make sure it has a programme ID in the progsplant
