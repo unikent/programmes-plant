@@ -367,6 +367,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		if (!$programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
 		$programme = $model::find($programme_id);
+		$instance_id = $programme->instance_id;
+
 		$revision = $revision_model::find($revision_id);
 		if (!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
@@ -388,7 +390,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 				$ugpg = ( $type == 'pg') ? 'postgraduate' : 'undergraduate';
 				
-				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $programme->programme_id . '/' . $slug;
+				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $instance_id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
