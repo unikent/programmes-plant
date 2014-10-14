@@ -165,6 +165,7 @@ class Users_Controller extends Admin_Controller {
 			// grab ldap details
 			$fullname = $userdata[0]['displayname'][0];
 			$email = $userdata[0]['mail'][0];
+			$department = $userdata[0]['unikentoddepartment'][0];
 
 			// Attempt to get existing user
 			$user = User::where('username', '=', $username)->first();
@@ -177,6 +178,7 @@ class Users_Controller extends Admin_Controller {
 			$user->ug_subjects = $ug_subjects;
 			$user->pg_subjects = $pg_subjects;
 			$user->email = $email;
+			$user->department = $department;
 			$user->verified = 1;
 			$user->save();
 			// set role

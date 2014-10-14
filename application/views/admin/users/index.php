@@ -11,6 +11,7 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Department</th>
           <th>Email</th>
           <th>Role</th>
           <th>Actions</th>
@@ -20,12 +21,28 @@
       foreach($users as $usr){
         echo '<tr>
           <td>'.$usr->fullname.' ('.$usr->username.')</td>
+
+          <td>'.$usr->department.'</td>
           
           <td>'. HTML::mailto(Str::lower($usr->email)) .'</td>
 
           <td>';
           foreach($usr->roles as $role){
-            echo $role->name;
+            switch ($role->name) {
+              case 'User':
+                echo 'U';
+                break;
+              case 'Admin':
+                echo 'A';
+                break;
+              case 'Hyper Administrator':
+                echo 'H';
+                break;
+              
+              default:
+                # do nothing
+                break;
+            }
           }
 
           echo '</td>
