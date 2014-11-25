@@ -527,11 +527,24 @@ abstract class Programme extends Revisionable {
 		$cache_key_index = "api-index-{$type}.fees-$year";
 
 		// use the api index as a starting point
-		$index_data = static::generate_api_index($year);
+		$index_data = static::get_api_index($year);
 		$fees_data = array();
+
+		// Generate mapping for "taught/research" type field
+		if($type == 'pg'){
+			$extra_fields = array();
+			$model = API::get_programme_model();
+			$programme_type_field = static::get_programme_type_field();
+			$extra = $model::where('year','=',$year)->get(array('instance_id', $programme_type_field));
+			foreach($extra as $fields){
+				$extra_fields[$fields->attributes["instance_id"]] = $fields->attributes[$programme_type_field];
+			}
+		}
 
 		// create fees data for each programme
 		foreach ($index_data as $programme) {
+
+
 			if($type == 'ug'){
 				$fee = Fees::getFeeInfoForPos($programme['pos_code'], $year);
 				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
@@ -554,6 +567,7 @@ abstract class Programme extends Revisionable {
 			}
 
 			else{
+
 				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
 				foreach ($deliveries as $delivery) {
 					if(empty($delivery['description'])){
@@ -575,6 +589,7 @@ abstract class Programme extends Revisionable {
 						'mode_of_study'		=>		$programme['mode_of_study'],
 						'search_keywords' 	=>		$programme['search_keywords'],
 						'pos_code'			=>		$delivery['pos_code'],
+						'type'				=>		$extra_fields[$programme['id']], // get course type
 						'currency'			=>		$currency,
 						'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
 						'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
