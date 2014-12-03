@@ -568,7 +568,7 @@ abstract class Programme extends Revisionable {
 
 			else{
 
-				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
+				$deliveries = PG_Delivery::get_programme_deliveries($programme['id'], $year);
 				foreach ($deliveries as $delivery) {
 					if(empty($delivery['description'])){
 						continue;

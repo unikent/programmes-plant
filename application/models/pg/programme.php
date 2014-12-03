@@ -8,12 +8,12 @@ class PG_Programme extends Programme {
 	// Get deliveries for this programme
 	public function get_deliveries()
 	{
-		return PG_Deliveries::where('programme_id','=',$this->id)->get();
+		return PG_Delivery::where('programme_id','=',$this->id)->get();
 	}
 
 	public function deliveries()
 	{
-	  	return $this->has_many('pg_deliveries', 'programme_id');
+	  	return $this->has_many('pg_delivery', 'programme_id');
 	}
 
 	/**

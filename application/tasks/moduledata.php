@@ -82,7 +82,7 @@ class ModuleData_Task {
             $n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 
             // Get deliveries
-            $deliveries =  PG_deliveries::get_programme_deliveries($programme['id'], $parameters['programme_session']);
+            $deliveries =  PG_Delivery::get_programme_deliveries($programme['id'], $parameters['programme_session']);
             if(sizeof($deliveries) === 0)continue;
             // Kent
             $institution = '0122';

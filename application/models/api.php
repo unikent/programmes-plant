@@ -312,7 +312,7 @@ class API {
 
 			// only get if has a programme_type
 			if( isset($final['programme_type']) ){
-				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+				$final['deliveries'] = PG_Delivery::get_programme_deliveries($final['instance_id'], $final['year']);
 
 
 
