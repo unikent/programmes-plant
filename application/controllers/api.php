@@ -49,7 +49,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($index_data) ;
+			case 'csv':
+				return static::csv_download($index_data, "programmes-index-$level-$year", $last_generated);
+			default :
+				return static::json($index_data, 200);
+		}
 	}
 
 
@@ -643,8 +650,9 @@ class API_Controller extends Base_Controller {
 	* @param  string  $format   Format, either XML or JSON.
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_subject_index($year, $format = 'json')
+	public function get_subject_index($year, $level, $format = 'json')
 	{
+	
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
@@ -660,7 +668,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// output
-		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($subjects) ;
+			case 'csv':
+				return static::csv_download($subjects, "subjects-index-$level-$year", $last_generated);
+			default :
+				return static::json($subjects, 200);
+		}
 	}
 
 	/**
@@ -693,7 +708,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($fees_data) : static::json($fees_data, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($fees_data) ;
+			case 'csv':
+				return static::csv_download($fees_data, "fees-index-$level-$year", $last_generated);
+			default :
+				return static::json($fees_data, 200);
+		}
 	}
 
 	/**
@@ -925,10 +947,10 @@ class API_Controller extends Base_Controller {
 
 		// Header line
 		$headings = array_keys( current($output) );
-		$csv = API::array_to_csv($headings). "\r\r\n";
+		$csv = API::array_to_csv($headings). "\r\n";
 		// csv body
 		foreach($output as $data){
-			$csv .= API::array_to_csv($data) . "\r\r\n";;
+			$csv .= API::array_to_csv($data) . "\r\n";;
 		}
 
 		// output the data
