@@ -85,8 +85,7 @@ class SITSImport_Task {
 
   public function loadXML() {
 
-    $courses = simplexml_load_file( 'http://localhost/SITSCourseData-sample.xml' );
-    //$courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
+    $courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
 
     if ( $courses === false ) {
       throw new Exception( 'XML file does not exist in this location' );
