@@ -26,7 +26,7 @@ class SITSImport_Task {
 
     // If XML file is good, purge old caches before starting import
     $this->purgeOldPGData();
-    $this->purgeOldUGData( $this->currentYears["ug"] );
+    $this->purgeOldUGData();
 
     foreach ( $xml as $course ) {
       //make sure it has a programme ID in the progsplant
@@ -56,13 +56,9 @@ class SITSImport_Task {
       }
 
 
-      if ( $courseLevel === "pg" ) {
-        URLParams::$type = "pg";
+      URLParams::$type = $courseLevel;
+      $delivery = $this->createDelivery( $course, $programme, $year, $courseLevel );
 
-        $delivery = $this->createDelivery( $course, $programme, $year );
-      } elseif ( $courseLevel === "ug" ) {
-        $this->updateUGSITSData( $course, $programme, $year );
-      }
 
       // Clear UG programme cache (PG doesnt need this clearing as it uses deliveries)
       ug_programme::purge_internal_cache($year);
@@ -74,34 +70,23 @@ class SITSImport_Task {
   }
 
   /**
-   * Deliveries table is separate for PG so we can
-   * truncate the data in this table
+   * Remove all PG deliveries
    */
   public function purgeOldPGData() {
     return DB::query( 'DELETE FROM pg_programme_deliveries' );
   }
 
   /**
-   * For UG we need to delete fields from the 2 relevant tables
-   * that will be replaced as part of this task
+   * Remove all UG deliveries
    */
-  public function purgeOldUGData( $year ) {
-    foreach ( array( 'programmes_ug', 'programmes_revisions_ug' ) as $table ) {
-      DB::table( $table )
-      ->where( 'year', '=', $year )
-      ->update( array(
-          'fulltime_mcr_code_88' => '',
-          'parttime_mcr_code_87' => '',
-          'pos_code_44' => '',
-          'ari_code' => '',
-          'current_ipo_pt' => '',
-          'previous_ipo_pt' => '' ) );
-    }
+  public function purgeOldUGData() {
+    return DB::query( 'DELETE FROM ug_programme_deliveries' );
   }
 
   public function loadXML() {
 
-    $courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
+    $courses = simplexml_load_file( 'http://localhost/SITSCourseData-sample.xml' );
+    //$courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
 
     if ( $courses === false ) {
       throw new Exception( 'XML file does not exist in this location' );
@@ -167,15 +152,23 @@ class SITSImport_Task {
    * We add a number of fields from the XML to the database in
    * this function.
    */
-  public function createDelivery( $course, $programme, $year, $delivery = null ) {
+  public function createDelivery( $course, $programme, $year, $level, $delivery = null ) {
+    $delivery_class = "PG_Delivery";
+    $award_class = "PG_Award";
+
+    if($level === 'ug'){
+      $delivery_class = "UG_Delivery";
+      $award_class = "UG_Award";
+    }
+
     // Quick dependency injector
     if ($delivery === null) {
-      $delivery = new PG_Deliveries;
+      $delivery = new $delivery_class;
     }
 
     $delivery->programme_id = $programme->id;
 
-    $award = PG_Award::where(
+    $award = $award_class::where(
       "longname", "=", $course->award
     )->first();
 
@@ -193,26 +186,6 @@ class SITSImport_Task {
     $delivery->save();
 
     return $delivery;
-  }
-
-  /**
-   * Get the attendanceType (full-time or part-time)
-   * Call to various functions to update the IPO data
-   */
-  public function updateUGSITSData( $course, $programme, $year ) {
-
-    $type = strtolower( $course->attendanceType );
-
-    $revisions = $programme->get_revisions();
-
-    $sequenceNumber = $this->extractCurrentIPO( $course, $programme->year );
-
-    // update all the revisions
-    foreach ( $revisions as $revision ) {
-      $this->updateUGRecord( $course, $revision, $type, $sequenceNumber );
-    }
-    // update real programme
-    $this->updateUGRecord( $course, $programme, $type, $sequenceNumber );
   }
 
   /**
