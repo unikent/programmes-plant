@@ -540,9 +540,19 @@ class API {
 	            $output[] = 'NULL';
 	            continue;
 	        }
-	        // trim
-	        $field = trim($field);
-
+			if(is_array($field) && !empty($field)){
+				if(!is_array(current($field))){
+					$field = implode(', ',$field);
+				}else{
+					$field = '## nested data  ##';
+				}
+			}else{
+				if(empty($field)){
+					$field ='';
+				}
+				// trim
+				$field = trim($field);
+			}
 	        // Enclose fields containing $delimiter, $enclosure or whitespace
 	        if ( $encloseAll || preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ) {
 	            $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
