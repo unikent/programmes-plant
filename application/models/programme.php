@@ -613,6 +613,18 @@ abstract class Programme extends Revisionable {
 		// return
 		return $fees_data;
 	}
+
+	// Get deliveries for this programme
+	public function get_deliveries()
+	{
+		$delivery_class = static::$type . "_Delivery";
+		return $delivery_class::where('programme_id','=',$this->id)->get();
+	}
+
+	public function deliveries()
+	{
+	  	return $this->has_many(static::$type . '_delivery', 'programme_id');
+	}
 	
 	
 	/**

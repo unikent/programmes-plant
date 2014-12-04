@@ -573,11 +573,11 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Show programme deliveries (PG only)
+	 * Show programme deliveries
 	 */
 	public function get_deliveries($year, $type, $id){
 
-		// Delete a programme is delete param is passed
+		// Delete a programme if delete param is passed
 		if(isset($_GET['delete'])){
 			// ensure perms
 			if(Auth::user()->can("edit_pg_deliveries")){
@@ -588,7 +588,9 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 
 		$model = $this->model;
+
 		$deliveries = $model::find($id)->get_deliveries();
+		
 		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
 	}
 

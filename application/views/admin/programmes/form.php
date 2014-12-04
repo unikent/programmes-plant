@@ -48,7 +48,7 @@
     <div class="control-group" style='padding:10px;'>
     <?php if (! $create): ?>
 
-   <?php
+    <?php
 
         $feesets = array();
         $displayed = array();
@@ -75,7 +75,6 @@
 </div>
 <br/>
 
-<?php if (! $create && URLParams::$type == 'pg'): ?>
 <div class="section accordion accordion-group">
   <div class="accordion-heading">
     <legend>
@@ -88,7 +87,6 @@
     </div>
   </div>
 </div>
-<?php endif; ?>
 
 
 
