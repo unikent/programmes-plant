@@ -188,28 +188,6 @@ class SITSImport_Task {
   }
 
   /**
-   * Update the UG fields in both the programmes_ug and revisions tables
-   */
-  public function updateUGRecord( $course, $programme, $type, $sequenceNumber ) {
-
-    $programme->pos_code_44 = "$course->pos";
-    
-    if ( $type == "part-time" ) 
-    {
-      $programme->parttime_mcr_code_87 = "$course->mcr";
-      $programme->current_ipo_pt = $sequenceNumber;
-      $programme->ari_code = "$course->ari_code";
-    }
-    elseif ( $type == "full-time" ) 
-    {
-      $programme->fulltime_mcr_code_88 = "$course->mcr";
-      $programme->ft_ari_code = "$course->ari_code";
-    }
-
-    $programme->raw_save();
-  }
-
-  /**
    * Get the IPOs that are inUse in SITS
    * We use this function to get the sequence number for the relevant academicYear
    */
