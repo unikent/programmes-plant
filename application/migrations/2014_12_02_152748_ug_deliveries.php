@@ -11,6 +11,14 @@ class Ug_Deliveries {
 	{
 		Schema::table('programmes_ug', function($table){
 			$table->drop_column('ari_code');
+			$table->drop_column('ft_ari_code');
+			$table->drop_column('current_ipo_pt');
+			$table->drop_column('previous_ipo_pt');
+		});
+
+		Schema::table('programmes_revisions_ug', function($table){
+			$table->drop_column('ari_code');
+			$table->drop_column('ft_ari_code');
 			$table->drop_column('current_ipo_pt', 4);
 			$table->drop_column('previous_ipo_pt', 4);
 		});
@@ -44,6 +52,14 @@ class Ug_Deliveries {
 	{
 		Schema::table('programmes_ug', function($table){
 			$table->string('ari_code', 12);
+			$table->string('ft_ari_code', 12);
+			$table->string('current_ipo_pt', 4);
+			$table->string('previous_ipo_pt', 4);
+		});
+
+		Schema::table('programmes_revisions_ug', function($table){
+			$table->string('ari_code', 12);
+			$table->string('ft_ari_code', 12);
 			$table->string('current_ipo_pt', 4);
 			$table->string('previous_ipo_pt', 4);
 		});
