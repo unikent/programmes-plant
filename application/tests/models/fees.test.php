@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL);
 class TestFees extends ModelTestCase 
 {
 
@@ -42,13 +42,16 @@ class TestFees extends ModelTestCase
 	}
 
 	/**
-	 * @expectedException PHPUnit_Framework_Error_Warning
+	 *
 	 */
-	public function testGenerateFeeMapThrowsErrorWhenPathIsWrong()
+	public function testGenerateFeeMapReturnEmptyArrayWhenPathIsWrong()
 	{
 		$year = 2015;
 		Config::set('fees.path', '/tmp/blah');
 		$result = Fees::generate_fee_map($year);
+		
+		$this->assertEquals(array(), $result);
+
 	}
 
 	public function testGenerateFeeMapGeneratesDataHash()
