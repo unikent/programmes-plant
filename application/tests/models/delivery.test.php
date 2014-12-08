@@ -20,20 +20,6 @@ class TestDelivery extends ModelTestCase
 		static::add_sample_deliveries();
 	}
 
-	// public function testDeleteClearsProgrammeOutputCaches()
-	// {
-	// 	$programme = UG_Programme::find(1);
-	// 	$revision = $programme->get_revision(1);
-	// 	$programme->make_revision_live($revision);
-
-	// 	$this->assertNotEmpty(Cache::get("api-output-ug/programme-2014-1"));
-
-	// 	$delivery = UG_Delivery::find(1);
-	// 	$delivery->delete();
-
-	// 	$this->assertEmpty(Cache::get("api-output-ug/programme-2014-1"));
-	// }
-
 	public function testGenerateAPIDataGeneratesCorrectCache()
 	{
 		UG_Delivery::generate_api_data();
