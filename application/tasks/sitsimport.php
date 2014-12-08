@@ -60,8 +60,6 @@ class SITSImport_Task {
       $delivery = $this->createDelivery( $course, $programme, $year, $courseLevel );
 
 
-      // Clear UG programme cache (PG doesnt need this clearing as it uses deliveries)
-      ug_programme::purge_internal_cache($year);
     }
     
     // clear output cache
