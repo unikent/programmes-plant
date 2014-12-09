@@ -185,13 +185,7 @@ abstract class Programme extends Revisionable {
 		// Regenerate data to store in caches
 		static::generate_api_programme($revision->instance_id, $year, $revision);
 		static::generate_api_index($year);
-		
-		// regenerate the module data from webservices as the revision is made live
-		// we don't want to do this in a test or local environment
-		if ( Request::env() != 'test' && Request::env() != 'local' )
-		{
-			Command::run(array('moduledata:modules', $revision, $year, URLParams::get_type(), false));
-		}
+
 	}
 
 	/**
