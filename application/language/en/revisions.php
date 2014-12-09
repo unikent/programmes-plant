@@ -17,7 +17,7 @@ return array(
 	'historical_revisions' => 'Previous revisions',
 	'draft'				=> 'Draft',
 	'draft_warning'		=> 'Warning: This programme contains changes that are not yet ready to go live.',
-	'under_review_warning' => 'Changes have been sent to EMS for publishing.',
+	'under_review_warning' => 'The latest changes to this programme have been sent to EMS for publishing but have not yet been published.',
 	'review_warning'	=> 'The latest changes to this programme have not yet been sent to EMS for publishing.',
 
 	// Buttons
