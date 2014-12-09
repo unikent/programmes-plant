@@ -40,13 +40,16 @@
 			</td>
 		</tr>
 
-		<?php foreach($deliveries as $delivery): ?>
+		<?php foreach($deliveries as $delivery):
+            $awardClass = strtoupper($type).'_Award';
+
+            ?>
 			<tr>
 				<td>
 					<form action="" method="post">
 					<table>
 						<tr>
-							<td> <?php echo Form::select('award', PG_Award::all_as_list(), $delivery->award, $field_state); ?> </td>
+							<td> <?php echo Form::select('award', $awardClass::all_as_list(), $delivery->award, $field_state); ?> </td>
 							<td> <?php echo Form::text('pos_code', $delivery->pos_code, $field_state); ?> </td>
 							<td> <?php echo Form::text('mcr', $delivery->mcr, $field_state); ?>  </td>
 							<td> <?php echo Form::select('attendance_pattern',array('full-time'=>'Full time', 'part-time'=> 'Part time'),$delivery->attendance_pattern, $field_state); ?></td>
@@ -75,7 +78,7 @@
 					<form action="" method="post">
 						<table >
 							<tr>
-								<td> <?php echo Form::select('award', PG_Award::all_as_list()); ?> </td>
+								<td> <?php echo Form::select('award', $awardClass::all_as_list()); ?> </td>
 								<td> <?php echo Form::text('pos_code'); ?> </td>
 								<td> <?php echo Form::text('mcr'); ?> </td>
 								<td> <?php echo Form::select('attendance_pattern', array('full-time'=>'Full time', 'part-time'=> 'Part time')); ?></td>

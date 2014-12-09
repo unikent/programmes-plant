@@ -312,7 +312,7 @@ class API {
 
 			// only get if has a programme_type
 			if( isset($final['programme_type']) ){
-				$final['deliveries'] = PG_Deliveries::get_programme_deliveries($final['instance_id'], $final['year']);
+				$final['deliveries'] = PG_Delivery::get_programme_deliveries($final['instance_id'], $final['year']);
 
 
 
@@ -322,7 +322,7 @@ class API {
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
-					// Add FAKE fee data
+					// Add fee data
 					$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
 
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
@@ -331,8 +331,26 @@ class API {
 			}
 		}
 		else
-		{ 
-			// if UG, grab modules normally
+		{
+			// Add delivery info
+			$deliveries = UG_Delivery::get_programme_deliveries($final['instance_id'], $final['year']);
+			foreach ($deliveries as $delivery) {
+
+				$final['pos_code'] = $delivery['pos_code'];
+
+				if ( $delivery['attendance_pattern'] == "part-time" ) {
+					$final['parttime_mcr_code'] = $delivery['mcr'];
+					$final['current_ipo'] = $delivery['current_ipo'];
+					$final['ari_code'] = $delivery['ari_code'];
+				}
+				elseif ( $delivery['attendance_pattern'] == "full-time" ) {
+					$final['fulltime_mcr_code'] = $delivery['mcr'];
+					$final['ari_code_ft'] = $delivery['ari_code'];
+				}
+			}
+			
+
+			// if UG, add  single grab modules normally
 			$modules = API::get_module_data($final['instance_id'], $final['pos_code'], $final['year'], $level);
 			if($modules !== false)$final['modules'] = $modules;
 

@@ -573,23 +573,25 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Show programme deliveries (PG only)
+	 * Show programme deliveries
 	 */
 	public function get_deliveries($year, $type, $id){
 
-		// Delete a programme is delete param is passed
+		// Delete a programme if delete param is passed
 		if(isset($_GET['delete'])){
 			// ensure perms
 			if(Auth::user()->can("edit_pg_deliveries")){
-				PG_Deliveries::find(Input::get('id'))->delete();
+				PG_Delivery::find(Input::get('id'))->delete();
 			}
 			
 			return Redirect::to(URI::current());
 		}
 
 		$model = $this->model;
+
 		$deliveries = $model::find($id)->get_deliveries();
-		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
+		
+		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries, 'type'=>$type));
 	}
 
 	/**
@@ -599,9 +601,9 @@ class Programmes_Controller extends Revisionable_Controller {
 
 
 		if(Input::get('id')){
-			$delivery = PG_Deliveries::find(Input::get('id'));
+			$delivery = PG_Delivery::find(Input::get('id'));
 		}else{
-			$delivery = new PG_Deliveries;
+			$delivery = new PG_Delivery;
 			$delivery->programme_id = $id;
 		}
 		

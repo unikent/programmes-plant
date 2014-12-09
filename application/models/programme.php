@@ -185,13 +185,7 @@ abstract class Programme extends Revisionable {
 		// Regenerate data to store in caches
 		static::generate_api_programme($revision->instance_id, $year, $revision);
 		static::generate_api_index($year);
-		
-		// regenerate the module data from webservices as the revision is made live
-		// we don't want to do this in a test or local environment
-		if ( Request::env() != 'test' && Request::env() != 'local' )
-		{
-			Command::run(array('moduledata:modules', $revision, $year, URLParams::get_type(), false));
-		}
+
 	}
 
 	/**
@@ -568,7 +562,7 @@ abstract class Programme extends Revisionable {
 
 			else{
 
-				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
+				$deliveries = PG_Delivery::get_programme_deliveries($programme['id'], $year);
 				foreach ($deliveries as $delivery) {
 					if(empty($delivery['description'])){
 						continue;
@@ -618,6 +612,18 @@ abstract class Programme extends Revisionable {
 		
 		// return
 		return $fees_data;
+	}
+
+	// Get deliveries for this programme
+	public function get_deliveries()
+	{
+		$delivery_class = static::$type . "_Delivery";
+		return $delivery_class::where('programme_id','=',$this->id)->get();
+	}
+
+	public function deliveries()
+	{
+	  	return $this->has_many(static::$type . '_delivery', 'programme_id');
 	}
 	
 	
