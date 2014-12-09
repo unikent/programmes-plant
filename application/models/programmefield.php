@@ -12,6 +12,11 @@ abstract class ProgrammeField extends Field
     								'OVERRIDABLE_DEFAULT' => 2
     							);
 
+    /**
+     * a cache of this model
+     */
+    public static $model_cache = array();
+
     public static function get_types_as_list()
     {
     	$list_types = array();
@@ -138,8 +143,10 @@ abstract class ProgrammeField extends Field
         $model = strtolower(get_called_class());
         $cache_key = 'api-'.$model;
 
+        if(isset(static::$model_cache[$cache_key])) return static::$model_cache[$cache_key];
+
         // Get data from cache (or generate it)
-        return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
+        return static::$model_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
     }
 
     /**

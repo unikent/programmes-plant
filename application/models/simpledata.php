@@ -29,6 +29,11 @@ class SimpleData extends Eloquent {
 	public static $data_by_year = false;
 
 	/**
+	 * a cache of this model
+	 */
+	public static $model_cache = array();
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -216,8 +221,10 @@ class SimpleData extends Eloquent {
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
 
+		if(isset(static::$model_cache[$cache_key])) return static::$model_cache[$cache_key];
+
 		// Get data from cache (or generate it)
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+		return static::$model_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**
