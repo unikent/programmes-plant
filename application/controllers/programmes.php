@@ -591,7 +591,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$deliveries = $model::find($id)->get_deliveries();
 		
-		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
+		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries, 'type'=>$type));
 	}
 
 	/**

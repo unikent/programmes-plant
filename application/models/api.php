@@ -322,7 +322,7 @@ class API {
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
-					// Add FAKE fee data
+					// Add fee data
 					$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
 
 					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
