@@ -45,7 +45,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$user = Auth::user();
 
 		// get required fields
-		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at');
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at','instance_id');
 
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
@@ -81,7 +81,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 *
 	 * @param int    $year    The year
 	 * @param string $type    Undergraduate or postgraduate.
-	 * @param int    $item_id The ID of the programme to clone from.
+	 * @param int    $item_id The instance ID of the programme to clone from.
 	 */
 	public function get_create($year, $type, $item_id = false)
 	{
@@ -91,7 +91,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			// We're cloning item_id
 			$model = $this->model;
-			$course = $model::find($item_id);
+			$course = $model::where('instance_id', '=', $item_id)->where('year', '=', $year)->first();
 			$this->data['clone'] = true;
 			$this->data['programme'] = $course;
 		} 
@@ -111,13 +111,13 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/$type/edit/$programme_id
+	 * Routing for GET /$year/$type/edit/$instance_id
 	 *
 	 * controls the display of the programme edit form
 	 *
 	 * @param int    $year    The year
 	 * @param string $type    Undergraduate or postgraduate.
-	 * @param int    $item_id The ID of the programme to edit.
+	 * @param int    $item_id The instance ID of the programme to edit.
 	 */
 	public function get_edit($year, $type, $id = false)
 	{	
@@ -125,7 +125,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$model = $this->model;
 
 		// Ensure we have a corresponding course in the database
-		$programme = $model::find($id);
+		$programme = $model::where('instance_id', '=', $id)->where('year', '=', $year)->first();
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
 		

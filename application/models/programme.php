@@ -578,8 +578,14 @@ abstract class Programme extends Revisionable {
 					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
 					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
-					$description = $delivery['description'];
-					$description = trim(substr($description ,0, strpos($description, ' - ')));
+					// We get a description:
+					// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow - MA - Full-time at Canterbury 
+					//
+					// But need only the name (which can have an arbitary number of -'s in it) only the hope it wont change much, just explode
+					// -'s and cut off the last 2 elements to give us:
+
+					// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow 
+					$description  = trim(implode(' - ',array_slice(explode(' - ', $delivery['description']), 0, -2)));
 
 					$programme_data = array(
 						'id' 				=> 		$programme['id'],
