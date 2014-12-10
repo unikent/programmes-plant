@@ -122,6 +122,9 @@ abstract class ProgrammeField extends Field
      */
     public function save()
     {
+        //clear model memory cache
+        static::$model_cache = array();
+        
         $saved = parent::save();
         
         if($saved){

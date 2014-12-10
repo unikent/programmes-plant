@@ -58,6 +58,9 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+		
+		//clear model memory cache
+		static::$model_cache = array();
 
 		// If instance_id  isn't set, set it to value of id.
 		// null for new records, 0 for created ones.
