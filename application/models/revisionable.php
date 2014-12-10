@@ -24,7 +24,7 @@ class Revisionable extends SimpleData {
 	/**
 	 * a cache of this model
 	 */
-	public static $model_cache = array();
+	public static $api_cache = array();
 
 	/**
 	 * Create new instance of a revisionble object
@@ -58,9 +58,9 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
-		
+
 		//clear model memory cache
-		static::$model_cache = array();
+		static::$api_cache = array();
 
 		// If instance_id  isn't set, set it to value of id.
 		// null for new records, 0 for created ones.
@@ -466,10 +466,10 @@ class Revisionable extends SimpleData {
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model.'-'.$year;
 
-		if(isset(static::$model_cache[$cache_key])) return static::$model_cache[$cache_key];
+		if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
 
 		// Get data from cache (or generate it)
-		return static::$model_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**

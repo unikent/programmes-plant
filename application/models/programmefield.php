@@ -15,7 +15,7 @@ abstract class ProgrammeField extends Field
     /**
      * a cache of this model
      */
-    public static $model_cache = array();
+    public static $api_cache = array();
 
     public static function get_types_as_list()
     {
@@ -123,8 +123,8 @@ abstract class ProgrammeField extends Field
     public function save()
     {
         //clear model memory cache
-        static::$model_cache = array();
-        
+        static::$api_cache = array();
+
         $saved = parent::save();
         
         if($saved){
@@ -146,10 +146,10 @@ abstract class ProgrammeField extends Field
         $model = strtolower(get_called_class());
         $cache_key = 'api-'.$model;
 
-        if(isset(static::$model_cache[$cache_key])) return static::$model_cache[$cache_key];
+        if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
 
         // Get data from cache (or generate it)
-        return static::$model_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
+        return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
     }
 
     /**

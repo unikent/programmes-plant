@@ -31,7 +31,7 @@ class SimpleData extends Eloquent {
 	/**
 	 * a cache of this model
 	 */
-	public static $model_cache = array();
+	public static $api_cache = array();
 
 	/**
 	 * Validates input for Field.
@@ -182,8 +182,8 @@ class SimpleData extends Eloquent {
 			static::clear_all_as_list_cache($this->year);
 
 			//clear model memory cache
-			static::$model_cache = array();
-			
+			static::$api_cache = array();
+
 			// Only store / refresh cache if this is NOT a revisionble item
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
@@ -225,10 +225,10 @@ class SimpleData extends Eloquent {
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
 
-		if(isset(static::$model_cache[$cache_key])) return static::$model_cache[$cache_key];
+		if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
 
 		// Get data from cache (or generate it)
-		return static::$model_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**
