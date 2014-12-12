@@ -625,6 +625,12 @@ abstract class Programme extends Revisionable {
 	{
 	  	return $this->has_many(static::$type . '_delivery', 'programme_id');
 	}
+
+	// Find deliveries for this programme type
+	public static function find_deliveries($instance_id, $year){
+		$model = static::$type.'_Delivery';
+		$model::get_programme_deliveries($instance_id, $year);
+	}
 	
 	
 	/**
