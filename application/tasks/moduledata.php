@@ -313,17 +313,13 @@ class ModuleData_Task {
         $model = $type.'_Programme';
 
         $campus_id_field = $model::get_location_field();
-        $pos_code_field = $model::get_pos_code_field();
         $module_session_field = $model::get_module_session_field();
 
         $tmp_programme['campus_id'] = Campus::find($programme->$campus_id_field)->identifier;
         $tmp_programme['id'] = $programme->instance_id;
         $tmp_programme['module_session'] = $programme->$module_session_field;
-        $tmp_programme['pos_code'] = $programme->$pos_code_field;
 
-        $method = 'load_'.$type.'_modules';
-
-        $this->$method($parameters, array($tmp_programme), false);
+        $this->load_modules($parameters, array($tmp_programme));
         // clear output cache
         Cache::purge('api-output-'.$type);
     }

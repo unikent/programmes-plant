@@ -53,17 +53,14 @@
         $feesets = array();
         $displayed = array();
 
-        if(URLParams::$type == 'pg'){
-            foreach($programme->get_deliveries() as $del){
-              // ignore duplicates
-              if(in_array($del->pos_code, $displayed)) continue;
-              // add to output
-               $feesets[] =  array('pos' => $del->pos_code, 'year'=> $programme->year);
-               $displayed[] = $del->pos_code;
-            }
-        }elseif(URLParams::$type == 'ug'){
-            $feesets[] = array('pos' => $programme->{$programme::get_pos_code_field()}, 'year'=> $programme->year);
+        foreach($programme->get_deliveries() as $del){
+          // ignore duplicates
+          if(in_array($del->pos_code, $displayed)) continue;
+          // add to output
+           $feesets[] =  array('pos' => $del->pos_code, 'year'=> $programme->year);
+           $displayed[] = $del->pos_code;
         }
+    
         // Show info
         echo View::make('admin.inc.partials.feeblock', array('feesets' => $feesets))->render();
 
