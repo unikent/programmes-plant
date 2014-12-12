@@ -594,29 +594,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries, 'type'=>$type));
 	}
 
-	/**
-	 * update programme deliveries (PG only)
-	 */
-	public function post_deliveries($year, $type, $id){
-
-
-		if(Input::get('id')){
-			$delivery = PG_Delivery::find(Input::get('id'));
-		}else{
-			$delivery = new PG_Delivery;
-			$delivery->programme_id = $id;
-		}
-		
-		$delivery->award = Input::get('award');
-		$delivery->pos_code = Input::get('pos_code');
-		$delivery->mcr = Input::get('mcr');
-		$delivery->description = Input::get('description');
-		$delivery->attendance_pattern = Input::get('attendance_pattern');
-		
-		$delivery->save();
-
-		return Redirect::to(URI::current());	
-	}
 
 	/**
 	* get the awards as a string

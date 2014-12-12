@@ -564,7 +564,7 @@ abstract class Programme extends Revisionable {
 	{
 		$type = static::$type;
 		$cache_key_index = "api-index-{$type}.fees-$year";
-		$deliver_model = $type . '_Delivery';
+		$delivery_model = $type . '_Delivery';
 		$award_model = $type . '_Award';
 
 		// use the api index as a starting point
@@ -585,7 +585,7 @@ abstract class Programme extends Revisionable {
 		// create fees data for each programme
 		foreach ($index_data as $programme) {
 
-			$deliveries = $delivery_class::get_programme_deliveries($programme['id'], $year);
+			$deliveries = $delivery_model::get_programme_deliveries($programme['id'], $year);
 			foreach ($deliveries as $delivery) {
 				if(empty($delivery['description'])){
 					continue;
