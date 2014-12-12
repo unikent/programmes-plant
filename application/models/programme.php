@@ -9,6 +9,54 @@ abstract class Programme extends Revisionable {
 	public static function get_title_field(){
 		return static::get_programme_title_field();
 	}
+
+
+		/**
+	 * Get this programme's awards.
+	 * 
+	 * @return Award The award for this programme.
+	 */
+	public function awards()
+	{
+		$output_awards = array();
+		$award_field = static::get_award_field();
+		$ids = explode(',', $this->$award_field);
+		$awards = PG_Award::where_in('id', $ids)->get();
+
+		// we need to get the awards back in the correct order as specified by the comma separated list
+		foreach ($ids as $id)
+		{
+			foreach ($awards as $award)
+			{
+				if ($award->id == $id)
+				{
+					$output_awards[] = $award;
+				}
+			}
+		}
+		return $output_awards;
+	}
+
+	/**
+	 * Get a list of this programme's award names.
+	 * 
+	 * @return string A comma seperated string of awards.
+	 */
+	public function get_award_names()
+	{
+		$awards = $this->awards();
+		$award_string = '';
+		$count = 0;
+
+		foreach ($awards as $id=>$award) {
+			$award_string .= (($count > 0) ? ', ' : '') . $award->name;
+			$count++;
+		}
+
+		return $award_string;
+	}
+
+	
 	/**
 	 * Get this programme's award.
 	 * 
@@ -603,8 +651,9 @@ abstract class Programme extends Revisionable {
 
 	// Find deliveries for this programme type
 	public static function find_deliveries($instance_id, $year){
+
 		$model = static::$type.'_Delivery';
-		$model::get_programme_deliveries($instance_id, $year);
+		return $model::get_programme_deliveries($instance_id, $year);
 	}
 	
 	
