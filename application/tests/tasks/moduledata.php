@@ -193,16 +193,14 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->populate_campus();
         
         $programme = new stdClass();
-        $pos_code = UG_Programme::get_pos_code_field();
         $location = UG_Programme::get_location_field();
         $award = UG_Programme::get_awarding_institute_or_body_field();
         $module_session = UG_Programme::get_module_session_field();
-        $programme->{$pos_code} = 'ACCF-S:BA';
         $programme->{$location} = '58';
         $programme->{$award} = '0122';
         $programme->{$module_session} = '2014';
 
-        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', $programme->{$award}, $programme->{$location}, $programme->{$module_session});
        
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2014&format=json';
         $this->assertEquals($expected_url, $actual_url);
@@ -214,16 +212,14 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
 		
         $programme = new stdClass();
 
-        $pos_code = UG_Programme::get_pos_code_field();
         $location = UG_Programme::get_location_field();
         $award = UG_Programme::get_awarding_institute_or_body_field();
         $module_session = UG_Programme::get_module_session_field();
-        $programme->{$pos_code} = 'ACCF-S:BA';
         $programme->{$location} = '58';
         $programme->{$award} = '0122';
         $programme->{$module_session} = '2013';
 		
-        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', $programme->{$award}, $programme->{$location}, $programme->{$module_session});
         $expected_url = 'madeupurlpos=ACCF-S:BA&teachingInstitution=0122&teachingCampus=58&sessionCode=2013&format=json';
         $this->assertEquals($expected_url, $actual_url);
     }
@@ -233,16 +229,14 @@ class TestModuleData_Task extends PHPUnit_Framework_TestCase {
         $this->populate_campus();
         
         $programme = new stdClass();
-        $pos_code = UG_Programme::get_pos_code_field();
         $location = UG_Programme::get_location_field();
         $award = UG_Programme::get_awarding_institute_or_body_field();
         $module_session = UG_Programme::get_module_session_field();
-        $programme->{$pos_code} = 'ACCF-S:BA';
         $programme->{$location} = '2';
         $programme->{$award} = '0122';
         $programme->{$module_session} = 'None';
         
-        $actual_url = $this->module_data_task->build_module_webservice_url($programme->{$pos_code}, $programme->{$award}, $programme->{$location}, $programme->{$module_session});
+        $actual_url = $this->module_data_task->build_module_webservice_url('ACCF-S:BA', $programme->{$award}, $programme->{$location}, $programme->{$module_session});
         $expected_url = '';
         $this->assertEquals($expected_url, $actual_url);
     }
