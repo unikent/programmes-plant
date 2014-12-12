@@ -39,7 +39,7 @@
 				<td>
 					<table>
 						<tr>
-							<td> <?php echo $delivery->award; ?> </td>
+							<td> <?php echo implode(', ',$awardClass::replace_ids_with_values($delivery->award,false,true)); ?> </td>
 							<td> <?php echo $delivery->pos_code; ?> </td>
 							<td> <?php echo $delivery->mcr; ?>  </td>
 							<td> <?php echo $delivery->attendance_pattern; ?></td>

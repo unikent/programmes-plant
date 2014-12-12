@@ -452,7 +452,7 @@ abstract class Programme extends Revisionable {
 		if(empty($live_revisions_ids)){
 			return array();
 		}
-	
+
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
 						->where_in('id', $live_revisions_ids)

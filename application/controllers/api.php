@@ -1024,7 +1024,7 @@ class API_Controller extends Base_Controller {
 	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
 	 */
-	public function get_xcri_cap($year)
+	public function get_xcri_cap($year='current')
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();

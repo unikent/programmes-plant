@@ -135,7 +135,7 @@ Route::group(array('before' => ''), function(){
 	
 	
 	// XCRI-CAP Feed
-	Route::any('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');
+	Route::any('/api/xcri-cap', 'api@xcri_cap');
 	Route::any('/api/([0-9]{4}|current)/xcri-cap', 'api@xcri_cap');
 
 	// bare-bones programme list
