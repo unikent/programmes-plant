@@ -21,7 +21,8 @@ abstract class Programme extends Revisionable {
 		$output_awards = array();
 		$award_field = static::get_award_field();
 		$ids = explode(',', $this->$award_field);
-		$awards = PG_Award::where_in('id', $ids)->get();
+		$award_model = strtoupper(static::$type).'_Award';
+		$awards = $award_model::where_in('id', $ids)->get();
 
 		// we need to get the awards back in the correct order as specified by the comma separated list
 		foreach ($ids as $id)

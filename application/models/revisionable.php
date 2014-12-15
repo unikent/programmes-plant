@@ -4,7 +4,7 @@
  * 
  * A model for datatypes that need to maintain revisions of itself.
  */
-class Revisionable extends SimpleData {
+abstract class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
 	public static $revision_model = false;
@@ -552,6 +552,9 @@ class Revisionable extends SimpleData {
 	public function __call($method, $parameters)
 	{
 		$class = get_called_class();
+		if(!isset(static::$fields[$class])){
+			static::$fields[$class]=array();
+		}
 		// If matchs get_X_field
 		if (ends_with($method, '_field') && starts_with($method, 'get_')){
 			// Check we have a fields map, if not load it
