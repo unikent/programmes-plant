@@ -577,16 +577,6 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_deliveries($year, $type, $id){
 
-		// Delete a programme if delete param is passed
-		if(isset($_GET['delete'])){
-			// ensure perms
-			if(Auth::user()->can("edit_pg_deliveries")){
-				PG_Delivery::find(Input::get('id'))->delete();
-			}
-			
-			return Redirect::to(URI::current());
-		}
-
 		$model = $this->model;
 
 		$deliveries = $model::find($id)->get_deliveries();

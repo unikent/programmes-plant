@@ -4,7 +4,7 @@
  * 
  * A model for datatypes that need to maintain revisions of itself.
  */
-class Revisionable extends SimpleData {
+abstract class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
 	public static $revision_model = false;
