@@ -112,7 +112,6 @@ class API {
 	{
 		$cache_key = "api-output-{$level}.programme-$year-$iid";
 
-
 		$prefix = API::_get_prefix($level);
 
 		$settings_model = $prefix.'ProgrammeSetting';
@@ -248,6 +247,9 @@ class API {
 	 * @return Combined programme data (fully linked)
 	 */
 	public static function combine_programme($programme, $programme_settings, $globals, $level = false){
+		// Get Models
+		$programme_model = URLParams::get_type().'_Programme';
+		$awards_model = URLParams::get_type().'_Award';
 
 		// Initialise the level
 		$level = ($level == false) ? URLParams::get_type() : $level;
@@ -294,10 +296,8 @@ class API {
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
 
-		$programme_model = URLParams::get_type().'_Programme';
-
+		// Related courses
 		$related_courses = $programme_model::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
-
 		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
 
 		// Add global settings data
@@ -305,59 +305,21 @@ class API {
 		
 		$final['programme_level'] = $level;
 
+		// Add in deliveries data
+		$final['deliveries'] = $programme_model::find_deliveries($final['instance_id'], $final['year']);
+		$modules = array();
 
+		foreach($final['deliveries'] as &$delivery){
+			$delivery_awards = $awards_model::replace_ids_with_values($delivery['award'], false, true);
+			$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
-		// Add deliveries if PG, Then use to grab modules
-		if($level == 'pg'){
+			// Add fee data
+			$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
 
-			// only get if has a programme_type
-			if( isset($final['programme_type']) ){
-				$final['deliveries'] = PG_Delivery::get_programme_deliveries($final['instance_id'], $final['year']);
-
-
-
-				// get modules
-				$modules = array();
-				foreach($final['deliveries'] as &$delivery){
-					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
-					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
-
-					// Add fee data
-					$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
-
-					$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
-				}
-				if(sizeof($modules) != 0) $final['modules'] = $modules;
-			}
+			// Add modules
+			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 		}
-		else
-		{
-			// Add delivery info
-			$deliveries = UG_Delivery::get_programme_deliveries($final['instance_id'], $final['year']);
-			foreach ($deliveries as $delivery) {
-
-				$final['pos_code'] = $delivery['pos_code'];
-
-				if ( $delivery['attendance_pattern'] == "part-time" ) {
-					$final['parttime_mcr_code'] = $delivery['mcr'];
-					$final['current_ipo'] = $delivery['current_ipo'];
-					$final['ari_code'] = $delivery['ari_code'];
-				}
-				elseif ( $delivery['attendance_pattern'] == "full-time" ) {
-					$final['fulltime_mcr_code'] = $delivery['mcr'];
-					$final['ari_code_ft'] = $delivery['ari_code'];
-				}
-			}
-			
-
-			// if UG, add  single grab modules normally
-			$modules = API::get_module_data($final['instance_id'], $final['pos_code'], $final['year'], $level);
-			if($modules !== false)$final['modules'] = $modules;
-
-			// Add Fee data
-			$final['fees'] = Fees::getFeeInfoForPos($final['pos_code'], $final['year']);
-		}
-		
+		if(sizeof($modules) != 0) $final['modules'] = $modules;
 
 		return $final;
 	}
