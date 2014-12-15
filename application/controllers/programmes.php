@@ -577,16 +577,6 @@ class Programmes_Controller extends Revisionable_Controller {
 	 */
 	public function get_deliveries($year, $type, $id){
 
-		// Delete a programme if delete param is passed
-		if(isset($_GET['delete'])){
-			// ensure perms
-			if(Auth::user()->can("edit_pg_deliveries")){
-				PG_Delivery::find(Input::get('id'))->delete();
-			}
-			
-			return Redirect::to(URI::current());
-		}
-
 		$model = $this->model;
 
 		$deliveries = $model::find($id)->get_deliveries();
@@ -594,29 +584,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries, 'type'=>$type));
 	}
 
-	/**
-	 * update programme deliveries (PG only)
-	 */
-	public function post_deliveries($year, $type, $id){
-
-
-		if(Input::get('id')){
-			$delivery = PG_Delivery::find(Input::get('id'));
-		}else{
-			$delivery = new PG_Delivery;
-			$delivery->programme_id = $id;
-		}
-		
-		$delivery->award = Input::get('award');
-		$delivery->pos_code = Input::get('pos_code');
-		$delivery->mcr = Input::get('mcr');
-		$delivery->description = Input::get('description');
-		$delivery->attendance_pattern = Input::get('attendance_pattern');
-		
-		$delivery->save();
-
-		return Redirect::to(URI::current());	
-	}
 
 	/**
 	* get the awards as a string
