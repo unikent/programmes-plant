@@ -235,7 +235,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			Messages::add('success', "Saved ".$programme->$title_field);
 			
 			// redirect back to the same page we were on
-			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
+			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->instance_id);
 		}
 	}
 
