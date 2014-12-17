@@ -320,7 +320,7 @@ class API {
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 		}
 
-		if($programme['module_session']=='None' || $programme['module_session'] == 'none'){
+		if($final['module_session']=='None' || $final['module_session'] == 'none'){
 			$final['modules'] = array();
 		}else{
 			$final['modules'] = $modules;
