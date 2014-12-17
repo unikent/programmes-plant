@@ -29,6 +29,11 @@ class SimpleData extends Eloquent {
 	public static $data_by_year = false;
 
 	/**
+	 * a cache of this model
+	 */
+	public static $api_cache = array();
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -175,6 +180,10 @@ class SimpleData extends Eloquent {
 		if ($saved)
 		{	
 			static::clear_all_as_list_cache($this->year);
+
+			//clear model memory cache
+			static::$api_cache = array();
+
 			// Only store / refresh cache if this is NOT a revisionble item
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
@@ -216,8 +225,10 @@ class SimpleData extends Eloquent {
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
 
+		if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
+
 		// Get data from cache (or generate it)
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**

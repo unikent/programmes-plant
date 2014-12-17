@@ -49,7 +49,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($index_data) : static::json($index_data, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($index_data) ;
+			case 'csv':
+				return static::csv_download($index_data, "programmes-index-$level-$year", $last_generated);
+			default :
+				return static::json($index_data, 200);
+		}
 	}
 
 
@@ -478,6 +485,66 @@ class API_Controller extends Base_Controller {
 
 	}
 
+    /**
+     * Routing for /export/$year/$type/pos-codes
+     *
+     * Export CSV of pos codes
+     *
+     * @param int    $year The year.
+     * @param string $type Undergraduate or postgraduate.
+     */
+    public function get_export_poscodes($year, $type){
+
+        // get last generated date
+        $last_generated = API::get_last_change_time();
+        // If cache is valid, send 304
+        if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+        // Get real year
+        if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+        // get the list of courses
+        $programmes = API::get_index($year);
+        $model = API::get_programme_model();
+        $level = $type == 'undergraduate' ? 'ug' : 'pg';
+        $listing = array();
+
+        foreach($programmes as $programme) {
+
+            $output = array();
+
+            $output['ID'] = $programme['id'];
+            $output['Title'] = $programme['name'];
+            $output['Award'] = $programme['award'];
+            $output['Campus'] = $programme['campus'];
+            $output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+
+
+            $programme_api = array();
+            try{
+                $programme_api = API::get_programme($level, $year, $programme['id']);
+
+            } catch(Exception $e) {
+                continue;
+            }
+
+            $pos_codes = array();
+            if (isset($programme_api['deliveries'])) {
+
+                foreach ($programme_api['deliveries'] as $delivery) {
+                    if(!in_array($delivery['pos_code'],$pos_codes)){
+                        $pos_codes[] = $delivery['pos_code'];
+                    }
+                }
+            }
+            $output['POS Codes'] = implode(', ',$pos_codes);
+            $listing[] = $output;
+        }
+
+        // output the data
+        return static::csv_download($listing, "{$type}-{$year}-POS-Codes", $last_generated);
+
+    }
 
 	/**
 	 * Routing for /export/$year/$type/entry
@@ -643,8 +710,9 @@ class API_Controller extends Base_Controller {
 	* @param  string  $format   Format, either XML or JSON.
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_subject_index($year, $format = 'json')
+	public function get_subject_index($year, $level, $format = 'json')
 	{
+	
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
@@ -660,7 +728,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// output
-		return ($format=='xml') ? static::xml($subjects) : static::json($subjects, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($subjects) ;
+			case 'csv':
+				return static::csv_download($subjects, "subjects-index-$level-$year", $last_generated);
+			default :
+				return static::json($subjects, 200);
+		}
 	}
 
 	/**
@@ -693,7 +768,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 
 		// Return the cached index file with the correct headers.
-		return ($format=='xml') ? static::xml($fees_data) : static::json($fees_data, 200);
+		switch($format){
+			case 'xml':
+				return static::xml($fees_data) ;
+			case 'csv':
+				return static::csv_download($fees_data, "fees-index-$level-$year", $last_generated);
+			default :
+				return static::json($fees_data, 200);
+		}
 	}
 
 	/**
@@ -749,7 +831,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200);
+		switch($format) {
+			case 'xml':
+				return static::xml($programme);
+			case 'csv':
+				return static::csv_download($programme, "programme-$level-$year-$programme_id", $last_modified);
+			default :
+				return static::json($programme, 200);
+		}
 	}
 
 	/**
@@ -925,10 +1014,10 @@ class API_Controller extends Base_Controller {
 
 		// Header line
 		$headings = array_keys( current($output) );
-		$csv = API::array_to_csv($headings). "\r\r\n";
+		$csv = API::array_to_csv($headings). "\r\n";
 		// csv body
 		foreach($output as $data){
-			$csv .= API::array_to_csv($data) . "\r\r\n";;
+			$csv .= API::array_to_csv($data) . "\r\n";;
 		}
 
 		// output the data
@@ -942,7 +1031,7 @@ class API_Controller extends Base_Controller {
 	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
 	 */
-	public function get_xcri_cap($year)
+	public function get_xcri_cap($year='current')
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();

@@ -45,7 +45,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$user = Auth::user();
 
 		// get required fields
-		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at');
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at','instance_id');
 
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
@@ -81,7 +81,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 *
 	 * @param int    $year    The year
 	 * @param string $type    Undergraduate or postgraduate.
-	 * @param int    $item_id The ID of the programme to clone from.
+	 * @param int    $item_id The instance ID of the programme to clone from.
 	 */
 	public function get_create($year, $type, $item_id = false)
 	{
@@ -91,7 +91,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		{
 			// We're cloning item_id
 			$model = $this->model;
-			$course = $model::find($item_id);
+			$course = $model::where('instance_id', '=', $item_id)->where('year', '=', $year)->first();
 			$this->data['clone'] = true;
 			$this->data['programme'] = $course;
 		} 
@@ -111,13 +111,13 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/$type/edit/$programme_id
+	 * Routing for GET /$year/$type/edit/$instance_id
 	 *
 	 * controls the display of the programme edit form
 	 *
 	 * @param int    $year    The year
 	 * @param string $type    Undergraduate or postgraduate.
-	 * @param int    $item_id The ID of the programme to edit.
+	 * @param int    $item_id The instance ID of the programme to edit.
 	 */
 	public function get_edit($year, $type, $id = false)
 	{	
@@ -125,7 +125,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$model = $this->model;
 
 		// Ensure we have a corresponding course in the database
-		$programme = $model::find($id);
+		$programme = $model::where('instance_id', '=', $id)->where('year', '=', $year)->first();
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
 		
@@ -138,7 +138,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['year'] = $year;
 
 		// get the active revision
-		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'published_at','created_at'));
+		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'under_review', 'published_at','created_at'));
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 	}
 
@@ -235,7 +235,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			Messages::add('success', "Saved ".$programme->$title_field);
 			
 			// redirect back to the same page we were on
-			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->id);
+			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->instance_id);
 		}
 	}
 
@@ -573,48 +573,17 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Show programme deliveries (PG only)
+	 * Show programme deliveries
 	 */
 	public function get_deliveries($year, $type, $id){
 
-		// Delete a programme is delete param is passed
-		if(isset($_GET['delete'])){
-			// ensure perms
-			if(Auth::user()->can("edit_pg_deliveries")){
-				PG_Deliveries::find(Input::get('id'))->delete();
-			}
-			
-			return Redirect::to(URI::current());
-		}
-
 		$model = $this->model;
+
 		$deliveries = $model::find($id)->get_deliveries();
-		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries));
+		
+		return View::make('admin.programmes.deliveries', array('deliveries' => $deliveries, 'type'=>$type));
 	}
 
-	/**
-	 * update programme deliveries (PG only)
-	 */
-	public function post_deliveries($year, $type, $id){
-
-
-		if(Input::get('id')){
-			$delivery = PG_Deliveries::find(Input::get('id'));
-		}else{
-			$delivery = new PG_Deliveries;
-			$delivery->programme_id = $id;
-		}
-		
-		$delivery->award = Input::get('award');
-		$delivery->pos_code = Input::get('pos_code');
-		$delivery->mcr = Input::get('mcr');
-		$delivery->description = Input::get('description');
-		$delivery->attendance_pattern = Input::get('attendance_pattern');
-		
-		$delivery->save();
-
-		return Redirect::to(URI::current());	
-	}
 
 	/**
 	* get the awards as a string

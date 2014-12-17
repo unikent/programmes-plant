@@ -165,7 +165,7 @@ class Users_Controller extends Admin_Controller {
 			// grab ldap details
 			$fullname = $userdata[0]['displayname'][0];
 			$email = $userdata[0]['mail'][0];
-			$department = $userdata[0]['unikentoddepartment'][0];
+			$department = isset($userdata[0]['unikentoddepartment']) ? $userdata[0]['unikentoddepartment'][0] : '';
 
 			// Attempt to get existing user
 			$user = User::where('username', '=', $username)->first();

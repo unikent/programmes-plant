@@ -9,6 +9,55 @@ abstract class Programme extends Revisionable {
 	public static function get_title_field(){
 		return static::get_programme_title_field();
 	}
+
+
+		/**
+	 * Get this programme's awards.
+	 * 
+	 * @return Award The award for this programme.
+	 */
+	public function awards()
+	{
+		$output_awards = array();
+		$award_field = static::get_award_field();
+		$ids = explode(',', $this->$award_field);
+		$award_model = strtoupper(static::$type).'_Award';
+		$awards = $award_model::where_in('id', $ids)->get();
+
+		// we need to get the awards back in the correct order as specified by the comma separated list
+		foreach ($ids as $id)
+		{
+			foreach ($awards as $award)
+			{
+				if ($award->id == $id)
+				{
+					$output_awards[] = $award;
+				}
+			}
+		}
+		return $output_awards;
+	}
+
+	/**
+	 * Get a list of this programme's award names.
+	 * 
+	 * @return string A comma seperated string of awards.
+	 */
+	public function get_award_names()
+	{
+		$awards = $this->awards();
+		$award_string = '';
+		$count = 0;
+
+		foreach ($awards as $id=>$award) {
+			$award_string .= (($count > 0) ? ', ' : '') . $award->name;
+			$count++;
+		}
+
+		return $award_string;
+	}
+
+	
 	/**
 	 * Get this programme's award.
 	 * 
@@ -185,13 +234,7 @@ abstract class Programme extends Revisionable {
 		// Regenerate data to store in caches
 		static::generate_api_programme($revision->instance_id, $year, $revision);
 		static::generate_api_index($year);
-		
-		// regenerate the module data from webservices as the revision is made live
-		// we don't want to do this in a test or local environment
-		if ( Request::env() != 'test' && Request::env() != 'local' )
-		{
-			Command::run(array('moduledata:modules', $revision, $year, URLParams::get_type(), false));
-		}
+
 	}
 
 	/**
@@ -349,7 +392,6 @@ abstract class Programme extends Revisionable {
 		$mode_of_study_field = static::get_mode_of_study_field();
 		$ucas_code_field = static::get_ucas_code_field();
 		$search_keywords_field = static::get_search_keywords_field();
-		$pos_code_field = static::get_pos_code_field();
 		$awarding_institute_or_body_field = static::get_awarding_institute_or_body_field();
 		$module_session_field = static::get_module_session_field();
 		$award_field = static::get_award_field();
@@ -381,7 +423,6 @@ abstract class Programme extends Revisionable {
 					 $subject_to_approval_field,
 					 $mode_of_study_field,
 					 $search_keywords_field,
-					 $pos_code_field,
 					 $awarding_institute_or_body_field,
 					 $module_session_field,
 					 $subject_area_2_field,
@@ -412,7 +453,7 @@ abstract class Programme extends Revisionable {
 		if(empty($live_revisions_ids)){
 			return array();
 		}
-	
+
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
 						->where_in('id', $live_revisions_ids)
@@ -459,7 +500,6 @@ abstract class Programme extends Revisionable {
 				'ucas_code' 	=> 	isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '',
 				'search_keywords' => isset($attributes[$search_keywords_field]) ? $attributes[$search_keywords_field] : '',
 				'campus_id' => isset($relationships["location"]) ? $relationships["location"]->attributes["identifier"] : '',
-				'pos_code' => isset($attributes[$pos_code_field]) ? $attributes[$pos_code_field] : '',
 				'awarding_institute_or_body' => isset($attributes[$awarding_institute_or_body_field]) ? $attributes[$awarding_institute_or_body_field] : '',
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
@@ -525,6 +565,8 @@ abstract class Programme extends Revisionable {
 	{
 		$type = static::$type;
 		$cache_key_index = "api-index-{$type}.fees-$year";
+		$delivery_model = $type . '_Delivery';
+		$award_model = $type . '_Award';
 
 		// use the api index as a starting point
 		$index_data = static::get_api_index($year);
@@ -544,18 +586,34 @@ abstract class Programme extends Revisionable {
 		// create fees data for each programme
 		foreach ($index_data as $programme) {
 
-
-			if($type == 'ug'){
-				$fee = Fees::getFeeInfoForPos($programme['pos_code'], $year);
+			$deliveries = $delivery_model::get_programme_deliveries($programme['id'], $year);
+			foreach ($deliveries as $delivery) {
+				if(empty($delivery['description'])){
+					continue;
+				}
+				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $year);
 				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
+				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
+				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
+
+				// We get a description:
+				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow - MA - Full-time at Canterbury 
+				//
+				// But need only the name (which can have an arbitary number of -'s in it) only the hope it wont change much, just explode
+				// -'s and cut off the last 2 elements to give us:
+
+				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow 
+				$description  = trim(implode(' - ',array_slice(explode(' - ', $delivery['description']), 0, -2)));
+
 				$programme_data = array(
 					'id' 				=> 		$programme['id'],
-					'name' 				=> 		$programme['name'],
-					'slug' 				=> 		$programme['slug'],
-					'award' 			=> 		$programme['award'],
+					'name' 				=>		$description,
+					'slug' 				=>		$programme['slug'],
+					'award' 			=>		$delivery['award_name'],
 					'mode_of_study'		=>		$programme['mode_of_study'],
-					'search_keywords' 	=> 		$programme['search_keywords'],
-					'pos_code'			=>		$programme['pos_code'],
+					'search_keywords' 	=>		$programme['search_keywords'],
+					'pos_code'			=>		$delivery['pos_code'],
+					'type'				=>		$type == 'pg' ? $extra_fields[$programme['id']] : 'taught', // get course type
 					'currency'			=>		$currency,
 					'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
 					'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
@@ -563,45 +621,11 @@ abstract class Programme extends Revisionable {
 					'int_part_time'		=>		$currency == 'pound' ? $fee['int']['part-time'] : $fee['int']['euro-part-time']
 				);
 
-				$fees_data[] = $programme_data;
+				$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
+
+				$fees_data[$key] = $programme_data;
 			}
-
-			else{
-
-				$deliveries = PG_Deliveries::get_programme_deliveries($programme['id'], $year);
-				foreach ($deliveries as $delivery) {
-					if(empty($delivery['description'])){
-						continue;
-					}
-					$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $year);
-					$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
-					$delivery_awards = PG_Award::replace_ids_with_values($delivery['award'],false,true);
-					$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
-
-					$description = $delivery['description'];
-					$description = trim(substr($description ,0, strpos($description, ' - ')));
-
-					$programme_data = array(
-						'id' 				=> 		$programme['id'],
-						'name' 				=>		$description,
-						'slug' 				=>		$programme['slug'],
-						'award' 			=>		$delivery['award_name'],
-						'mode_of_study'		=>		$programme['mode_of_study'],
-						'search_keywords' 	=>		$programme['search_keywords'],
-						'pos_code'			=>		$delivery['pos_code'],
-						'type'				=>		$extra_fields[$programme['id']], // get course type
-						'currency'			=>		$currency,
-						'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
-						'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
-						'int_full_time'		=>		$currency == 'pound' ? $fee['int']['full-time'] : $fee['int']['euro-full-time'],
-						'int_part_time'		=>		$currency == 'pound' ? $fee['int']['part-time'] : $fee['int']['euro-part-time']
-					);
-
-					$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
-
-					$fees_data[$key] = $programme_data;
-				}
-			}
+			
 		}
 
 		$fees_data = array_values($fees_data);
@@ -612,6 +636,25 @@ abstract class Programme extends Revisionable {
 		
 		// return
 		return $fees_data;
+	}
+
+	// Get deliveries for this programme
+	public function get_deliveries()
+	{
+		$delivery_class = static::$type . "_Delivery";
+		return $delivery_class::where('programme_id','=',$this->id)->get();
+	}
+
+	public function deliveries()
+	{
+	  	return $this->has_many(static::$type . '_delivery', 'programme_id');
+	}
+
+	// Find deliveries for this programme type
+	public static function find_deliveries($instance_id, $year){
+
+		$model = static::$type.'_Delivery';
+		return $model::get_programme_deliveries($instance_id, $year);
 	}
 	
 	

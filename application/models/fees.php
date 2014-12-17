@@ -54,7 +54,6 @@ class Fees {
 		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
 		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 
-
 		// Ensure data was found
 		if(!$fees || !$courses) return array();
 
@@ -119,7 +118,7 @@ class Fees {
 	 */
 	public static function load_csv_from_webservice($url){
 		// Try web service
-		$raw = file_get_contents($url);
+		$raw = @file_get_contents($url);
 		if($raw === false) return false;
 
 		$data = array();

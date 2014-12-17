@@ -4,7 +4,7 @@
  * 
  * A model for datatypes that need to maintain revisions of itself.
  */
-class Revisionable extends SimpleData {
+abstract class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
 	public static $revision_model = false;
@@ -20,6 +20,11 @@ class Revisionable extends SimpleData {
 
 	// The different live statuses
 	public static $publish_statuses = array('new', 'editing', 'published');
+
+	/**
+	 * a cache of this model
+	 */
+	public static $api_cache = array();
 
 	/**
 	 * Create new instance of a revisionble object
@@ -53,6 +58,9 @@ class Revisionable extends SimpleData {
 
 		// Save self.
 		$success = parent::save();
+
+		//clear model memory cache
+		static::$api_cache = array();
 
 		// If instance_id  isn't set, set it to value of id.
 		// null for new records, 0 for created ones.
@@ -458,9 +466,10 @@ class Revisionable extends SimpleData {
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model.'-'.$year;
 
-		// Get data from cache (or generate it)
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+		if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
 
+		// Get data from cache (or generate it)
+		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
 	}
 
 	/**
@@ -527,8 +536,8 @@ class Revisionable extends SimpleData {
 
     // Load field mapping - true field name => field colname
 	public static function load_field_map(){
-
-		$model = get_called_class().'Field';
+		$class = get_called_class();
+		$model = $class.'Field';
 
 		$field_map = array();
 		$field_list = $model::get(array('colname'));
@@ -536,20 +545,24 @@ class Revisionable extends SimpleData {
 		foreach($field_list as $field){
 			$field_map[static::trim_id_from_field_name($field->colname)] = $field->colname;
 		}
-		static::$fields = $field_map;
+		static::$fields[$class] = $field_map;
 	}
 
 	// Add additional check to call magic method
 	public function __call($method, $parameters)
-	{	
+	{
+		$class = get_called_class();
+		if(!isset(static::$fields[$class])){
+			static::$fields[$class]=array();
+		}
 		// If matchs get_X_field
 		if (ends_with($method, '_field') && starts_with($method, 'get_')){
 			// Check we have a fields map, if not load it
-			if( sizeof(static::$fields) === 0 ) static::load_field_map();
+			if( sizeof(static::$fields[$class]) === 0 ) static::load_field_map();
 			// get just X (remove get_ and _field)
 			$method = str_replace(array('get_','_field'),'',$method);
 			// return result | null
-			return isset(static::$fields[$method]) ? static::$fields[$method] : null;
+			return isset(static::$fields[$class][$method]) ? static::$fields[$class][$method] : null;
 		}
 		// Else, normal action
 		return parent::__call($method, $parameters);

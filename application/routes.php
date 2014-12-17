@@ -109,22 +109,22 @@ Route::group(array('before' => ''), function(){
 	// Routing for API index
 	Route::any(array(
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)',
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes.(json|xml)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes.(json|xml|csv)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes'
 			
 	), 'api@index');
 
 	// Routing for API fees
 	Route::any(array(
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees'
 			
 	), 'api@fees_index');
 
-	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num?)','/api/([0-9]{4})/(undergraduate|postgraduate)/programmes/(:num?).(json|xml)'), 'api@programme');
-	Route::any(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects','/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml)'), 'api@subject_index');
+	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num).(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)'), 'api@programme');
+	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');
 
-	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
+	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
 	Route::get(array('/api/(:any).(json|xml)', '/api/(:any)'), 'api@data');
 
@@ -135,7 +135,7 @@ Route::group(array('before' => ''), function(){
 	
 	
 	// XCRI-CAP Feed
-	Route::any('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/xcri-cap', 'api@xcri_cap');
+	Route::any('/api/xcri-cap', 'api@xcri_cap');
 	Route::any('/api/([0-9]{4}|current)/xcri-cap', 'api@xcri_cap');
 
 	// bare-bones programme list
@@ -149,6 +149,8 @@ Route::group(array('before' => ''), function(){
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/print-courses/(:num?)', 'api@printlist'); // as per the simplelist csv output, but with fields that are more relevant for the printed prospectus
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/last-updated', 'api@export_lastupdated'); 
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses-without-fees', 'api@courses_without_fees'); // get courses that don't yet have fees data
+    Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
+
 });
 
 // Login/out
