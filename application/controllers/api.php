@@ -831,7 +831,14 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
 		
 		// return a JSON version of the newly-created $final object
-		return ($format=='xml') ? static::xml($programme) : static::json($programme, 200);
+		switch($format) {
+			case 'xml':
+				return static::xml($programme);
+			case 'csv':
+				return static::csv_download($programme, "programme-$level-$year-$programme_id", $last_modified);
+			default :
+				return static::json($programme, 200);
+		}
 	}
 
 	/**
