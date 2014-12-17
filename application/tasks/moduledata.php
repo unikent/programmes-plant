@@ -50,7 +50,7 @@ class ModuleData_Task {
             // get campus
             $campus_id = $programme['campus_id'];
             $module_session = $this->parse_module_session($programme['module_session'], $parameters);
-            if($module_session === null)continue;
+            if(empty($module_session))continue;
 
             $module_cache =array();
             // cache modules for each delivery
@@ -141,10 +141,10 @@ class ModuleData_Task {
                     $parameters['test_mode'] = true;
                     break;
                 default:
-                    $parameters['help'] = "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+                    $parameters['help'] = "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
             }
         }
-        
+
         return $parameters;
     }
     
@@ -160,8 +160,10 @@ class ModuleData_Task {
 
         if(!$module) $module = new ProgrammesPlant\ModuleData();
 
+        if(empty($module_session)){ return false; }
+
         // build request
-        $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session); 
+        $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session);
 
         // auth 
         $module->login['username'] = Config::get('module.programme_module_user');
