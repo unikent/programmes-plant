@@ -319,7 +319,13 @@ class API {
 			// Add modules
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 		}
-		if(sizeof($modules) != 0) $final['modules'] = $modules;
+
+		if($final['module_session']=='None' || $final['module_session'] == 'none'){
+			$final['modules'] = array();
+		}else{
+			$final['modules'] = $modules;
+		}
+
 
 		return $final;
 	}
