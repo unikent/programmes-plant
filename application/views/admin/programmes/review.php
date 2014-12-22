@@ -25,7 +25,7 @@
     <a class="btn btn-primary" data-toggle="modal" href="#request_changes" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@request_changes')?>">
       <?php echo  __('programmes.rev_request_amends'); ?>
     </a>
-    <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->id))?>">
+    <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->instance_id))?>">
       <?php echo  __('programmes.rev_edit_programme'); ?>
     </a>
     <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>">
