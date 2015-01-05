@@ -572,7 +572,7 @@ class API_Controller extends Base_Controller {
 		if (!$programme) {
 			return Response::make('', 501);
 		}
-		//die(print_r(Auth::check(),true));
+
 		if(Auth::check()) {
 			Command::run(array('moduledata:modules', $programme, $year, $level, false));
 			return Response::make('module data refreshed for ' . $level . '/' . $year . '/' . $programme_id, 200);

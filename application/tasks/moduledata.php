@@ -19,11 +19,12 @@ class ModuleData_Task {
             exit;
         }
 
-
+        Cache::purge('api-index-ug');
         // load UG
         $parameters['type']='ug';
         $this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
 
+        Cache::purge('api-index-pg');
         // load PG
         $parameters['type']='pg';
         $this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
