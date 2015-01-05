@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\CLI\Command;
+
 class API_Controller extends Base_Controller {
 
 	public $restful = true;
@@ -545,6 +547,39 @@ class API_Controller extends Base_Controller {
         return static::csv_download($listing, "{$type}-{$year}-POS-Codes", $last_generated);
 
     }
+
+	public function get_refresh_modules($year, $level, $programme_id)
+	{
+		switch ($level) {
+			case 'postgraduate':
+				$level = 'pg';
+				break;
+			case 'undergraduate':
+				$level = 'ug';
+				break;
+		}
+
+		try {
+			$programme = API::get_programme($level, $year, $programme_id);
+		} // Required data is missing?
+		catch (MissingDataException $e) {
+			return Response::make('', 501);
+		} catch (NotFoundException $e) {
+			return Response::make('', 404);
+		}
+
+		// Unknown issue with data.
+		if (!$programme) {
+			return Response::make('', 501);
+		}
+		//die(print_r(Auth::check(),true));
+		if(Auth::check()) {
+			Command::run(array('moduledata:modules', $programme, $year, $level, false));
+			return Response::make('module data refreshed for ' . $level . '/' . $year . '/' . $programme_id, 200);
+		}else{
+			return Response::make('',403);
+		}
+	}
 
 	/**
 	 * Routing for /export/$year/$type/entry

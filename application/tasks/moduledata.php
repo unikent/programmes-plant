@@ -64,7 +64,7 @@ class ModuleData_Task {
                     $module_cache[$cache_key] = $programme_modules_new;
                 }
 
-                if ( ! $parameters['test_mode'] ) Cache::put($cache_key, $programme_modules_new, 2628000);
+                if ( ! $parameters['test_mode'] && $programme_modules_new!==false ) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
             }
 
@@ -307,23 +307,18 @@ class ModuleData_Task {
         $parameters = array();
         $parameters['type'] = $type;
         $parameters['programme_session'] = $programme_session;
-        $parameters['sleeptime'] = 1;
-        $parameters['counter'] = 1;
+        $parameters['sleeptime'] = 3;
+        $parameters['counter'] = 0;
         $parameters['test_mode'] = false;
 
         // set programme vars
-        $model = $type.'_Programme';
+        $tmp_programme['campus_id'] = $programme['location'][0]['identifier'];
+        $tmp_programme['id'] = $programme['instance_id'];
+        $tmp_programme['module_session'] = $module_session = $this->parse_module_session($programme['module_session'], $parameters);
 
-        $campus_id_field = $model::get_location_field();
-        $module_session_field = $model::get_module_session_field();
-
-        $tmp_programme['campus_id'] = Campus::find($programme->$campus_id_field)->identifier;
-        $tmp_programme['id'] = $programme->instance_id;
-        $tmp_programme['module_session'] = $programme->$module_session_field;
-
-        $this->load_modules($parameters, array($tmp_programme));
-        // clear output cache
-        Cache::purge('api-output-'.$type);
+        $this->load_modules($parameters, array($tmp_programme['id']=>$tmp_programme));
+        $cache_key = "api-output-{$type}.programme-$module_session-" . $tmp_programme['id'];
+        Cache::forget($cache_key);
     }
     
     
