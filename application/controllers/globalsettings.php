@@ -231,6 +231,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 	 */
 	public function get_make_live($year, $revisionable_item_id = false, $revision_id = false, $misc = false)
 	{
+		API::purge_fees_cache();
 		return parent::get_make_live($year, URLParams::get_type(), $revisionable_item_id, $revision_id);
 	}
 

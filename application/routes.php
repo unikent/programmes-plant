@@ -118,8 +118,12 @@ Route::group(array('before' => ''), function(){
 	Route::any(array(
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees'
-			
 	), 'api@fees_index');
+
+	Route::any(array(
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees/([0-9]{4}).(json|xml|csv)',
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees/([0-9]{4})'
+	), 'api@fees_index_for_year');
 
 	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num).(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)'), 'api@programme');
 	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');

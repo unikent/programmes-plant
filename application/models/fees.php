@@ -7,19 +7,19 @@
 class Fees {
 
 	// In memory cache of fee data structure 
-	public static $mapping = false;
+	public static $mapping = array();
 
 	/**
 	 * getFeeInfoForPos - returns fee data object for given pos code
 	 * 
 	 * @param $pos code
-	 * @param $year
+	 * @param $fee_year year to look at for fees data (may not be programme year) see fees_year global
 	 *
 	 * @return Fee Data array | false
 	 */
-	public static function getFeeInfoForPos($pos, $year){
+	public static function getFeeInfoForPos($pos, $fee_year){
 		// Load fee mapping, and if fees exist return them, else false
-		$fees = static::get_fee_mapping($year);
+		$fees = static::get_fee_mapping($fee_year);
 		return (isset($fees[$pos])) ? $fees[$pos] : false;
 	}
 
@@ -33,10 +33,10 @@ class Fees {
 	public static function get_fee_mapping($year){
 
 		// If loaded in memory, use that. (PG courses often have multiple instances of the same POS's)
-		if(static::$mapping) return static::$mapping;
+		if(isset(static::$mapping[$year])) return static::$mapping[$year];
 
 		// Else, load object from cache
-		return static::$mapping = Cache::get("fee-mappings-{$year}", function() use ($year) { return Fees::generate_fee_map($year, false); });
+		return static::$mapping[$year] = Cache::get("fee-mappings-{$year}", function() use ($year) { return Fees::generate_fee_map($year, false); });
 	}
 
 	/**
@@ -96,9 +96,7 @@ class Fees {
 		// Flush output caches, so new data is reflected
 		try
         {
-        	Cache::forget('api-index-ug.fees-'.$year);
-            Cache::forget('api-index-pg.fees-'.$year);
-
+			API::purge_fees_cache($year);
             API::purge_output_cache();
         }
         catch(Exception $e)
