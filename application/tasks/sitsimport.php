@@ -12,21 +12,29 @@
  */
 class SITSImport_Task {
 
-  public $currentYears = array();
+  public $processYears = array();
   public $seenProgrammes = array();
   public $ipos = array();
 
   public function run( $args = array() ) {
 
-    $this->currentYears["ug"] = $this->getCurrentYear( "ug" );
-    $this->currentYears["pg"] = $this->getCurrentYear( "pg" );
+    $parameters = $this->parse_arguments($args);
+    // display help if needed
+    if ( isset($parameters['help']) )
+    {
+      echo $parameters['help'];
+      exit;
+    }
 
+    foreach ($parameters['year'] as $type=>$year){
+      $this->processYears[$type] = ($year=='current')?$this->getCurrentYear( $type ):$year;
+    }
     // Load XML file
     $xml = $this->loadXML();
 
     // If XML file is good, purge old caches before starting import
-    $this->purgeOldPGData();
-    $this->purgeOldUGData();
+    $this->purgeOldPGData($this->processYears['pg']);
+    $this->purgeOldUGData($this->processYears['ug']);
 
     foreach ( $xml as $course ) {
       //make sure it has a programme ID in the progsplant
@@ -49,7 +57,7 @@ class SITSImport_Task {
       $course->pos = $this->trimPOSCode( $course->pos );
       $courseLevel = $this->getCourseLevel( $course );
       $programme   = $this->getProgramme( $course, $courseLevel );
-      $year = $this->currentYears[$courseLevel];
+      $year = $this->processYears[$courseLevel];
 
       if ( empty( $programme ) || !is_object( $programme ) ) {
         continue;
@@ -70,15 +78,17 @@ class SITSImport_Task {
   /**
    * Remove all PG deliveries
    */
-  public function purgeOldPGData() {
-    return DB::query( 'DELETE FROM pg_programme_deliveries' );
+  public function purgeOldPGData($year) {
+    $to_del = DB::table('programmes_pg')->where('year', '=', $year)->lists('id');
+    DB::table('pg_programme_deliveries')->where_in('programme_id',$to_del)->delete();
   }
 
   /**
    * Remove all UG deliveries
    */
-  public function purgeOldUGData() {
-    return DB::query( 'DELETE FROM ug_programme_deliveries' );
+  public function purgeOldUGData($year) {
+    $to_del = DB::table('programmes_ug')->where('year', '=', $year)->lists('id');
+    DB::table('ug_programme_deliveries')->where_in('programme_id',$to_del)->delete();
   }
 
   public function loadXML() {
@@ -129,9 +139,9 @@ class SITSImport_Task {
     return 'pg';
   }
 
-  public function getProgramme( $course, $level, $currentYears = null ) {
-    if ($currentYears === null) {
-      $currentYears = $this->currentYears;
+  public function getProgramme( $course, $level, $processYears = null ) {
+    if ($processYears === null) {
+      $processYears = $this->processYears;
     }
 
     $model = $level === "ug" ? "UG_Programme" : "PG_Programme";
@@ -140,7 +150,7 @@ class SITSImport_Task {
     return $model::where(
       "instance_id", "=", $courseID
     )->where(
-      "year", "=", $currentYears[$level]
+      "year", "=", $processYears[$level]
     )->first();
   }
 
@@ -203,6 +213,45 @@ class SITSImport_Task {
 
     return "";
 
+  }
+
+  /**
+   * parse_arguments - parses command line options
+   *
+   * @param array $arguments
+   * @return array $parameters
+   */
+  public function parse_arguments($arguments = array())
+  {
+
+    // set defaults for the parameters in case they're not set
+    $parameters = array();
+    $parameters['year'] = array('pg'=>'current','ug'=>'current');
+
+    foreach ($arguments as $argument)
+    {
+      $switch_name = substr($argument, 0, 2);
+      switch($switch_name)
+      {
+        // level
+        case '-p':
+          $parameters['year']['pg'] = str_replace('-p', '', $argument) != '' ? str_replace('-p', '', $argument) : 'current';
+          break;
+        // programme session
+        case '-u':
+          $parameters['year']['ug'] = str_replace('-u', '', $argument) != '' ? str_replace('-u', '', $argument) : 'current';
+          break;
+        default:
+          $parameters['help'] = $this->help_argument();
+      }
+    }
+
+    return $parameters;
+  }
+
+  public function help_argument()
+  {
+    return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
   }
 
 }
