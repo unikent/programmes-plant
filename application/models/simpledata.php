@@ -1,5 +1,5 @@
 <?php
-class SimpleData extends Eloquent {
+abstract class SimpleData extends Eloquent {
 
 	/**
 	 * Validation object once it has been created.
@@ -188,7 +188,7 @@ class SimpleData extends Eloquent {
 			// revisionble items only store on "make_live" not "save"
 			if(!is_subclass_of($this, "Revisionable")){
 				static::generate_api_data();
-				$type=strtoupper(URLParams::get_type());
+				$type=strtoupper(URLParams::get_type(get_called_class()));
 				if(in_array($type,array('UG','PG'))) {
 					$model = $type . '_Programme';
 					$model::forget_api_index();

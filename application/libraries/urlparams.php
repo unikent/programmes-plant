@@ -64,7 +64,7 @@ class URLParams {
 		if(!static::$type_header_links && Session::has('last_type')){
 			$last = Session::get('last_type');
 			if(!empty($last)) {
-				static::$type = Session::get('last_type');
+				static::$type = $last;
 			}
 		}
 
@@ -73,6 +73,9 @@ class URLParams {
 
 	public static function get_type($model=''){
 		if ($model == 'GlobalSettingField') return 'ug';
+		if ($model == 'Staff') return 'pg';
+		if (in_array($model,array('Campus','Faculty','School'))) return '';
+
 		return static::$type;
 
 	}
