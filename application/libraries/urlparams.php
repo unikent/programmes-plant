@@ -61,8 +61,11 @@ class URLParams {
 
 		static::set_header_links_params();
 
-		if(!static::$type_header_links){
-			static::$type = Session::get('last_type');
+		if(!static::$type_header_links && Session::has('last_type')){
+			$last = Session::get('last_type');
+			if(!empty($last)) {
+				static::$type = Session::get('last_type');
+			}
 		}
 
 		Session::put('last_type', static::$type);
