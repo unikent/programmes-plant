@@ -318,11 +318,11 @@ abstract class Programme extends Revisionable {
 	 * @param $year year to get fees for
 	 * @return programmes fees
 	 */
-	public static function get_api_fees($year)
+	public static function get_api_fees($year,$fees_year)
 	{	
 		$type = static::$type;
-		$cache_key = "api-index-{$type}.fees-$year";
-		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year);
+		$cache_key = "api-index-{$type}.fees.$fees_year.$year";
+		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year,$fees_year);
 	}
 
 	/**
@@ -561,10 +561,10 @@ abstract class Programme extends Revisionable {
 	 * @param $year year to get fees index for
 	 * @return programmes fees index
 	 */
-	public static function generate_api_fees($year)
+	public static function generate_api_fees($year,$fees_year)
 	{
 		$type = static::$type;
-		$cache_key_index = "api-index-{$type}.fees-$year";
+		$cache_key_index = "api-index-{$type}.fees.$fees_year.$year";
 		$delivery_model = $type . '_Delivery';
 		$award_model = $type . '_Award';
 
@@ -591,7 +591,7 @@ abstract class Programme extends Revisionable {
 				if(empty($delivery['description'])){
 					continue;
 				}
-				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $year);
+				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $fees_year);
 				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
 				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';

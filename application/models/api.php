@@ -74,14 +74,15 @@ class API {
 	 * @param level ug|pg
 	 * @return array Index of fees data
 	 */
-	public static function get_fees_index($year, $level = false)
+	public static function get_fees_index($year, $level = false, $fees_year = false)
 	{
 		// Get index of programmes
 		$level =  ($level === false) ? URLParams::get_type() : $level;
 		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
-
+		$fees_year_field = GlobalSetting::get_fees_year_field();
+		$fees_year = ($fees_year===false)? GlobalSetting::where('year','=',$year)->first(array($fees_year_field))->$fees_year_field:$fees_year;
 		$model =  $level.'_Programme';
-		return $model::get_api_fees($year);
+		return $model::get_api_fees($year,$fees_year);
 	}
 
 	/**
@@ -314,7 +315,7 @@ class API {
 			$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
 			// Add fee data
-			$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['year']);
+			$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['globals']['fees_year']);
 
 			// Add modules
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
@@ -425,9 +426,17 @@ class API {
 		// @todo work out a way of purging this data in tests
 		// so we can test logic creates/removes the correct files
 		if(Request::env() != 'test'){
+
+			//separate trys as will throw exception if dir does not exist.
+
 			// Pokémon expection handling, gotta catch em all.
 			try {
 				Cache::purge('api-output-ug');
+			}catch (Exception $e) {
+				// Do nothing, all this means if there was no directory (yet) to wipe
+			}
+			// Pokémon expection handling, gotta catch em all.
+			try {
 				Cache::purge('api-output-pg');
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
@@ -436,6 +445,32 @@ class API {
 		}
 
 		// Last changed timestamp 
+		// (All data generated after this point can be considered as "up to date" by the API)
+		Cache::put('last_change', time(), 2628000);
+	}
+
+	public static function purge_fees_cache($fees_year = false)
+	{
+		$pg_key = 'api-index-pg.fees';
+		$ug_key = 'api-index-ug.fees';
+		if(!empty($fees_year)){
+			$pg_key .='.' . $fees_year;
+			$ug_key .='.' . $fees_year;
+		}
+		// Pokémon expection handling, gotta catch em all.
+		try {
+
+			Cache::purge($pg_key);
+		}catch (Exception $e) {
+			// Do nothing, all this means if there was no directory (yet) to wipe
+		}
+		// Pokémon expection handling, gotta catch em all.
+		try {
+			Cache::purge($ug_key);
+		}catch (Exception $e) {
+			// Do nothing, all this means if there was no directory (yet) to wipe
+		}
+		// Last changed timestamp
 		// (All data generated after this point can be considered as "up to date" by the API)
 		Cache::put('last_change', time(), 2628000);
 	}

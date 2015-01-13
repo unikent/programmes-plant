@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\CLI\Command;
+
 class API_Controller extends Base_Controller {
 
 	public $restful = true;
@@ -546,6 +548,39 @@ class API_Controller extends Base_Controller {
 
     }
 
+	public function get_refresh_modules($year, $level, $programme_id)
+	{
+		switch ($level) {
+			case 'postgraduate':
+				$level = 'pg';
+				break;
+			case 'undergraduate':
+				$level = 'ug';
+				break;
+		}
+
+		try {
+			$programme = API::get_programme($level, $year, $programme_id);
+		} // Required data is missing?
+		catch (MissingDataException $e) {
+			return Response::make('', 501);
+		} catch (NotFoundException $e) {
+			return Response::make('', 404);
+		}
+
+		// Unknown issue with data.
+		if (!$programme) {
+			return Response::make('', 501);
+		}
+
+		if(Auth::check()) {
+			Command::run(array('moduledata:modules', $programme, $year, $level, false));
+			return Response::make('module data refreshed for ' . $level . '/' . $year . '/' . $programme_id, 200);
+		}else{
+			return Response::make('',403);
+		}
+	}
+
 	/**
 	 * Routing for /export/$year/$type/entry
 	 *
@@ -739,13 +774,26 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
-	* Get the fees data
+	 * Get the fees data using a specific fees_year data
+	 *
+	 * @param  int     $year     Year of index to get.
+	 * @param  string  $format   Format, either XML or JSON.
+	 * @param  int	   $fees_year Year of fees data to use
+	 * @return string  json|xml  Data as a string or HTTP response.
+	 */
+	public function get_fees_index_for_year($year, $level, $fees_year, $format = 'json')
+	{
+			return $this->get_fees_index($year, $level,$format,$fees_year);
+	}
+	/**
+	* Get the fees data for a years current fees_year
 	*
 	* @param  int     $year     Year of index to get.
 	* @param  string  $format   Format, either XML or JSON.
+	* @param  int|bool $fees_year Year of fees data to use, false to use current "fees_year" for $year
 	* @return string  json|xml  Data as a string or HTTP response.
 	*/
-	public function get_fees_index($year, $level, $format = 'json')
+	public function get_fees_index($year, $level, $format = 'json',	$fees_year=false)
 	{
 
 		// get last generated date
@@ -756,7 +804,16 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 
-		$fees_data = API::get_fees_index($year);
+		switch($level){
+			case 'postgraduate':
+				$type = 'pg';
+				break;
+			case 'undergraduate':
+				$type = 'ug';
+				break;
+		}
+
+		$fees_data = API::get_fees_index($year,$type,$fees_year);
 
 		if (! $fees_data)
 		{

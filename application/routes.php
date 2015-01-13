@@ -118,8 +118,12 @@ Route::group(array('before' => ''), function(){
 	Route::any(array(
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
 			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees'
-			
 	), 'api@fees_index');
+
+	Route::any(array(
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees/([0-9]{4}).(json|xml|csv)',
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees/([0-9]{4})'
+	), 'api@fees_index_for_year');
 
 	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num).(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)'), 'api@programme');
 	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');
@@ -141,6 +145,7 @@ Route::group(array('before' => ''), function(){
 	// bare-bones programme list
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist');
 
+	Route::get('/command/modulerefresh/([0-9]{4}|current)/(undergraduate|postgraduate)/(:num)','api@refresh_modules');
 	// Exports
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist'); // Duplicate of above, but in export url space
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/course-ids', 'api@verysimplelist'); // Duplicate of above, but really simple output showing just course names and ids
