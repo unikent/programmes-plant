@@ -62,10 +62,12 @@ class ModuleData_Task {
                     $programme_modules_new = $module_cache[$cache_key];
                 }else {
                     $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
-                    $module_cache[$cache_key] = $programme_modules_new;
+                    if($programme_modules_new!==null) {
+                        $module_cache[$cache_key] = $programme_modules_new;
+                    }
                 }
 
-                if ( ! $parameters['test_mode'] && $programme_modules_new!==false ) Cache::put($cache_key, $programme_modules_new, 2628000);
+                if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
             }
 
@@ -200,12 +202,13 @@ class ModuleData_Task {
         $programme_modules_new->stages = array();
 
         // return blank if no valid modules found
-        if($programme_modules === null) return $programme_modules_new;
+        if($programme_modules === null) return null;
         
         // loop through each of the modules and get its synopsis, adding it to the object for output
         if ( isset($programme_modules->response->message) )
         {
             echo $programme_modules->response->message;
+            return false;
         }
         else
         {
