@@ -55,7 +55,7 @@ class Fees {
 		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 
 		// Ensure data was found
-		if(!$fees || !$courses) return array();
+		if(!$fees || !$courses || empty($fees) || empty($courses)) return array();
 
 		// Ensure data has actually changed (and its worth continuing (No point busting all our caches if we don't need to)
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
