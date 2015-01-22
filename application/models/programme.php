@@ -605,11 +605,18 @@ abstract class Programme extends Revisionable {
 				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow 
 				$description  = trim(implode(' - ',array_slice(explode(' - ', $delivery['description']), 0, -2)));
 
+				$campus = ($programme['additional_locations'] != '') 
+					? ( strstr($programme['additional_locations'], ',') ) 
+						? $programme['campus'].', '.$programme['additional_locations'] 
+						: $programme['campus'].' and '.$programme['additional_locations'] 
+					: $programme['campus'];
+
 				$programme_data = array(
 					'id' 				=> 		$programme['id'],
 					'name' 				=>		$description,
 					'slug' 				=>		$programme['slug'],
 					'award' 			=>		$delivery['award_name'],
+					'campus'			=>		$campus,
 					'mode_of_study'		=>		$programme['mode_of_study'],
 					'search_keywords' 	=>		$programme['search_keywords'],
 					'pos_code'			=>		$delivery['pos_code'],
