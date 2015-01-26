@@ -113,7 +113,6 @@ class ModuleData_Task {
         
         // set defaults for the parameters in case they're not set
         $parameters = array();
-        $parameters['type'] = 'ug';
         $parameters['programme_session'] = '2014';
         $parameters['sleeptime'] = 5;
         $parameters['counter'] = 1;
@@ -124,10 +123,6 @@ class ModuleData_Task {
             $switch_name = substr($argument, 0, 2);
             switch($switch_name)
             {
-                // level
-                case '-l':
-                    $parameters['type'] = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
-                    break;
                 // programme session
                 case '-s':
                     $parameters['programme_session'] = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
@@ -154,7 +149,7 @@ class ModuleData_Task {
     
     public function help_argument()
     {
-        return "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+        return "\n\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
     }
     
 
