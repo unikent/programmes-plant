@@ -173,6 +173,7 @@ class ModuleData_Task {
         $module->login['password'] = Config::get('module.programme_module_pass');
 
         // load data & 
+        echo "requesting: " + $webservice_request;
         $data = $module->get_programme_modules($webservice_request);
 
         // clear auth
