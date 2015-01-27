@@ -42,6 +42,8 @@ class ModuleData_Task {
             // make sure we don't get past the counter limit
             $n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 
+            echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . " - ";
+
             $deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
             // Get deliveries
             $deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
@@ -60,12 +62,15 @@ class ModuleData_Task {
                 $cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
                 if(in_array($cache_key,$module_cache)){
                     $programme_modules_new = $module_cache[$cache_key];
+                    echo "loaded cached modules";
                 }else {
                     $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
                     if($programme_modules_new!==null) {
                         $module_cache[$cache_key] = $programme_modules_new;
                     }
                 }
+
+                echo " - module count:" . count($programme_modules_new);
 
                 if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
