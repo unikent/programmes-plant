@@ -42,7 +42,7 @@ class ModuleData_Task {
             // make sure we don't get past the counter limit
             $n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 
-            echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . " - ";
+            echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
 
             $deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
             // Get deliveries
@@ -53,6 +53,7 @@ class ModuleData_Task {
             // get campus
             $campus_id = $programme['campus_id'];
             $module_session = $this->parse_module_session($programme['module_session'], $parameters);
+            echo "Module session: {$module_session}\n";
             if(empty($module_session))continue;
 
             $module_cache =array();
@@ -62,7 +63,7 @@ class ModuleData_Task {
                 $cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
                 if(in_array($cache_key,$module_cache)){
                     $programme_modules_new = $module_cache[$cache_key];
-                    echo "loaded cached modules";
+                    echo "Cached modules loaded";
                 }else {
                     $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
                     if($programme_modules_new!==null) {
@@ -70,7 +71,7 @@ class ModuleData_Task {
                     }
                 }
 
-                echo " - module count:" . count($programme_modules_new);
+                echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
 
                 if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
@@ -90,6 +91,7 @@ class ModuleData_Task {
             }
         }  // otherwise use the config module session field  
         else {
+
             if ($parameters['type'] == 'ug') {
                 $module_session_field = UG_Programme::get_module_session_field();
                 return UG_ProgrammeSetting::get_setting($parameters['programme_session'], $module_session_field);
@@ -173,7 +175,7 @@ class ModuleData_Task {
         $module->login['password'] = Config::get('module.programme_module_pass');
 
         // load data & 
-        echo "requesting: " . $webservice_request;
+        echo "Requesting: " . $webservice_request . ' - ';
         $data = $module->get_programme_modules($webservice_request);
 
         // clear auth
