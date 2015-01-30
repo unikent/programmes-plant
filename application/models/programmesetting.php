@@ -18,13 +18,13 @@ abstract class ProgrammeSetting extends Revisionable
      */
     public static function get_setting($year, $colname)
     {
+        $revision_model = static::$revision_model;
 
         // If in memoery cache, return from there
-        if(isset(static::$settings_cache[$year])) return isset(static::$settings_cache[$year][$colname]) ? static::$settings_cache[$year][$colname] : '';
+        if(isset(static::$settings_cache[$revision_model][$year])) 
+            return isset(static::$settings_cache[$revision_model][$year][$colname]) ? static::$settings_cache[$revision_model][$year][$colname] : '';
 
         // Otherwise, get data
-        $revision_model = static::$revision_model;
-        
         $settings = $revision_model::where('year', '=', $year)->where('status', '=', 'live')->first();
         
         // Check data was okay

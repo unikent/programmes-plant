@@ -42,6 +42,8 @@ class ModuleData_Task {
             // make sure we don't get past the counter limit
             $n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 
+            echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+
             $deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
             // Get deliveries
             $deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
@@ -51,6 +53,7 @@ class ModuleData_Task {
             // get campus
             $campus_id = $programme['campus_id'];
             $module_session = $this->parse_module_session($programme['module_session'], $parameters);
+            echo "Module session: {$module_session}\n";
             if(empty($module_session))continue;
 
             $module_cache =array();
@@ -60,12 +63,15 @@ class ModuleData_Task {
                 $cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
                 if(in_array($cache_key,$module_cache)){
                     $programme_modules_new = $module_cache[$cache_key];
+                    echo "Cached modules loaded";
                 }else {
                     $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
                     if($programme_modules_new!==null) {
                         $module_cache[$cache_key] = $programme_modules_new;
                     }
                 }
+
+                echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
 
                 if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
@@ -85,6 +91,7 @@ class ModuleData_Task {
             }
         }  // otherwise use the config module session field  
         else {
+
             if ($parameters['type'] == 'ug') {
                 $module_session_field = UG_Programme::get_module_session_field();
                 return UG_ProgrammeSetting::get_setting($parameters['programme_session'], $module_session_field);
@@ -113,7 +120,6 @@ class ModuleData_Task {
         
         // set defaults for the parameters in case they're not set
         $parameters = array();
-        $parameters['type'] = 'ug';
         $parameters['programme_session'] = '2014';
         $parameters['sleeptime'] = 5;
         $parameters['counter'] = 1;
@@ -124,10 +130,6 @@ class ModuleData_Task {
             $switch_name = substr($argument, 0, 2);
             switch($switch_name)
             {
-                // level
-                case '-l':
-                    $parameters['type'] = str_replace('-l', '', $argument) != '' ? str_replace('-l', '', $argument) : 'ug';
-                    break;
                 // programme session
                 case '-s':
                     $parameters['programme_session'] = str_replace('-s', '', $argument) != '' ? str_replace('-s', '', $argument) : '2014';
@@ -144,7 +146,7 @@ class ModuleData_Task {
                     $parameters['test_mode'] = true;
                     break;
                 default:
-                    $parameters['help'] = "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+                    $parameters['help'] = $this->help_argument();
             }
         }
 
@@ -154,7 +156,7 @@ class ModuleData_Task {
     
     public function help_argument()
     {
-        return "\n\n-l - ug or pg. Defaults to ug.\n-s - programme session. Defaults to 2014.\n-m - module session. Defaults to 2014\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
+        return "\n\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
     }
     
 
@@ -173,6 +175,7 @@ class ModuleData_Task {
         $module->login['password'] = Config::get('module.programme_module_pass');
 
         // load data & 
+        echo "Requesting: " . $webservice_request . ' - ';
         $data = $module->get_programme_modules($webservice_request);
 
         // clear auth
