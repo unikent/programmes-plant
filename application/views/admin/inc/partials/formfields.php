@@ -36,8 +36,12 @@ foreach($section as $field):
       switch($type){
 
         case 'select':
-          $options_list = explode(',',$field->field_meta);
+          $options_list = array();
+          foreach (explode(',',$field->field_meta) as $option) {
+            $options_list[] = trim($option);
+          }
           asort($options_list);
+          
           $form_element = Form::$tip($column_name, array_combine( $options_list, $options_list), $current_value);
           break;
 
