@@ -524,6 +524,14 @@ class Programmes_Controller extends Revisionable_Controller {
 		if($hash !== false){
 			return Redirect::to(Config::get('application.front_end_url').$level."/preview/".$hash);	
 		}
+
+
+		$this->layout->nest('content', 'admin.programmes.error', 
+			array(
+				"title"=> "An error occurred",
+				"body"=> "Unable to generate preview. Please ensure overridable & immutable fields have been published for this year.",
+			)
+		);
 	}
 
 	/**
