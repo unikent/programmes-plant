@@ -412,27 +412,27 @@ class API_Controller extends Base_Controller {
 		$programmes = API::get_index($year); 
 		$model = API::get_programme_model();
 		$listing = array();
-
-		// Additional Fields
-		$kiscourseid_field = $model::get_kiscourseid_field();
-		$total_credit_field = $model::get_total_kent_credits_awarded_on_completion_field();
 		
 		// Generate data format
 		foreach($programmes as $programme) {
 			$output = array();
-			$output['POS'] = $programme['pos_code'];
+			$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
+
+			$output['POS'] = array();
 			$output['Title'] = $programme['name'];
+
+			foreach ($programme_api['deliveries'] as $delivery) {
+					$output['POS'][] = $delivery['pos_code'];
+			}
+			$output['POS'] = implode(', ', array_unique($output['POS']));
 
 			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
 
 			$output['Honours type'] = $programme['award'];
 			$output['Location'] = $programme['campus'];
 			$output['Mode of study'] = $programme['mode_of_study'];
-
-			// pulled from "current" for speed, may have to be adjusted to use revisions if live & current are too out of sync.
-			$extra = $model::where('instance_id','=',$programme['id'])->where('year','=',$year)->first(array($kiscourseid_field, $total_credit_field));
-			$output['KIS Course ID'] = $extra->attributes[$kiscourseid_field];
-			$output['Total Kent credits'] = $extra->attributes[$total_credit_field];
+			$output['KIS Course ID'] = $programme_api['kiscourseid'];
+			$output['Total Kent credits'] = $programme_api['total_kent_credits_awarded_on_completion'];
 
 			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
 		
