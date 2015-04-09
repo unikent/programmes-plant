@@ -200,7 +200,7 @@
                     <?php if(!empty($programme['location']['postcode'])): ?>
                       <mlo:postcode><![CDATA[<?php echo ($programme['location']['postcode']); ?>]]></mlo:postcode>
                     <?php endif; ?>
-                    <mlo:address><![CDATA[<?php echo ($programme['location']['address_1']); ?>]]></mlo:address>
+                    <mlo:address><![CDATA[<?php echo ($programme['location']['address_2']); ?>]]></mlo:address>
                     <?php if(!empty($programme['location']['phone'])): ?>
                       <mlo:phone><![CDATA[<?php echo ($programme['location']['phone']); ?>]]></mlo:phone>
                     <?php endif; ?>
