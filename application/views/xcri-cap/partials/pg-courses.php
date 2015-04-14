@@ -1,5 +1,6 @@
       <?php foreach ($programmes as $programme): ?>
         <course>
+          <mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
           <dc:description>
             <xhtml:div>
               <![CDATA[<?php echo (strip_tags($programme['programme_overview'])); ?>]]>
@@ -15,6 +16,8 @@
           <?php endif; ?>
           <dc:title><![CDATA[<?php echo ($programme['programme_title']); ?>]]></dc:title>
           <dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
+          <dc:type xsi:type="courseDataProgramme:courseTypeGeneral" courseDataProgramme:identifier="PG"><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dc:type>
+          <dc:type xsi:type="mlo:RTCourseTypeFlag" mlo:RT-identifier="<?php echo $programme['programme_type'] === 'taught' ? 'T' : 'R'; ?>"><?php echo $programme['programme_type'] === 'taught' ? 'Taught' : 'Research'; ?></dc:type>
           <mlo:url><?php echo ($programme['url']); ?></mlo:url>
           <?php if (isset($programme['programme_abstract'])): ?>
             <abstract><![CDATA[<?php echo (strip_tags($programme['programme_abstract'])); ?>]]></abstract>
@@ -65,10 +68,21 @@
               </xhtml:div>
             </mlo:objective>
           <?php endif; ?>
-          <?php if (isset($programme['prerequisite'])): ?>
+          <?php if (isset($programme['entry_requirements']) || isset($programme['pg_general_entry_requirements']) || isset($programme['english_language_requirements_intro_text'])): ?>
             <mlo:prerequisite>
               <xhtml:div>
-                <![CDATA[<?php echo ($programme['prerequisite']); ?>]]>
+                <?php if (isset($programme['entry_requirements'])): ?>
+                  <xhtml:h3>Entry requirements</xhtml:h3>
+                  <![CDATA[<?php echo ($programme['entry_requirements']); ?>]]>
+                <?php endif; ?>
+                <?php if (isset($programme['pg_general_entry_requirements'])): ?>
+                  <xhtml:h3>General entry requirements</xhtml:h3>
+                  <![CDATA[<?php echo ($programme['pg_general_entry_requirements']); ?>]]>
+                <?php endif; ?>
+                <?php if (isset($programme['english_language_requirements_intro_text'])): ?>
+                  <xhtml:h3>English language requirements</xhtml:h3>
+                  <![CDATA[<?php echo ($programme['english_language_requirements_intro_text']); ?>]]>
+                <?php endif; ?>
               </xhtml:div>
             </mlo:prerequisite>
           <?php endif; ?>
@@ -120,9 +134,8 @@
                   <dc:subject><![CDATA[<?php echo ($subject); ?>]]></dc:subject>
                 <?php endforeach; ?>
               <?php endif; ?>
-              <mlo:start>September <![CDATA[<?php echo ($programme['year']); ?>]]></mlo:start>
-              <end>September <?php echo "2016"; ?></end>
-              <mlo:duration><![CDATA[<?php echo ($programme['attendance_text']); ?>]]></mlo:duration>
+              <mlo:start dtf="<?php echo $programme['start_date_short']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
+              <mlo:duration interval="<?php echo $programme['attendance_text_id']; ?>"><![CDATA[<?php echo ($programme['attendance_text']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
               <?php if (strpos($programme['mode_of_study'], 'Full-time only') !== false): ?>
                 <studyMode identifier="FT">Full time</studyMode>
@@ -147,7 +160,7 @@
                 <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
               <?php endif; ?>
               <?php if ($programme['attendance_pattern']): ?>
-                <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
+                <attendancePattern identifier="<?php echo $programme['attendance_pattern_id'] ?>"><?php echo $programme['attendance_pattern'] ?></attendancePattern>
               <?php endif; ?>
               <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
               <languageOfAssessment>en</languageOfAssessment>
@@ -201,14 +214,15 @@
                       <mlo:postcode><![CDATA[<?php echo ($programme['location']['postcode']); ?>]]></mlo:postcode>
                     <?php endif; ?>
                     <mlo:address><![CDATA[<?php echo ($programme['location']['address_2']); ?>]]></mlo:address>
-                    <?php if(!empty($programme['location']['phone'])): ?>
-                      <mlo:phone><![CDATA[<?php echo ($programme['location']['phone']); ?>]]></mlo:phone>
+                    <mlo:address><![CDATA[<?php echo ($programme['location']['town']); ?>]]></mlo:address>
+                    <?php if(!empty($programme['enquiry_phone'])): ?>
+                      <mlo:phone><![CDATA[<?php echo ($programme['enquiry_phone']); ?>]]></mlo:phone>
                     <?php endif; ?>
-                    <?php if(!empty($programme['location']['fax'])): ?>
-                      <mlo:fax><![CDATA[<?php echo ($programme['location']['fax']); ?>]]></mlo:fax>
+                    <?php if(!empty($programme['enquiry_fax'])): ?>
+                      <mlo:fax><?php echo ($programme['enquiry_fax']); ?></mlo:fax>
                     <?php endif; ?>
-                    <?php if(!empty($programme['location']['email'])): ?>
-                      <mlo:email><![CDATA[<?php echo ($programme['location']['email']); ?>]]></mlo:email>
+                    <?php if(!empty($programme['enquiry_email'])): ?>
+                      <mlo:email><?php echo ($programme['enquiry_email']); ?></mlo:email>
                     <?php endif; ?>
                     <?php if(!empty($programme['location']['url'])): ?>
                       <mlo:url><![CDATA[<?php echo ($programme['location']['url']); ?>]]></mlo:url>

@@ -621,9 +621,49 @@ class API {
 		$programme['mode_of_study_id'] = '';
 		$programme['attendance_mode_id'] = '';
 
-		// Dummy attendence_pattern_id for now since we dont have it in our data.
-		$programme['attendance_pattern'] = 'Daytime';
-		$programme['attendance_pattern_id'] = 'DT';
+		// transform attendence_pattern ad needed.
+		$programme['attendance_pattern'] = strtolower($programme['attendance_pattern']);
+		switch ($programme['attendance_pattern']) {
+			case 'day-time':
+				$programme['attendance_pattern'] = 'Daytime';
+				$programme['attendance_pattern_id'] = 'DT';
+				break;
+			case 'weekend':
+				$programme['attendance_pattern'] = 'Weekend';
+				$programme['attendance_pattern_id'] = 'WE';
+				break;
+			case 'evening':
+				$programme['attendance_pattern'] = 'Evening';
+				$programme['attendance_pattern_id'] = 'EV';
+				break;
+			case 'customized':
+				$programme['attendance_pattern'] = 'Customised';
+				$programme['attendance_pattern_id'] = 'CS';
+				break;
+			default:
+				$programme['attendance_pattern'] = 'Daytime';
+				$programme['attendance_pattern_id'] = 'DT';
+		}
+
+		if (is_int(substr($programme['attendance_text'], 0, 1))) {
+			$programme['attendance_text_id'] = 'P'.substr($programme['attendance_text'], 0, 1).'Y';
+		}
+		else {
+			$programme['attendance_text_id'] = 'P1Y';
+		}
+
+		// start date
+		if (isset($programme['start']) && isset($programme['year'])) {
+			$programme['start_date'] = $programme['start'] . ' ' . $programme['year'];
+			$programme['start_date_short'] = date('Y-m', strtotime($programme['start_date']));
+		}
+		
+
+		$enq = strip_tags($programme['enquiries']);
+		$programme['enquiry_phone'] = explode("\n", strstr($enq, 'T:'))[0];
+		$programme['enquiry_email'] = explode("\n", strstr($enq, 'E:'))[0];
+		$programme['enquiry_fax'] = explode("\n", strstr($enq, 'F:'))[0];
+
 
 		// Leave as is for the moment.
 		$programme['cost'] = (strcmp($type, 'ug') == 0) ? $programme['tuition_fees'] : $programme['fees_and_funding'];
