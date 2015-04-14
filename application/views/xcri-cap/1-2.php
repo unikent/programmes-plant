@@ -16,17 +16,17 @@
   <?php endif; ?>
   <?php if (!empty($globals['ug']->catalog_description)): ?>
     <dc:description>
-      <div xmlns="http://www.w3.org/1999/xhtml">
+      <xhtml:div>
         <![CDATA[<?php echo ($globals['ug']->catalog_description); ?>]]>
-      </div>
+      </xhtml:div>
     </dc:description>
   <?php endif; ?>
     <provider>
       <?php if (!empty($globals['ug']->provider_description)): ?>
         <dc:description>
-          <div xmlns="http://www.w3.org/1999/xhtml">
+          <xhtml:div>
             <![CDATA[<?php echo ($globals['ug']->provider_description); ?>]]>
-          </div>
+          </xhtml:div>
         </dc:description>
       <?php endif; ?>
       <dc:identifier><?php echo ($globals['ug']->provider_url); ?></dc:identifier>
