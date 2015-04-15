@@ -124,28 +124,8 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['duration']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <?php if (strpos($programme['mode_of_study'], 'Full-time only') !== false): ?>
-                <studyMode identifier="FT">Full time</studyMode>
-              <?php elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false): ?>
-                <studyMode identifier="FL">Flexible</studyMode>
-              <?php elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false): ?>
-                <studyMode identifier="PT">Part time</studyMode>
-              <?php else: ?>
-                <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
-              <?php endif; ?>
-              <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
-                <attendanceMode identifier="MM">Mixed mode</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Distance with attendance') !== false): ?>
-                <attendanceMode identifier="DA">Distance with attendance</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Distance without attendance') !== false): ?>
-                <attendanceMode identifier="DS">Distance without attendance</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Campus') !== false): ?>
-                <attendanceMode identifier="CM">Campus</attendanceMode>
-              <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
-                <attendanceMode identifier="CM">Campus</attendanceMode>
-              <?php else: ?>
-                <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
-              <?php endif; ?>
+              <studyMode identifier="<?php echo $programme['mode_of_study_id']; ?>"><?php echo $programme['mode_of_study']; ?></studyMode>
+              <attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
               <?php if ($programme['attendance_pattern']): ?>
                 <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
               <?php endif; ?>
