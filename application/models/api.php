@@ -645,7 +645,8 @@ class API {
 				$programme['attendance_pattern_id'] = 'DT';
 		}
 
-		if (is_int(substr($programme['attendance_text'], 0, 1))) {
+		// set the attendance text id
+		if (isset($programme['attendance_text']) && is_int(substr($programme['attendance_text'], 0, 1))) {
 			$programme['attendance_text_id'] = 'P'.substr($programme['attendance_text'], 0, 1).'Y';
 		}
 		else {
@@ -659,10 +660,17 @@ class API {
 		}
 		
 
+		// pull out the school enquiry details
 		$enq = strip_tags($programme['enquiries']);
-		$programme['enquiry_phone'] = explode("\n", strstr($enq, 'T:'))[0];
-		$programme['enquiry_email'] = explode("\n", strstr($enq, 'E:'))[0];
-		$programme['enquiry_fax'] = explode("\n", strstr($enq, 'F:'))[0];
+
+		$enquiry_phone = explode("\n", strstr($enq, 'T:'));
+		$programme['enquiry_phone'] = isset($enquiry_phone[0]) ? $enquiry_phone[0] : '';
+
+		$enquiry_email = explode("\n", strstr($enq, 'E:'));
+		$programme['enquiry_email'] = isset($enquiry_email[0]) ? $enquiry_email[0] : '';
+
+		$enquiry_fax = explode("\n", strstr($enq, 'F:'));
+		$programme['enquiry_fax'] = isset($enquiry_fax[0]) ? $enquiry_fax[0] : '';
 
 
 		// Leave as is for the moment.
