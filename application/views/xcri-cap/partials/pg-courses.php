@@ -105,7 +105,7 @@
                 </dc:description>
               <?php endif; ?>
               <?php if (isset($programme['education_level'])): ?>
-                <dcterms:educationLevel><![CDATA[<?php echo ($programme['education_level']); ?>]]></dcterms:educationLevel>
+                <dcterms:educationLevel><?php echo XMLHelper::makeXMLSafe($programme['education_level']); ?></dcterms:educationLevel>
               <?php endif; ?>
               <awardedBy><?php echo ($globalsettings->institution_name); ?></awardedBy>
               <?php if (isset($programme['accredited_by'])): ?>
@@ -116,21 +116,21 @@
             <?php if (isset($programme['credits'])) : ?>
               <?php foreach ($programme['credits'] as $credit): ?>
                 <mlo:credit>
-                  <credit:level><![CDATA[<?php echo ($credit->level); ?>]]></credit:level>
+                  <credit:level><?php echo ($credit->level); ?></credit:level>
                   <?php if($credit->scheme): ?>
-                    <credit:scheme><![CDATA[<?php echo ($credit->scheme); ?>]]></credit:scheme>
+                    <credit:scheme><?php echo ($credit->scheme); ?></credit:scheme>
                   <?php endif; ?>
-                  <credit:level><![CDATA[<?php echo ($credit->value); ?>]]></credit:level>
+                  <credit:level><?php echo ($credit->value); ?></credit:level>
                 </mlo:credit>
               <?php endforeach; ?>
             <?php endif; ?>
               <presentation>
                 <dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
-                <?php if (isset($presentation->subjects)): ?>
-                  <?php foreach ($presentation->subjects as $subject): ?>
-                    <dc:subject><![CDATA[<?php echo ($subject); ?>]]></dc:subject>
-                  <?php endforeach; ?>
-                <?php endif; ?>
+                <?php foreach ($programme['subjects'] as $subject): ?>
+                  <?php if (!empty($subject)): ?>
+                    <dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
+                  <?php endif; ?>
+                <?php endforeach; ?>
                 <mlo:start dtf="<?php echo $programme['start_date_short']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
                 <mlo:duration interval="<?php echo $programme['attendance_text_id']; ?>"><?php echo ($programme['attendance_text']); ?></mlo:duration>
                 <applyTo><?php echo ($programme['url']); ?></applyTo>
