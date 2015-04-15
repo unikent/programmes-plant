@@ -16,17 +16,21 @@
   <?php endif; ?>
   <?php if (!empty($globals['ug']->catalog_description)): ?>
     <dc:description>
-      <div xmlns="http://www.w3.org/1999/xhtml">
+      <xhtml:div>
         <![CDATA[<?php echo ($globals['ug']->catalog_description); ?>]]>
-      </div>
+      </xhtml:div>
     </dc:description>
   <?php endif; ?>
     <provider>
+      <?php foreach ($schools as $school): ?>
+        <mlo:hasPart><?php echo $school['name']; ?></mlo:hasPart>
+      <?php endforeach; ?>
+      
       <?php if (!empty($globals['ug']->provider_description)): ?>
         <dc:description>
-          <div xmlns="http://www.w3.org/1999/xhtml">
+          <xhtml:div>
             <![CDATA[<?php echo ($globals['ug']->provider_description); ?>]]>
-          </div>
+          </xhtml:div>
         </dc:description>
       <?php endif; ?>
       <dc:identifier><?php echo ($globals['ug']->provider_url); ?></dc:identifier>
@@ -36,8 +40,8 @@
       <?php endif; ?>
       <dc:title><?php echo ($globals['ug']->institution_name); ?></dc:title>
       <mlo:url><?php echo ($globals['ug']->provider_url); ?></mlo:url>
-      <?php echo View::make('xcri-cap.partials.ug-courses', array('programmes' => $programmes['ug'], 'globalsettings' => $globals['ug'])); ?>
-      <?php echo View::make('xcri-cap.partials.pg-courses', array('programmes' => $programmes['pg'], 'globalsettings' => $globals['pg'])); ?>
+      <?php echo View::make('xcri-cap.partials.ug-courses', array('programmes' => $programmes['ug'], 'globalsettings' => $globals['ug']))->render(); ?>
+      <?php echo View::make('xcri-cap.partials.pg-courses', array('programmes' => $programmes['pg'], 'globalsettings' => $globals['pg']))->render(); ?>
       <mlo:location>
         <?php if (!empty($globals['ug']->town)): ?>
           <mlo:town><?php echo ($globals['ug']->town); ?></mlo:town>
@@ -45,7 +49,8 @@
         <?php if (!empty($globals['ug']->postcode)): ?>
           <mlo:postcode><?php echo ($globals['ug']->postcode); ?></mlo:postcode>
         <?php endif; ?>
-        <mlo:address><?php echo ($globals['ug']->address_line_1); ?></mlo:address>
+        <mlo:address><?php echo ($globals['ug']->address_line_2); ?></mlo:address>
+        <mlo:address><?php echo ($globals['ug']->town); ?></mlo:address>
         <?php if (!empty($globals['ug']->phone)): ?>
           <mlo:phone><?php echo ($globals['ug']->phone); ?></mlo:phone>
         <?php endif; ?>

@@ -18,6 +18,9 @@ class XCRICAP_Task {
 
         $api_index = array();
         $data = array();
+
+        // add schools listing
+        $data['schools'] = API::get_data('schools');
       
         // get a list of all our programmes through the API
         foreach ($types as $type) {

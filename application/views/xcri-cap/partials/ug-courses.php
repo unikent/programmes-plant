@@ -1,9 +1,9 @@
       <?php foreach ($programmes as $programme): ?>
         <course>
           <dc:description>
-            <div xmlns="http://www.w3.org/1999/xhtml">
+            <xhtml:div>
               <![CDATA[<?php echo (strip_tags($programme['programme_overview_text'])); ?>]]>
-            </div>
+            </xhtml:div>
           </dc:description>
           <dc:identifier><![CDATA[<?php echo ($programme['url']); ?>]]></dc:identifier>
           <?php if (isset($programme['subjects'])): ?>
@@ -21,21 +21,21 @@
           <?php endif; ?>
           <?php if(!empty($programme['how_to_apply'])): ?>
             <applicationProcedure>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['how_to_apply']); ?>]]>
-              </div>
+              </xhtml:div>
             </applicationProcedure>
           <?php endif; ?>
           <?php if(!empty($programme['teaching_and_assessment'])): ?>
             <mlo:assessment>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['teaching_and_assessment']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:assessment>
           <?php endif; ?>
           <?php if (isset($programme['learning_outcomes'])): ?>
             <learningOutcome>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[
                   <p><strong>Knowledge and understanding</strong></p>
                   <?php echo ($programme['learning_outcomes']); ?>
@@ -55,28 +55,28 @@
                   <?php echo ($programme['transferable_skills_learning_outcomes']); ?>
                 <?php endif; ?>
                 ]]>
-              </div>
+              </xhtml:div>
             </learningOutcome>
           <?php endif; ?>
           <?php if (isset($programme['programme_aims'])): ?>
             <mlo:objective>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['programme_aims']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:objective>
           <?php endif; ?>
           <?php if (isset($programme['prerequisite'])): ?>
             <mlo:prerequisite>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['prerequisite']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:prerequisite>
           <?php endif; ?>
           <?php if ($globalsettings->regulations): ?>
             <regulations>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($globalsettings->regulations); ?>]]>
-              </div>
+              </xhtml:div>
             </regulations>
           <?php endif; ?>
 
@@ -87,9 +87,9 @@
               <abbr><![CDATA[<?php echo ($award['name']); ?>]]></abbr>
               <?php if (isset($programme['description'])): ?>
                 <dc:description>
-                  <div xmlns="http://www.w3.org/1999/xhtml">
+                  <xhtml:div>
                     <![CDATA[<?php echo ($programme['description']); ?>]]>
-                  </div>
+                  </xhtml:div>
                 </dc:description>
               <?php endif; ?>
               <?php if (isset($programme['education_level'])): ?>
@@ -181,9 +181,9 @@
                 <provider>
                   <?php if (isset($programme['location']['description'])): ?>
                     <dc:description>
-                      <div xmlns="http://www.w3.org/1999/xhtml">
+                      <xhtml:div>
                         <![CDATA[<?php echo ($programme['location']['description']); ?>]]>
-                      </div>
+                      </xhtml:div>
                     </dc:description>
                   <?php endif; ?>
                   <dc:identifier>asc:<?php echo ($programme['location']['name']); ?></dc:identifier>
