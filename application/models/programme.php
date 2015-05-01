@@ -683,7 +683,7 @@ abstract class Programme extends Revisionable {
 			$revision->save();
 		}
 		
-		$this->live_revision = 0;
+		$this->live_revision = -1;
 		$this->raw_save();
 		
 		// Update feed file & kill output caches

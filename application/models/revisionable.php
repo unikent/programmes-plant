@@ -19,7 +19,7 @@ abstract class Revisionable extends SimpleData {
 	public static $data_by_year = true;
 
 	// The different live statuses
-	public static $publish_statuses = array('new', 'editing', 'published');
+	public static $publish_statuses = array('new', 'editing', 'published','unpublished');
 
 	/**
 	 * a cache of this model
@@ -234,6 +234,9 @@ abstract class Revisionable extends SimpleData {
 	 */
 	public function get_publish_status()
 	{
+        if($this->live_revision == -1){
+            return static::$publish_statuses[3];
+        }
 		// return new
 		if($this->live_revision == 0){
 			return static::$publish_statuses[0];
