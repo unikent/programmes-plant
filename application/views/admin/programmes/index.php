@@ -27,6 +27,8 @@
                     <span class="label label-success" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.published.tooltip') ?>"><?php echo __('programmes.traffic-lights.published.label') ?></span>
                 <?php elseif ( $programme->get_publish_status() === 'editing' ): ?>
                     <span class="label label-warning" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.editing.tooltip') ?>"><?php echo __('programmes.traffic-lights.editing.label') ?></span>
+                <?php elseif ( $programme->get_publish_status() === 'unpublished' ): ?>
+                    <span class="label label-default" rel="tooltip" data-original-title="<?php echo __('programmes.traffic-lights.unpublished.tooltip') ?>"><?php echo __('programmes.traffic-lights.unpublished.label') ?></span>
                 <?php endif; ?>
 
 

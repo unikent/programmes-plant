@@ -69,6 +69,10 @@ return array(
 			'label' => 'New',
 			'tooltip' => '\'New\' marks programmes which have never been pushed to live.',
 		),
+        'unpublished' => array(
+            'label' => 'Unpublished',
+            'tooltip' => '\'Unpublished\' marks programmes which have previously been pushed to live but have since been removed',
+        ),
 	),
 
 	'diff_header' => 'Differences between live and :ident',

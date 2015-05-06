@@ -42,7 +42,7 @@
 			<a class="btn btn-warning" target="_blank" href="<?php echo $preview_link; ?>" ><?php echo __("revisions.view_preview"); ?></a>
 		<?php endif; ?>
 
-		<?php if($instance->get_publish_status() === 'editing' || $instance->get_publish_status() === 'new'):?>
+		<?php if($instance->get_publish_status() === 'editing' || $instance->get_publish_status() === 'new' || $instance->get_publish_status() === 'unpublished'):?>
 			<?php if (Auth::user()->can('make_programme_live')) : ?>
 				<?php if($instance->locked_to == ''):?>
 					<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo action(URLParams::get_variable_path_prefix().$type.'.' . $instance->id . '@make_live', array($revision->id));?>"><?php echo __("revisions.make_live"); ?></a>
