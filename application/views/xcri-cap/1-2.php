@@ -12,12 +12,12 @@
   xsi:schemaLocation="http://xcri.org/profiles/1.2/catalog http://www.xcri.co.uk/bindings/xcri_cap_1_2.xsd http://xcri.org/profiles/1.2/catalog/terms  http://www.xcri.co.uk/bindings/xcri_cap_terms_1_2.xsd http://xcri.co.uk http://www.xcri.co.uk/bindings/coursedataprogramme.xsd"
   generated="<?php echo "2012-04-11T17:36:22.218Z"; ?>">
   <?php if (!empty($globals['ug']->contributor)): ?>
-    <dc:contributor><![CDATA[<?php echo (strip_tags($globals['ug']->contributor)); ?>]]></dc:contributor>
+    <dc:contributor><?php echo XMLHelper::makeXMLSafe(strip_tags($globals['ug']->contributor)); ?></dc:contributor>
   <?php endif; ?>
   <?php if (!empty($globals['ug']->catalog_description)): ?>
     <dc:description>
       <xhtml:div>
-        <![CDATA[<?php echo ($globals['ug']->catalog_description); ?>]]>
+        <?php echo XMLHelper::makeXMLSafe($globals['ug']->catalog_description); ?>
       </xhtml:div>
     </dc:description>
   <?php endif; ?>
@@ -29,7 +29,7 @@
       <?php if (!empty($globals['ug']->provider_description)): ?>
         <dc:description>
           <xhtml:div>
-            <![CDATA[<?php echo ($globals['ug']->provider_description); ?>]]>
+            <?php echo XMLHelper::makeXMLSafe($globals['ug']->provider_description); ?>
           </xhtml:div>
         </dc:description>
       <?php endif; ?>

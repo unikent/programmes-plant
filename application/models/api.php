@@ -617,9 +617,49 @@ class API {
 			$programme['subjects'][] = $programme['subject_area_2'];
 		}
 
-		// Set identifiers to blank for now since we have none
-		$programme['mode_of_study_id'] = '';
-		$programme['attendance_mode_id'] = '';
+		// for fees display
+		$programme['has_parttime'] = (strpos(strtolower($programme['mode_of_study']), 'part-time') !== false);
+		$programme['has_fulltime'] = (strpos(strtolower($programme['mode_of_study']), 'full-time') !== false);
+
+		// mode of study
+		if (strpos($programme['mode_of_study'], 'Full-time only') !== false){
+			$programme['mode_of_study_id'] = 'FT';
+			$programme['mode_of_study'] = 'Full time';
+		}
+		elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false){
+			$programme['mode_of_study_id'] = 'FL';
+			$programme['mode_of_study'] = 'Flexible';
+		}
+		elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false){
+			$programme['mode_of_study_id'] = 'PT';
+			$programme['mode_of_study'] = 'Part time';
+		}
+		else{
+			$programme['mode_of_study_id'] = '';
+			$programme['mode_of_study'] = $programme['mode_of_study'];
+		}
+
+		// attendance mode
+		if (strpos($programme['attendance_mode'], 'Mixed') !== false){
+			$programme['attendance_mode_id'] = 'MM';
+			$programme['attendance_mode'] = 'Mixed mode';
+		}
+		elseif (strpos($programme['attendance_mode'], 'Distance with attendance') !== false){
+			$programme['attendance_mode_id'] = 'DA';
+			$programme['attendance_mode'] = 'Distance with attendance';
+		}
+		elseif (strpos($programme['attendance_mode'], 'Distance without attendance') !== false){
+			$programme['attendance_mode_id'] = 'DS';
+			$programme['attendance_mode'] = 'Distance without attendance';
+		}
+		elseif (strpos($programme['attendance_mode'], 'Campus') !== false){
+			$programme['attendance_mode_id'] = 'CM';
+			$programme['attendance_mode'] = 'Campus';
+		}
+		else{
+			$programme['attendance_mode_id'] = 'CM';
+			$programme['attendance_mode'] = 'Campus';
+		}
 
 		// transform attendence_pattern ad needed.
 		$programme['attendance_pattern'] = strtolower($programme['attendance_pattern']);
@@ -664,13 +704,13 @@ class API {
 		$enq = strip_tags($programme['enquiries']);
 
 		$enquiry_phone = explode("\n", strstr($enq, 'T:'));
-		$programme['enquiry_phone'] = isset($enquiry_phone[0]) ? $enquiry_phone[0] : '';
+		$programme['enquiry_phone'] = isset($enquiry_phone[0]) ? trim(substr($enquiry_phone[0], 2)) : '';
 
 		$enquiry_email = explode("\n", strstr($enq, 'E:'));
-		$programme['enquiry_email'] = isset($enquiry_email[0]) ? $enquiry_email[0] : '';
+		$programme['enquiry_email'] = isset($enquiry_email[0]) ? trim(substr($enquiry_email[0], 2)) : '';
 
 		$enquiry_fax = explode("\n", strstr($enq, 'F:'));
-		$programme['enquiry_fax'] = isset($enquiry_fax[0]) ? $enquiry_fax[0] : '';
+		$programme['enquiry_fax'] = isset($enquiry_fax[0]) ? trim(substr($enquiry_fax[0], 2)) : '';
 
 
 		// Leave as is for the moment.
