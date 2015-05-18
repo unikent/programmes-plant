@@ -6,12 +6,12 @@ class Campus extends SimpleData {
 	public static $rules = array(
 		'name' => 'required|unique:campuses|max:255',
 		'identifier' => 'numeric',
-		'address_1' => 'string',
-		'address_2' => 'string',
+		'address_1' => 'max:255',
+		'address_2' => 'max:255',
 		'email' => 'email',
 		'phone' => 'match:/^([0-9 \-+\(\)])/',
-		'postcode' => 'string',
+		'postcode' => 'max:255',
 		'url' => 'url'
 	);
-	
+
 }
