@@ -495,7 +495,7 @@ class API_Controller extends Base_Controller {
      * @param int    $year The year.
      * @param string $type Undergraduate or postgraduate.
      */
-    public function get_export_poscodes($year, $type){
+    public function get_export_poscodes($year, $type, $programme_type=null){
 
         // get last generated date
         $last_generated = API::get_last_change_time();
@@ -512,35 +512,38 @@ class API_Controller extends Base_Controller {
         $listing = array();
 
         foreach($programmes as $programme) {
+            if(empty($programme_type) || ($programme['programme_type']===$programme_type)) {
+                $output = array();
 
-            $output = array();
-
-            $output['ID'] = $programme['id'];
-            $output['Title'] = $programme['name'];
-            $output['Award'] = $programme['award'];
-            $output['Campus'] = $programme['campus'];
-            $output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+                $output['ID'] = $programme['id'];
+                $output['Title'] = $programme['name'];
+                $output['Award'] = $programme['award'];
+                $output['Campus'] = $programme['campus'];
+                $output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
 
 
-            $programme_api = array();
-            try{
-                $programme_api = API::get_programme($level, $year, $programme['id']);
+                $programme_api = array();
+                try {
+                    $programme_api = API::get_programme($level, $year, $programme['id']);
 
-            } catch(Exception $e) {
-                continue;
-            }
+                } catch (Exception $e) {
+                    continue;
+                }
 
-            $pos_codes = array();
-            if (isset($programme_api['deliveries'])) {
+                $pos_codes = array();
+                if (isset($programme_api['deliveries'])) {
 
-                foreach ($programme_api['deliveries'] as $delivery) {
-                    if(!in_array($delivery['pos_code'],$pos_codes)){
-                        $pos_codes[] = $delivery['pos_code'];
+                    foreach ($programme_api['deliveries'] as $delivery) {
+                        if (!in_array($delivery['pos_code'], $pos_codes)) {
+                            $pos_codes[] = $delivery['pos_code'];
+                        }
                     }
                 }
+                $output['POS Codes'] = implode(', ', $pos_codes);
+                if(!empty($pos_codes)) {
+                    $listing[] = $output;
+                }
             }
-            $output['POS Codes'] = implode(', ',$pos_codes);
-            $listing[] = $output;
         }
 
         // output the data
