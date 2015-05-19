@@ -1,9 +1,9 @@
       <?php foreach ($programmes as $programme): ?>
         <course>
           <dc:description>
-            <div xmlns="http://www.w3.org/1999/xhtml">
+            <xhtml:div>
               <![CDATA[<?php echo (strip_tags($programme['programme_overview_text'])); ?>]]>
-            </div>
+            </xhtml:div>
           </dc:description>
           <dc:identifier><![CDATA[<?php echo ($programme['url']); ?>]]></dc:identifier>
           <?php if (isset($programme['subjects'])): ?>
@@ -21,21 +21,21 @@
           <?php endif; ?>
           <?php if(!empty($programme['how_to_apply'])): ?>
             <applicationProcedure>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['how_to_apply']); ?>]]>
-              </div>
+              </xhtml:div>
             </applicationProcedure>
           <?php endif; ?>
           <?php if(!empty($programme['teaching_and_assessment'])): ?>
             <mlo:assessment>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['teaching_and_assessment']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:assessment>
           <?php endif; ?>
           <?php if (isset($programme['learning_outcomes'])): ?>
             <learningOutcome>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[
                   <p><strong>Knowledge and understanding</strong></p>
                   <?php echo ($programme['learning_outcomes']); ?>
@@ -55,28 +55,28 @@
                   <?php echo ($programme['transferable_skills_learning_outcomes']); ?>
                 <?php endif; ?>
                 ]]>
-              </div>
+              </xhtml:div>
             </learningOutcome>
           <?php endif; ?>
           <?php if (isset($programme['programme_aims'])): ?>
             <mlo:objective>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['programme_aims']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:objective>
           <?php endif; ?>
           <?php if (isset($programme['prerequisite'])): ?>
             <mlo:prerequisite>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($programme['prerequisite']); ?>]]>
-              </div>
+              </xhtml:div>
             </mlo:prerequisite>
           <?php endif; ?>
           <?php if ($globalsettings->regulations): ?>
             <regulations>
-              <div xmlns="http://www.w3.org/1999/xhtml">
+              <xhtml:div>
                 <![CDATA[<?php echo ($globalsettings->regulations); ?>]]>
-              </div>
+              </xhtml:div>
             </regulations>
           <?php endif; ?>
 
@@ -87,9 +87,9 @@
               <abbr><![CDATA[<?php echo ($award['name']); ?>]]></abbr>
               <?php if (isset($programme['description'])): ?>
                 <dc:description>
-                  <div xmlns="http://www.w3.org/1999/xhtml">
+                  <xhtml:div>
                     <![CDATA[<?php echo ($programme['description']); ?>]]>
-                  </div>
+                  </xhtml:div>
                 </dc:description>
               <?php endif; ?>
               <?php if (isset($programme['education_level'])): ?>
@@ -124,28 +124,8 @@
               <end>September <?php echo "2016"; ?></end>
               <mlo:duration><![CDATA[<?php echo ($programme['duration']); ?>]]></mlo:duration>
               <applyTo><![CDATA[<?php echo ($programme['url']); ?>]]></applyTo>
-              <?php if (strpos($programme['mode_of_study'], 'Full-time only') !== false): ?>
-                <studyMode identifier="FT">Full time</studyMode>
-              <?php elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false): ?>
-                <studyMode identifier="FL">Flexible</studyMode>
-              <?php elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false): ?>
-                <studyMode identifier="PT">Part time</studyMode>
-              <?php else: ?>
-                <studyMode><?php echo ($programme['mode_of_study']); ?></studyMode>
-              <?php endif; ?>
-              <?php if (strpos($programme['attendance_mode'], 'Mixed') !== false): ?>
-                <attendanceMode identifier="MM">Mixed mode</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Distance with attendance') !== false): ?>
-                <attendanceMode identifier="DA">Distance with attendance</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Distance without attendance') !== false): ?>
-                <attendanceMode identifier="DS">Distance without attendance</attendanceMode>
-              <?php elseif (strpos($programme['attendance_mode'], 'Campus') !== false): ?>
-                <attendanceMode identifier="CM">Campus</attendanceMode>
-              <?php elseif (strcmp($programme['attendance_mode'], '') == 0): ?>
-                <attendanceMode identifier="CM">Campus</attendanceMode>
-              <?php else: ?>
-                <attendanceMode><?php echo ($programme['attendance_mode']); ?></attendanceMode>
-              <?php endif; ?>
+              <studyMode identifier="<?php echo $programme['mode_of_study_id']; ?>"><?php echo $programme['mode_of_study']; ?></studyMode>
+              <attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
               <?php if ($programme['attendance_pattern']): ?>
                 <attendancePattern><?php echo ($programme['attendance_pattern']); ?></attendancePattern>
               <?php endif; ?>
@@ -181,9 +161,9 @@
                 <provider>
                   <?php if (isset($programme['location']['description'])): ?>
                     <dc:description>
-                      <div xmlns="http://www.w3.org/1999/xhtml">
+                      <xhtml:div>
                         <![CDATA[<?php echo ($programme['location']['description']); ?>]]>
-                      </div>
+                      </xhtml:div>
                     </dc:description>
                   <?php endif; ?>
                   <dc:identifier>asc:<?php echo ($programme['location']['name']); ?></dc:identifier>
