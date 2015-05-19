@@ -155,6 +155,7 @@ Route::group(array('before' => ''), function(){
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/last-updated', 'api@export_lastupdated'); 
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses-without-fees', 'api@courses_without_fees'); // get courses that don't yet have fees data
     Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
+    Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/(taught|research|taught-research)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
 
 });
 
