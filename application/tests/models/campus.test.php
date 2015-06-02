@@ -20,7 +20,7 @@ class TestCampus extends ModelTestCase
 	{
 
 		static::clear_models(array("campus"));
-		
+
 		parent::tear_down();
 	}
 
@@ -38,7 +38,7 @@ class TestCampus extends ModelTestCase
 
 	/**
 	 * Simple check that our data made it to the database.
-	 * 
+	 *
 	 * @param string $field The column, thefirst half of a SQL where statement ran against the database.
 	 * @param string $value The value of the column, the second half of a SQL where statement against the database.
  	 * @return bool True if we have this in our database.
@@ -84,7 +84,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue(Campus::is_valid());
 	}
 
-	public function testNameIsRequired() 
+	public function testNameIsRequired()
 	{
 
 		unset($this->input['name']);
@@ -94,7 +94,7 @@ class TestCampus extends ModelTestCase
 		$this->assertFalse(Campus::is_valid());
 	}
 
-	public function testNameIsUnique() 
+	public function testNameIsUnique()
 	{
 		// A campus is used as the name in $this->input
 		$campus = Campus::create(array('name' => 'A campus'));
@@ -114,7 +114,7 @@ class TestCampus extends ModelTestCase
 		$this->assertFalse(Campus::is_valid());
 	}
 
-	public function testAddDescription() 
+	public function testAddDescription()
 	{
 		$campus = new Campus;
 		$campus->description = 'Blah blah';
@@ -123,7 +123,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('description', 'Blah blah'));
 	}
 
-	public function testAddIdentifier() 
+	public function testAddIdentifier()
 	{
 		$campus = new Campus;
 		$campus->identifier = 1;
@@ -136,13 +136,13 @@ class TestCampus extends ModelTestCase
 	public function testIdentifierMustMeNumeric()
 	{
 		$this->input['identifier'] = 'AAA';
-		
+
 		Request::foundation()->request->add($this->input);
 
 		$this->assertFalse(Campus::is_valid());
 	}
 
-	public function testAddTitle() 
+	public function testAddTitle()
 	{
 		$campus = new Campus;
 		$campus->title = 'Some Campus';
@@ -151,7 +151,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('title', 'Some Campus'));
 	}
 
-	public function testAddAddress_1() 
+	public function testAddAddress_1()
 	{
 		$campus = new Campus;
 		$campus->address_1 = 'Address 1';
@@ -160,16 +160,16 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('address_1', 'Address 1'));
 	}
 
-	public function testAddress_1IsRequired()
+	public function testAddress_1IsNotRequired()
 	{
 		unset($this->input['address_1']);
 
 		Request::foundation()->request->add($this->input);
 
-		$this->assertFalse(Campus::is_valid());
+		$this->assertTrue(Campus::is_valid());
 	}
 
-	public function testAddAddress_2() 
+	public function testAddAddress_2()
 	{
 		$campus = Campus::create(array('address_2' => 'Address 2'));
 		$campus->save();
@@ -178,13 +178,13 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('address_2', 'Address 2'));
 	}
 
-	public function testAddress_2IsRequired()
+	public function testAddress_2IsNotRequired()
 	{
 		unset($this->input['address_2']);
 
 		Request::foundation()->request->add($this->input);
 
-		$this->assertFalse(Campus::is_valid());
+		$this->assertTrue(Campus::is_valid());
 	}
 
 	public function testAddAddress_3()
@@ -196,7 +196,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('address_3', 'Address 3'));
 	}
 
-	public function testAddTown() 
+	public function testAddTown()
 	{
 		$campus = Campus::create(array('town' => 'Wolverhampton'));
 		$campus->save();
@@ -205,7 +205,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('town', 'Wolverhampton'));
 	}
 
-	public function testAddEmail() 
+	public function testAddEmail()
 	{
 		$campus = Campus::create(array('email' => 'somecampus@example.com'));
 		$campus->save();
@@ -214,7 +214,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('email', 'somecampus@example.com'));
 	}
 
-	public function testValidFailsOnInvalidEmail() 
+	public function testValidFailsOnInvalidEmail()
 	{
 		$this->input['email'] = 'blah blah blah@ invalid...email';
 
@@ -223,7 +223,7 @@ class TestCampus extends ModelTestCase
 		$this->assertFalse(Campus::is_valid());
 	}
 
-	public function testAddFax() 
+	public function testAddFax()
 	{
 		$campus = Campus::create(array('fax' => '01010101010'));
 		$campus->save();
@@ -232,7 +232,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('fax', '01010101010'));
 	}
 
-	public function testAddPhone() 
+	public function testAddPhone()
 	{
 		$campus = Campus::create(array('phone' => '07373 8737373'));
 		$campus->save();
@@ -244,7 +244,7 @@ class TestCampus extends ModelTestCase
 	/**
 	 * For our purposes a valid phone number contains numbers, brackers pluses, hyphens and spaces.
 	 */
-	public function testPhoneFailsOnInvalidPhoneNumber() 
+	public function testPhoneFailsOnInvalidPhoneNumber()
 	{
 		$this->input['phone'] = 'Blah haalakak invalid.';
 
@@ -288,7 +288,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue(Campus::is_valid());
 	}
 
-	public function testAddPostcode() 
+	public function testAddPostcode()
 	{
 		$campus = Campus::create(array('postcode' => 'CT4 2JS'));
 		$campus->save();
@@ -297,13 +297,13 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('postcode', 'CT4 2JS'));
 	}
 
-	public function testPostcodeIsRequired()
+	public function testPostcodeIsNotRequired()
 	{
 		unset($this->input['postcode']);
 
 		Request::foundation()->request->add($this->input);
 
-		$this->assertFalse(Campus::is_valid());
+		$this->assertTrue(Campus::is_valid());
 	}
 
 	public function testAddURL()
@@ -315,7 +315,7 @@ class TestCampus extends ModelTestCase
 		$this->assertTrue($this->check_for_data('url', 'http://example.com'));
 	}
 
-	public function testURLFailsOnOInvalidURL() 
+	public function testURLFailsOnOInvalidURL()
 	{
 		$this->input['url'] = 'blah blah not valid url';
 
