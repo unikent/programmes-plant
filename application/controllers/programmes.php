@@ -40,12 +40,13 @@ class Programmes_Controller extends Revisionable_Controller {
 		$suspended_field 	= 	$model::get_programme_suspended_field();
 		$subject_to_approval_field = $model::get_subject_to_approval_field();
 		$subject_area_1 	= 	$model::get_subject_area_1_field();
-
+        $campus_field       =   $model::get_location_field();
+        $additional_locations_field = $model::get_additional_locations_field();
 		// Get user
 		$user = Auth::user();
 
 		// get required fields
-		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at','instance_id');
+		$fields_array = array('id', $title_field, $award_field, $withdrawn_field, $suspended_field, $subject_to_approval_field, $campus_field, $additional_locations_field, 'locked_to', 'live_revision', 'current_revision' , 'updated_at','instance_id');
 
 		// If user can view all programmes in system, get a list of all of them
 		if($user->can("view_all_programmes"))
@@ -71,6 +72,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['withdrawn_field'] = $withdrawn_field;
 		$this->data['suspended_field'] = $suspended_field;
 		$this->data['subject_to_approval_field'] = $subject_to_approval_field;
+        $this->data['campus_field'] = $campus_field;
+        $this->data['additional_locations_field'] = $additional_locations_field;
 
 		$this->layout->nest('content', 'admin.programmes.index', $this->data);
 	}
