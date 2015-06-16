@@ -696,7 +696,7 @@ abstract class Programme extends Revisionable {
 		// Update feed file & kill output caches
 		static::generate_api_index($revision->year);
 		API::purge_output_cache();
-		Cache::forget('api-'. static::$table . '-'. $revision->year . '-'. $revision->instance_id);
+		Cache::forget('api-'. static::$table . '.'. $revision->year . '.'. $revision->instance_id);
 		
 		return $revision;
 	}
