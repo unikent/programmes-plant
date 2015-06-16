@@ -345,29 +345,7 @@ function init_dataTable(){
         "aoColumns": [ 
             { "bSortable": false, 'iDataSort': 1 },
             { "bSortable": false},
-            { "bSortable": false }
-          ]
-    });
-
-  }catch(e){
-    // Dont kill the page on error...
-  }
-}
-
-function init_dataTable(){
-
-  try{
-
-    $('#programme-list').dataTable( {
-        "sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
-        "sPaginationType": "bootstrap",
-        "iDisplayLength": 20,
-        "oLanguage": {
-            "sSearch": ""
-        },
-        "aoColumns": [ 
-            { "bSortable": false, 'iDataSort': 1 },
-            { "bSortable": false},
+            { "bSortable": false },
             { "bSortable": false }
           ]
     });

@@ -39,11 +39,9 @@
             <td>
                 <?php echo $programme->attributes[$title_field]; ?> - <em>
                 <?php 
-                  $model = $programme::$type.'_award'; 
+                  $model = $programme::$type.'_award';
                   echo implode(', ', $model::replace_ids_with_values($programme->attributes[$award_field], $year, true)); ?>
                 </em>
-              
-
                 <?php if(strcmp($programme->attributes[$withdrawn_field], 'true') == 0): ?>
                   <span class="label label-important"><?php echo __('programmes.withdrawn_field_text')  ?></span>
                 <?php endif; ?>
@@ -60,6 +58,18 @@
                 </span>
                 
             </td>
+              <td><?php
+                  $campus = Campus::replace_ids_with_values($programme->attributes[$campus_field],$year,true);
+                  $additional_locations =Campus::replace_ids_with_values($programme->attributes[$additional_locations_field],$year,true);
+                  $locs = array_merge($campus,$additional_locations);
+                  if(count($locs)>3) {
+                      $locs_str = implode(', ', array_slice($locs, 0, count($locs) - 2)) . ' and ' . $locs[count($locs) - 1];
+                  }else{
+                      $locs_str = implode(' and ',$locs);
+                  }
+                  echo $locs_str;
+                  ?>
+              </td>
             <td style='width:130px;'><a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->attributes["instance_id"]))?>"><?php echo  __('programmes.edit_programme') ?></a>
               <?php if($can_create_programmes): ?>
               <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@create', array($programme->attributes["instance_id"]))?>"><?php echo  __('programmes.clone') ?></a>
