@@ -551,6 +551,69 @@ class API_Controller extends Base_Controller {
 
     }
 
+
+	/**
+	 * Routing for /export/$year/$type/pos-codes
+	 *
+	 * Export CSV of pos codes
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_pos_to_mcr($year, $type){
+
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		// get the list of courses
+		$programmes = API::get_index($year);
+		$model = API::get_programme_model();
+		$level = $type == 'undergraduate' ? 'ug' : 'pg';
+		$listing = array();
+
+		foreach($programmes as $programme) {
+
+			$programme_api = array();
+			try {
+				$programme_api = API::get_programme($level, $year, $programme['id']);
+
+			} catch (Exception $e) {
+				continue;
+			}
+
+			$mcrs = array();
+			if (isset($programme_api['deliveries'])) {
+
+				foreach ($programme_api['deliveries'] as $delivery) {
+					if (!in_array($delivery['mcr'], $mcrs)) {
+						$mcrs[] = $delivery['mcr'];
+
+						$output = array();
+						$output['ID'] = $programme['id'];
+						$output['Title'] = $programme['name'];
+						$output['POS'] = $delivery['pos_code'];
+						$output['MCR'] = $delivery['mcr'];
+						$output['School/Fac/Dep'] = $programme['main_school'];
+						$output['mode of study '] = $programme['mode_of_study'];
+						$output['attendance pattern'] = $delivery['attendance_pattern'];
+
+						$listing[] = $output;
+					}
+				}
+			}
+
+		}
+
+		// output the data
+		return static::csv_download($listing, "{$type}-{$year}-POS-to-MCR", $last_generated);
+
+	}
+
 	public function get_refresh_modules($year, $level, $programme_id)
 	{
 		switch ($level) {
