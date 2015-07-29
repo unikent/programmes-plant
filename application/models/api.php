@@ -685,12 +685,14 @@ class API {
 				$programme['attendance_pattern_id'] = 'DT';
 		}
 
-		// set the attendance text id
-		if (isset($programme['attendance_text']) && is_int(substr($programme['attendance_text'], 0, 1))) {
-			$programme['attendance_text_id'] = 'P'.substr($programme['attendance_text'], 0, 1).'Y';
+		// set the duration
+		if (isset($programme['duration']) && !empty($programme['duration']) && is_int(intval($programme['duration']))) {
+			$programme['duration_text_id'] = 'P'.$programme['duration'].'M';
+			$programme['duration_text'] = $programme['duration'].' months';
 		}
 		else {
-			$programme['attendance_text_id'] = 'P1Y';
+			$programme['duration_text_id'] = 'P12M';
+			$programme['duration_text'] = '12 months';
 		}
 
 		// start date
