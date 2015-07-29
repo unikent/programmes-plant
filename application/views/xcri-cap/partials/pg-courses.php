@@ -92,7 +92,7 @@
                 </xhtml:div>
               </regulations>
             <?php endif; ?>
-            
+
             <mlo:qualification>
               <dc:identifier><?php echo ($award['name']) ?></dc:identifier>
               <dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
@@ -131,7 +131,7 @@
                     <dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
                   <?php endif; ?>
                 <?php endforeach; ?>
-                <mlo:start dtf="<?php echo $programme['start_date_short']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
+                <mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
                 <mlo:duration interval="<?php echo $programme['attendance_text_id']; ?>"><?php echo ($programme['attendance_text']); ?></mlo:duration>
                 <applyTo><?php echo ($programme['url']); ?></applyTo>
                 <studyMode identifier="<?php echo $programme['mode_of_study_id']; ?>"><?php echo $programme['mode_of_study']; ?></studyMode>
@@ -146,7 +146,7 @@
                     <?php $pos_codes = array(); ?>
                     <?php foreach ($programme['deliveries'] as $delivery): ?>
                       <?php if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ): ?>
-                        
+
                         <xhtml:table>
                           <xhtml:thead>
                             <xhtml:tr>
@@ -160,10 +160,10 @@
                           </xhtml:thead>
                           <xhtml:tbody>
 
-                                                
-                                            
+
+
                                             <?php if ($has_parttime): ?>
-                                                
+
                                             <?php endif; ?>
                             <?php if ($programme['has_fulltime']): ?>
                               <xhtml:tr>
@@ -185,7 +185,7 @@
                         <?php $pos_codes[] = $delivery['pos_code'];?>
                       <?php endif; ?>
                     <?php endforeach; ?>
-                 
+
                 </mlo:cost>
                 <venue>
                   <provider>

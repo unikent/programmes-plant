@@ -1,7 +1,7 @@
 <?php
 
 class API {
-	
+
 	/**
 	 * Return the programmes index
 	 *
@@ -96,7 +96,7 @@ class API {
 	{
 
 		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
-		
+
 		$cache_key = "api-output-{$level}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($level, $year, $id);
 	}
@@ -121,7 +121,7 @@ class API {
 		// Get basic data set
 		$globals 			= GlobalSetting::get_api_data($year);
 		$programme_settings = $settings_model::get_api_data($year);
-		
+
 		// Do we have the required data to show a programme?
 		if($globals === false || $programme_settings === false){
 			// Required data is missing.
@@ -168,13 +168,13 @@ class API {
 	 * @throws NoFoundException if preview does not exist (or has expired)
 	 */
 	public static function get_preview($hash)
-	{	
+	{
 		$key = URLParams::get_type()."-programme-previews.preview-{$hash}";
 		if(Cache::has($key)){
 			return Cache::get($key);
 		}else{
 			throw new NotFoundException("Preview data not found");
-		}	
+		}
 	}
 
 	/**
@@ -191,16 +191,16 @@ class API {
 
 		$p = $model::find($id);
 		$revision = $p->get_revision($revision_id);
-		
+
 		// If this revision exists
 		if($revision !== false){
 			// Grab additional data sets
-			$globals 			= GlobalSetting::get_api_data($revision->year);	
+			$globals 			= GlobalSetting::get_api_data($revision->year);
 			$programme_settings = $setting_model::get_api_data($revision->year);
 			// Fail if these arent set
 			if($globals === false || $programme_settings === false){
-				return false;	
-			} 
+				return false;
+			}
 			// Generate programme
 			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
 			// Log revision identity
@@ -278,7 +278,7 @@ class API {
 		{
 			unset($final[$key]);
 		}
-		
+
 		// Now remove IDs from our field names, they're not necessary and return.
 		// e.g. 'programme_title_1' simply becomes 'programme_title'.
 		$final = static::remove_ids_from_field_names($final);
@@ -303,7 +303,7 @@ class API {
 
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
-		
+
 		$final['programme_level'] = $level;
 
 		// Add in deliveries data
@@ -336,7 +336,7 @@ class API {
 	 *
 	 * @param $related_courses, Inital array of courses
 	 * @param $additional_related_courses, Additional courses array of courses
-	 * 
+	 *
 	 * @return (array) $related_courses
 	 */
 	public static function merge_related_courses($related_courses, $additional_related_courses){
@@ -347,14 +347,14 @@ class API {
 				if(!isset($related_courses[$course['id']])) $related_courses[$course['id']] = $course;
 			}
 		}
-		
+
 		// Make alphabetical
 		if(isset($related_courses) && !empty($related_courses)){
 			usort($related_courses, function($a,$b){
 				return strcmp($a["name"], $b["name"]);
 			});
 		}
-		
+
 
 		return $related_courses;
 	}
@@ -366,7 +366,7 @@ class API {
 	 * @param id ID of programme to get module data for
 	 * @param year year of progamme
 	 * @param type of progamme ug|pg
-	 * 
+	 *
 	 * @return Module data | false
 	 */
 	public static function get_module_data($iid, $pos, $year, $level = 'ug')
@@ -378,15 +378,15 @@ class API {
 
 	/**
 	 * Removes the automatically generated field ids from our field names.
-	 * 
+	 *
 	 * @param $record Record to remove field ids from.
 	 * @return $new_record Record with field ids removed.
 	 */
 	public static function remove_ids_from_field_names($record)
 	{
 		$new_record = array();
-		
-		foreach ($record as $name => $value) 
+
+		foreach ($record as $name => $value)
 		{
 			$new_record[preg_replace('/_\d{1,3}$/', '', $name)] = $value;
 		}
@@ -396,7 +396,7 @@ class API {
 
 	/**
 	 * look through the passed in record and substitute any ids with data from the correct table
-	 * 
+	 *
 	 * @param $record The record
 	 * @return $new_record A new record with ids substituted
 	 */
@@ -417,10 +417,10 @@ class API {
 
 	/**
 	 * Purge output cache. Clears final output caches when data is changed.
-	 * 
+	 *
 	 * @param $data Data to show as XML
 	 * @return Raw XML
-	 */ 
+	 */
 	public static function purge_output_cache()
 	{
 		// @todo work out a way of purging this data in tests
@@ -441,10 +441,10 @@ class API {
 			}catch (Exception $e) {
 				// Do nothing, all this means if there was no directory (yet) to wipe
 			}
-			
+
 		}
 
-		// Last changed timestamp 
+		// Last changed timestamp
 		// (All data generated after this point can be considered as "up to date" by the API)
 		Cache::put('last_change', time(), 2628000);
 	}
@@ -503,7 +503,7 @@ class API {
 			// if time was provided, dont grab from cache
 			$last_change = $time;
 		}else{
-			$last_change = static::get_last_change_time();	
+			$last_change = static::get_last_change_time();
 		}
 		// else return in correct format
 		return gmdate('D, d M Y H:i:s \G\M\T', $last_change);
@@ -511,10 +511,10 @@ class API {
 
 	/**
 	 * Function to convert feed to XML
-	 * 
+	 *
 	 * @param $data Data to show as XML
 	 * @return Raw XML
-	 */ 
+	 */
 	public static function array_to_xml($data, $xml = false)
 	{
 
@@ -529,14 +529,14 @@ class API {
 				$key = 'item'; // Else will use 1/2/3/etc which is invalid xml
 			}else{
 				$key = preg_replace('~\W*~', "", $key);// Remove any funny chars from keys
-			} 
+			}
 
 			if (is_array($value) || is_object($value))
 			{
 				static::array_to_xml($value, $xml->addChild($key));
 			}
 			else
-			{	
+			{
 				$xml->addChild($key, str_replace('&', '&amp;', $value));
 			}
 		}
@@ -546,11 +546,11 @@ class API {
 
 	/**
 	 * Function to convert feed to CSV
-	 * 
+	 *
 	 * @see http://stackoverflow.com/questions/3933668/convert-array-into-csv
 	 * @param $data Data to show as CSV
 	 * @return Raw CSV
-	 */  
+	 */
 	public static function array_to_csv( array &$fields, $delimiter = ',', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false ) {
 	    $delimiter_esc = preg_quote($delimiter, '/');
 	    $enclosure_esc = preg_quote($enclosure, '/');
@@ -588,14 +588,14 @@ class API {
 
 	/**
 	 * Creates a flat representation of a programme for use in XCRI.
-	 * 
+	 *
 	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
 	 */
 	public static function get_xcrified_programme($id, $year, $type = false)
 	{
 		// get the programme
 		$programme = static::get_programme($type, $year, $id);
-	
+
 		// format the programme appropriately
 		$ug_pg_full = (strcmp($type, 'ug') == 0) ? 'undergraduate' : 'postgraduate';
 		$programme['url'] = Config::get('application.front_end_url') . $ug_pg_full . '/' . $id . '/' . $programme['slug'];
@@ -607,8 +607,8 @@ class API {
 		$programme['location'] = isset($programme['location'][0]) ? $programme['location'][0] : array();
 		$programme['subject_leaflet'] = isset($programme['subject_leaflet'][0]) ? $programme['subject_leaflet'][0] : array();
 		$programme['subject_leaflet_2'] = isset($programme['subject_leaflet_2'][0]) ? $programme['subject_leaflet_2'][0] : array();
-		
-		// merge subjects areas into one array 
+
+		// merge subjects areas into one array
 		if(!empty($programme['subject_area_1'])){
 			$programme['subjects'][] = $programme['subject_area_1'];
 		}
@@ -693,13 +693,6 @@ class API {
 			$programme['attendance_text_id'] = 'P1Y';
 		}
 
-		// start date
-		if (isset($programme['start']) && isset($programme['year'])) {
-			$programme['start_date'] = $programme['start'] . ' ' . $programme['year'];
-			$programme['start_date_short'] = date('Y-m', strtotime($programme['start_date']));
-		}
-		
-
 		// pull out the school enquiry details
 		$enq = strip_tags($programme['enquiries']);
 
@@ -724,7 +717,7 @@ class API {
 
 	/**
 	 * Return programme model of correct type
-	 * 
+	 *
 	 * @return UG/PG_Programme
 	 */
 	public static function get_programme_model(){
@@ -733,7 +726,7 @@ class API {
 
 	/**
 	 * Get correct prefix for model
-	 * 
+	 *
 	 * @param $level
 	 * @return "UG_" / "PG_"
 	 */
