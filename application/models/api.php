@@ -693,6 +693,15 @@ class API {
 			$programme['attendance_text_id'] = 'P1Y';
 		}
 
+		// start date
+		if (isset($programme['start_date']) && !empty($programme['start_date'])) {
+			$programme['start_date_text'] = date('M Y', strtotime($programme['start_date']));
+		}
+		else {
+			$programme['start_date'] = $programme['year'] . '-09';
+			$programme['start_date_text'] = date('M Y', strtotime($programme['start_date']));
+		}
+
 		// pull out the school enquiry details
 		$enq = strip_tags($programme['enquiries']);
 

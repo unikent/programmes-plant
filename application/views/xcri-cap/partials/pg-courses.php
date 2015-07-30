@@ -131,7 +131,7 @@
                     <dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
                   <?php endif; ?>
                 <?php endforeach; ?>
-                <mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
+                <mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
                 <mlo:duration interval="<?php echo $programme['attendance_text_id']; ?>"><?php echo ($programme['attendance_text']); ?></mlo:duration>
                 <applyTo><?php echo ($programme['url']); ?></applyTo>
                 <studyMode identifier="<?php echo $programme['mode_of_study_id']; ?>"><?php echo $programme['mode_of_study']; ?></studyMode>
