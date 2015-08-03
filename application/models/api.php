@@ -3,12 +3,12 @@
 class API {
 
 	/**
-	 * Return the programmes index
-	 *
-	 * @param year year to get index for
-	 * @param level ug|pg
-	 * @return array Index of programmes
-	 */
+	* Return the programmes index
+	*
+	* @param year year to get index for
+	* @param level ug|pg
+	* @return array Index of programmes
+	*/
 	public static function get_index($year, $level = false)
 	{
 		// Get index of programmes
@@ -68,12 +68,12 @@ class API {
 	}
 
 	/**
-	 * Return the fees index
-	 *
-	 * @param year year to get index for
-	 * @param level ug|pg
-	 * @return array Index of fees data
-	 */
+	* Return the fees index
+	*
+	* @param year year to get index for
+	* @param level ug|pg
+	* @return array Index of fees data
+	*/
 	public static function get_fees_index($year, $level = false, $fees_year = false)
 	{
 		// Get index of programmes
@@ -86,12 +86,12 @@ class API {
 	}
 
 	/**
-	 * Return fully combined programme item from the API
-	 *
-	 * @param id ID of programme
-	 * @param year Year to get index for
-	 * @return combined Programme data array
-	 */
+	* Return fully combined programme item from the API
+	*
+	* @param id ID of programme
+	* @param year Year to get index for
+	* @return combined Programme data array
+	*/
 	public static function get_programme($level, $year, $id)
 	{
 
@@ -102,12 +102,12 @@ class API {
 	}
 
 	/**
-	 * generate fully combined programme item from caches
-	 *
-	 * @param id ID of programme
-	 * @param year year to get index for
-	 * @return combined programme data array
-	 */
+	* generate fully combined programme item from caches
+	*
+	* @param id ID of programme
+	* @param year year to get index for
+	* @return combined programme data array
+	*/
 
 	public static function generate_programme_data($level, $year, $iid)
 	{
@@ -161,12 +161,12 @@ class API {
 	}
 
 	/**
-	 * get a "preview" programme from the API based on hash
-	 *
-	 * @param $hash of preview
-	 * @return preview from cache
-	 * @throws NoFoundException if preview does not exist (or has expired)
-	 */
+	* get a "preview" programme from the API based on hash
+	*
+	* @param $hash of preview
+	* @return preview from cache
+	* @throws NoFoundException if preview does not exist (or has expired)
+	*/
 	public static function get_preview($hash)
 	{
 		$key = URLParams::get_type()."-programme-previews.preview-{$hash}";
@@ -178,12 +178,12 @@ class API {
 	}
 
 	/**
-	 * Create a new "preview" of a given revision
-	 *
-	 * @param $id of programme preview is for
-	 * @param $id of revision to create preview from
-	 * @return hash of preview.
-	 */
+	* Create a new "preview" of a given revision
+	*
+	* @param $id of programme preview is for
+	* @param $id of revision to create preview from
+	* @return hash of preview.
+	*/
 	public static function create_preview($id, $revision_id)
 	{
 		$model =  URLParams::get_type().'_Programme';
@@ -217,12 +217,12 @@ class API {
 	}
 
 	/**
-	 * Get "data" from specific datatype
-	 *
-	 * @param $type data type to return data for.
-	 * @throws NotFoundException on unknown datatype
-	 * @return array of data to return.
-	 */
+	* Get "data" from specific datatype
+	*
+	* @param $type data type to return data for.
+	* @throws NotFoundException on unknown datatype
+	* @return array of data to return.
+	*/
 	public static function get_data($type, $level = null){
 		// Do some magic (ie. convert schools=>school & campuses to campus for models)
 		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
@@ -240,13 +240,13 @@ class API {
 	}
 
 	/**
-	 * Create a combined programme output
-	 *
-	 * @param $programme - basic programme data
-	 * @param $programme_settings - basic programme setting data
-	 * @param $globals - basic global setting data
-	 * @return Combined programme data (fully linked)
-	 */
+	* Create a combined programme output
+	*
+	* @param $programme - basic programme data
+	* @param $programme_settings - basic programme setting data
+	* @param $globals - basic global setting data
+	* @return Combined programme data (fully linked)
+	*/
 	public static function combine_programme($programme, $programme_settings, $globals, $level = false){
 		// Get Models
 		$programme_model = URLParams::get_type().'_Programme';
@@ -332,13 +332,13 @@ class API {
 	}
 
 	/**
-	 * Merge related courses. Merges course arrays removing any duplicates and returns them in alphabetical order
-	 *
-	 * @param $related_courses, Inital array of courses
-	 * @param $additional_related_courses, Additional courses array of courses
-	 *
-	 * @return (array) $related_courses
-	 */
+	* Merge related courses. Merges course arrays removing any duplicates and returns them in alphabetical order
+	*
+	* @param $related_courses, Inital array of courses
+	* @param $additional_related_courses, Additional courses array of courses
+	*
+	* @return (array) $related_courses
+	*/
 	public static function merge_related_courses($related_courses, $additional_related_courses){
 		// Merge arrays (copying over duplicates)
 		if(is_array($additional_related_courses)){
@@ -361,14 +361,14 @@ class API {
 
 
 	/**
-	 * Get Module Data
-	 *
-	 * @param id ID of programme to get module data for
-	 * @param year year of progamme
-	 * @param type of progamme ug|pg
-	 *
-	 * @return Module data | false
-	 */
+	* Get Module Data
+	*
+	* @param id ID of programme to get module data for
+	* @param year year of progamme
+	* @param type of progamme ug|pg
+	*
+	* @return Module data | false
+	*/
 	public static function get_module_data($iid, $pos, $year, $level = 'ug')
 	{
 		$cache_key = "programme-modules.$level-$year-".base64_encode($pos)."-$iid";
@@ -377,11 +377,11 @@ class API {
 
 
 	/**
-	 * Removes the automatically generated field ids from our field names.
-	 *
-	 * @param $record Record to remove field ids from.
-	 * @return $new_record Record with field ids removed.
-	 */
+	* Removes the automatically generated field ids from our field names.
+	*
+	* @param $record Record to remove field ids from.
+	* @return $new_record Record with field ids removed.
+	*/
 	public static function remove_ids_from_field_names($record)
 	{
 		$new_record = array();
@@ -395,11 +395,11 @@ class API {
 	}
 
 	/**
-	 * look through the passed in record and substitute any ids with data from the correct table
-	 *
-	 * @param $record The record
-	 * @return $new_record A new record with ids substituted
-	 */
+	* look through the passed in record and substitute any ids with data from the correct table
+	*
+	* @param $record The record
+	* @return $new_record A new record with ids substituted
+	*/
 	public static function load_external_data($record, $level = false)
 	{
 		$level = ($level == false) ? URLParams::get_type() : $level;
@@ -416,11 +416,11 @@ class API {
 	}
 
 	/**
-	 * Purge output cache. Clears final output caches when data is changed.
-	 *
-	 * @param $data Data to show as XML
-	 * @return Raw XML
-	 */
+	* Purge output cache. Clears final output caches when data is changed.
+	*
+	* @param $data Data to show as XML
+	* @return Raw XML
+	*/
 	public static function purge_output_cache()
 	{
 		// @todo work out a way of purging this data in tests
@@ -476,10 +476,10 @@ class API {
 	}
 
 	/**
-	 * Get timestamp of when last change to caches was made
-	 *
-	 * @return unix timestamp
-	 */
+	* Get timestamp of when last change to caches was made
+	*
+	* @return unix timestamp
+	*/
 	public static function get_last_change_time(){
 		// Get last change
 		$last_change = Cache::get('last_change');
@@ -492,11 +492,11 @@ class API {
 	}
 
 	/**
-	 * Get last change time in format sutable for use in headers
-	 *
-	 * @param timestamp to generate header from
-	 * @return time formatted for header
-	 */
+	* Get last change time in format sutable for use in headers
+	*
+	* @param timestamp to generate header from
+	* @return time formatted for header
+	*/
 	public static function get_last_change_date_for_headers($time = false){
 
 		if($time){
@@ -510,11 +510,11 @@ class API {
 	}
 
 	/**
-	 * Function to convert feed to XML
-	 *
-	 * @param $data Data to show as XML
-	 * @return Raw XML
-	 */
+	* Function to convert feed to XML
+	*
+	* @param $data Data to show as XML
+	* @return Raw XML
+	*/
 	public static function array_to_xml($data, $xml = false)
 	{
 
@@ -545,22 +545,22 @@ class API {
 	}
 
 	/**
-	 * Function to convert feed to CSV
-	 *
-	 * @see http://stackoverflow.com/questions/3933668/convert-array-into-csv
-	 * @param $data Data to show as CSV
-	 * @return Raw CSV
-	 */
+	* Function to convert feed to CSV
+	*
+	* @see http://stackoverflow.com/questions/3933668/convert-array-into-csv
+	* @param $data Data to show as CSV
+	* @return Raw CSV
+	*/
 	public static function array_to_csv( array &$fields, $delimiter = ',', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false ) {
-	    $delimiter_esc = preg_quote($delimiter, '/');
-	    $enclosure_esc = preg_quote($enclosure, '/');
+		$delimiter_esc = preg_quote($delimiter, '/');
+		$enclosure_esc = preg_quote($enclosure, '/');
 
-	    $output = array();
-	    foreach ( $fields as $field ) {
-	        if ($field === null && $nullToMysqlNull) {
-	            $output[] = 'NULL';
-	            continue;
-	        }
+		$output = array();
+		foreach ( $fields as $field ) {
+			if ($field === null && $nullToMysqlNull) {
+				$output[] = 'NULL';
+				continue;
+			}
 			if(is_array($field) && !empty($field)){
 				if(!is_array(current($field))){
 					$field = implode(', ',$field);
@@ -574,23 +574,23 @@ class API {
 				// trim
 				$field = trim($field);
 			}
-	        // Enclose fields containing $delimiter, $enclosure or whitespace
-	        if ( $encloseAll || preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ) {
-	            $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
-	        }
-	        else {
-	            $output[] = $field;
-	        }
-	    }
+			// Enclose fields containing $delimiter, $enclosure or whitespace
+			if ( $encloseAll || preg_match( "/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field ) ) {
+				$output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
+			}
+			else {
+				$output[] = $field;
+			}
+		}
 
-	    return implode( $delimiter, $output );
+		return implode( $delimiter, $output );
 	}
 
 	/**
-	 * Creates a flat representation of a programme for use in XCRI.
-	 *
-	 * @return StdClass A flattened and simplified XCRI ready representation of this object.
-	 */
+	* Creates a flat representation of a programme for use in XCRI.
+	*
+	* @return StdClass A flattened and simplified XCRI ready representation of this object.
+	*/
 	public static function get_xcrified_programme($id, $year, $type = false)
 	{
 		// get the programme
@@ -621,24 +621,24 @@ class API {
 		$programme['has_parttime'] = (strpos(strtolower($programme['mode_of_study']), 'part-time') !== false);
 		$programme['has_fulltime'] = (strpos(strtolower($programme['mode_of_study']), 'full-time') !== false);
 
-		// mode of study
-		if (strpos($programme['mode_of_study'], 'Full-time only') !== false){
-			$programme['mode_of_study_id'] = 'FT';
-			$programme['mode_of_study'] = 'Full time';
-		}
-		elseif (strpos($programme['mode_of_study'], 'Full-time or part-time') !== false){
-			$programme['mode_of_study_id'] = 'FL';
-			$programme['mode_of_study'] = 'Flexible';
-		}
-		elseif (strpos($programme['mode_of_study'], 'Part-time only') !== false){
-			$programme['mode_of_study_id'] = 'PT';
-			$programme['mode_of_study'] = 'Part time';
-		}
-		else{
-			$programme['mode_of_study_id'] = '';
-			$programme['mode_of_study'] = $programme['mode_of_study'];
-		}
+		$programme['modes_of_study'] = array();
 
+		if ($programme['has_fulltime'] || $programme['has_parttime']) {
+				if ($programme['has_fulltime']) {
+						$programme['modes_of_study'][] = array('id' => 'FT', 'name' => "Full time");
+				}
+				if ($programme['has_parttime']) {
+						$programme['modes_of_study'][] = array('id' => 'PT', 'name' => "Part time");
+				}
+		} else {
+				$programme['modes_of_study'][]['name'] = $programme['mode_of_study'];
+				if (stristr($programme['mode_of_study'], 'full')) {
+						$programme['modes_of_study'][]['id'] = 'FT';
+				} else if (stristr($programme['mode_of_study'], 'part')) {
+						$programme['modes_of_study'][]['id'] = 'PT';
+				}
+		}
+		
 		// attendance mode
 		if (strpos($programme['attendance_mode'], 'Mixed') !== false){
 			$programme['attendance_mode_id'] = 'MM';
@@ -665,24 +665,24 @@ class API {
 		$programme['attendance_pattern'] = strtolower($programme['attendance_pattern']);
 		switch ($programme['attendance_pattern']) {
 			case 'day-time':
-				$programme['attendance_pattern'] = 'Daytime';
-				$programme['attendance_pattern_id'] = 'DT';
-				break;
+			$programme['attendance_pattern'] = 'Daytime';
+			$programme['attendance_pattern_id'] = 'DT';
+			break;
 			case 'weekend':
-				$programme['attendance_pattern'] = 'Weekend';
-				$programme['attendance_pattern_id'] = 'WE';
-				break;
+			$programme['attendance_pattern'] = 'Weekend';
+			$programme['attendance_pattern_id'] = 'WE';
+			break;
 			case 'evening':
-				$programme['attendance_pattern'] = 'Evening';
-				$programme['attendance_pattern_id'] = 'EV';
-				break;
+			$programme['attendance_pattern'] = 'Evening';
+			$programme['attendance_pattern_id'] = 'EV';
+			break;
 			case 'customized':
-				$programme['attendance_pattern'] = 'Customised';
-				$programme['attendance_pattern_id'] = 'CS';
-				break;
+			$programme['attendance_pattern'] = 'Customised';
+			$programme['attendance_pattern_id'] = 'CS';
+			break;
 			default:
-				$programme['attendance_pattern'] = 'Daytime';
-				$programme['attendance_pattern_id'] = 'DT';
+			$programme['attendance_pattern'] = 'Daytime';
+			$programme['attendance_pattern_id'] = 'DT';
 		}
 
 		// set the duration
@@ -727,31 +727,31 @@ class API {
 	}
 
 	/**
-	 * Return programme model of correct type
-	 *
-	 * @return UG/PG_Programme
-	 */
+	* Return programme model of correct type
+	*
+	* @return UG/PG_Programme
+	*/
 	public static function get_programme_model(){
 		return static::_get_prefix(URLParams::get_type()).'Programme';
 	}
 
 	/**
-	 * Get correct prefix for model
-	 *
-	 * @param $level
-	 * @return "UG_" / "PG_"
-	 */
+	* Get correct prefix for model
+	*
+	* @param $level
+	* @return "UG_" / "PG_"
+	*/
 	public static function _get_prefix($level){
 		switch($level){
 			case 'ug':
-				$prefix = 'UG_';
-				break;
+			$prefix = 'UG_';
+			break;
 			case 'pg':
-				$prefix = 'PG_';
-				break;
+			$prefix = 'PG_';
+			break;
 			default:
-				$prefix = '';
-				break;
+			$prefix = '';
+			break;
 		}
 
 		return $prefix;
@@ -760,5 +760,5 @@ class API {
 
 // Exceptions
 class MissingMagicalUnicornFieldException extends \Exception {}
-class MissingDataException extends \Exception {}
-class NotFoundException extends \Exception {}
+	class MissingDataException extends \Exception {}
+		class NotFoundException extends \Exception {}
