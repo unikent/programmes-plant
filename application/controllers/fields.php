@@ -126,7 +126,7 @@ abstract class Fields_Controller extends Admin_Controller {
 		$permissions['W'] = isset($permissions['W']) ? $permissions['W'] : array();
 		$permission->roles()->sync(Role::sanitize_ids($permissions['W']));
 
-		Messages::add('success','Row added to schema');
+		Messages::add('success','The new field was successfully added');
 
 		return Redirect::to(URI::current());
 	}
