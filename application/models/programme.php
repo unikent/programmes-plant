@@ -405,6 +405,7 @@ abstract class Programme extends Revisionable {
 		$suspended_field = static::get_programme_suspended_field();
 		$programme_type_field = static::get_programme_type_field();
 		$study_abroad_option_field = static::get_study_abroad_option_field();
+		$science_without_borders_field = static::get_science_without_borders_field();
 
 		$index_data = array();
 
@@ -428,7 +429,8 @@ abstract class Programme extends Revisionable {
 					 $subject_area_2_field,
 					 $programme_type_field,
 					 $withdrawn_field,
-					 $suspended_field
+					 $suspended_field,
+					 $science_without_borders_field
 
 		);
 		// If UG, add ucas field
@@ -504,7 +506,8 @@ abstract class Programme extends Revisionable {
 				'module_session' => isset($attributes[$module_session_field]) ? $attributes[$module_session_field] : '',
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
-				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : ''
+				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : '',
+				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : ''
 			);
 			
 			$statuses = '(';
