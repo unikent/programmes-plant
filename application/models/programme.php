@@ -13,7 +13,7 @@ abstract class Programme extends Revisionable {
 
 		/**
 	 * Get this programme's awards.
-	 * 
+	 *
 	 * @return Award The award for this programme.
 	 */
 	public function awards()
@@ -40,7 +40,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Get a list of this programme's award names.
-	 * 
+	 *
 	 * @return string A comma seperated string of awards.
 	 */
 	public function get_award_names()
@@ -57,10 +57,10 @@ abstract class Programme extends Revisionable {
 		return $award_string;
 	}
 
-	
+
 	/**
 	 * Get this programme's award.
-	 * 
+	 *
 	 * @return Award The award for this programme.
 	 */
 	public function award()
@@ -71,7 +71,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Get this programme's first subject area.
-	 * 
+	 *
 	 * @return Subject The first subject area for this programme.
 	 */
 	public function subject_area_1()
@@ -82,7 +82,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Get this programme's administrative school.
-	 * 
+	 *
 	 * @return School The administrative school for this programme.
 	 */
 	public function administrative_school()
@@ -92,7 +92,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Get this programme's additional school.
-	 * 
+	 *
 	 * @return School The additional school for this programme.
 	 */
 	public function additional_school()
@@ -102,7 +102,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Get this programme's campus.
-	 * 
+	 *
 	 * @return School The location for this programme.
 	 */
 	public function location()
@@ -112,7 +112,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Save changes to programme
-	 * 
+	 *
 	 * @return true|false
 	 */
 	public function save()
@@ -145,7 +145,7 @@ abstract class Programme extends Revisionable {
 		}
 		// Save revision & current
 		$revision->save();
-		$this->raw_save();	
+		$this->raw_save();
 	}
 
 
@@ -153,7 +153,7 @@ abstract class Programme extends Revisionable {
 	 * Submits a revision into the inbox of EMS for editing, setting the status to 'under_review'.
 	 * This should work for all revisionable types that inherit from this.
 	 * Presently only the revisions of programmes are surfaced.
-	 * 
+	 *
 	 * @param int|Revision  Revision object or integer to send for editing.
 	 */
 	public function submit_revision_for_editing($revision)
@@ -181,7 +181,7 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Gets all programme revisions that are currently under review.
-	 * 
+	 *
 	 * @return array $under_review  An array of programme revisions currently under review.
 	 */
 	public static function get_under_review()
@@ -208,7 +208,7 @@ abstract class Programme extends Revisionable {
 		$cached_data = static::get_api_index($year);
 		// Create new array of actual values matching the ids from the cache
 		$values = array();
-		foreach ($id_array as $id) 
+		foreach ($id_array as $id)
 		{
 			// Only display relation IF programme is published
 			if(isset($cached_data[$id])){
@@ -277,7 +277,7 @@ abstract class Programme extends Revisionable {
 		// Return false if there is no live revision
 		if(sizeof($revision) === 0 || $revision === null){
 			return false;
-		} 
+		}
 
 		Cache::put($cache_key, $revision_data = $revision->attributes, 2628000);
 
@@ -306,9 +306,10 @@ abstract class Programme extends Revisionable {
 	 * @return programmes index
 	 */
 	public static function get_api_index($year)
-	{	
+	{
 		$type = static::$type;
 		$cache_key = "api-index-{$type}.index-$year";
+		return static::generate_api_index($year);
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
 
@@ -319,7 +320,7 @@ abstract class Programme extends Revisionable {
 	 * @return programmes fees
 	 */
 	public static function get_api_fees($year,$fees_year)
-	{	
+	{
 		$type = static::$type;
 		$cache_key = "api-index-{$type}.fees.$fees_year.$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year,$fees_year);
@@ -332,7 +333,7 @@ abstract class Programme extends Revisionable {
 	 * @return programmes mapping
 	 */
 	public static function get_api_related_programmes_map($year)
-	{	
+	{
 		$type = static::$type;
 		$cache_key = "api-index-{$type}.api-programmes-$year-subject-relations";
 
@@ -379,7 +380,7 @@ abstract class Programme extends Revisionable {
 		$subject_cat_model = $type.'_SubjectCategory';
 
 		// Set cache keys
-		
+
 		$cache_key_index = "api-index-{$type}.index-$year";
 		$cache_key_subject = "api-index-{$type}.api-programmes-$year-subject-relations";
 
@@ -406,6 +407,7 @@ abstract class Programme extends Revisionable {
 		$programme_type_field = static::get_programme_type_field();
 		$study_abroad_option_field = static::get_study_abroad_option_field();
 		$science_without_borders_field = static::get_science_without_borders_field();
+		$attendance_mode_field = static::get_attendance_mode_field();
 
 		$index_data = array();
 
@@ -441,6 +443,7 @@ abstract class Programme extends Revisionable {
 		if ($type == 'pg') {
 			$fields[] = $additional_locations_field;
 			$fields[] = $study_abroad_option_field;
+			$fields[] = $attendance_mode_field;
 		}
 
 		// Find all programmes that have a live revision set (live_revision != 0)
@@ -449,7 +452,7 @@ abstract class Programme extends Revisionable {
 		$live_revisions_ids = array();
 		foreach($programmes_with_live_revisions as $programme_with_live_revisions){
 			$live_revisions_ids[] = $programme_with_live_revisions->attributes['live_revision'];
-		} 
+		}
 
 		// if nothing is live in $year, don't continue
 		if(empty($live_revisions_ids)){
@@ -467,7 +470,7 @@ abstract class Programme extends Revisionable {
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
-		
+
 			if($type == 'pg')
 			{
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
@@ -507,9 +510,10 @@ abstract class Programme extends Revisionable {
 				'subject2'	 => 	isset($relationships["subject_area_2"]) ? $relationships["subject_area_2"]->attributes["name"] : '',
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : '',
-				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : ''
+				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
+				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : ''
 			);
-			
+
 			$statuses = '(';
 			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
 				$statuses .= "subject to approval";
@@ -600,18 +604,18 @@ abstract class Programme extends Revisionable {
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
 				// We get a description:
-				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow - MA - Full-time at Canterbury 
+				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow - MA - Full-time at Canterbury
 				//
 				// But need only the name (which can have an arbitary number of -'s in it) only the hope it wont change much, just explode
 				// -'s and cut off the last 2 elements to give us:
 
-				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow 
+				// Drama & Theatre - Physical Actor Training & Performance with a Term in Moscow
 				$description  = trim(implode(' - ',array_slice(explode(' - ', $delivery['description']), 0, -2)));
 
-				$campus = ($programme['additional_locations'] != '') 
-					? ( strstr($programme['additional_locations'], ',') ) 
-						? $programme['campus'].', '.$programme['additional_locations'] 
-						: $programme['campus'].' and '.$programme['additional_locations'] 
+				$campus = ($programme['additional_locations'] != '')
+					? ( strstr($programme['additional_locations'], ',') )
+						? $programme['campus'].', '.$programme['additional_locations']
+						: $programme['campus'].' and '.$programme['additional_locations']
 					: $programme['campus'];
 
 				$programme_data = array(
@@ -635,15 +639,15 @@ abstract class Programme extends Revisionable {
 
 				$fees_data[$key] = $programme_data;
 			}
-			
+
 		}
 
 		$fees_data = array_values($fees_data);
-		
+
 		// Store index data in to cache
 		Cache::put($cache_key_index, $fees_data, 2628000);
 
-		
+
 		// return
 		return $fees_data;
 	}
@@ -666,17 +670,17 @@ abstract class Programme extends Revisionable {
 		$model = static::$type.'_Delivery';
 		return $model::get_programme_deliveries($instance_id, $year);
 	}
-	
-	
+
+
 	/**
 	 * unpublishes a given revision
-	 * 
+	 *
 	 * @param $revision Object|id
 	 * @return $revision
 	 */
 	public function unpublish_revision($revision)
 	{
-		
+
 		// Get the currently "active/selected" revision.
 		// If this revision is currently live, change its status to selected (so the system knows which revision is being edited/used)
 		// If the active revision is already current, leave it be
@@ -692,21 +696,21 @@ abstract class Programme extends Revisionable {
 			$revision->status = 'prior_live';
 			$revision->save();
 		}
-		
+
 		$this->live_revision = -1;
 		$this->raw_save();
-		
+
 		// Update feed file & kill output caches
 		static::generate_api_index($revision->year);
 		API::purge_output_cache();
 		Cache::forget('api-'. static::$table . '.'. $revision->year . '.'. $revision->instance_id);
-		
+
 		return $revision;
 	}
 
 	/**
 	 * Delete this programme by hiding it and unpublishing any of its published revisions
-	 * 
+	 *
 	 * @param $revision Object|id
 	 * @return $revision
 	 */
@@ -730,7 +734,7 @@ abstract class Programme extends Revisionable {
 	/**
 	 * Find related programmes using API. Returns array containing any course
 	 * in the given year that is in either subject_1 or subject_2.
-	 * 
+	 *
 	 * @param $subject_1 is course part of subject 1
 	 * @param $subject_2 is course part of subject 2
 	 * @param $year is course in year
@@ -744,11 +748,11 @@ abstract class Programme extends Revisionable {
 		// If subject isn't set, just return an empty array of relations.
 		if($subject_1 == null){
 			return array();
-		} 
+		}
 		// If subject 2 is null, assume is duplicate of 1.
 		if($subject_2 == null){
 			$subject_2 = $subject_1;
-		} 
+		}
 
 		if ($subject_1 != $subject_2)
 		{
@@ -762,13 +766,13 @@ abstract class Programme extends Revisionable {
 
 		// Remove self from list as theres no point it being related to itself
 		if($self_id) unset($related_courses_array[$self_id]);
-		 
+
 		return $related_courses_array;
 	}
 
 	/**
 	 * Generate data to display diff of two revisions
-	 * 
+	 *
 	 * @param $revision_1 - previous revision
 	 * @param $revision_2 - new revision
 	 * @return array(revision_1, revision_2, attributes)
@@ -803,19 +807,19 @@ abstract class Programme extends Revisionable {
 				$type = $attribute_types[$attribute];
 
 				$revision_1->{$attribute} = implode(',', $type::replace_ids_with_values($revision_1->{$attribute} , $revision_1->attributes['year'], true) );
-				
+
 				if($revision_2 != null){
 					$revision_2->{$attribute} =  implode(',', $type::replace_ids_with_values($revision_2->{$attribute} , $revision_2->attributes['year'], true) );
 				}
-					
-			}	
+
+			}
 
 			// Apply diff highlighting to "revision_2" for this attribute
 			if($revision_2 != null){
 				$revision_2->{$attribute} = SimpleDiff::htmlDiff($revision_1->{$attribute}, $revision_2->{$attribute});
 			}
-			
-			
+
+
 		}
 
 		// Return required data
@@ -829,8 +833,8 @@ abstract class Programme extends Revisionable {
 
 	public function use_revision($revision){
 		$revision = parent::use_revision($revision);
-		
-		// if the revision being used was last edited by a user 
+
+		// if the revision being used was last edited by a user
 		// who does not have the permission to approve revisions,
 		// lock this programme to that user, else no need to lock the programme
 		$user = User::where('username', '=', $revision->edits_by)->first();

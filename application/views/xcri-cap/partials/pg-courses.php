@@ -92,7 +92,7 @@
                 </xhtml:div>
               </regulations>
             <?php endif; ?>
-            
+
             <mlo:qualification>
               <dc:identifier><?php echo ($award['name']) ?></dc:identifier>
               <dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
@@ -124,105 +124,102 @@
                 </mlo:credit>
               <?php endforeach; ?>
             <?php endif; ?>
-              <presentation>
-                <dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
-                <?php foreach ($programme['subjects'] as $subject): ?>
-                  <?php if (!empty($subject)): ?>
-                    <dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-                <mlo:start dtf="<?php echo $programme['start_date_short']; ?>"><?php echo $programme['start_date']; ?></mlo:start>
-                <mlo:duration interval="<?php echo $programme['attendance_text_id']; ?>"><?php echo ($programme['attendance_text']); ?></mlo:duration>
-                <applyTo><?php echo ($programme['url']); ?></applyTo>
-                <studyMode identifier="<?php echo $programme['mode_of_study_id']; ?>"><?php echo $programme['mode_of_study']; ?></studyMode>
-                <attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
-                <?php if ($programme['attendance_pattern']): ?>
-                  <attendancePattern identifier="<?php echo $programme['attendance_pattern_id'] ?>"><?php echo $programme['attendance_pattern'] ?></attendancePattern>
-                <?php endif; ?>
-                <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
-                <languageOfAssessment>en</languageOfAssessment>
-                <mlo:cost>
-                    <?php echo XMLHelper::makeXMLSafe($programme['cost']); ?>
-                    <?php $pos_codes = array(); ?>
-                    <?php foreach ($programme['deliveries'] as $delivery): ?>
-                      <?php if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ): ?>
-                        
-                        <xhtml:table>
-                          <xhtml:thead>
-                            <xhtml:tr>
-                              <xhtml:th><xhtml:strong><?php echo $delivery['award_name'] ?></xhtml:strong></xhtml:th>
-                              <xhtml:th>UK/EU</xhtml:th>
-                              <xhtml:th>Overseas</xhtml:th>
-                            </xhtml:tr>
-                            <xhtml:tr>
-                              <xhtml:td colspan="3"><?php echo $delivery['description'] ?></xhtml:td>
-                            </xhtml:tr>
-                          </xhtml:thead>
-                          <xhtml:tbody>
-
-                                                
-                                            
-                                            <?php if ($has_parttime): ?>
-                                                
-                                            <?php endif; ?>
-                            <?php if ($programme['has_fulltime']): ?>
-                              <xhtml:tr>
-                                <xhtml:td><xhtml:strong>Full-time</xhtml:strong></xhtml:td>
-                                <xhtml:td><?php echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['home']['full-time']); ?></xhtml:td>
-                                <xhtml:td><?php echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['int']['full-time']); ?></xhtml:td>
-                              </xhtml:tr>
-                            <?php endif; ?>
-                            <?php if ($programme['has_parttime']): ?>
-                              <xhtml:tr>
-                                <xhtml:td><xhtml:strong>Part-time</xhtml:strong></xhtml:td>
-                                <xhtml:td><?php echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['home']['part-time']); ?></xhtml:td>
-                                <xhtml:td><?php echo empty($delivery['fees']['int']['part-time']) ? ((empty($delivery['fees']['int']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['int']['part-time']); ?></xhtml:td>
-                              </xhtml:tr>
-                            <?php endif; ?>
-                          </xhtml:tbody>
-                        </xhtml:table>
-
-                        <?php $pos_codes[] = $delivery['pos_code'];?>
+            <?php foreach ($programme['modes_of_study'] as $mode): ?>
+                  <presentation>
+                    <dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
+                    <?php foreach ($programme['subjects'] as $subject): ?>
+                      <?php if (!empty($subject)): ?>
+                        <dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
                       <?php endif; ?>
                     <?php endforeach; ?>
-                 
-                </mlo:cost>
-                <venue>
-                  <provider>
-                    <?php if (isset($programme['location']['description'])): ?>
-                      <dc:description>
-                        <xhtml:div>
-                          <?php echo ($programme['location']['description']); ?>
-                        </xhtml:div>
-                      </dc:description>
+                    <mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
+                    <mlo:duration interval="<?php echo $programme['duration_text_id']; ?>"><?php echo ($programme['duration_text']); ?></mlo:duration>
+                    <applyTo><?php echo ($programme['url']); ?></applyTo>
+                    <studyMode identifier="<?php echo $mode['id']; ?>"><?php echo $mode['name']; ?></studyMode>
+                    <attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
+                    <?php if ($programme['attendance_pattern']): ?>
+                      <attendancePattern identifier="<?php echo $programme['attendance_pattern_id'] ?>"><?php echo $programme['attendance_pattern'] ?></attendancePattern>
                     <?php endif; ?>
-                    <dc:identifier>asc:<?php echo XMLHelper::htmlTrim($programme['location']['name']); ?></dc:identifier>
-                    <dc:title>asc:<?php echo XMLHelper::htmlTrim($programme['location']['title']); ?></dc:title>
-                    <mlo:location>
-                      <?php if(!empty($programme['location']['town'])): ?>
-                        <mlo:town><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:town>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['postcode'])): ?>
-                        <mlo:postcode><?php echo XMLHelper::htmlTrim($programme['location']['postcode']); ?></mlo:postcode>
-                      <?php endif; ?>
-                      <mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['address_2']); ?></mlo:address>
-                      <mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:address>
-                      <?php if(!empty($programme['enquiry_phone'])): ?>
-                        <mlo:phone><?php echo XMLHelper::htmlTrim($programme['enquiry_phone']); ?></mlo:phone>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['enquiry_fax'])): ?>
-                        <mlo:fax><?php echo XMLHelper::htmlTrim($programme['enquiry_fax']); ?></mlo:fax>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['enquiry_email'])): ?>
-                        <mlo:email><?php echo XMLHelper::htmlTrim($programme['enquiry_email']); ?></mlo:email>
-                      <?php endif; ?>
-                      <?php if(!empty($programme['location']['url'])): ?>
-                        <mlo:url><?php echo XMLHelper::htmlTrim($programme['location']['url']); ?></mlo:url>
-                      <?php endif; ?>
-                    </mlo:location>
-                  </provider>
-                </venue>
-              </presentation>
+                    <mlo:languageOfInstruction>en</mlo:languageOfInstruction>
+                    <languageOfAssessment>en</languageOfAssessment>
+                    <mlo:cost>
+                        <?php echo XMLHelper::makeXMLSafe($programme['cost']); ?>
+                        <?php $pos_codes = array(); ?>
+                        <?php foreach ($programme['deliveries'] as $delivery): ?>
+                          <?php if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ): ?>
+                            <xhtml:table>
+                              <xhtml:thead>
+                                <xhtml:tr>
+                                  <xhtml:th><xhtml:strong><?php echo $delivery['award_name'] ?></xhtml:strong></xhtml:th>
+                                  <xhtml:th>UK/EU</xhtml:th>
+                                  <xhtml:th>Overseas</xhtml:th>
+                                </xhtml:tr>
+                                <xhtml:tr>
+                                  <xhtml:td colspan="3"><?php echo $delivery['description'] ?></xhtml:td>
+                                </xhtml:tr>
+                              </xhtml:thead>
+                              <xhtml:tbody>
+                              <?php if ($has_parttime): ?>
+                              <?php endif; ?>
+                                <?php if ($programme['has_fulltime']): ?>
+                                  <xhtml:tr>
+                                    <xhtml:td><xhtml:strong>Full-time</xhtml:strong></xhtml:td>
+                                    <xhtml:td><?php echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['home']['full-time']); ?></xhtml:td>
+                                    <xhtml:td><?php echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['int']['full-time']); ?></xhtml:td>
+                                  </xhtml:tr>
+                                <?php endif; ?>
+                                <?php if ($programme['has_parttime']): ?>
+                                  <xhtml:tr>
+                                    <xhtml:td><xhtml:strong>Part-time</xhtml:strong></xhtml:td>
+                                    <xhtml:td><?php echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['home']['part-time']); ?></xhtml:td>
+                                    <xhtml:td><?php echo empty($delivery['fees']['int']['part-time']) ? ((empty($delivery['fees']['int']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['int']['part-time']); ?></xhtml:td>
+                                  </xhtml:tr>
+                                <?php endif; ?>
+                              </xhtml:tbody>
+                            </xhtml:table>
+
+                            <?php $pos_codes[] = $delivery['pos_code'];?>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+
+                    </mlo:cost>
+                    <venue>
+                      <provider>
+                        <?php if (isset($programme['location']['description'])): ?>
+                          <dc:description>
+                            <xhtml:div>
+                              <?php echo ($programme['location']['description']); ?>
+                            </xhtml:div>
+                          </dc:description>
+                        <?php endif; ?>
+                        <dc:identifier>asc:<?php echo XMLHelper::htmlTrim($programme['location']['name']); ?></dc:identifier>
+                        <dc:title>asc:<?php echo XMLHelper::htmlTrim($programme['location']['title']); ?></dc:title>
+                        <mlo:location>
+                          <?php if(!empty($programme['location']['town'])): ?>
+                            <mlo:town><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:town>
+                          <?php endif; ?>
+                          <?php if(!empty($programme['location']['postcode'])): ?>
+                            <mlo:postcode><?php echo XMLHelper::htmlTrim($programme['location']['postcode']); ?></mlo:postcode>
+                          <?php endif; ?>
+                          <mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['address_2']); ?></mlo:address>
+                          <mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:address>
+                          <?php if(!empty($programme['enquiry_phone'])): ?>
+                            <mlo:phone><?php echo XMLHelper::htmlTrim($programme['enquiry_phone']); ?></mlo:phone>
+                          <?php endif; ?>
+                          <?php if(!empty($programme['enquiry_fax'])): ?>
+                            <mlo:fax><?php echo XMLHelper::htmlTrim($programme['enquiry_fax']); ?></mlo:fax>
+                          <?php endif; ?>
+                          <?php if(!empty($programme['enquiry_email'])): ?>
+                            <mlo:email><?php echo XMLHelper::htmlTrim($programme['enquiry_email']); ?></mlo:email>
+                          <?php endif; ?>
+                          <?php if(!empty($programme['location']['url'])): ?>
+                            <mlo:url><?php echo XMLHelper::htmlTrim($programme['location']['url']); ?></mlo:url>
+                          <?php endif; ?>
+                        </mlo:location>
+                      </provider>
+                    </venue>
+                  </presentation>
+              <?php endforeach; ?>
           </course>
         <?php endforeach; ?>
       <?php endforeach; ?>
