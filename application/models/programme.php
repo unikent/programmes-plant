@@ -624,7 +624,7 @@ abstract class Programme extends Revisionable {
 					'slug' 				=>		$programme['slug'],
 					'award' 			=>		$delivery['award_name'],
 					'campus'			=>		$campus,
-					'main_school'		=>  	$programme['main_school'],
+					'main_school'		=>		$programme['main_school'],
 					'secondary_school'	=>		$programme['secondary_school'],
 					'mode_of_study'		=>		$programme['mode_of_study'],
 					'search_keywords' 	=>		$programme['search_keywords'],
