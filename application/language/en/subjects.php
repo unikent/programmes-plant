@@ -43,5 +43,23 @@ return array(
 		'delete' => 'Subject successfully removed.',
 		'create' => 'Subject successfully created',
 		'edit' => 'Subject saved',
-	)
+	),
+
+	'form' => array(
+		'edit' => array(
+			'header' => 'Edit Subject',
+		),
+		'new' => array(
+			'header' => 'New Subject',
+		),
+		'details_header' => 'Subject Details',
+		'name' => array(
+			'label' => 'Name',
+			'placeholder' => 'Enter subject name...',
+		),
+		'jacs_code' => array(
+			'label' => 'JACS codes',
+			'placeholder' => 'Enter related JACS codes, separated with commas... ',
+		),
+	),
 );
