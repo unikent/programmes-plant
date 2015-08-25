@@ -393,7 +393,7 @@ class Programmes_Controller extends Revisionable_Controller {
 
 				$ugpg = ( $type == 'pg') ? 'postgraduate' : 'undergraduate';
 				
-				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $instance_id . '/' . $slug;
+				$link_to_programme_frontend = Config::get('application.front_end_url') . $ugpg . '/' . $year . '/' . $instance_id . '/' . $slug;
 				$link_to_programme_frontend = HTML::link($link_to_programme_frontend, $link_to_programme_frontend);
 
 				$mailer = IoC::resolve('mailer');
