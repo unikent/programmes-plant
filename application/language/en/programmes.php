@@ -89,7 +89,8 @@ return array(
 
 	'rev_edit_programme' => 'Edit this programme',
 	'rev_request_amends' => 'Request changes from author',
-	'rev_approve_revision' => 'Approve revision and make live',
+	'rev_approve_revision' => 'Approve',
+	'rev_approve_revision_and_publish' => 'Approve revision and make live',
 
 	'diff_modal' => array(
 		'request_changes' => array(
@@ -97,9 +98,14 @@ return array(
 			'body' => '<p>Use the form below to send a brief message to the author of this revision.</p>',
 			'submit' => 'Send message',
 		),
-		'approve_revision' => array(
+		'approve_revision_and_publish' => array(
 			'header' => 'Are you sure?',
 			'body' => '<p>This will make the currently selected revision live, meaning it will be visible on the course pages.</p><p>Are you sure?</p>',
+			'submit' => 'Approve and make live',
+		),
+		'approve_revision' => array(
+			'header' => 'Are you sure?',
+			'body' => '<p>This will approve the changes and remove this programme from your inbox, but the revision will not be published.</p><p>Are you sure?</p>',
 			'submit' => 'Approve',
 		),
 		'reject_revision' => array(
