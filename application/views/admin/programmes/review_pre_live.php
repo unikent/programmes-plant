@@ -28,8 +28,11 @@
     <a class="btn btn-primary" href="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@edit', array($programme->instance_id))?>">
       <?php echo  __('programmes.rev_edit_programme'); ?>
     </a>
-    <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>">
-     <?php echo  __('programmes.rev_approve_revision'); ?> 
+    <a class="btn btn-warning approve_revision_and_publish_toggler" data-toggle="modal" href="#approve_revision_and_publish" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes@approve_revision')?>">
+      <?php echo  __('programmes.rev_approve_revision_and_publish'); ?>
+    </a>
+    <a class="btn btn-warning approve_revision_toggler" data-toggle="modal" href="#approve_revision" rel="<?php echo  url('editor/remove/'.URI::segment(2).'/'.URI::segment(6))?>">
+      <?php echo  __('programmes.rev_approve_revision'); ?>
     </a>
    
   </div>
@@ -57,24 +60,39 @@
 
 
 
-<div class="modal hide fade" id="approve_revision">
+<div class="modal hide fade" id="approve_revision_and_publish">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3><?php echo __('programmes.diff_modal.approve_revision.header') ?></h3>
+    <h3><?php echo __('programmes.diff_modal.approve_revision_and_publish.header') ?></h3>
   </div>
 
   <div class="modal-body">
-     <?php echo __('programmes.diff_modal.approve_revision.body') ?>
+     <?php echo __('programmes.diff_modal.approve_revision_and_publish.body') ?>
   </div>
 
   <div class="modal-footer">
     <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/approve_revision', 'POST')?>
     <?php echo Form::hidden('programme_id', $programme->id); ?>
     <?php echo Form::hidden('revision_id', $diff['revision_1']->id); ?>
-    <?php echo Form::submit('Approve', array('class' => 'btn btn-warning')); ?>
+    <?php echo Form::submit('Approve and make live', array('class' => 'btn btn-warning')); ?>
     <a data-dismiss="modal" href="#" class="btn">Cancel</a>
     <?php echo Form::close()?>
   </div>
 </div>
 
+    <div class="modal hide fade" id="approve_revision">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3><?php echo __('programmes.diff_modal.approve_revision.header') ?></h3>
+      </div>
+
+      <div class="modal-body">
+        <?php echo __('programmes.diff_modal.approve_revision.body') ?>
+      </div>
+
+      <div class="modal-footer">
+        <a class="btn btn-warning" href="<?php echo  url('editor/remove/'.URI::segment(2).'/'.URI::segment(6))?>">Approve</a>
+        <a data-dismiss="modal" href="#" class="btn">Cancel</a>
+      </div>
+    </div>
 

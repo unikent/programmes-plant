@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\Redirect;
+
 class Editor_Controller extends Admin_Controller {
 	
 	public $restful = true;
@@ -26,6 +28,17 @@ class Editor_Controller extends Admin_Controller {
 		});
 
 		return $this->layout->nest('content', 'admin.editor.index', array('for_review' => $for_review));
+	}
+
+	public function get_remove($type,$id){
+
+		if(in_array($type,array('pg','ug'))){
+			$model = strtoupper($type) . '_ProgrammeRevision';
+			$revision = $model::find($id);
+			$revision->under_review = 0;
+			$revision->save();
+		}
+		return Redirect::to_action('editor@inbox');
 	}
 
 }
