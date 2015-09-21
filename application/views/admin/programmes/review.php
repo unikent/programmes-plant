@@ -71,7 +71,7 @@
       <div class="modal-footer">
         <?php echo Form::open(URI::segment(1).'/'.URI::segment(2).'/programmes/approve_revision', 'POST')?>
         <?php echo Form::hidden('programme_id', $programme->id); ?>
-        <?php echo Form::hidden('revision_id', $diff['revision_1']->id); ?>
+        <?php echo Form::hidden('revision_id', $diff['revision_2']->id); ?>
         <?php echo Form::submit('Approve and make live', array('class' => 'btn btn-warning')); ?>
         <a data-dismiss="modal" href="#" class="btn">Cancel</a>
         <?php echo Form::close()?>
