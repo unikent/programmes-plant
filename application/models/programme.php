@@ -322,7 +322,7 @@ abstract class Programme extends Revisionable {
 	public static function get_api_fees($year,$fees_year)
 	{
 		$type = static::$type;
-		$cache_key = "api-index-{$type}.fees.$fees_year.$year";
+		$cache_key = ($year==='preview')?"api-index-{$type}.fees.preview":"api-index-{$type}.fees.$fees_year.$year";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_fees($year,$fees_year);
 	}
 
@@ -571,11 +571,18 @@ abstract class Programme extends Revisionable {
 	public static function generate_api_fees($year,$fees_year)
 	{
 		$type = static::$type;
-		$cache_key_index = "api-index-{$type}.fees.$fees_year.$year";
+
+		$cache_key_index = ($year==='preview')?"api-index-{$type}.fees.preview":"api-index-{$type}.fees.$fees_year.$year";
+
 		$delivery_model = $type . '_Delivery';
 		$award_model = $type . '_Award';
 
 		// use the api index as a starting point
+        $is_preview=false;
+        if($year==='preview'){
+            $is_preview=true;
+            $year = Setting::get_setting("{$type}_current_year");
+        }
 		$index_data = static::get_api_index($year);
 		$fees_data = array();
 
@@ -598,7 +605,7 @@ abstract class Programme extends Revisionable {
 				if(empty($delivery['description'])){
 					continue;
 				}
-				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], $fees_year);
+				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
 				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
 				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
