@@ -175,7 +175,8 @@ class SITSImport_Task {
 
     $delivery->programme_id = $programme->id;
 
-    $delivery->award = empty( intval($course->award) ) ? 0 : intval($course->award);
+    $award = intval($course->award);
+    $delivery->award = empty($award) ? 0 : $award;
 
     $delivery->pos_code = (string)$course->pos;
     $delivery->mcr = (string)$course->mcr;

@@ -50,9 +50,22 @@ class Fees {
 		$path = Config::get('fees.path');
 		if($path == '') return false;
 
-		// If no cache, open up feedbands and mapping csv files for given year
-		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
-		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+
+        if ($year ==='preview'){
+            $path = explode('/',$path);
+
+            array_pop($path);
+
+            $path = implode('/',$path) . '/preview-fees';
+
+            // If no cache, open up feedbands and mapping csv files for preview
+            $fees = Fees::load_csv_from_webservice("{$path}/preview-feebands.csv");
+            $courses = Fees::load_csv_from_webservice("{$path}/preview-mapping.csv");
+        }else {
+            // If no cache, open up feedbands and mapping csv files for given year
+            $fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
+            $courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+        }
 
 		// Ensure data was found
 		if(!$fees || !$courses || empty($fees) || empty($courses)) return array();

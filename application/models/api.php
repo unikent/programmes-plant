@@ -80,7 +80,7 @@ class API {
 		$level =  ($level === false) ? URLParams::get_type() : $level;
 		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
 		$fees_year_field = GlobalSetting::get_fees_year_field();
-		$fees_year = ($fees_year===false)? GlobalSetting::where('year','=',$year)->first(array($fees_year_field))->$fees_year_field:$fees_year;
+		$fees_year = $year==='preview'?false:(($fees_year===false)? GlobalSetting::where('year','=',$year)->first(array($fees_year_field))->$fees_year_field:$fees_year);
 		$model =  $level.'_Programme';
 		return $model::get_api_fees($year,$fees_year);
 	}
