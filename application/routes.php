@@ -116,8 +116,8 @@ Route::group(array('before' => ''), function(){
 
 	// Routing for API fees
 	Route::any(array(
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees'
+			'/api/([0-9]{4}|current|preview)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
+			'/api/([0-9]{4}|current|preview)/(undergraduate|postgraduate)/fees'
 	), 'api@fees_index');
 
 	Route::any(array(

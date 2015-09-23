@@ -175,11 +175,8 @@ class SITSImport_Task {
 
     $delivery->programme_id = $programme->id;
 
-    $award = $award_class::where(
-      "longname", "=", $course->award
-    )->first();
-
-    $delivery->award = empty( $award ) ? 0 : $award->id;
+    $award = intval($course->award);
+    $delivery->award = empty($award) ? 0 : $award;
 
     $delivery->pos_code = (string)$course->pos;
     $delivery->mcr = (string)$course->mcr;
