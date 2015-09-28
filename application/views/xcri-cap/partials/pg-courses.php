@@ -125,61 +125,65 @@
 							<?php endforeach; ?>
 						<?php endif; ?>
 						<?php foreach ($programme['modes_of_study'] as $mode): ?>
-									<presentation>
-										<dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
-										<?php foreach ($programme['subjects'] as $subject): ?>
-											<?php if (!empty($subject)): ?>
-												<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
+							<presentation>
+								<dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
+								<?php foreach ($programme['subjects'] as $subject): ?>
+									<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
+										<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
+											<?php if (!empty($jacs_code)): ?>
+												<dc:subject xsi:type="courseDataProgramme:JACS3" identifier="<?php echo $jacs_code; ?>"><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 											<?php endif; ?>
 										<?php endforeach; ?>
-										<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
-										<mlo:duration interval="<?php echo $programme['duration_text_id']; ?>"><?php echo ($programme['duration_text']); ?></mlo:duration>
-										<applyTo><?php echo ($programme['url']); ?></applyTo>
-										<studyMode identifier="<?php echo $mode['id']; ?>"><?php echo $mode['name']; ?></studyMode>
-										<attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
-										<?php if ($programme['attendance_pattern']): ?>
-											<attendancePattern identifier="<?php echo $programme['attendance_pattern_id'] ?>"><?php echo $programme['attendance_pattern'] ?></attendancePattern>
+									<?php endif; ?>
+								<?php endforeach; ?>
+								<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
+								<mlo:duration interval="<?php echo $programme['duration_text_id']; ?>"><?php echo ($programme['duration_text']); ?></mlo:duration>
+								<applyTo><?php echo ($programme['url']); ?></applyTo>
+								<studyMode identifier="<?php echo $mode['id']; ?>"><?php echo $mode['name']; ?></studyMode>
+								<attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>
+								<?php if ($programme['attendance_pattern']): ?>
+									<attendancePattern identifier="<?php echo $programme['attendance_pattern_id'] ?>"><?php echo $programme['attendance_pattern'] ?></attendancePattern>
+								<?php endif; ?>
+								<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
+								<languageOfAssessment>en</languageOfAssessment>
+								<mlo:cost>Please see <?php echo $programme['url'] ?> for current tuition fees.</mlo:cost>
+								<venue>
+									<provider>
+										<?php if (isset($programme['location']['description'])): ?>
+											<dc:description>
+												<xhtml:div>
+													<?php echo ($programme['location']['description']); ?>
+												</xhtml:div>
+											</dc:description>
 										<?php endif; ?>
-										<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
-										<languageOfAssessment>en</languageOfAssessment>
-										<mlo:cost>Please see <?php echo $programme['url'] ?> for current tuition fees.</mlo:cost>
-										<venue>
-											<provider>
-												<?php if (isset($programme['location']['description'])): ?>
-													<dc:description>
-														<xhtml:div>
-															<?php echo ($programme['location']['description']); ?>
-														</xhtml:div>
-													</dc:description>
-												<?php endif; ?>
-												<dc:identifier>asc:<?php echo XMLHelper::htmlTrim($programme['location']['name']); ?></dc:identifier>
-												<dc:title>asc:<?php echo XMLHelper::htmlTrim($programme['location']['title']); ?></dc:title>
-												<mlo:location>
-													<?php if(!empty($programme['location']['town'])): ?>
-														<mlo:town><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:town>
-													<?php endif; ?>
-													<?php if(!empty($programme['location']['postcode'])): ?>
-														<mlo:postcode><?php echo XMLHelper::htmlTrim($programme['location']['postcode']); ?></mlo:postcode>
-													<?php endif; ?>
-													<mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['address_2']); ?></mlo:address>
-													<mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:address>
-													<?php if(!empty($programme['enquiry_phone'])): ?>
-														<mlo:phone><?php echo XMLHelper::htmlTrim($programme['enquiry_phone']); ?></mlo:phone>
-													<?php endif; ?>
-													<?php if(!empty($programme['enquiry_fax'])): ?>
-														<mlo:fax><?php echo XMLHelper::htmlTrim($programme['enquiry_fax']); ?></mlo:fax>
-													<?php endif; ?>
-													<?php if(!empty($programme['enquiry_email'])): ?>
-														<mlo:email><?php echo XMLHelper::htmlTrim($programme['enquiry_email']); ?></mlo:email>
-													<?php endif; ?>
-													<?php if(!empty($programme['location']['url'])): ?>
-														<mlo:url><?php echo XMLHelper::htmlTrim($programme['location']['url']); ?></mlo:url>
-													<?php endif; ?>
-												</mlo:location>
-											</provider>
-										</venue>
-									</presentation>
-							<?php endforeach; ?>
+										<dc:identifier>asc:<?php echo XMLHelper::htmlTrim($programme['location']['name']); ?></dc:identifier>
+										<dc:title>asc:<?php echo XMLHelper::htmlTrim($programme['location']['title']); ?></dc:title>
+										<mlo:location>
+											<?php if(!empty($programme['location']['town'])): ?>
+												<mlo:town><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:town>
+											<?php endif; ?>
+											<?php if(!empty($programme['location']['postcode'])): ?>
+												<mlo:postcode><?php echo XMLHelper::htmlTrim($programme['location']['postcode']); ?></mlo:postcode>
+											<?php endif; ?>
+											<mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['address_2']); ?></mlo:address>
+											<mlo:address><?php echo XMLHelper::htmlTrim($programme['location']['town']); ?></mlo:address>
+											<?php if(!empty($programme['enquiry_phone'])): ?>
+												<mlo:phone><?php echo XMLHelper::htmlTrim($programme['enquiry_phone']); ?></mlo:phone>
+											<?php endif; ?>
+											<?php if(!empty($programme['enquiry_fax'])): ?>
+												<mlo:fax><?php echo XMLHelper::htmlTrim($programme['enquiry_fax']); ?></mlo:fax>
+											<?php endif; ?>
+											<?php if(!empty($programme['enquiry_email'])): ?>
+												<mlo:email><?php echo XMLHelper::htmlTrim($programme['enquiry_email']); ?></mlo:email>
+											<?php endif; ?>
+											<?php if(!empty($programme['location']['url'])): ?>
+												<mlo:url><?php echo XMLHelper::htmlTrim($programme['location']['url']); ?></mlo:url>
+											<?php endif; ?>
+										</mlo:location>
+									</provider>
+								</venue>
+							</presentation>
+						<?php endforeach; ?>
 					</course>
 				<?php endforeach; ?>
 			<?php endforeach; ?>
