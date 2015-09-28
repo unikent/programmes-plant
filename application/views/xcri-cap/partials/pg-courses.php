@@ -142,47 +142,7 @@
 										<?php endif; ?>
 										<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 										<languageOfAssessment>en</languageOfAssessment>
-										<mlo:cost>
-												<?php echo XMLHelper::makeXMLSafe($programme['cost']); ?>
-												<?php $pos_codes = array(); ?>
-												<?php foreach ($programme['deliveries'] as $delivery): ?>
-													<?php if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ): ?>
-														<xhtml:table>
-															<xhtml:thead>
-																<xhtml:tr>
-																	<xhtml:th><xhtml:strong><?php echo $delivery['award_name'] ?></xhtml:strong></xhtml:th>
-																	<xhtml:th>UK/EU</xhtml:th>
-																	<xhtml:th>Overseas</xhtml:th>
-																</xhtml:tr>
-																<xhtml:tr>
-																	<xhtml:td colspan="3"><?php echo $delivery['description'] ?></xhtml:td>
-																</xhtml:tr>
-															</xhtml:thead>
-															<xhtml:tbody>
-															<?php if ($has_parttime): ?>
-															<?php endif; ?>
-																<?php if ($programme['has_fulltime']): ?>
-																	<xhtml:tr>
-																		<xhtml:td><xhtml:strong>Full-time</xhtml:strong></xhtml:td>
-																		<xhtml:td><?php echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['home']['full-time']); ?></xhtml:td>
-																		<xhtml:td><?php echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-full-time'])) : 'GBP ' . number_format($delivery['fees']['int']['full-time']); ?></xhtml:td>
-																	</xhtml:tr>
-																<?php endif; ?>
-																<?php if ($programme['has_parttime']): ?>
-																	<xhtml:tr>
-																		<xhtml:td><xhtml:strong>Part-time</xhtml:strong></xhtml:td>
-																		<xhtml:td><?php echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['home']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['home']['part-time']); ?></xhtml:td>
-																		<xhtml:td><?php echo empty($delivery['fees']['int']['part-time']) ? ((empty($delivery['fees']['int']['euro-part-time'])) ? 'TBC' : 'EUR ' . number_format($delivery['fees']['int']['euro-part-time'])) : 'GBP ' . number_format($delivery['fees']['int']['part-time']); ?></xhtml:td>
-																	</xhtml:tr>
-																<?php endif; ?>
-															</xhtml:tbody>
-														</xhtml:table>
-
-														<?php $pos_codes[] = $delivery['pos_code'];?>
-													<?php endif; ?>
-												<?php endforeach; ?>
-
-										</mlo:cost>
+										<mlo:cost>Please see <?php echo $programme['url'] ?> for current tuition fees.</mlo:cost>
 										<venue>
 											<provider>
 												<?php if (isset($programme['location']['description'])): ?>
