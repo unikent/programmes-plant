@@ -10,8 +10,12 @@
 						<dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
 						<?php if (isset($programme['subjects'])): ?>
 							<?php foreach ($programme['subjects'] as $subject): ?>
-								<?php if (!empty($subject)): ?>
-									<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
+								<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
+									<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
+										<?php if (!empty($jacs_code)): ?>
+											<dc:subject xsi:type="courseDataProgramme:JACS3" identifier="<?php echo $jacs_code; ?>"><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
+										<?php endif; ?>
+									<?php endforeach; ?>
 								<?php endif; ?>
 							<?php endforeach; ?>
 						<?php endif; ?>
