@@ -1,9 +1,15 @@
 <?php
+use Note;
+
 abstract class ProgrammeRevision extends Revision
 {
     public static $table = 'programmes_revisions';
     protected $data_type_id = 'programme_id';
 
+
+    public function note(){
+        return Note::where('programme_id','=',$this->programme_id)->first();
+    }
 
     /**
      * Get this programme's administrative school.
