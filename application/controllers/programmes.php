@@ -140,6 +140,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['title_field'] = $model::get_programme_title_field();
 		$this->data['year'] = $year;
 
+		$this->data['notes'] = $programme->note;
 		// get the active revision
 		$this->data['active_revision'] = $programme->get_active_revision(array('id','status','programme_id', 'year', 'edits_by', 'under_review', 'published_at','created_at'));
 		$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);

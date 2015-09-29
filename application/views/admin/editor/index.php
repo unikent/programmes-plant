@@ -20,9 +20,10 @@
             $revision_class = get_class($revision);
             $model = $revision_class::$programme_model;
             $title_field = $model::get_title_field();
+            $note = $revision->programme->note;
             ?>
             <tr>
-                <td><?php echo $revision->$title_field ?></td>
+                <td><?php echo $revision->$title_field ?><?php echo !empty($note)?'<br/><em class="admin-note">'.$note->short_note . '</em>':''; ?></td>
                 <td><?php echo strstr($model, 'UG') ? "Undergraduate" : "Postgraduate"; ?></td>
                 <td><?php echo $revision->year ?></td>
                 <td>
