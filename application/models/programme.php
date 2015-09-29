@@ -11,6 +11,9 @@ abstract class Programme extends Revisionable {
 	}
 
 
+	public function note(){
+		return $this->has_one('Note','programme_id');
+	}
 		/**
 	 * Get this programme's awards.
 	 *

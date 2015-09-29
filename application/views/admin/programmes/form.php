@@ -35,9 +35,7 @@
 </div>
 
 <?php echo View::make('admin.inc.partials.formfields', array('year' => $year, 'model' => $model, 'sections' => $sections, 'programme' => isset($programme) ? $programme : null,'create'=>($create && !$clone), 'from' => 'programmes'))->render(); ?>
-
-
-
+<?php if($programme->exists){ ?>
 <div class="section accordion accordion-group">
   <div class="accordion-heading">
     <legend>
@@ -84,14 +82,53 @@
     </div>
   </div>
 </div>
-
-
-
+<?php } ?>
+<?php if (Auth::user()->can('isSuperDuperUser') && $programme->exists) { ?>
+<div class="section accordion accordion-group">
+    <div class="accordion-heading">
+        <legend>
+            <a href="#notes" class="accordion-toggle" data-toggle="collapse">Notes</a>
+        </legend>
+    </div>
+    <div id="notes" class="accordion-body collapse in">
+        <div class="control-group">
+            <label for="note" class="control-label">Notes</label>
+            <div class="controls">
+                <textarea id="note"><?php echo $notes->note; ?></textarea>
+                <span class="help-block">For Internal use only. This field will NOT be displayed publicly anywhere.</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="short_note" class="control-label">Short Note</label>
+            <div class="controls">
+                <input type="text" id="short_note" value="<?php echo $notes->short_note; ?>">
+                <span class="help-block">For Internal use only. This field will NOT be displayed publicly anywhere.</span>
+            </div>
+        </div>
+        <div class="notes-form-actions">
+            <p class="alert alert-success" id="notes_success" style="display: none;">Notes Updated</p>
+            <p class="alert alert-danger" id="notes_fail" style="display: none;">Error: failed to save Notes. Please try again.</p>
+            <span id="submit_notes" class="btn btn-warning">Save Notes</span>
+        </div>
+    </div>
+</div>
+<?php } ?>
 <?php echo Form::actions('programmes', isset($programme) ? $programme : null) ?>
 
 <?php echo Form::close(); ?>
 
 
 <a href='#' class='scroll-to-top'><i class="icon-chevron-up icon-white"></i></a>
-
-
+<?php if (Auth::user()->can('isSuperDuperUser') && $programme->exists) { ?>
+<form id="notesform" method="POST" action="<?php echo $notes->exists?URL::to('notes/update'):URL::to('notes/create');?>">
+    <?php if($notes->exists){
+    ?>
+        <input type="hidden" name="id" value="<?php echo $notes->id; ?>">
+    <?php
+    }?>
+    <?php echo Form::token();?>
+    <input type="hidden" name="programme_id" value="<?php echo $programme->id; ?>">
+    <input type="hidden" id="actual_note" name="note" value="<?php echo $notes->note; ?>">
+    <input type="hidden" id="actual_short_note" name="short_note" value="<?php echo $notes->short_note; ?>">
+</form>
+<?php } ?>

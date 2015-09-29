@@ -219,3 +219,6 @@ a.scroll-to-top {
     float:right; 
 }
 
+.notes-form-actions{
+    padding: 15px 15px 15px 180px;
+}
