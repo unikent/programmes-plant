@@ -20,7 +20,7 @@
             $revision_class = get_class($revision);
             $model = $revision_class::$programme_model;
             $title_field = $model::get_title_field();
-            $note = $revision->note();
+            $note = $revision->programme->note;
             ?>
             <tr>
                 <td><?php echo $revision->$title_field ?><?php echo !empty($note)?'<br/><em class="admin-note">'.$note->short_note . '</em>':''; ?></td>

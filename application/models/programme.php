@@ -190,7 +190,7 @@ abstract class Programme extends Revisionable {
 	public static function get_under_review()
 	{
 		$revision_model = static::$revision_model;
-		return $revision_model::where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
+		return $revision_model::with(array('programme','programme.note'))->where('under_review', '=', 1)->order_by('updated_at', 'asc')->get();
 	}
 
 	/**
