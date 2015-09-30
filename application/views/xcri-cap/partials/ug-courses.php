@@ -92,9 +92,7 @@
 									</xhtml:div>
 								</dc:description>
 							<?php endif; ?>
-							<?php if (isset($programme['education_level'])): ?>
-								<dcterms:educationLevel><![CDATA[<?php echo ($programme['education_level']); ?>]]></dcterms:educationLevel>
-							<?php endif; ?>
+							<dcterms:educationLevel><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dcterms:educationLevel>
 							<awardedBy><![CDATA[<?php echo ($globalsettings->institution_name); ?>]]></awardedBy>
 							<?php if (isset($programme['accredited_by'])): ?>
 								<accreditedBy><![CDATA[<?php echo ($programme['accredited_by']); ?>]]></accreditedBy>
