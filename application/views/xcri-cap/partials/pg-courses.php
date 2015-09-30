@@ -7,7 +7,7 @@
 								<?php echo XMLHelper::makeXMLSafe($programme['programme_overview']); ?>
 							</xhtml:div>
 						</dc:description>
-						<dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
+						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']); ?></dc:identifier>
 						<?php if (isset($programme['subjects'])): ?>
 							<?php foreach ($programme['subjects'] as $subject): ?>
 								<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
@@ -130,7 +130,7 @@
 						<?php endif; ?>
 						<?php foreach ($programme['modes_of_study'] as $mode): ?>
 							<presentation>
-								<dc:identifier><?php echo ($programme['url']); ?></dc:identifier>
+								<dc:identifier><?php echo XMLHelper::makeXMLSafe($programme['programme_title']) . ' - ' . $mode['name']; ?></dc:identifier>
 								<?php foreach ($programme['subjects'] as $subject): ?>
 									<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
 										<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
@@ -150,7 +150,7 @@
 								<?php endif; ?>
 								<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 								<languageOfAssessment>en</languageOfAssessment>
-								<mlo:cost>Please see <?php echo $programme['url'] ?> for current tuition fees.</mlo:cost>
+								<mlo:cost>Please see <?php echo $programme['url'].'#fees-tables-link' ?> for current tuition fees.</mlo:cost>
 								<venue>
 									<provider>
 										<?php if (isset($programme['location']['description'])): ?>
