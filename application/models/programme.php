@@ -862,4 +862,24 @@ abstract class Programme extends Revisionable {
 	}
 
 
+	/**
+	 * make a revision of this item live.
+	 *
+	 * @param $revision Object|id
+	 * @return $revision
+	 */
+	public function make_revision_live($revision)
+	{
+
+		$return = parent::make_revision_live($revision);
+
+		$note = $this->note;
+		if(!empty($note)){
+			$note->short_note ='';
+			$note->save();
+		}
+
+		return $return;
+	}
+
 }
