@@ -148,7 +148,24 @@
 								<?php endif; ?>
 								<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 								<languageOfAssessment>en</languageOfAssessment>
-								<mlo:cost>Please see <?php echo $programme['url'].'#fees-tables-link' ?> for current tuition fees.</mlo:cost>
+								<mlo:cost><?php 
+										foreach ($programme['deliveries'] as $delivery) {
+											if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ){
+												if ($programme['has_fulltime'] && $delivery['attendance_pattern'] === 'full-time') {
+													echo 'Full Time UK/EU: ';
+													echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['home']['full-time']) . ' GBP';
+													echo ' | Full Time Overseas: ';
+													echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['int']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['int']['full-time']) . ' GBP';
+												}
+												if ($programme['has_parttime'] && $delivery['attendance_pattern'] === 'part-time') {
+													echo ($programme['has_fulltime']) ? ' | ' : '';
+													echo 'Part Time UK/EU: ';
+													echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-part-time'])) . ' EUR' : number_format($delivery['fees']['home']['part-time']) . ' GBP';
+													echo ' | Part Time Overseas: N/A';
+												}
+											}
+										}
+									?></mlo:cost>
 								<venue>
 									<provider>
 										<?php if (isset($programme['location']['description'])): ?>
