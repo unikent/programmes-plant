@@ -329,6 +329,10 @@ $(document).ready(function (){
       }
     });
 
+
+
+    init_NotesForm();
+
 });
 
 function init_dataTable(){
@@ -375,5 +379,21 @@ function init_simple_index_dataTable(){
   }catch(e){
     // Dont kill the page on error...
   }
+}
+
+function init_NotesForm(){
+
+    $('#submit_notes','#notes').click(function(){
+        $('#actual_note','#notesform').val(CKEDITOR.instances['note'].getData());
+        $('#actual_short_note','#notesform').val($('#short_note','#notes').val());
+
+        $form = $('#notesform');
+        $.post( $form.attr('action'), $form.serialize(),function(){
+            $('#notes_success','#notes').show().delay(2000).fadeOut();
+        }).fail(function(){
+            $('#notes_fail','#notes').show().delay(2000).fadeOut();
+        });
+    })
+
 }
 

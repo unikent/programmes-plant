@@ -4,6 +4,11 @@ abstract class ProgrammeRevision extends Revision
     public static $table = 'programmes_revisions';
     protected $data_type_id = 'programme_id';
 
+    public static $programme_model;
+
+    public function programme(){
+        return $this->belongs_to(static::$programme_model,'programme_id');
+    }
 
     /**
      * Get this programme's administrative school.

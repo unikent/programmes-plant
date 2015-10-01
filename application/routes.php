@@ -14,6 +14,11 @@ else {
 
 Route::group(array('before' => ''), function(){
 
+
+	//Notes
+	Route::post('notes/create','notes@create');
+	Route::post('notes/update','notes@update');
+
 	// index
 	Route::any('/', 'programmes@index');
 	Route::any('([0-9]{4})', 'programmes@index');
