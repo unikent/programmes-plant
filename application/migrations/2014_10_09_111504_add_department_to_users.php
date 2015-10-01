@@ -11,7 +11,7 @@ class Add_Department_To_Users {
 	{
 		Schema::table('usersys_users', function($table)
 		{
-			$table->string('department', 255);
+			$table->string('department', 255)->nullable();
 		});
 	}
 
