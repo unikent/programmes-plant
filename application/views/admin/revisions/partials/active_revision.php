@@ -22,7 +22,7 @@
 
 	<div style='padding:10px;' class='alert alert-info alert-block'>		
 		<div style='float:right;'>
-	  		<a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a>
+	  		<?php if($revision_type=='programmes') {?><a class="btn btn-info" href="<?php echo $diff_link;?>"><?php echo __("revisions.diff_live"); ?></a><?php } ?>
 	  		<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>"><?php echo __("revisions.make_live"); ?></a>
 	  		<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>"><?php echo __("revisions.use_previous"); ?></a>
 	  	</div>

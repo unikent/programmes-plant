@@ -107,10 +107,12 @@ h2.alert-ug a.current-year, h2.alert-pg a.current-year{
 del {
 	background-color: OrangeRed;
 	text-decoration: line-through;
+    display: inline-block;
 }
 ins {
 	background-color:SpringGreen;
 	text-decoration: none;
+    display: inline-block;
 }
 
 /*info box*/
@@ -219,3 +221,9 @@ a.scroll-to-top {
     float:right; 
 }
 
+.notes-form-actions{
+    padding: 15px 15px 15px 180px;
+}
+.admin-note{
+    color: #AAA;
+}
