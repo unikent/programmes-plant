@@ -687,12 +687,12 @@ class API {
 
 		// set the duration
 		if (isset($programme['duration']) && !empty($programme['duration']) && is_int(intval($programme['duration']))) {
-			$programme['duration_text_id'] = 'P'.$programme['duration'].'M';
-			$programme['duration_text'] = $programme['duration'].' months';
+			$programme['duration_text_id'] = 'P'.$programme['duration'];
+			$programme['duration_text'] = $programme['duration'].' (months)';
 		}
 		else {
 			$programme['duration_text_id'] = 'P12M';
-			$programme['duration_text'] = '12 months';
+			$programme['duration_text'] = '12M (months)';
 		}
 
 		// start date
