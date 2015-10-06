@@ -275,8 +275,14 @@ class XMLHelper {
 		return trim(str_replace('&nbsp;', ' ', $text));
 	}
 
+	public function stripTags($text)
+	{
+		return strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><span><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
+	}
+
 	public static function makeXMLSafe($text)
 	{
+		$safexml = static::stripTags($text);
 		$safexml = static::addXHTMLPrefix($text);
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);

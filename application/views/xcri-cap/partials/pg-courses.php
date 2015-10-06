@@ -171,7 +171,7 @@
 										<?php if (isset($programme['location']['description'])): ?>
 											<dc:description>
 												<xhtml:div>
-													<?php echo ($programme['location']['description']); ?>
+													<?php echo XMLHelper::makeXMLSafe($programme['location']['description']); ?>
 												</xhtml:div>
 											</dc:description>
 										<?php endif; ?>
