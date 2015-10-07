@@ -75,7 +75,6 @@
 							<mlo:prerequisite>
 								<xhtml:div>
 									<?php if (isset($programme['entry_requirements'])): ?>
-										<xhtml:h3>Entry requirements</xhtml:h3>
 										<?php echo XMLHelper::makeXMLSafe($programme['entry_requirements']); ?>
 									<?php endif; ?>
 									<?php if (isset($programme['pg_general_entry_requirements'])): ?>
