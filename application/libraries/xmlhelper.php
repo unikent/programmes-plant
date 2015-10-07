@@ -275,14 +275,33 @@ class XMLHelper {
 		return trim(str_replace('&nbsp;', ' ', $text));
 	}
 
-	public static function stripTags($text)
+	public static function stripTagsAndAttributes($text)
 	{
-		return strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><li><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
+		$result = strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><li><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
+		$result = preg_replace('/(<[^>]+) target=".*?"/i', '$1', $result);
+
+
+		// Array of attributes to keep, all others will be removed
+		$attr_to_remove = array('target', 'onClick');
+
+		// Get an array of all the attributes and their values in the data string
+		preg_match_all('/[a-z]+=".+"/iU', $result, $attributes);
+
+		// Loop through the attribute pairs, match them against the keep array and remove
+		// them from $result if they don't exist in the array
+		foreach ($attributes[0] as $attribute) {
+			$attributeName = stristr($attribute, '=', true);
+			if (in_array($attributeName, $attr_to_remove)) {
+				$result = str_replace(' ' . $attribute, '', $result);
+			}
+		}
+
+		return $result;
 	}
 
 	public static function makeXMLSafe($text)
 	{
-		$safexml = static::stripTags($text);
+		$safexml = static::stripTagsAndAttributes($text);
 		$safexml = static::addXHTMLPrefix($safexml);
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);
