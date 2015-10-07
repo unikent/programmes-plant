@@ -282,7 +282,7 @@ class XMLHelper {
 
 
 		// Array of attributes to keep, all others will be removed
-		$attr_to_remove = array('target', 'onClick', 'onclick');
+		$attributes_to_remove = array('target', 'onClick');
 
 		// Get an array of all the attributes and their values in the data string
 		preg_match_all('/[a-z]+=".+"/iU', $result, $attributes);
@@ -291,7 +291,7 @@ class XMLHelper {
 		// them from $result if they don't exist in the array
 		foreach ($attributes[0] as $attribute) {
 			$attributeName = stristr($attribute, '=', true);
-			if (in_array($attributeName, $attr_to_remove)) {
+			if (in_array(strtolower($attributeName), array_map('strtolower', $attributes_to_remove))) {
 				$result = str_replace(' ' . $attribute, '', $result);
 			}
 		}
