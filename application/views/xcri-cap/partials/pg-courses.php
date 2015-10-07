@@ -4,7 +4,7 @@
 						<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
 						<dc:description>
 							<xhtml:div>
-								<?php echo XMLHelper::makeXMLSafe($programme['programme_overview']); ?>
+								<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 							</xhtml:div>
 						</dc:description>
 						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']); ?></dc:identifier>
