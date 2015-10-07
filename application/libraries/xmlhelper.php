@@ -282,7 +282,7 @@ class XMLHelper {
 
 
 		// Array of attributes to keep, all others will be removed
-		$attr_to_remove = array('target', 'onClick');
+		$attr_to_remove = array('target', 'onClick', 'onclick');
 
 		// Get an array of all the attributes and their values in the data string
 		preg_match_all('/[a-z]+=".+"/iU', $result, $attributes);
