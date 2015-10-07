@@ -283,7 +283,7 @@ class XMLHelper {
 	public static function makeXMLSafe($text)
 	{
 		$safexml = static::stripTags($text);
-		$safexml = static::addXHTMLPrefix($text);
+		$safexml = static::addXHTMLPrefix($safexml);
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);
 		$safexml = str_replace(':o:', ':', $safexml); //remove office namespace
