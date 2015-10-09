@@ -129,32 +129,7 @@
 							<?php endif; ?>
 							<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 							<languageOfAssessment>en</languageOfAssessment>
-							<mlo:cost><![CDATA[
-
-								<?php echo ($programme['cost']); ?>
-								<table>
-									<thead>
-										<tr>
-											<th></th>
-											<th>UK/EU</th>
-											<th>Overseas</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td><strong>Full-time</strong></td>
-												<td><?php echo empty($programme['fees']['home']['full-time']) ? 'TBC' : '&pound;' . $programme['fees']['home']['full-time']; ?></td>
-												<td><?php echo empty($programme['fees']['int']['full-time']) ? 'TBC' : '&pound;' . $programme['fees']['int']['full-time']; ?></td>
-											</tr>
-											<tr>
-												<td><strong>Part-time</strong></td>
-												<td><?php echo empty($programme['fees']['home']['part-time']) ? 'TBC' : '&pound;' . $programme['fees']['home']['part-time']; ?></td>
-												<td><?php echo empty($programme['fees']['int']['part-time']) ? 'TBC' : '&pound;' . $programme['fees']['int']['part-time']; ?></td>
-											</tr>
-									</tbody>
-								</table>
-
-							]]></mlo:cost>
+							<mlo:cost><?php echo ($programme['cost']); ?></mlo:cost>
 							<venue>
 								<provider>
 									<?php if (isset($programme['location']['description'])): ?>

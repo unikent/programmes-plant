@@ -148,24 +148,29 @@
 								<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 								<languageOfAssessment>en</languageOfAssessment>
 								<mlo:cost><?php 
+										$cost = '';
 										$fulltime_used = false;
 										foreach ($programme['deliveries'] as $delivery) {
 											if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ){
 												if ($programme['has_fulltime'] && $delivery['attendance_pattern'] === 'full-time') {
 													$fulltime_used = true;
-													echo 'Full Time UK/EU: ';
-													echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['home']['full-time']) . ' GBP';
-													echo ' | Full Time Overseas: ';
-													echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['int']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['int']['full-time']) . ' GBP';
+													$cost = 'Full Time UK/EU: ';
+													$cost .= empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['home']['full-time']) . ' GBP';
+													$cost .= ' | Full Time Overseas: ';
+													$cost .= empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['int']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['int']['full-time']) . ' GBP';
 												}
 												if ($fulltime_used && $delivery['attendance_pattern'] === 'part-time') {
-													echo ($programme['has_fulltime']) ? ' | ' : '';
-													echo 'Part Time UK/EU: ';
-													echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-part-time'])) . ' EUR' : number_format($delivery['fees']['home']['part-time']) . ' GBP';
-													echo ' | Part Time Overseas: N/A';
+													$cost .= ($programme['has_fulltime']) ? ' | ' : '';
+													$cost .= 'Part Time UK/EU: ';
+													$cost .= empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-part-time'])) . ' EUR' : number_format($delivery['fees']['home']['part-time']) . ' GBP';
+													$cost .= ' | Part Time Overseas: N/A';
 												}
 											}
 										}
+										if (empty(trim($cost))) {
+											$cost = 'TBC';
+										}
+										echo $cost;
 									?></mlo:cost>
 								<venue>
 									<provider>
