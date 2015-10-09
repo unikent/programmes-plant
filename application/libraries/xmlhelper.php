@@ -275,11 +275,15 @@ class XMLHelper {
 		return trim(str_replace('&nbsp;', ' ', $text));
 	}
 
-	public static function stripTagsAndAttributes($text)
+	public static function sanitizeTagsAndAttributes($text)
 	{
 		$result = strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><li><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
+		
+		// remove target attribute
 		$result = preg_replace('/(<[^>]+) target=".*?"/i', '$1', $result);
 
+		// remove any extra mailto params
+		$result = preg_replace('/"mailto:(.+)\?.+?"/i', '"mailto:$1"', $result);
 
 		// Array of attributes to keep, all others will be removed
 		$attributes_to_remove = array('target', 'onClick');
@@ -301,7 +305,7 @@ class XMLHelper {
 
 	public static function makeXMLSafe($text)
 	{
-		$safexml = static::stripTagsAndAttributes($text);
+		$safexml = static::sanitizeTagsAndAttributes($text);
 		$safexml = static::addXHTMLPrefix($safexml);
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);
