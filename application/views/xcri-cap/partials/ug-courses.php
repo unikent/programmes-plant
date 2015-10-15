@@ -129,7 +129,7 @@
 							<?php endif; ?>
 							<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 							<languageOfAssessment>en</languageOfAssessment>
-							<mlo:cost><?php echo ($programme['cost']); ?></mlo:cost>
+							<mlo:cost><?php echo XMLHelper::makeXMLSafe($programme['cost']); ?></mlo:cost>
 							<venue>
 								<provider>
 									<?php if (isset($programme['location']['description'])): ?>
