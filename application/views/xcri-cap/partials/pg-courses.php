@@ -169,7 +169,10 @@
 												}
 											}
 										}
-										if (empty(trim($cost))) {
+										
+										$trimmed = trim($cost);
+										
+										if (empty($trimmed)) {
 											$cost = 'TBC';
 										}
 										echo $cost;
