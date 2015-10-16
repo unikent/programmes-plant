@@ -2,8 +2,8 @@
 				<?php foreach ($programme['award'] as $award) : ?>
 					<course>
 						<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
-						<dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
 						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?' . $award['name']; ?></dc:identifier>
+						<dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
 						<dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
 						<dc:type xsi:type="courseDataProgramme:courseTypeGeneral" courseDataProgramme:identifier="PG"><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dc:type>
 						<dc:type xsi:type="mlo:RTCourseTypeFlag" mlo:RT-identifier="<?php echo $programme['programme_type'] === 'taught' ? 'T' : 'R'; ?>"><?php echo $programme['programme_type'] === 'taught' ? 'Taught' : 'Research'; ?></dc:type>
