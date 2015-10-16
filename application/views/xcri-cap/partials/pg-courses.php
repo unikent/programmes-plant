@@ -131,12 +131,14 @@
 							<presentation>
 								<dc:identifier><?php echo XMLHelper::makeXMLSafe($programme['programme_title']) . ' - ' . $mode['name']; ?></dc:identifier>
 								<?php foreach ($programme['subjects'] as $subject): ?>
-									<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
+									<?php if (!empty($subject['jacs_codes'])): ?>
 										<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
 											<?php if (!empty($jacs_code)): ?>
 												<dc:subject xsi:type="courseDataProgramme:JACS3" identifier="<?php echo $jacs_code; ?>"><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 											<?php endif; ?>
 										<?php endforeach; ?>
+									<?php else: ?>
+										<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 									<?php endif; ?>
 								<?php endforeach; ?>
 								<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
