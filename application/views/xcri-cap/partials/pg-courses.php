@@ -2,17 +2,12 @@
 				<?php foreach ($programme['award'] as $award) : ?>
 					<course>
 						<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
-						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?' . $award['name']; ?></dc:identifier>
-						<dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
-						<dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
-						<dc:type xsi:type="courseDataProgramme:courseTypeGeneral" courseDataProgramme:identifier="PG"><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dc:type>
-						<dc:type xsi:type="mlo:RTCourseTypeFlag" mlo:RT-identifier="<?php echo $programme['programme_type'] === 'taught' ? 'T' : 'R'; ?>"><?php echo $programme['programme_type'] === 'taught' ? 'Taught' : 'Research'; ?></dc:type>
-						<mlo:url><?php echo ($programme['url']); ?></mlo:url>
 						<dc:description>
 							<xhtml:div>
 								<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 							</xhtml:div>
 						</dc:description>
+						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?' . $award['name']; ?></dc:identifier>
 						<?php if (isset($programme['subjects'])): ?>
 							<?php foreach ($programme['subjects'] as $subject): ?>
 								<?php if (!empty($subject['jacs_codes'])): ?>
@@ -26,6 +21,11 @@
 								<?php endif; ?>
 							<?php endforeach; ?>
 						<?php endif; ?>
+						<dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
+						<dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
+						<dc:type xsi:type="courseDataProgramme:courseTypeGeneral" courseDataProgramme:identifier="PG"><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dc:type>
+						<dc:type xsi:type="mlo:RTCourseTypeFlag" mlo:RT-identifier="<?php echo $programme['programme_type'] === 'taught' ? 'T' : 'R'; ?>"><?php echo $programme['programme_type'] === 'taught' ? 'Taught' : 'Research'; ?></dc:type>
+						<mlo:url><?php echo ($programme['url']); ?></mlo:url>
 						<?php if (isset($programme['programme_abstract'])): ?>
 							<abstract><?php echo XMLHelper::makeXMLSafe(strip_tags($programme['programme_abstract'])); ?></abstract>
 						<?php endif; ?>
@@ -154,7 +154,6 @@
 								$cost = '';
 								$fulltime_used = false;
 								foreach ($programme['deliveries'] as $delivery) {
-
 									if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ){
 
 										if ($programme['has_fulltime'] && $delivery['attendance_pattern'] === 'full-time') {
@@ -229,6 +228,7 @@
 									</provider>
 								</venue>
 							</presentation>
+
 						<?php endforeach; ?>
 					</course>
 				<?php endforeach; ?>

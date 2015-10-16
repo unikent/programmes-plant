@@ -5,15 +5,15 @@
 							<![CDATA[<?php echo (strip_tags($programme['programme_overview_text'])); ?>]]>
 						</xhtml:div>
 					</dc:description>
-					<dc:identifier><![CDATA[<?php echo ($programme['url']); ?>]]></dc:identifier>
+					<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']); ?></dc:identifier>
 					<?php if (isset($programme['subjects'])): ?>
 						<?php foreach ($programme['subjects'] as $subject): ?>
 							<?php if (!empty($subject)): ?>
-								<dc:subject><![CDATA[<?php echo ($subject['name']) ?>]]></dc:subject>
+								<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 							<?php endif; ?>
 						<?php endforeach; ?>
 					<?php endif; ?>
-					<dc:title><![CDATA[<?php echo ($programme['programme_title']); ?>]]></dc:title>
+					<dc:title><?php echo XMLHelper::makeXMLSafe($programme['programme_title']); ?></dc:title>
 					<dc:type><?php echo __("programmes.{$programme['type']}"); ?></dc:type>
 					<mlo:url><?php echo ($programme['url']); ?></mlo:url>
 					<?php if (isset($programme['programme_abstract'])): ?>

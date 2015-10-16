@@ -25,7 +25,7 @@
 			<?php foreach ($schools as $school): ?>
 				<mlo:hasPart><?php echo $school['name']; ?></mlo:hasPart>
 			<?php endforeach; ?>
-			
+
 			<?php if (!empty($globals['ug']->provider_description)): ?>
 				<dc:description>
 					<xhtml:div>
