@@ -4,18 +4,20 @@
 						<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
 						<dc:description>
 							<xhtml:div>
-								<?php echo XMLHelper::makeXMLSafe($programme['programme_overview']); ?>
+								<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 							</xhtml:div>
 						</dc:description>
-						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']); ?></dc:identifier>
+						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?' . $award['name']; ?></dc:identifier>
 						<?php if (isset($programme['subjects'])): ?>
 							<?php foreach ($programme['subjects'] as $subject): ?>
-								<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
+								<?php if (!empty($subject['jacs_codes'])): ?>
 									<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
 										<?php if (!empty($jacs_code)): ?>
 											<dc:subject xsi:type="courseDataProgramme:JACS3" identifier="<?php echo $jacs_code; ?>"><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 										<?php endif; ?>
 									<?php endforeach; ?>
+								<?php else: ?>
+									<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 								<?php endif; ?>
 							<?php endforeach; ?>
 						<?php endif; ?>
@@ -75,7 +77,6 @@
 							<mlo:prerequisite>
 								<xhtml:div>
 									<?php if (isset($programme['entry_requirements'])): ?>
-										<xhtml:h3>Entry requirements</xhtml:h3>
 										<?php echo XMLHelper::makeXMLSafe($programme['entry_requirements']); ?>
 									<?php endif; ?>
 									<?php if (isset($programme['pg_general_entry_requirements'])): ?>
@@ -130,12 +131,14 @@
 							<presentation>
 								<dc:identifier><?php echo XMLHelper::makeXMLSafe($programme['programme_title']) . ' - ' . $mode['name']; ?></dc:identifier>
 								<?php foreach ($programme['subjects'] as $subject): ?>
-									<?php if (!empty($subject) && !empty($subject['jacs_codes'])): ?>
+									<?php if (!empty($subject['jacs_codes'])): ?>
 										<?php foreach (array_map('trim', explode(',', $subject['jacs_codes'])) as $jacs_code): ?>
 											<?php if (!empty($jacs_code)): ?>
 												<dc:subject xsi:type="courseDataProgramme:JACS3" identifier="<?php echo $jacs_code; ?>"><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 											<?php endif; ?>
 										<?php endforeach; ?>
+									<?php else: ?>
+										<dc:subject><?php echo XMLHelper::makeXMLSafe($subject['name']) ?></dc:subject>
 									<?php endif; ?>
 								<?php endforeach; ?>
 								<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
@@ -148,30 +151,55 @@
 								<?php endif; ?>
 								<mlo:languageOfInstruction>en</mlo:languageOfInstruction>
 								<languageOfAssessment>en</languageOfAssessment>
-								<mlo:cost><?php 
-										foreach ($programme['deliveries'] as $delivery) {
-											if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ){
-												if ($programme['has_fulltime'] && $delivery['attendance_pattern'] === 'full-time') {
-													echo 'Full Time UK/EU: ';
-													echo empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['home']['full-time']) . ' GBP';
-													echo ' | Full Time Overseas: ';
-													echo empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' : number_format($delivery['fees']['int']['euro-full-time'])) . ' EUR' : number_format($delivery['fees']['int']['full-time']) . ' GBP';
-												}
-												if ($programme['has_parttime'] && $delivery['attendance_pattern'] === 'part-time') {
-													echo ($programme['has_fulltime']) ? ' | ' : '';
-													echo 'Part Time UK/EU: ';
-													echo empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' : number_format($delivery['fees']['home']['euro-part-time'])) . ' EUR' : number_format($delivery['fees']['home']['part-time']) . ' GBP';
-													echo ' | Part Time Overseas: N/A';
-												}
-											}
+								<mlo:cost>
+								<?php
+								$cost = '';
+								$fulltime_used = false;
+								foreach ($programme['deliveries'] as $delivery) {
+									if ( $delivery['award_name'] === $award['name'] && !in_array($delivery['pos_code'], $pos_codes) ){
+
+										if ($programme['has_fulltime'] && $delivery['attendance_pattern'] === 'full-time') {
+											$fulltime_used = true;
+											$cost = 'Full Time UK/EU: ';
+											$cost .= empty($delivery['fees']['home']['full-time']) ? ((empty($delivery['fees']['home']['euro-full-time'])) ? 'TBC' :
+											number_format($delivery['fees']['home']['euro-full-time'])) . ' EUR' :
+											number_format($delivery['fees']['home']['full-time']) . ' GBP';
+											$cost .= ' | Full Time Overseas: ';
+											$cost .= empty($delivery['fees']['int']['full-time']) ? ((empty($delivery['fees']['int']['euro-full-time'])) ? 'TBC' :
+											number_format($delivery['fees']['int']['euro-full-time'])) . ' EUR' :
+											number_format($delivery['fees']['int']['full-time']) . ' GBP';
 										}
-									?></mlo:cost>
+
+
+										if ($fulltime_used && $delivery['attendance_pattern'] === 'part-time') {
+											$cost .= ($programme['has_fulltime']) ? ' | ' :
+											'';
+											$cost .= 'Part Time UK/EU: ';
+											$cost .= empty($delivery['fees']['home']['part-time']) ? ((empty($delivery['fees']['home']['euro-part-time'])) ? 'TBC' :
+											number_format($delivery['fees']['home']['euro-part-time'])) . ' EUR' :
+											number_format($delivery['fees']['home']['part-time']) . ' GBP';
+											$cost .= ' | Part Time Overseas: N/A';
+										}
+
+									}
+
+								}
+
+								$trimmed = trim($cost);
+
+								if (empty($trimmed)) {
+									$cost = 'TBC';
+								}
+
+								echo $cost;
+								?>
+								</mlo:cost>
 								<venue>
 									<provider>
 										<?php if (isset($programme['location']['description'])): ?>
 											<dc:description>
 												<xhtml:div>
-													<?php echo ($programme['location']['description']); ?>
+													<?php echo XMLHelper::makeXMLSafe($programme['location']['description']); ?>
 												</xhtml:div>
 											</dc:description>
 										<?php endif; ?>
@@ -202,6 +230,7 @@
 									</provider>
 								</venue>
 							</presentation>
+
 						<?php endforeach; ?>
 					</course>
 				<?php endforeach; ?>
