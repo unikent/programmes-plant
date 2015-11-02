@@ -7,7 +7,7 @@
 								<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 							</xhtml:div>
 						</dc:description>
-						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?' . $award['name']; ?></dc:identifier>
+						<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?award=' . $award['name']; ?></dc:identifier>
 						<?php if (isset($programme['subjects'])): ?>
 							<?php foreach ($programme['subjects'] as $subject): ?>
 								<?php if (!empty($subject['jacs_codes'])): ?>
