@@ -4,6 +4,8 @@
 						<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
 						<dc:description>
 							<xhtml:div>
+								<p><strong>Location</strong></p>
+								<?php echo XMLHelper::makeXMLSafe($programme['location']['name']); ?>
 								<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 							</xhtml:div>
 						</dc:description>
