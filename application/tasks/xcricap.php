@@ -33,7 +33,10 @@ class XCRICAP_Task {
             $api_index[$type] = API::get_index($tmp_year, $type);
 
             // fetch each programme individually for our xcri feed
-            foreach (array_keys($api_index[$type]) as $programme_id) {
+            foreach ($api_index[$type] as $programme_id => $programme) {
+                if ($programme['suspended'] == 'true' || $programme['withdrawn'] == 'true') {
+                    continue;
+                }
                 $data['programmes'][$type][] = API::get_xcrified_programme($programme_id, $tmp_year, $type);
             }
 
