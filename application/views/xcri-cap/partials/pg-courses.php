@@ -29,6 +29,11 @@
 					}
 					?>
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
+
+					<?php if (count($programme['award']) > 1 && !empty($programme['attendance_text'])): ?>
+						<p><strong>Duration</strong></p>
+						<p><?php echo $programme['attendance_text']; ?></p>
+					<?php endif; ?>
 				</xhtml:div>
 			</dc:description>
 			<dc:identifier xsi:type="courseDataProgramme:internalID"><?php echo ($programme['url']) . '?award=' . $award['name']; ?></dc:identifier>
