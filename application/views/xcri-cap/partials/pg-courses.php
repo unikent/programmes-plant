@@ -30,7 +30,7 @@
 					?>
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 
-					<?php if (count($programme['award'] > 1) && !empty($programme['attendance_text'])): ?>
+					<?php if (count($programme['award']) > 1 && !empty($programme['attendance_text'])): ?>
 						<p><strong>Duration</strong></p>
 						<p><?php echo $programme['attendance_text']; ?></p>
 					<?php endif; ?>
