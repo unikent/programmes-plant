@@ -36,21 +36,21 @@
 		<?php if (isset($programme['learning_outcomes'])): ?>
 			<learningOutcome>
 				<xhtml:div>
-					<p><strong>Knowledge and understanding</strong></p>
+					<xhtml:p><xhtml:strong>Knowledge and understanding</xhtml:strong></xhtml:p>
 					<?php echo XMLHelper::makeXMLSafe($programme['learning_outcomes']); ?>
 
 					<?php if (isset($programme['intellectual_skills_learning_outcomes'])): ?>
-						<p><strong>Intellectual Skills</strong></p>
+						<xhtml:p><xhtml:strong>Intellectual Skills</xhtml:strong></xhtml:p>
 						<?php echo XMLHelper::makeXMLSafe($programme['intellectual_skills_learning_outcomes']); ?>
 					<?php endif; ?>
 
 					<?php if (isset($programme['subjectspecific_skills_learning_outcomes'])): ?>
-						<p><strong>Subject-specific skills</strong></p>
+						<xhtml:p><xhtml:strong>Subject-specific skills</xhtml:strong></xhtml:p>
 						<?php echo XMLHelper::makeXMLSafe($programme['subjectspecific_skills_learning_outcomes']); ?>
 					<?php endif; ?>
 
 					<?php if (isset($programme['transferable_skills_learning_outcomes'])): ?>
-						<p><strong>Transferable skills</strong></p>
+						<xhtml:p><xhtml:strong>Transferable skills</xhtml:strong></xhtml:p>
 						<?php echo XMLHelper::makeXMLSafe($programme['transferable_skills_learning_outcomes']); ?>
 					<?php endif; ?>
 				</xhtml:div>
