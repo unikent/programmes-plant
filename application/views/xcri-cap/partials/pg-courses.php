@@ -9,7 +9,7 @@
 						echo XMLHelper::makeXMLSafe($programme['location']['name']);
 					}
 
-					if (isset($programme['additional_locations'])) {
+					if (isset($programme['additional_locations']) && is_array($programme['additional_locations'])) {
 						$locations = array();
 						foreach ($programme['additional_locations'] as $location) {
 							$locations[] = $location['name'];
