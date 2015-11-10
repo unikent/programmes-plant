@@ -4,7 +4,7 @@
 			<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
 			<dc:description>
 				<xhtml:div>
-					<xhtml:p><xhtml:strong>Location</xhtml:strong></xhtml:p>
+					<xhtml:p><xhtml:strong>Location</xhtml:strong>
 					<?php if (!empty($programme['location']['name'])) {
 						echo XMLHelper::makeXMLSafe($programme['location']['name']);
 					}
@@ -28,6 +28,8 @@
 						echo $locations;
 					}
 					?>
+					&#xD;
+					</xhtml:p>
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 
 					<?php if (count($programme['award']) > 1 && !empty($programme['attendance_text'])): ?>
