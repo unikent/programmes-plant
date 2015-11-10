@@ -28,7 +28,7 @@
 						echo $locations;
 					}
 					?>
-					&#xD;
+					<xhtml:br />
 					</xhtml:p>
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 
