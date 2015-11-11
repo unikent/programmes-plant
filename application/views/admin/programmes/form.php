@@ -50,12 +50,14 @@
 
         $feesets = array();
         $displayed = array();
+        $globals = GlobalSetting::get_api_data($year);
+        $fee_year = $globals['fees_year_42'];
 
         foreach($programme->get_deliveries() as $del){
           // ignore duplicates
           if(in_array($del->pos_code, $displayed)) continue;
           // add to output
-           $feesets[] =  array('pos' => $del->pos_code, 'year'=> $programme->year);
+           $feesets[] =  array('pos' => $del->pos_code, 'year'=> $fee_year);
            $displayed[] = $del->pos_code;
         }
     
