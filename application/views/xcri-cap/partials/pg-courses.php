@@ -4,12 +4,12 @@
 			<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
 			<dc:description>
 				<xhtml:div>
-					<xhtml:p><xhtml:strong>Location</xhtml:strong></xhtml:p>
+					<xhtml:p><xhtml:strong>Location: </xhtml:strong>
 					<?php if (!empty($programme['location']['name'])) {
 						echo XMLHelper::makeXMLSafe($programme['location']['name']);
 					}
 
-					if (isset($programme['additional_locations'])) {
+					if (isset($programme['additional_locations']) && is_array($programme['additional_locations'])) {
 						$locations = array();
 						foreach ($programme['additional_locations'] as $location) {
 							$locations[] = $location['name'];
@@ -28,6 +28,8 @@
 						echo $locations;
 					}
 					?>
+					</xhtml:p>
+					<xhtml:br />
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
 
 					<?php if (count($programme['award']) > 1 && !empty($programme['attendance_text'])): ?>
