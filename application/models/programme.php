@@ -14,7 +14,7 @@ abstract class Programme extends Revisionable {
 	public function note(){
 		return $this->has_one('Note','programme_id');
 	}
-		/**
+	/**
 	 * Get this programme's awards.
 	 *
 	 * @return Award The award for this programme.
@@ -69,7 +69,7 @@ abstract class Programme extends Revisionable {
 	public function award()
 	{
 		$type = URLParams::get_type();
-	  	return $this->belongs_to($type.'_Award', static::get_award_field());
+		return $this->belongs_to($type.'_Award', static::get_award_field());
 	}
 
 	/**
@@ -90,7 +90,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public function administrative_school()
 	{
-	  return $this->belongs_to('School', static::get_administrative_school_field());
+		return $this->belongs_to('School', static::get_administrative_school_field());
 	}
 
 	/**
@@ -100,7 +100,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public function additional_school()
 	{
-	  return $this->belongs_to('School', static::get_additional_school_field());
+		return $this->belongs_to('School', static::get_additional_school_field());
 	}
 
 	/**
@@ -110,7 +110,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public function location()
 	{
-	  return $this->belongs_to('Campus', static::get_location_field());
+		return $this->belongs_to('Campus', static::get_location_field());
 	}
 
 	/**
@@ -197,7 +197,7 @@ abstract class Programme extends Revisionable {
 	 * This function replaces the passed-in ids with their actual record
 	 * Limiting the record to its name and id
 	 *
-     * @param $ids List of ids to lookup
+	 * @param $ids List of ids to lookup
 	 * @param $year Year course should be returned from.
 	 * @return array of objects matching id's
 	 */
@@ -273,7 +273,7 @@ abstract class Programme extends Revisionable {
 		// If revision not passed, get data
 		if(!$revision){
 
-			$p = static::where('instance_id', '=', $iid)->where('year', '=', $year)->first();
+			$p = static::where('instance_id', '=', $iid)->where('hidden', '!=', 1)->where('year', '=', $year)->first();
 			$revision = ($p !== null) ? $p->find_live_revision() : null;
 		}
 
@@ -416,26 +416,26 @@ abstract class Programme extends Revisionable {
 
 
 		$fields = array(
-					'instance_id',
-					 $title_field,
-					 $slug_field,
-					 $award_field,
-					 $subject_area_1_field,
-					 $subject_categories_field,
-					 $administrative_school_field,
-					 $additional_school_field,
-					 $location_field,
-					 $new_programme_field,
-					 $subject_to_approval_field,
-					 $mode_of_study_field,
-					 $search_keywords_field,
-					 $awarding_institute_or_body_field,
-					 $module_session_field,
-					 $subject_area_2_field,
-					 $programme_type_field,
-					 $withdrawn_field,
-					 $suspended_field,
-					 $science_without_borders_field
+			'instance_id',
+			$title_field,
+			$slug_field,
+			$award_field,
+			$subject_area_1_field,
+			$subject_categories_field,
+			$administrative_school_field,
+			$additional_school_field,
+			$location_field,
+			$new_programme_field,
+			$subject_to_approval_field,
+			$mode_of_study_field,
+			$search_keywords_field,
+			$awarding_institute_or_body_field,
+			$module_session_field,
+			$subject_area_2_field,
+			$programme_type_field,
+			$withdrawn_field,
+			$suspended_field,
+			$science_without_borders_field
 
 		);
 		// If UG, add ucas field
@@ -450,7 +450,8 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Find all programmes that have a live revision set (live_revision != 0)
-		$programmes_with_live_revisions = static::where('year','=', $year)->where('live_revision', '!=', 0)->get('live_revision');
+		$programmes_with_live_revisions = static::where('year','=', $year)->where('live_revision', '!=', 0)->where('hidden', '!=', 1)->get('live_revision');
+
 		// pull out id's of all live revisions
 		$live_revisions_ids = array();
 		foreach($programmes_with_live_revisions as $programme_with_live_revisions){
@@ -464,8 +465,8 @@ abstract class Programme extends Revisionable {
 
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
-						->where_in('id', $live_revisions_ids)
-						->get($fields);
+			->where_in('id', $live_revisions_ids)
+			->get($fields);
 
 		// Build index array
 		foreach($programmes as $programme)
@@ -581,11 +582,11 @@ abstract class Programme extends Revisionable {
 		$award_model = $type . '_Award';
 
 		// use the api index as a starting point
-        $is_preview=false;
-        if($year==='preview'){
-            $is_preview=true;
-            $year = Setting::get_setting("{$type}_current_year");
-        }
+		$is_preview=false;
+		if($year==='preview'){
+			$is_preview=true;
+			$year = Setting::get_setting("{$type}_current_year");
+		}
 		$index_data = static::get_api_index($year);
 		$fees_data = array();
 
@@ -672,7 +673,7 @@ abstract class Programme extends Revisionable {
 
 	public function deliveries()
 	{
-	  	return $this->has_many(static::$type . '_delivery', 'programme_id');
+		return $this->has_many(static::$type . '_delivery', 'programme_id');
 	}
 
 	// Find deliveries for this programme type
@@ -838,7 +839,7 @@ abstract class Programme extends Revisionable {
 			'revision_1' => $revision_1,
 			'revision_2' => ($revision_2 != null) ? $revision_2 : null,
 			'attributes' => $attributes,
- 		);
+		);
 
 	}
 
