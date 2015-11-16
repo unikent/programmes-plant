@@ -156,6 +156,7 @@ class TestAPI_Controller extends ControllerTestCase
                 'id' => 1, 
                 UG_Programme::get_title_field() => 'Programme 1',
                 'year' => '2014',
+                'hidden' => 0,
                 UG_Programme::get_programme_suspended_field() => '',
                 UG_Programme::get_programme_withdrawn_field() => '',
                 UG_Programme::get_subject_area_1_field()  => '1'
@@ -211,6 +212,7 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'hidden' => 0,
             UG_Programme::get_programme_suspended_field() => '',
             UG_Programme::get_programme_withdrawn_field() => '',
             );
@@ -237,6 +239,7 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'hidden' => 0,
             UG_Programme::get_programme_suspended_field() => '',
             UG_Programme::get_programme_withdrawn_field() => '',
         );
@@ -261,6 +264,7 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'hidden' => 0,
         );
 
         $course = $this->create_programme($input);
@@ -279,6 +283,7 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'hidden' => 0,
             UG_Programme::get_programme_suspended_field() => '',
             UG_Programme::get_programme_withdrawn_field() => '',
             UG_Programme::get_subject_area_1_field()  => '1'
@@ -300,6 +305,7 @@ class TestAPI_Controller extends ControllerTestCase
             'id' => 1, 
             'programme_title_1' => 'Programme 1',
             'year' => '2014',
+            'hidden' => 0,
             UG_Programme::get_subject_area_1_field()  => '1'
         );
         
