@@ -8,6 +8,7 @@ class TestAPI extends ModelTestCase
 		return array(
 			'programme_title_1' => 'Thing',
 			'year' => "2014",
+            'hidden' => 0,
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
 	        UG_Programme::get_subject_area_1_field()  => '1'
