@@ -108,19 +108,14 @@
 				</mlo:objective>
 			<?php endif; ?>
 
-			<?php if (isset($programme['entry_requirements']) || isset($programme['pg_general_entry_requirements']) || isset($programme['english_language_requirements_intro_text'])): ?>
+			<?php if (isset($programme['entry_requirements']) || isset($globalsettings->xcri_entry_requirements_pg)): ?>
 				<mlo:prerequisite>
 					<xhtml:div>
 						<?php if (isset($programme['entry_requirements'])): ?>
 							<?php echo XMLHelper::makeXMLSafe($programme['entry_requirements']); ?>
 						<?php endif; ?>
-						<?php if (isset($programme['pg_general_entry_requirements'])): ?>
-							<xhtml:h3>General entry requirements</xhtml:h3>
-							<?php echo XMLHelper::makeXMLSafe($programme['pg_general_entry_requirements']); ?>
-						<?php endif; ?>
-						<?php if (isset($programme['english_language_requirements_intro_text'])): ?>
-							<xhtml:h3>English language requirements</xhtml:h3>
-							<?php echo XMLHelper::makeXMLSafe($programme['english_language_requirements_intro_text']); ?>
+						<?php if (isset($globalsettings->xcri_entry_requirements_pg)): ?>
+							<?php echo XMLHelper::makeXMLSafe($globalsettings->xcri_entry_requirements_pg); ?>
 						<?php endif; ?>
 					</xhtml:div>
 				</mlo:prerequisite>
