@@ -609,13 +609,8 @@ abstract class Programme extends Revisionable {
 				if(empty($delivery['description'])){
 					continue;
 				}
-				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
-				$currency = 'pound';
-				$fee_amount_prefix = '';
-				if (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) {
-					$currency = 'euro';
-					$fee_amount_prefix = 'euro-';
-				}
+
+				$fee = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
 				
 				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
@@ -646,12 +641,9 @@ abstract class Programme extends Revisionable {
 					'search_keywords' 	=>		$programme['search_keywords'],
 					'pos_code'			=>		$delivery['pos_code'],
 					'type'				=>		$type == 'pg' ? $extra_fields[$programme['id']] : 'taught', // get course type
-					'currency'			=>		$currency,
-					'home_full_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'full-time']),
-					'home_part_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'part-time']),
-					'int_full_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'full-time']),
-					'int_part_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'part-time'])
 				);
+
+				$programme_data = array_merge($programme_data, $fee);
 
 				$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
 
