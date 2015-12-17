@@ -315,7 +315,7 @@ class API {
 			$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
 			// Add fee data
-			$delivery['fees'] = Fees::getFeeInfoForPos($delivery['pos_code'], $final['globals']['fees_year']);
+			$delivery['fees'] = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], $final['globals']['fees_year']);
 
 			// Add modules
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);

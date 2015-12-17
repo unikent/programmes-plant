@@ -24,6 +24,43 @@ class Fees {
 	}
 
 	/**
+	 * getCondensedFeeInfoForPos - returns fee data object for given pos code in a condensed format
+	 * ie:
+	 *	"currency": "pound",
+	 * 	"home_full_time": "N/A",
+	 *	"home_part_time": "TBC",
+	 *	"int_full_time": "14000",
+	 *	"int_part_time": "7020"
+	 * 
+	 * @param $pos code
+	 * @param $fee_year year to look at for fees data (may not be programme year) see fees_year global
+	 *
+	 * @return Fee Data array | false
+	 */
+	public static function getCondensedFeeInfoForPos($pos, $fee_year){
+
+		$fee = static::getFeeInfoForPos($pos, $fee_year);
+		if (empty($fee)) {
+			return false;
+		}
+
+		$currency = 'pound';
+		$fee_amount_prefix = '';
+		if (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) {
+			$currency = 'euro';
+			$fee_amount_prefix = 'euro-';
+		}
+
+		return array(
+			'currency'			=>		$currency,
+			'home_full_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'full-time']),
+			'home_part_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'part-time']),
+			'int_full_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'full-time']),
+			'int_part_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'part-time'])
+		);
+	}
+
+	/**
 	 * get_fee_mapping - Gets cached lookup object, for quickly getting fee data from POS.
 	 * 
 	 * @param $year
