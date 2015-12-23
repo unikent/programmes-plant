@@ -209,15 +209,29 @@ class Programmes_Controller extends Revisionable_Controller {
 		$fieldModel = $this->model.'Field';
 		$model = $this->model;
 
-
 		// placeholder for any future validation rules
 		$rules = array(
+
 		);
+
+		if ($model === 'PG_Programme') {
+			//Get mode_of_study, duration and parttime_duration fields
+			$mode_of_study_field = $model::get_mode_of_study_field();
+			$duration_field = $model::get_duration_field();
+			$parttime_duration_field = $model::get_parttime_duration_field();
+
+			//add rules for the above
+			$rules[$duration_field] = 'duration:'.Input::get($mode_of_study_field);
+			$rules[$parttime_duration_field] = 'parttime_duration:'.Input::get($mode_of_study_field);
+			//make 
+
+		}
 		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails())
 		{
+			$programme = $model::find(Input::get('programme_id'));
 			Messages::add('error',$validation->errors->all());
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/')->with_input();
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->instance_id)->with_input();
 		} 
 		else 
 		{
