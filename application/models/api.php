@@ -638,7 +638,21 @@ class API {
 						$programme['modes_of_study'][]['id'] = 'PT';
 				}
 		}
-		
+
+		foreach($programme['modes_of_study'] as &$mode){
+			if($mode['id'] == 'FT'){
+				if (isset($programme['duration']) && !empty($programme['duration']) && is_int(intval($programme['duration']))) {
+					$mode['duration_text_id'] = 'P'.$programme['duration'];
+					$mode['duration_text'] = $programme['duration'].' (months)';
+				}
+			}else{
+				if (isset($programme['parttime_duration']) && !empty($programme['parttime_duration']) && is_int(intval($programme['parttime_duration']))) {
+					$mode['duration_text_id'] = 'P'.$programme['parttime_duration'];
+					$mode['duration_text'] = $programme['parttime_duration'].' (months)';
+				}
+			}
+		}
+
 		// attendance mode
 		if (strpos($programme['attendance_mode'], 'Mixed') !== false){
 			$programme['attendance_mode_id'] = 'MM';
@@ -685,15 +699,7 @@ class API {
 			$programme['attendance_pattern_id'] = 'DT';
 		}
 
-		// set the duration
-		if (isset($programme['duration']) && !empty($programme['duration']) && is_int(intval($programme['duration']))) {
-			$programme['duration_text_id'] = 'P'.$programme['duration'];
-			$programme['duration_text'] = $programme['duration'].' (months)';
-		}
-		else {
-			$programme['duration_text_id'] = 'P12M';
-			$programme['duration_text'] = '12M (months)';
-		}
+
 
 		// start date
 		if (isset($programme['start_date']) && !empty($programme['start_date'])) {

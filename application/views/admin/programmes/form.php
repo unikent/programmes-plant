@@ -16,6 +16,16 @@
 
 
 <?php echo Messages::get_html()?>
+<?php
+error_log(print_r($errors,true));
+
+if (!empty($errors->messages)){
+
+	?>
+	<br><br>
+<p class="alert alert-danger">There were problems with your submission please see error messages inline below.</p>
+<?php
+}?>
 
 <h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($award_name) ? ' - <em>'.$award_name.'</em>' : '' ; ?></h1>
 

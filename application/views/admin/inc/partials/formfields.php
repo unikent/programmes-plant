@@ -30,6 +30,8 @@ foreach($section as $field):
           $current_value = $programme->$column_name;
       }
 
+	  $current_value = Input::old($column_name,$current_value);
+
       $tip = "{$type}_if_permitted";
 
       // Build select box
@@ -109,7 +111,12 @@ foreach($section as $field):
 		<div class="controls">
 		
 			<?php echo $form_element?>
-
+			<?php if ($errors->has($column_name)){
+				?>
+				<br><br>
+			<p class="alert alert-danger"><?php echo $errors->first($column_name); ?></p>
+			<?php
+			} ?>
 			<?php if(isset($field->programme_field_type) && $field->programme_field_type == $field_model::$types['OVERRIDABLE_DEFAULT']): ?>
 
 				<div class="overridable-badge">

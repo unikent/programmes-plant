@@ -341,16 +341,16 @@ $(document).ready(function (){
       function mos_change(mos){
         switch(mos){
           case 'Full-time only':
-            fulltime_duration.prop('disabled', false);
-            parttime_duration.val('None').prop('disabled', 'disabled');
+		    fulltime_duration.closest('.control-group').show();
+            parttime_duration.val('None').closest('.control-group').hide();
             break;
           case 'Part-time only':
-            parttime_duration.prop('disabled', false);
-            fulltime_duration.val('None').prop('disabled', 'disabled');
+		    parttime_durationclosest('.control-group').show();
+            fulltime_duration.val('None').closest('.control-group').hide();
             break;
           default:
-            parttime_duration.prop('disabled', false);
-            fulltime_duration.prop('disabled', false);
+            parttime_duration.closest('.control-group').show();
+            fulltime_duration.closest('.control-group').show();
             break;
         }
       }
