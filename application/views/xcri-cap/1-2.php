@@ -40,7 +40,7 @@
 			<?php endif; ?>
 			<dc:title><?php echo ($globals['ug']->institution_name); ?></dc:title>
 			<mlo:url><?php echo ($globals['ug']->provider_url); ?></mlo:url>
-			<?php echo View::make('xcri-cap.partials.ug-courses', array('programmes' => $programmes['ug'], 'globalsettings' => $globals['ug']))->render(); ?>
+			<?php error_log(count($programmes['pg'])) //echo View::make('xcri-cap.partials.ug-courses', array('programmes' => $programmes['ug'], 'globalsettings' => $globals['ug']))->render(); ?>
 			<?php echo View::make('xcri-cap.partials.pg-courses', array('programmes' => $programmes['pg'], 'globalsettings' => $globals['pg']))->render(); ?>
 			<mlo:location>
 				<?php if (!empty($globals['ug']->town)): ?>

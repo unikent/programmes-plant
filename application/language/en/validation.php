@@ -61,6 +61,8 @@ return array(
 	),
 	"unique"         => "The :attribute has already been taken.",
 	"url"            => "The :attribute format is invalid.",
+	"duration"       => "Please select a relevant full-time duration for the chosen mode of study.",
+	"parttime_duration" => "Please select a relevant part-time duration for the chosen mode of study.",
 
 	/*
 	|--------------------------------------------------------------------------
