@@ -417,7 +417,7 @@ class API_Controller extends Base_Controller {
 		foreach($programmes as $programme) {
 			$output = array();
 			$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
-
+			$output['Course ID'] = $programme_api['instance_id'];
 			$output['POS'] = array();
 			$output['Title'] = $programme['name'];
 
