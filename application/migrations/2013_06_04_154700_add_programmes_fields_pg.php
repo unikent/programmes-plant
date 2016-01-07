@@ -36,9 +36,6 @@ class Add_Programmes_Fields_Pg {
 		$programme_fields[] = array('Programme withdrawn', 'checkbox', 'Only tick the box if the programme has been completely withdrawn. Please unpublish the programme if necessary or add a holding message.', '', 10);
 		$programme_fields[] = array('Programme suspended', 'checkbox', 'Only tick the box if the programme has been suspended. Please unpublish the programme if necessary or add a holding message.', '', 10);
 		$programme_fields[] = array('Subject to approval', 'checkbox', 'Check the box if this programme has been approved for advertising subject to approval by PASC.', '', 10);
-		$programme_fields[] = array('mode_of_study', 'text', 'blah', '', 10);
-		$programme_fields[] = array('duration', 'text', 'blah', '', 10);
-		$programme_fields[] = array('parttime_duration', 'text', 'blah', '', 10);
 		
 		// Add the fields in
 		foreach ($programme_fields as $field) {

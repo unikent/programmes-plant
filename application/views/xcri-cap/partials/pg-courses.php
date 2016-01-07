@@ -1,5 +1,4 @@
-<?php
-foreach ($programmes as $programme): ?>
+<?php foreach ($programmes as $programme): ?>
 	<?php foreach ($programme['award'] as $award) : ?>
 		<course>
 			<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
@@ -176,7 +175,7 @@ foreach ($programmes as $programme): ?>
 					<?php endforeach; ?>
 
 					<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
-					<mlo:duration interval="<?php echo $mode['duration_text_id']; ?>"><?php echo ($mode['duration_text']); ?></mlo:duration>
+					<mlo:duration interval="<?php echo $programme['duration_text_id']; ?>"><?php echo ($programme['duration_text']); ?></mlo:duration>
 					<applyTo><?php echo ($programme['url']); ?></applyTo>
 					<studyMode identifier="<?php echo $mode['id']; ?>"><?php echo $mode['name']; ?></studyMode>
 					<attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>

@@ -182,11 +182,11 @@ $(document).ready(function (){
             $('#delete_section').modal('show');
           });
      });
-    // invoke the jquery placeholder plugin for IE
+  // invoke the jquery placeholder plugin for IE
 
-    // Invoke the plugin
-    //$('input, textarea').placeholder();
-    $("[rel=tooltip]").tooltip();
+  // Invoke the plugin
+  //$('input, textarea').placeholder();
+  $("[rel=tooltip]").tooltip();
 
 
     
@@ -333,36 +333,7 @@ $(document).ready(function (){
 
     init_NotesForm();
 
-    //mode of study behaviour
-    if ($('.form-pg').length > 0) {
-      var mode_of_study = $('.form-pg').find('select[name^="mode_of_study"]');
-      var fulltime_duration = $('.form-pg').find('select[name^="duration"]');
-      var parttime_duration = $('.form-pg').find('select[name^="parttime_duration"]');
-      function mos_change(mos){
-        switch(mos){
-          case 'Full-time only':
-		    fulltime_duration.closest('.control-group').show();
-            parttime_duration.val('None').closest('.control-group').hide();
-            break;
-          case 'Part-time only':
-		    parttime_durationclosest('.control-group').show();
-            fulltime_duration.val('None').closest('.control-group').hide();
-            break;
-          default:
-            parttime_duration.closest('.control-group').show();
-            fulltime_duration.closest('.control-group').show();
-            break;
-        }
-      }
-      mode_of_study.change(function () {
-        mos_change($(this).val());
-      });
-      mos_change(mode_of_study.val());
-    }
-
 });
-
-
 
 function init_dataTable(){
 

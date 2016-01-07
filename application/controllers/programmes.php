@@ -209,34 +209,15 @@ class Programmes_Controller extends Revisionable_Controller {
 		$fieldModel = $this->model.'Field';
 		$model = $this->model;
 
+
 		// placeholder for any future validation rules
 		$rules = array(
-
 		);
-		$messages = array();
-		if ($model === 'PG_Programme') {
-			//Get mode_of_study, duration and parttime_duration fields
-			$mode_of_study_field = $model::get_mode_of_study_field();
-			$duration_field = $model::get_duration_field();
-			$parttime_duration_field = $model::get_parttime_duration_field();
-
-			//add rules for the above
-			$rules[$duration_field] = 'required|duration:'.Input::get($mode_of_study_field);
-			$rules[$parttime_duration_field] = 'required|parttime_duration:'.Input::get($mode_of_study_field);
-
-			$messages = array(
-				$duration_field . "_required"      		=> "Please select a relevant full-time duration for the chosen mode of study.",
-				$parttime_duration_field . "_required" 	=> "Please select a relevant part-time duration for the chosen mode of study.",
-			);
-			//make
-
-		}
-
-		$validation = Validator::make(Input::all(), $rules,$messages);
+		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails())
 		{
-			$programme = $model::find(Input::get('programme_id'));
-			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/'.$programme->instance_id)->with_errors($validation);
+			Messages::add('error',$validation->errors->all());
+			return Redirect::to($year.'/'.$type.'/'.$this->views.'/edit/')->with_input();
 		} 
 		else 
 		{
