@@ -37,27 +37,3 @@ Form::macro('actions', function($type, $object = null)
 
 	return $actions;
 });
-
-Validator::register('duration', function($attribute, $value, $parameters)
-{
-	error_log(print_r($parameters,true));
-	error_log($value);
-	if (isset($parameters[0])) {
-		if ($parameters[0] == 'Part-time only' && $value != 'None' &&  $value !=='') return false;
-		if ($parameters[0] != 'Part-time only' && ($value == 'None' || $value =='')) return false;
-	}
-
-	return true;
-});
-
-Validator::register('parttime_duration', function($attribute, $value, $parameters)
-{
-	error_log(print_r($parameters,true));
-	error_log($value);
-	if (isset($parameters[0])) {
-		if ($parameters[0] == 'Full-time only' && $value != 'None' && $value !=='' ) return false;
-		if ($parameters[0] != 'Full-time only' && ($value == 'None' || $value =='')) return false;
-	}
-	
-	return true;
-});

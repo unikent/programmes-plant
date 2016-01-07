@@ -11,8 +11,7 @@ class TestAPI extends ModelTestCase
             'hidden' => 0,
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
-	        UG_Programme::get_subject_area_1_field()  => '1',
-			UG_Programme::get_mode_of_study_field()=>'Full-time only',
+	        UG_Programme::get_subject_area_1_field()  => '1'
     	);
     }
 
