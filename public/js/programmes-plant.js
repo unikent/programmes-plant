@@ -345,7 +345,7 @@ $(document).ready(function (){
             parttime_duration.val('None').closest('.control-group').hide();
             break;
           case 'Part-time only':
-		    parttime_durationclosest('.control-group').show();
+		    parttime_duration.closest('.control-group').show();
             fulltime_duration.val('None').closest('.control-group').hide();
             break;
           default:
