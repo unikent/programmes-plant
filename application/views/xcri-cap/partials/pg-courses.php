@@ -1,4 +1,5 @@
-<?php foreach ($programmes as $programme): ?>
+<?php
+foreach ($programmes as $programme): ?>
 	<?php foreach ($programme['award'] as $award) : ?>
 		<course>
 			<mlo:isPartOf><?php echo $programme['administrative_school']['name']; ?></mlo:isPartOf>
@@ -76,11 +77,11 @@
 				</mlo:assessment>
 			<?php endif; ?>
 
-			<?php if (isset($programme['learning_outcomes'])): ?>
+			<?php if (isset($programme['knowledge_and_understanding_learning_outcomes'])): ?>
 				<learningOutcome>
 					<xhtml:div>
 						<xhtml:p><xhtml:strong>Knowledge and understanding</xhtml:strong></xhtml:p>
-						<?php echo XMLHelper::makeXMLSafe($programme['learning_outcomes']); ?>
+						<?php echo XMLHelper::makeXMLSafe($programme['knowledge_and_understanding_learning_outcomes']); ?>
 
 						<?php if (isset($programme['intellectual_skills_learning_outcomes'])): ?>
 							<xhtml:p><xhtml:strong>Intellectual Skills</xhtml:strong></xhtml:p>
@@ -175,7 +176,7 @@
 					<?php endforeach; ?>
 
 					<mlo:start dtf="<?php echo $programme['start_date']; ?>"><?php echo $programme['start_date_text']; ?></mlo:start>
-					<mlo:duration interval="<?php echo $programme['duration_text_id']; ?>"><?php echo ($programme['duration_text']); ?></mlo:duration>
+					<mlo:duration interval="<?php echo $mode['duration_text_id']; ?>"><?php echo ($mode['duration_text']); ?></mlo:duration>
 					<applyTo><?php echo ($programme['url']); ?></applyTo>
 					<studyMode identifier="<?php echo $mode['id']; ?>"><?php echo $mode['name']; ?></studyMode>
 					<attendanceMode identifier="<?php echo $programme['attendance_mode_id']; ?>"><?php echo $programme['attendance_mode']; ?></attendanceMode>

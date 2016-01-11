@@ -609,8 +609,9 @@ abstract class Programme extends Revisionable {
 				if(empty($delivery['description'])){
 					continue;
 				}
-				$fee = Fees::getFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
-				$currency = (!empty($fee['home']['euro-full-time']) || !empty($fee['home']['euro-part-time'])) ? 'euro' : 'pound';
+
+				$fee = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
+				
 				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
@@ -640,12 +641,9 @@ abstract class Programme extends Revisionable {
 					'search_keywords' 	=>		$programme['search_keywords'],
 					'pos_code'			=>		$delivery['pos_code'],
 					'type'				=>		$type == 'pg' ? $extra_fields[$programme['id']] : 'taught', // get course type
-					'currency'			=>		$currency,
-					'home_full_time'	=>		$currency == 'pound' ? $fee['home']['full-time'] : $fee['home']['euro-full-time'],
-					'home_part_time'	=>		$currency == 'pound' ? $fee['home']['part-time'] : $fee['home']['euro-part-time'],
-					'int_full_time'		=>		$currency == 'pound' ? $fee['int']['full-time'] : $fee['int']['euro-full-time'],
-					'int_part_time'		=>		$currency == 'pound' ? $fee['int']['part-time'] : $fee['int']['euro-part-time']
 				);
+
+				$programme_data = array_merge($programme_data, $fee);
 
 				$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
 

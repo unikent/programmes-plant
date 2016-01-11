@@ -3,7 +3,7 @@
   <?php echo View::make('admin.revisions.partials.revision_header', array('revision' => $active_revision, 'instance' => $programme, 'type'=>'programmes'))->render(); ?>
 <?php endif; ?>
 
-<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'));?>
+<?php echo Form::open_for_files(URI::segment(1).'/'.URI::segment(2).'/programmes/'.( $create ? 'create' : 'edit' ), 'POST', array('class'=>'form-horizontal'.' form-'.URLParams::$type));?>
 
 <div class="floating_save" data-spy="affix" data-offset-top="100">
    <div class='pull-right'>
@@ -16,6 +16,16 @@
 
 
 <?php echo Messages::get_html()?>
+<?php
+error_log(print_r($errors,true));
+
+if (!empty($errors->messages)){
+
+	?>
+	<br><br>
+<p class="alert alert-danger">There were problems with your submission please see error messages inline below.</p>
+<?php
+}?>
 
 <h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?><?php echo ( $create ? __('programmes.create_programme_title') : $programme->$title_field ); ?><?php echo isset($award_name) ? ' - <em>'.$award_name.'</em>' : '' ; ?></h1>
 
