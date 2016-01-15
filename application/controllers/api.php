@@ -1102,6 +1102,9 @@ class API_Controller extends Base_Controller {
 			static::$headers = array_merge(static::$headers, $add_headers);
 		}
 
+		// Add access controls to allow JS to talk
+		static::$headers['Access-Control-Allow-Origin'] = '*';
+
 		// Add JSONP support (if callback param)
 		if (isset($_GET['callback']))
 		{
