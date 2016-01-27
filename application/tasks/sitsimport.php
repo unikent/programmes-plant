@@ -1,5 +1,6 @@
 <?php
 
+use Kent\Log;
 /**
  * This task file is used to load an XML feed provided from SITS
  * and import the data into the Programmes Plant
@@ -29,6 +30,10 @@ class SITSImport_Task {
     foreach ($parameters['year'] as $type=>$year){
       $this->processYears[$type] = ($year=='current')?$this->getCurrentYear( $type ):$year;
     }
+
+	Log::$logfile = path('storage') . '/logs/sits_import.log';
+	Log::purge();
+
     // Load XML file
     $xml = $this->loadXML();
 
@@ -93,11 +98,22 @@ class SITSImport_Task {
 
   public function loadXML() {
 
-    $courses = simplexml_load_file( '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml' );
+	libxml_use_internal_errors(true);
+
+	$path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
+
+	if(filemtime($path) < (time()-(24 * 60 * 60))){
+		Log::error('XML file has not been modified for more than 24 hours.');
+	}
+
+    $courses = simplexml_load_file($path);
 
     if ( $courses === false ) {
-      throw new Exception( 'XML file does not exist in this location' );
-      exit;
+		Log::error('XML file does not exist or is invalid.');
+		foreach(libxml_get_errors() as $error) {
+			Log::error($error->message);
+		}
+		exit;
     }
 
     return $courses;
