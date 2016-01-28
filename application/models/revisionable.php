@@ -438,8 +438,14 @@ abstract class Revisionable extends SimpleData {
 	public static function get_attributes_list($year = false)
 	{
 		$options = array();
-
 		$model = get_called_class().'Field';
+		$overrideable_only = false;
+
+		// if is a setting class, use the ug/pg programme module to access feilds
+		if(strpos($model, 'ProgrammeSetting') !== false){
+			$model = str_replace('Setting', '', $model);
+			$overrideable_only = true;
+		}
 
 		if (!$year)
 		{
@@ -450,7 +456,12 @@ abstract class Revisionable extends SimpleData {
 			$data = $model::where('year','=',$year)->get();
 		}
 
-		foreach ($data as $record) {$options[$record->colname] = $record->field_name;}
+		foreach ($data as $record) {
+			// 0 = normal, 1= deleted, 2 = overridebale
+			if($overrideable_only && $record->programme_field_type != 2) continue;
+			$options[$record->colname] = $record->field_name;
+		}
+
 
 		return $options;
 	}
