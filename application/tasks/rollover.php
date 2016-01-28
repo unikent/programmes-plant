@@ -33,7 +33,29 @@ class Rollover_Task {
 	public function ug($arguments = array())
 	{
 
-		if(sizeof($arguments) != 2) die("Please provide a from and to year. \n");
+		$this->programme($arguments, "UG_Programme");
+
+		die("UG Rollover complete. \n");
+
+	}
+
+	/**
+	 * rollover pg programmes
+	 */
+	public function pg($arguments = array())
+	{
+		$this->programme($arguments, "PG_Programme");
+
+		die("PG Rollover complete. \n");
+	}
+
+	/**
+	 * rollover programmes
+	 * should not be called from CLI directly
+	 */
+	public function programme($arguments = array(), $programme_model)
+	{
+		if(empty($programme_model) || sizeof($arguments) != 2) die("Please provide a from and to year. \n");
 
 		Auth::login(1);
 
@@ -41,7 +63,7 @@ class Rollover_Task {
 		$to_year = $arguments[1];	
 
 		// Foreach programme
-		foreach(UG_Programme::where('year', '=', $from_year)->get() as $programme){
+		foreach($programme_model::where('year', '=', $from_year)->get() as $programme){
 			// Copy data
 			$attributes = $programme->attributes;
 
@@ -51,48 +73,16 @@ class Rollover_Task {
 			}	
 
 			// Create a new copy in the next year
-			$copy = new UG_Programme;
+			$copy = new $programme_model;
 			$copy->fill($attributes);
 
 			$copy->year = $to_year;
 			$copy->save();
+
+			// make the revision live
+			$revision = $copy->current_revision;
+			$copy->make_revision_live($revision);
 		}
-
-		die("Rollover complete. \n");
-
-	}
-
-	/**
-	 * rollover pg programmes
-	 */
-	public function pg($arguments = array())
-	{
-		if(sizeof($arguments) != 2) die("Please provide a from and to year. \n");
-
-		Auth::login(1);
-
-		$from_year = $arguments[0];
-		$to_year = $arguments[1];
-
-		// Foreach programme
-		foreach(PG_Programme::where('year', '=', $from_year)->get() as $programme){
-
-			$attributes = $programme->attributes;
-
-			// Remove attributes
-			foreach(static::$to_unset as $unset){
-				unset($attributes[$unset]);
-			}
-
-			// Create a new copy in the next year
-			$copy = new PG_Programme;
-			$copy->fill($attributes);
-
-			$copy->year = $to_year;
-			$copy->save();
-		}
-
-		die("Rollover complete. \n");
 	}
 
 	/**
