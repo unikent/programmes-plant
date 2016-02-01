@@ -10,5 +10,6 @@ return array(
 	'institution_param' => '', // web service institution parameter name
 	'campus_param' => '',  // web service campus parameter name
 	'session_param' => '', // web service session parameter name
-	'module_session' => '', // module session value (where 2013 = 2012/2013 session)
+	'module_session' => '', // module session value (where 2013 = 2012/2013 session),
+	'api_base' => 'https://api.kent.ac.uk/api/'
 );
