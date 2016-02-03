@@ -90,36 +90,39 @@ class Rollover_Task {
 	*/
 	public function immutable($arguments = array())
 	{
-		if(sizeof($arguments) != 3) die("Please provide a from and to year. \n");
+		if(sizeof($arguments) != 2) die("Please provide a from and to year. \n");
 
 		Auth::login(1);
 
-		$type = $arguments[0];
-		$from_year = $arguments[1];
-		$to_year = $arguments[2];
+		$from_year = $arguments[0];
+		$to_year = $arguments[1];
 
-		// should only be one result but loop anyway
-		foreach(GlobalSetting::where('year', '=', $from_year)->get() as $global_settings){
+		$d = GlobalSetting::where('year', '=', $to_year)->first();
 
-			// attributes from the original version
-			$attributes = $global_settings->attributes;
-
-			// remove attributes from the original version that we don't want for the new copy
-			foreach(static::$to_unset_for_settings as $unset){
-				unset($attributes[$unset]);
-			}
-
-			// create the copy using fill to push in the relevant attributes
-			$global_settings_copy = new GlobalSetting;
-			$global_settings_copy->fill($attributes);
-			$global_settings_copy->year = $to_year;
-			$global_settings_copy->save();
-
-			// make the revision live
-			$revision = $global_settings_copy->current_revision;
-        	$global_settings_copy->make_revision_live($revision);
+		if($d !== NULL){
+			return "Skipping Immutable rollover - to_year already exists.";
 		}
 
+		// should only be one result but loop anyway
+		$global_settings = GlobalSetting::where('year', '=', $from_year)->first();
+
+		// attributes from the original version
+		$attributes = $global_settings->attributes;
+
+		// remove attributes from the original version that we don't want for the new copy
+		foreach(static::$to_unset_for_settings as $unset){
+			unset($attributes[$unset]);
+		}
+
+		// create the copy using fill to push in the relevant attributes
+		$global_settings_copy = new GlobalSetting;
+		$global_settings_copy->fill($attributes);
+		$global_settings_copy->year = $to_year;
+		$global_settings_copy->save();
+
+		// make the revision live
+		$revision = $global_settings_copy->current_revision;
+    	$global_settings_copy->make_revision_live($revision);
 	}
 
 	/**
@@ -136,6 +139,13 @@ class Rollover_Task {
 		$to_year = $arguments[2];
 
 		$model = strtoupper($type) . "_ProgrammeSetting";
+
+
+		$d = $model::where('year', '=', $to_year)->first();
+
+		if($d !== NULL){
+			return "Skipping settings rollover - to_year already exists.";
+		}
 
 		// should only be one result but loop anyway
 		foreach($model::where('year', '=', $from_year)->get() as $programme_settings){
