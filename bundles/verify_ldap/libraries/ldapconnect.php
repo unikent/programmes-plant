@@ -1,4 +1,4 @@
-<?php use \Config;
+<?php use \Laravel\Config;
 /**
  * LDAP Class provides basic operations for authenticating users and getting details from them.
  *
