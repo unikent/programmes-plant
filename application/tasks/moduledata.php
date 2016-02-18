@@ -4,6 +4,8 @@ require_once path('base') . 'vendor/autoload.php';
 
 class ModuleData_Task {
 
+	public static $moduleCache = array();
+
     /**
      * Run the moduledata command.
      * 
@@ -182,7 +184,7 @@ class ModuleData_Task {
         $module->login = array();
 
         //parse modules
-        $data = $this->parse_module_data($data, $module);
+        $data = $this->parse_module_data($data);
 
         return $data;
     }
@@ -198,7 +200,7 @@ class ModuleData_Task {
             'format=json';
     }
 
-    public function parse_module_data($programme_modules, $module_data_obj)
+    public function parse_module_data($programme_modules)
     {
         // set up the output object
         $programme_modules_new = new stdClass;
@@ -206,7 +208,7 @@ class ModuleData_Task {
 
         // return blank if no valid modules found
         if($programme_modules === null) return null;
-        
+
         // loop through each of the modules and get its synopsis, adding it to the object for output
         if ( isset($programme_modules->response->message) )
         {
@@ -221,7 +223,7 @@ class ModuleData_Task {
                 {
                     $programme_modules->response->rubric->cluster = array($programme_modules->response->rubric->cluster);
                 }
-                
+
                 // loop through each cluster and assign it to the appropriate cluster type
                 foreach ($programme_modules->response->rubric->cluster as $cluster)
                 {
@@ -246,28 +248,29 @@ class ModuleData_Task {
                         if ( is_object($cluster->modules->module) )
                         {
                             $cluster->modules->module = array($cluster->modules->module);
+
                         }
-                        
-                        // set the synopsis for each module (but don't bother with wildcards)
-                        if ($cluster_type != 'wildcard')
-                        {
-                            foreach ($cluster->modules->module as $module_index => $module)
-                            {
-                                if (is_object($module) && $module != null)
-                                {
-                                    $module->synopsis = '';
-                                    if (isset($module->module_code))
-                                    {
-                                        // set the url for this web service call
-                                        $url_synopsis_full = Config::get('module.module_data_url') . $module->module_code . '.xml';
-                                        // get the synopsis and add it to the programme_modules object
-                                        $module->synopsis = str_replace("\r\n", '<br>', $module_data_obj->get_module_synopsis($url_synopsis_full));
-                                    }
-                                } // end module test
-                                
-                            } // endforeach
-                        } //endif
-                        
+
+						foreach ($cluster->modules->module as $module_index => $module)
+						{
+							if (is_object($module) && $module != null)
+							{
+								$module->synopsis = '';
+								if (isset($module->module_code))
+								{
+
+									$apiData = self::getModuleAPIData($module->module_code);
+									if(!empty($apiData)){
+										$module->synopsis = str_replace("\r\n", '<br>', $apiData->synopsis);
+										$module->module_code = $apiData->code;
+										$module->sds_code = $apiData->sds_code;
+									}
+								}
+							} // end module test
+
+						} // endforeach
+
+
                         // rebuild the structure of the programmes modules object to make things easier on the frontend
                         // we now store modules in stages, with each stage broken into separate clusters
                         // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
@@ -289,7 +292,7 @@ class ModuleData_Task {
         
         // sort the stages
         ksort($programme_modules_new->stages);
-        
+
         return $programme_modules_new;    
     }
 
@@ -328,8 +331,32 @@ class ModuleData_Task {
         Cache::forget($cache_key);
     }
     
-    
+    public static function getModuleAPIData($code){
+
+		if(array_key_exists($code,self::$moduleCache)){
+			return self::$moduleCache['code'];
+		}
+
+		$ch = curl_init( Config::get('module.api_base') . "/v1/modules/module/" . $code);
+
+		curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
+		//curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+
+		$result = curl_exec($ch);
+		$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		if($result) {
+			$result = json_decode($result);
+
+			self::$moduleCache[$code] = $result;
+
+			return $result;
+		}else{
+			return false;
+		}
+
+	}
     
 }
-    
-    

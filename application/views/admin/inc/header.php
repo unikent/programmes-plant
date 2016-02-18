@@ -14,7 +14,7 @@
 
                     <ul class="nav">
                         <?php for ($year=URLParams::$current_year-1; $year<=(URLParams::$current_year+1); $year++): ?>
-                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/' . '/globalsettings'); ?>"><?php echo $year; ?></a></li>
+                        <li class="<?php echo ( URLParams::$year == $year ? 'active' : false ); ?>"><a href="<?php echo url($year . '/globalsettings'); ?>"><?php echo $year; ?></a></li>
                         <?php endfor; ?>
                     </ul>
 
