@@ -8,7 +8,7 @@ class ModuleData_Task {
 
     /**
      * Run the moduledata command.
-     * 
+     *
      * @param array  $arguments The arguments sent to the moduledata command.
      */
     public function run($arguments = array())
@@ -30,7 +30,7 @@ class ModuleData_Task {
         // load PG
         $parameters['type']='pg';
         $this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
-        
+
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
          API::purge_output_cache();
     }
@@ -63,9 +63,9 @@ class ModuleData_Task {
             foreach($deliveries as $delivery){
 
                 $cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
-                if(in_array($cache_key,$module_cache)){
-                    $programme_modules_new = $module_cache[$cache_key];
-                    echo "Cached modules loaded";
+
+                if(array_key_exists($cache_key,$module_cache)){
+                    continue;
                 }else {
                     $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
                     if($programme_modules_new!==null) {
@@ -91,7 +91,7 @@ class ModuleData_Task {
             else {
                 return null;
             }
-        }  // otherwise use the config module session field  
+        }  // otherwise use the config module session field
         else {
 
             if ($parameters['type'] == 'ug') {
@@ -105,7 +105,7 @@ class ModuleData_Task {
         }
     }
 
-    
+
     /**
     * parse_arguments - parses command line options
     *
@@ -114,19 +114,19 @@ class ModuleData_Task {
     */
     public function parse_arguments($arguments = array())
     {
-        if ( empty($arguments) || $arguments[0] == '-h' ) 
+        if ( empty($arguments) || $arguments[0] == '-h' )
         {
             $parameters['help'] = $this->help_argument();
             return $parameters;
         }
-        
+
         // set defaults for the parameters in case they're not set
         $parameters = array();
         $parameters['programme_session'] = '2014';
         $parameters['sleeptime'] = 5;
         $parameters['counter'] = 1;
         $parameters['test_mode'] = false;
-        
+
         foreach ($arguments as $argument)
         {
             $switch_name = substr($argument, 0, 2);
@@ -154,13 +154,13 @@ class ModuleData_Task {
 
         return $parameters;
     }
-    
-    
+
+
     public function help_argument()
     {
         return "\n\n-s - programme session. Defaults to 2014.\n-t - seconds per web service call. Defaults to 5 (one request every 5 seconds).\n-c - programmes to process. Defaults to 1. 0 indicates all.\n-x - test mode.\n\n";
     }
-    
+
 
     //$institution = '0122';
     public function load_module_data($pos_code, $institution, $campus_id, $module_session, $module = false){
@@ -172,11 +172,11 @@ class ModuleData_Task {
         // build request
         $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session);
 
-        // auth 
+        // auth
         $module->login['username'] = Config::get('module.programme_module_user');
         $module->login['password'] = Config::get('module.programme_module_pass');
 
-        // load data & 
+        // load data &
         echo "Requesting: " . $webservice_request . ' - ';
         $data = $module->get_programme_modules($webservice_request);
 
@@ -192,7 +192,7 @@ class ModuleData_Task {
 
         if($module_session == 'None' || $module_session == 'none') return '';
 
-        return Config::get('module.programme_module_base_url') . 
+        return Config::get('module.programme_module_base_url') .
             Config::get('module.pos_code_param') . '=' . $pos_code . '&' .
             Config::get('module.institution_param') . '=' . $institution . '&' .
             Config::get('module.campus_param') . '=' . $campus_id . '&' .
@@ -243,7 +243,7 @@ class ModuleData_Task {
                         {
                             $cluster_type = 'optional';
                         }
-                        
+
                         // make sure the modules list is always an array, even if there's only one module in the cluster
                         if ( is_object($cluster->modules->module) )
                         {
@@ -251,7 +251,7 @@ class ModuleData_Task {
 
                         }
 
-						foreach ($cluster->modules->module as $module_index => $module)
+						foreach ($cluster->modules->module as $module_index => &$module)
 						{
 							if (is_object($module) && $module != null)
 							{
@@ -275,25 +275,25 @@ class ModuleData_Task {
                         // we now store modules in stages, with each stage broken into separate clusters
                         // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
                         $cluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
-                        
+
                         // if a particular stage hasn't been set before, create it as a new object
                         if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
-                        
+
                         // set the stage name and stage cluster array
                         $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
                         $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
-                        
-                        
+
+
                     } // end cluster test
                 } // endforeach
-                
+
             } // endif
         } // endif
-        
+
         // sort the stages
         ksort($programme_modules_new->stages);
 
-        return $programme_modules_new;    
+        return $programme_modules_new;
     }
 
 
@@ -306,11 +306,11 @@ class ModuleData_Task {
     */
     public function modules($arguments = array())
     {
-        
+
         // get the list of programmes for this session and programme type from our own API call
         $programme = $arguments[0]; // programme data
         $programme_session = $arguments[1]; // session
-        
+
         $type = $arguments[2]; // ug or pg
 
         // set params
@@ -330,11 +330,11 @@ class ModuleData_Task {
         $cache_key = "api-output-{$type}.programme-$module_session-" . $tmp_programme['id'];
         Cache::forget($cache_key);
     }
-    
+
     public static function getModuleAPIData($code){
 
 		if(array_key_exists($code,self::$moduleCache)){
-			return self::$moduleCache['code'];
+			return self::$moduleCache[$code];
 		}
 
 		$ch = curl_init( Config::get('module.api_base') . "/v1/modules/module/" . $code);
@@ -358,5 +358,5 @@ class ModuleData_Task {
 		}
 
 	}
-    
+
 }
