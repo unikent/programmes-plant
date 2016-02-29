@@ -294,6 +294,7 @@ class XMLHelper
 			'onClick',
 			'style',
 			'trebuchet',
+			'type',
 			'align="left"',
 			'value'
 		);
