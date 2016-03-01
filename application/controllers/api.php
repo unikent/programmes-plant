@@ -38,8 +38,14 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 		if($level==='all'){
-			$ug = API::get_index($year,'UG');
-			$pg = API::get_index($year,'PG');
+			$ug = API::get_index($year,'ug');
+			array_walk($ug,function(&$programme){
+				$programme['level'] = 'UG';
+			});
+			$pg = API::get_index($year,'pg');
+			array_walk($pg,function(&$programme){
+				$programme['level'] = 'PG';
+			});
 			$index_data = array_merge(array_values($ug),array_values($pg));
 		}else {
 			$index_data = API::get_index($year);
