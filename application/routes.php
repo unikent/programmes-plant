@@ -113,9 +113,9 @@ Route::group(array('before' => ''), function(){
 
 	// Routing for API index
 	Route::any(array(
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)',
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes.(json|xml|csv)',
-			'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes'
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/programmes.(json|xml|csv)',
+			'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/programmes'
 			
 	), 'api@index');
 

@@ -312,7 +312,6 @@ abstract class Programme extends Revisionable {
 	{
 		$type = static::$type;
 		$cache_key = "api-index-{$type}.index-$year";
-		return static::generate_api_index($year);
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_index($year);
 	}
 
