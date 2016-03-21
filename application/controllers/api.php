@@ -427,6 +427,7 @@ class API_Controller extends Base_Controller {
 		foreach($programmes as $programme) {
 			$output = array();
 			$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
+
 			$output['Course ID'] = $programme_api['instance_id'];
 			$output['POS'] = array();
 			$output['Title'] = $programme['name'];
@@ -445,7 +446,23 @@ class API_Controller extends Base_Controller {
 			$output['Total Kent credits'] = $programme_api['total_kent_credits_awarded_on_completion'];
 
 			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
-		
+			$output['Administrative School'] = $programme_api['administrative_school'][0]['name'];
+			$subjects =  array();
+			if(!empty($programme_api['subject_area_1'])){
+				$subjects[] = $programme_api['subject_area_1'][0]['name'];
+			}
+			if(!empty($programme_api['subject_area_2'])){
+				$subjects[] = $programme_api['subject_area_2'][0]['name'];
+			}
+			$output['Subject Areas'] = implode(',',$subjects);
+			$output['Award'] = $programme_api['award'][0]['name'];
+			$output['Award Type'] = $programme_api['honours_type'];
+			$output['Duration'] = $programme_api['duration'];
+			$output['Year Abroad'] = $programme_api['year_abroad'];
+			$output['Year in Industry'] = $programme_api['year_in_industry'];
+			$output['Accredited by'] = $programme_api['accredited_by'];
+
+
 			$lising[] = $output;
 		}
 
