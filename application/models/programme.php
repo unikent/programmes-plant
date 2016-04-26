@@ -643,8 +643,8 @@ abstract class Programme extends Revisionable {
 				);
 
 				$programme_data = array_merge($programme_data, $fee);
-
-				$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
+				$key = md5(serialize($programme_data)); // use has as key to prevent duplicate rows with different mcr codes FP#741822 (e.g. LAW:LLB)
+				//$key = trim(substr($delivery['mcr'], 0, strpos($delivery['mcr'], "-")));
 
 				$fees_data[$key] = $programme_data;
 			}
