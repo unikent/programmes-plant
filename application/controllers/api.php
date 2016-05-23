@@ -1266,7 +1266,6 @@ class API_Controller extends Base_Controller {
 			//die($type);
 			// Generate data format
 			foreach($programmes as &$programme) {
-				$output = [];
 				$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
 				$programme['programme_aims'] = $programme_api['programme_aims'];
 				if($type == 'undergraduate') {
