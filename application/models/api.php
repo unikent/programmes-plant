@@ -459,14 +459,23 @@ class API {
 		}
 		// Pokémon expection handling, gotta catch em all.
 		try {
-
-			Cache::purge($pg_key);
+			if($fees_year==='preview'){
+				Cache::forget($pg_key);
+			}else {
+				Cache::purge($pg_key);
+			}
 		}catch (Exception $e) {
 			// Do nothing, all this means if there was no directory (yet) to wipe
 		}
 		// Pokémon expection handling, gotta catch em all.
 		try {
-			Cache::purge($ug_key);
+
+			if($fees_year==='preview') {
+				Cache::forget($ug_key);
+			}else {
+				Cache::purge($ug_key);
+			}
+
 		}catch (Exception $e) {
 			// Do nothing, all this means if there was no directory (yet) to wipe
 		}
