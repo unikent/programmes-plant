@@ -1276,7 +1276,7 @@ class API_Controller extends Base_Controller {
 													  $programme_api['subjectspecific_skills_learning_outcomes'] .
 													  $programme_api['transferable_skills_learning_outcomes'];
 				}
-				$programme['deliveries'] = [];
+				$programme['deliveries'] = array();
 				foreach($programme_api['deliveries'] as $d) {
 					$programme['deliveries'][] = ['pos_code' => $d['pos_code']];
 				}
