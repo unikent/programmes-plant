@@ -1250,27 +1250,39 @@ class API_Controller extends Base_Controller {
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
 
-		// Get real year
-		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
-		// get the list of courses
-		$programmes = API::get_index($year);
+		$cache_key = "hear-$year-$type";
+		$programmes = (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
 
-		//die($type);
-		// Generate data format
-		foreach($programmes as &$programme) {
-			$output = array();
-			$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
-			$programme['programme_aims'] = $programme_api['programme_aims'];
-			if($type == 'undergraduate') {
-				$programme['learning_outcomes'] = $programme_api['learning_outcomes'];
-			}else{
-				$programme['learning_outcomes'] =  $programme_api['knowledge_and_understanding_learning_outcomes'] . $programme_api['intellectual_skills_learning_outcomes'] . $programme_api['subjectspecific_skills_learning_outcomes'] . $programme_api['transferable_skills_learning_outcomes'];
+		if(!$programmes) {
+			// Get real year
+			if($year == 'current') {
+				$year = Setting::get_setting(URLParams::$type . "_current_year");
 			}
-			$programme['deliveries'] = array();
-			foreach( $programme_api['deliveries'] as $d){
-				$programme['deliveries'][] = array('pos_code'=>$d['pos_code']);
+
+			// get the list of courses
+			$programmes = API::get_index($year);
+
+			//die($type);
+			// Generate data format
+			foreach($programmes as &$programme) {
+				$output = [];
+				$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
+				$programme['programme_aims'] = $programme_api['programme_aims'];
+				if($type == 'undergraduate') {
+					$programme['learning_outcomes'] = $programme_api['learning_outcomes'];
+				} else {
+					$programme['learning_outcomes'] = $programme_api['knowledge_and_understanding_learning_outcomes'] .
+													  $programme_api['intellectual_skills_learning_outcomes'] .
+													  $programme_api['subjectspecific_skills_learning_outcomes'] .
+													  $programme_api['transferable_skills_learning_outcomes'];
+				}
+				$programme['deliveries'] = [];
+				foreach($programme_api['deliveries'] as $d) {
+					$programme['deliveries'][] = ['pos_code' => $d['pos_code']];
+				}
 			}
+			Cache::put($cache_key,$programmes,86000); //just under 24 hours
 		}
 
 		// output the data
