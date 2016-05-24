@@ -1277,8 +1277,12 @@ class API_Controller extends Base_Controller {
 													  $programme_api['transferable_skills_learning_outcomes'];
 				}
 				$programme['deliveries'] = array();
+				$poscodes= array();
 				foreach($programme_api['deliveries'] as $d) {
-					$programme['deliveries'][] = array('pos_code' => $d['pos_code']);
+					if(!in_array($d['pos_code'],$poscodes)) {
+						$programme['deliveries'][] = array('pos_code' => $d['pos_code']);
+						$poscodes[] = $d['pos_code'];
+					}
 				}
 			}
 			Cache::put($cache_key,$programmes,86000); //just under 24 hours
