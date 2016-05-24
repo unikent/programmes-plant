@@ -119,6 +119,11 @@ Route::group(array('before' => ''), function(){
 			
 	), 'api@index');
 
+	Route::get(array(
+				   '/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear.(json|xml|csv)',
+				   '/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear'
+			   ), 'api@hear');
+
 	// Routing for API fees
 	Route::any(array(
 			'/api/([0-9]{4}|current|preview)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
@@ -141,8 +146,7 @@ Route::group(array('before' => ''), function(){
 	Route::any('/api/preview/(undergraduate|postgraduate)/(:any?)', 'api@preview');
 
 	Route::any('/api/simpleview/(undergraduate|postgraduate)/(:any?)', 'api@simpleview');
-	
-	
+
 	// XCRI-CAP Feed
 	Route::any('/api/xcri-cap', 'api@xcri_cap');
 	Route::any('/api/([0-9]{4}|current)/xcri-cap', 'api@xcri_cap');
