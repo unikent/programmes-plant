@@ -166,19 +166,19 @@ class API_Controller extends Base_Controller {
 		$api_index = API::get_index($year, 'pg');
 		$listing = array();
 		$data = array();
-        // fetch each programme individually for our xcri feed
-        $index_programmes = array_keys($api_index);
+		// fetch each programme individually for our xcri feed
+		$index_programmes = array_keys($api_index);
 
-        $start--;
-    	$slice = array_slice($index_programmes, (int)$start, 50);
+		$start--;
+		$slice = array_slice($index_programmes, (int)$start, 50);
 
-        foreach ($slice as $programme_id) {
-	        try {
-	            $data['programmes'][] = API::get_programme('pg', $year, $programme_id);
-	        }
-	        catch (Exception $e) {
-	        }
-    	}
+		foreach ($slice as $programme_id) {
+			try {
+				$data['programmes'][] = API::get_programme('pg', $year, $programme_id);
+			}
+			catch (Exception $e) {
+			}
+		}
 
 		foreach($data['programmes'] as $programme) {
 
@@ -204,14 +204,14 @@ class API_Controller extends Base_Controller {
 
 				// course structure data
 				$output['course structure']  = 'Course structure' . "\r\n\r\n";
- 				if (!empty($programme['programme_overview'])) {
- 					$output['course structure'] .= $programme['programme_overview'];
- 				}
+				if (!empty($programme['programme_overview'])) {
+					$output['course structure'] .= $programme['programme_overview'];
+				}
 
- 				$output['course structure'] .= 'Modules' . "\r\n";
+				$output['course structure'] .= 'Modules' . "\r\n";
 
- 				$emptystages = true;
- 				if ( isset ($programme['modules']) ) {
+				$emptystages = true;
+				if ( isset ($programme['modules']) ) {
 					foreach($programme['modules'] as $module){
 						if ( ! empty($module->stages) ) {
 							$emptystages = false;
@@ -253,11 +253,11 @@ class API_Controller extends Base_Controller {
 
 				foreach($module_list as $module) {
 					$output['course structure'] .= "$module->module_code  -  $module->module_title" . "\r\n" . "Credits: $module->credit_amount credits ( $module->ects_credit ECTS credits)." . "\r\n";
-	            }
-	            $output['course structure'] .= 'Assessment' . "\r\n" . $programme['assessment'];
+				}
+				$output['course structure'] .= 'Assessment' . "\r\n" . $programme['assessment'];
 
-	            // study support
-	            $output['study support'] = 'Study support' . "\r\n";
+				// study support
+				$output['study support'] = 'Study support' . "\r\n";
 				$output['study support'] = !empty($programme['key_information_miscellaneous']) ? $programme['key_information_miscellaneous'] . "\r\n" : "\r\n";
 
 				if ( !empty($programme['careers_and_employability']) || !empty($programme['globals']['careersemployability_text']) ) {
@@ -514,69 +514,69 @@ class API_Controller extends Base_Controller {
 
 	}
 
-    /**
-     * Routing for /export/$year/$type/pos-codes
-     *
-     * Export CSV of pos codes
-     *
-     * @param int    $year The year.
-     * @param string $type Undergraduate or postgraduate.
-     */
-    public function get_export_poscodes($year, $type, $programme_type=null){
+	/**
+	 * Routing for /export/$year/$type/pos-codes
+	 *
+	 * Export CSV of pos codes
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_export_poscodes($year, $type, $programme_type=null){
 
-        // get last generated date
-        $last_generated = API::get_last_change_time();
-        // If cache is valid, send 304
-        if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
 
-        // Get real year
-        if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
-        // get the list of courses
-        $programmes = API::get_index($year);
-        $model = API::get_programme_model();
-        $level = $type == 'undergraduate' ? 'ug' : 'pg';
-        $listing = array();
+		// get the list of courses
+		$programmes = API::get_index($year);
+		$model = API::get_programme_model();
+		$level = $type == 'undergraduate' ? 'ug' : 'pg';
+		$listing = array();
 
-        foreach($programmes as $programme) {
-            if(empty($programme_type) || ($programme['programme_type']===$programme_type)) {
-                $output = array();
+		foreach($programmes as $programme) {
+			if(empty($programme_type) || ($programme['programme_type']===$programme_type)) {
+				$output = array();
 
-                $output['ID'] = $programme['id'];
-                $output['Title'] = $programme['name'];
-                $output['Award'] = $programme['award'];
-                $output['Campus'] = $programme['campus'];
-                $output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
+				$output['ID'] = $programme['id'];
+				$output['Title'] = $programme['name'];
+				$output['Award'] = $programme['award'];
+				$output['Campus'] = $programme['campus'];
+				$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
 
 
-                $programme_api = array();
-                try {
-                    $programme_api = API::get_programme($level, $year, $programme['id']);
+				$programme_api = array();
+				try {
+					$programme_api = API::get_programme($level, $year, $programme['id']);
 
-                } catch (Exception $e) {
-                    continue;
-                }
+				} catch (Exception $e) {
+					continue;
+				}
 
-                $pos_codes = array();
-                if (isset($programme_api['deliveries'])) {
+				$pos_codes = array();
+				if (isset($programme_api['deliveries'])) {
 
-                    foreach ($programme_api['deliveries'] as $delivery) {
-                        if (!in_array($delivery['pos_code'], $pos_codes)) {
-                            $pos_codes[] = $delivery['pos_code'];
-                        }
-                    }
-                }
-                $output['POS Codes'] = implode(', ', $pos_codes);
-                if(!empty($pos_codes)) {
-                    $listing[] = $output;
-                }
-            }
-        }
+					foreach ($programme_api['deliveries'] as $delivery) {
+						if (!in_array($delivery['pos_code'], $pos_codes)) {
+							$pos_codes[] = $delivery['pos_code'];
+						}
+					}
+				}
+				$output['POS Codes'] = implode(', ', $pos_codes);
+				if(!empty($pos_codes)) {
+					$listing[] = $output;
+				}
+			}
+		}
 
-        // output the data
-        return static::csv_download($listing, "{$type}-{$year}-POS-Codes", $last_generated);
+		// output the data
+		return static::csv_download($listing, "{$type}-{$year}-POS-Codes", $last_generated);
 
-    }
+	}
 
 
 	/**
@@ -1226,21 +1226,21 @@ class API_Controller extends Base_Controller {
 
 		// set the right encoding
 		if( headers_sent() )
-	        $encoding = false;
-	    else if( strpos($HTTP_ACCEPT_ENCODING, 'x-gzip') !== false )
-	        $encoding = 'x-gzip';
-	    else if( strpos($HTTP_ACCEPT_ENCODING,'gzip') !== false )
-	        $encoding = 'gzip';
-	    else
-	        $encoding = false;
+			$encoding = false;
+		else if( strpos($HTTP_ACCEPT_ENCODING, 'x-gzip') !== false )
+			$encoding = 'x-gzip';
+		else if( strpos($HTTP_ACCEPT_ENCODING,'gzip') !== false )
+			$encoding = 'gzip';
+		else
+			$encoding = false;
 
-	    if($encoding){
+		if($encoding){
 			// Add the appropriate encoding header and gzip our content
-	    	static::$headers['Content-Encoding'] = $encoding;
-	    	$content = "\x1f\x8b\x08\x00\x00\x00\x00\x00" . gzcompress($content);
-	    }
+			static::$headers['Content-Encoding'] = $encoding;
+			$content = "\x1f\x8b\x08\x00\x00\x00\x00\x00" . gzcompress($content);
+		}
 
-	    return $content;
+		return $content;
 	}
 
 	public function get_hear($year, $type)
