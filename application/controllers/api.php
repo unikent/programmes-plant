@@ -8,19 +8,19 @@ class API_Controller extends Base_Controller {
 
 	/**
 	 * Array to store headers as header => value.
-	 * 
+	 *
 	 * Static so that potentially other classes could arbitarily add or modify headers here.
 	 */
 	public static $headers = array();
-	
+
 	public function __construct()
 	{
 		// turn off the profiler because this interferes with the web service
 		Config::set('application.profiler', false);
 
-		static::$headers['Cache-Control'] = 'public, max-age=600'; 
+		static::$headers['Cache-Control'] = 'public, max-age=600';
 	}
-	
+
 	/**
 	* Get the index data
 	*
@@ -32,7 +32,7 @@ class API_Controller extends Base_Controller {
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
-		
+
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)){
 			return Response::make('', '304');
@@ -104,7 +104,7 @@ class API_Controller extends Base_Controller {
 
 			$output['location'] = $programme['campus'];
 			if($type == 'postgraduate') $output['additional locations'] = $programme['additional_locations'];
-			
+
 			$lising[] = $output;
 		}
 
@@ -137,7 +137,7 @@ class API_Controller extends Base_Controller {
 			$output['id'] = $programme['id'];
 			$output['title'] = $programme['name'] . ' ' . $programme['award'];
 			$output['title'] .= $programme['subject_to_approval'] != '' ? ' (subject to approval)' : '';
-			
+
 			$lising[] = $output;
 		}
 
@@ -205,7 +205,7 @@ class API_Controller extends Base_Controller {
 				// course structure data
 				$output['course structure']  = 'Course structure' . "\r\n\r\n";
  				if (!empty($programme['programme_overview'])) {
- 					$output['course structure'] .= $programme['programme_overview']; 
+ 					$output['course structure'] .= $programme['programme_overview'];
  				}
 
  				$output['course structure'] .= 'Modules' . "\r\n";
@@ -308,10 +308,10 @@ class API_Controller extends Base_Controller {
 				// 			$output['staff research interests'] .= $staff['forename'] . " " . $staff['surname'];
 				// 			$output['staff research interests'] .= $staff['role'] != '' ? ' : ' . $staff['role'] : '';
 				// 			$output['staff research interests'] .= "\r\n";
-							
+
 				// 			if ( ! empty ($staff['blurb']) ) {
 				// 				$output['staff research interests'] .= $staff['blurb']. "\r\n";
-				// 				if ($staff['profile_url'] != '') { 
+				// 				if ($staff['profile_url'] != '') {
 				// 					$output['staff research interests'] .= $staff['profile_url']. "\r\n";
 				// 				}
 				// 			}
@@ -321,7 +321,7 @@ class API_Controller extends Base_Controller {
 
 				// key facts
 				$output['key facts'] = 'Key facts' . "\r\n";
-				if (!empty($programme['additional_school'][0]) && !empty($programme['administrative_school'][0])) { 
+				if (!empty($programme['additional_school'][0]) && !empty($programme['administrative_school'][0])) {
 					$output['key facts'] .= "Schools: " . $programme['school_website'] . " " . $programme['administrative_school'][0]['name'] . ", " . $programme['url_for_additional_school'] . " " . $programme['additional_school'][0]['name'] . "\r\n";
 				}
 				else if (!empty($programme['administrative_school'][0])) {
@@ -336,7 +336,7 @@ class API_Controller extends Base_Controller {
 				$output['key facts'] .= $second_subject ? ', ' . $programme['subject_area_2'][0]['name'] : '';
 				$output['key facts'] .= "\n\n";
 				$output['key facts'] .= "Award: " . $programme['award_list'] . "\r\n";
-				
+
 				$output['key facts'] .= "Course type: ";
 				if(strpos($programme['programme_type'], 'research') === false ) $output['key facts'] .= "Taught";
 				elseif(strpos($programme['programme_type'], 'taught') === false) $output['key facts'] .= "Research";
@@ -359,7 +359,7 @@ class API_Controller extends Base_Controller {
 					}
 				}
 				$output['key facts'] .= $locations.$additional_locations . "\r\n";
-				
+
 
 				$output['key facts'] .= "Mode of study: {$programme['mode_of_study']}" . "\r\n";
 
@@ -369,20 +369,20 @@ class API_Controller extends Base_Controller {
 
 				if (!empty($programme['attendance_text'])) {
 					$output['key facts'] .= "Duration: {$programme['attendance_text']}" . "\r\n";
-				} 
-				
+				}
+
 				if (!empty($programme['start'])) {
 					$output['key facts'] .= "Start: {$programme['start']}" . "\r\n";
 				}
-				
+
 				if (!empty($programme['accredited_by'])) {
 					$output['key facts'] .= "Accredited by: {$programme['accredited_by']}" . "\r\n";
 				}
-				
-				if (!empty($programme['total_kent_credits_awarded_on_completion'])) { 
+
+				if (!empty($programme['total_kent_credits_awarded_on_completion'])) {
 					$output['key facts'] .= "Total Kent credits: {$programme['total_kent_credits_awarded_on_completion']}" . "\r\n";
 				}
-			
+
 				if (!empty($programme['total_ects_credits_awarded_on_completion'])) {
 					$output['key facts'] .= "Total ECTS credits: {$programme['total_ects_credits_awarded_on_completion']}" . "\r\n";
 				}
@@ -396,8 +396,8 @@ class API_Controller extends Base_Controller {
 
 		// output the data
 		return static::csv_download($listing, "courses", $last_generated);
-		
-		
+
+
 	}
 
 	/**
@@ -410,7 +410,7 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_export_kisdata($year, $type)
 	{
-		// get last generated date 
+		// get last generated date
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
@@ -419,10 +419,10 @@ class API_Controller extends Base_Controller {
 		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
 		// get the list of courses
-		$programmes = API::get_index($year); 
+		$programmes = API::get_index($year);
 		$model = API::get_programme_model();
 		$listing = array();
-		
+
 		// Generate data format
 		foreach($programmes as $programme) {
 			$output = array();
@@ -480,7 +480,7 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_export_lastupdated($year, $type){
 
-		// get last generated date 
+		// get last generated date
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
@@ -489,7 +489,7 @@ class API_Controller extends Base_Controller {
 		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
 		// get the list of courses
-		$programmes = API::get_index($year); 
+		$programmes = API::get_index($year);
 		$model = API::get_programme_model();
 
 		$lising = array();
@@ -505,7 +505,7 @@ class API_Controller extends Base_Controller {
 			$output['Last Updated'] = $extra->updated_at;
 
 			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
-		
+
 			$lising[] = $output;
 		}
 
@@ -687,7 +687,7 @@ class API_Controller extends Base_Controller {
 		// UG only currently
 		if($type !== 'undergraduate') return 0;
 
-		// get last generated date 
+		// get last generated date
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
@@ -696,15 +696,15 @@ class API_Controller extends Base_Controller {
 		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
 		// get the list of courses
-		$programmes = API::get_index($year); 
+		$programmes = API::get_index($year);
 		$model = API::get_programme_model();
 		$listing = array();
-	
+
 		// Additional Fields
 		$extra_cols = array(
-			"subject_to_approval", 
-			"homeeu_students_intro_text", 
-			"a_level", 
+			"subject_to_approval",
+			"homeeu_students_intro_text",
+			"a_level",
 			"cgse",
 			"access_to_he_diploma",
 			"btec_level_3_extended_diploma_formerly_btec_national_diploma",
@@ -754,14 +754,14 @@ class API_Controller extends Base_Controller {
 	 * @param string $type Undergraduate or postgraduate.
 	 */
 	public function get_courses_without_fees($year, $type)
-	{	
+	{
 		// Since this a none-user facing report which will be run pretty irregularity,
 		// optimizing its at this point feels as if it will be a waste of effort that could
 		// be better spent optimizing other parts of the code base.
 		// Since this report being slow doesn't really matter, I've upped the timeout for this report to 60 seconds
 		set_time_limit(60);
-		
-		// get last generated date 
+
+		// get last generated date
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
@@ -770,11 +770,11 @@ class API_Controller extends Base_Controller {
 		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
 
 		// get the list of courses
-		$programmes = API::get_index($year); 
+		$programmes = API::get_index($year);
 		$model = API::get_programme_model();
 		$listing = array();
 		$level = $type == 'undergraduate' ? 'ug' : 'pg';
-		
+
 		// // Generate data format
 		foreach($programmes as $programme) {
 			$output = array();
@@ -788,7 +788,7 @@ class API_Controller extends Base_Controller {
 			} catch(Exception $e) {
 				continue;
 			}
-			
+
 			// PG
 			if ($level == 'pg') {
 				if (isset($programme_api['deliveries'])) {
@@ -817,14 +817,14 @@ class API_Controller extends Base_Controller {
 				}
 				$output['POS'] = $programme['pos_code'];
 			}
-		
+
 
 			if($type == 'undergraduate') $output['UCAS code'] = $programme['ucas_code'];
 
 			$output['URL'] = "http://kent.ac.uk/courses/{$type}/{$year}/{$programme['id']}/{$programme['slug']}";
 			$listing[] = $output;
 		}
-			
+
 		// output the data
 		return static::csv_download($listing, "{$year} {$type} courses without fees", $last_generated);
 	}
@@ -840,7 +840,7 @@ class API_Controller extends Base_Controller {
 	*/
 	public function get_subject_index($year, $level, $format = 'json')
 	{
-	
+
 		// Get last updated date from cache
 		$last_generated = API::get_last_change_time();
 		// If cache is valid, send 304
@@ -891,7 +891,7 @@ class API_Controller extends Base_Controller {
 
 		// get last generated date
 		$last_generated = API::get_last_change_time();
-		
+
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)){
 			return Response::make('', '304');
@@ -934,8 +934,8 @@ class API_Controller extends Base_Controller {
 	* @param string $year          The Year.
 	* @param string $level 		   undergraduate or postgraduate
 	* @param int    $programme_id  The programme we're pulling data for.
-	* @param string $format        Return in XML or JSON.      
-	* @return Response             json|xml data as a string or HTTP response.    
+	* @param string $format        Return in XML or JSON.
+	* @return Response             json|xml data as a string or HTTP response.
 	*/
 	public function get_programme($year, $level, $programme_id, $format = 'json')
 	{
@@ -956,11 +956,11 @@ class API_Controller extends Base_Controller {
 			return Response::make('', '304');
 		}
 
-		try 
+		try
 		{
 			$programme = API::get_programme($level, $year, $programme_id);
 		}
-		
+
 		// Required data is missing?
 		catch(MissingDataException $e)
 		{
@@ -970,7 +970,7 @@ class API_Controller extends Base_Controller {
 		{
 			return Response::make('', 404);
 		}
-		
+
 		// Unknown issue with data.
 		if (! $programme)
 		{
@@ -979,7 +979,7 @@ class API_Controller extends Base_Controller {
 
 		// Set the HTTP Last-Modified header to the last updated date.
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
-		
+
 		// return a JSON version of the newly-created $final object
 		switch($format) {
 			case 'xml':
@@ -996,13 +996,13 @@ class API_Controller extends Base_Controller {
 	 *
 	 * This is a wrapper around get_data_for_level to avoid
 	 * breaking changes to the public API. Some lookups require
-	 * a level, others do not. As Laravel 3 does not support named routes 
+	 * a level, others do not. As Laravel 3 does not support named routes
 	 * we can't make level an optional parameter and require different
 	 * endpoints for the router.
 	 *
 	 * @param string $type.   Type of data to return, ie. Campuses
 	 * @param string $format  Return in JSON or XML.
-	 * @return Response       json|xml data as a string or HTTP response.    
+	 * @return Response       json|xml data as a string or HTTP response.
 	 */
 	public function get_data($type, $format = 'json')
 	{
@@ -1012,10 +1012,10 @@ class API_Controller extends Base_Controller {
 	/**
 	 * get_data_for_level Return data from simpleData cache
 	 *
-	 * @param string $level   Undergraduate, Postgraduate 
+	 * @param string $level   Undergraduate, Postgraduate
 	 * @param string $type    Type of data to return, ie. Campuses
 	 * @param string $format  Return in JSON or XML.
-	 * @return Response       json|xml data as a string or HTTP response.    
+	 * @return Response       json|xml data as a string or HTTP response.
 	 */
 	public function get_data_for_level($level, $type, $format = 'json'){
 		switch($level){
@@ -1067,7 +1067,7 @@ class API_Controller extends Base_Controller {
 		$last_retrived = Request::header('if-modified-since');
 		$request_modified_since = strtotime($last_retrived[0]);
 
-		// If time the client created its cache ($request_modified_since) is after (or equal to) 
+		// If time the client created its cache ($request_modified_since) is after (or equal to)
 		// the last change made to the data ($last_modified) then it is still valid.
 		return ($last_modified <= $request_modified_since);
 	}
@@ -1080,7 +1080,7 @@ class API_Controller extends Base_Controller {
 	 */
 	public function get_preview($level, $hash, $format='json')
 	{
-		try 
+		try
 		{
 			$programme = API::get_preview($hash);
 		}
@@ -1112,7 +1112,7 @@ class API_Controller extends Base_Controller {
 
 		return Response::make(API::array_to_xml($data), 200, static::$headers);
 	}
-	
+
 	/**
 	* Output as JSON
 	*
@@ -1136,8 +1136,8 @@ class API_Controller extends Base_Controller {
 		if (isset($_GET['callback']))
 		{
 			return Response::jsonp($_GET['callback'], $data, $code, static::$headers);
-		} 
-		else 
+		}
+		else
 		{
 			return Response::json($data, $code, static::$headers);
 		}
@@ -1179,7 +1179,7 @@ class API_Controller extends Base_Controller {
 
 	/**
 	 * Return an XCRI-CAP feed for all programmes in a given year.
-	 * 
+	 *
 	 * @param string $year year to generate xcri-cap of.
 	 * @param string $level Either undergraduate or postgraduate.
 	 * @return Response An XCRI-CAP field of the programmes for that year.
@@ -1188,7 +1188,7 @@ class API_Controller extends Base_Controller {
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
-		
+
 		// If cache is valid, send 304
 		if($this->cache_still_valid($last_generated)){
 			return Response::make('', '304');
@@ -1208,7 +1208,7 @@ class API_Controller extends Base_Controller {
 		// set the content-type header
 		static::$headers['Content-Type'] = 'text/xml';
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
-		
+
 		//send xcri-cap as our response
 		return Response::make($xcri, 200, static::$headers);
 	}
@@ -1222,18 +1222,18 @@ class API_Controller extends Base_Controller {
 	public static function gzip($content)
 	{
 		// what do we have in our Accept-Encoding headers
-		$HTTP_ACCEPT_ENCODING = isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ? $_SERVER["HTTP_ACCEPT_ENCODING"] : ''; 
-	    
+		$HTTP_ACCEPT_ENCODING = isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ? $_SERVER["HTTP_ACCEPT_ENCODING"] : '';
+
 		// set the right encoding
-		if( headers_sent() ) 
-	        $encoding = false; 
-	    else if( strpos($HTTP_ACCEPT_ENCODING, 'x-gzip') !== false ) 
-	        $encoding = 'x-gzip'; 
-	    else if( strpos($HTTP_ACCEPT_ENCODING,'gzip') !== false ) 
-	        $encoding = 'gzip'; 
-	    else 
+		if( headers_sent() )
 	        $encoding = false;
-		
+	    else if( strpos($HTTP_ACCEPT_ENCODING, 'x-gzip') !== false )
+	        $encoding = 'x-gzip';
+	    else if( strpos($HTTP_ACCEPT_ENCODING,'gzip') !== false )
+	        $encoding = 'gzip';
+	    else
+	        $encoding = false;
+
 	    if($encoding){
 			// Add the appropriate encoding header and gzip our content
 	    	static::$headers['Content-Encoding'] = $encoding;
@@ -1271,10 +1271,7 @@ class API_Controller extends Base_Controller {
 				if($type == 'undergraduate') {
 					$programme['learning_outcomes'] = $programme_api['learning_outcomes'];
 				} else {
-					$programme['learning_outcomes'] = $programme_api['knowledge_and_understanding_learning_outcomes'] .
-													  $programme_api['intellectual_skills_learning_outcomes'] .
-													  $programme_api['subjectspecific_skills_learning_outcomes'] .
-													  $programme_api['transferable_skills_learning_outcomes'];
+					$programme['learning_outcomes'] = $programme_api['knowledge_and_understanding_learning_outcomes'];
 				}
 				$programme['deliveries'] = array();
 				$poscodes= array();
