@@ -6,6 +6,9 @@ It is written in [Laravel3](http://three.laravel.com/) and using [Twitter Bootst
 
 ![Programmes plant homepage screenshot](https://raw.github.com/unikent/programmes-plant/master/screenshot.jpg "Programmes plant homepage screenshot")
 
+## Usage
+Please refer to the current [brand guidelines](https://www.kent.ac.uk/brand) for use of the existing brand.
+
 ## Build Status
 
 [![Build Status - master](https://travis-ci.org/unikent/programmes-plant.png?branch=master)](https://travis-ci.org/unikent/programmes-plant) `master` 
