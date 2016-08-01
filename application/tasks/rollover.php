@@ -60,7 +60,7 @@ class Rollover_Task {
 		Auth::login(1);
 
 		$from_year = $arguments[0];
-		$to_year = $arguments[1];	
+		$to_year = $arguments[1];
 
 		// Foreach programme
 		foreach($programme_model::where('year', '=', $from_year)->get() as $programme){
@@ -70,7 +70,7 @@ class Rollover_Task {
 			// Remove attributes
 			foreach(static::$to_unset as $unset){
 				unset($attributes[$unset]);
-			}	
+			}
 
 			// Create a new copy in the next year
 			$copy = new $programme_model;
@@ -90,12 +90,12 @@ class Rollover_Task {
 	*/
 	public function immutable($arguments = array())
 	{
-		if(sizeof($arguments) != 2) die("Please provide a from and to year. \n");
+		if(sizeof($arguments) != 3) die("Please provide a from and to year. \n");
 
 		Auth::login(1);
 
-		$from_year = $arguments[0];
-		$to_year = $arguments[1];
+		$from_year = $arguments[1];
+		$to_year = $arguments[2];
 
 		$d = GlobalSetting::where('year', '=', $to_year)->first();
 
