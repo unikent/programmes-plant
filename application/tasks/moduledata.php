@@ -258,7 +258,7 @@ class ModuleData_Task {
 
 						foreach ($cluster->modules->module as $module_index => $module)
 						{
-							if (is_object($module) && $module != null && $module->modules_status == "ACTIVE")
+							if (is_object($module) && $module != null && $module->module_status == "ACTIVE")
 							{
 								$module->synopsis = '';
 								if (isset($module->module_code))
