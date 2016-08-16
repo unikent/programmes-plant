@@ -6,10 +6,11 @@ var ck_config = {
 		{ name: 'styles', items: [ 'Format' ] },
 		{ name: 'links', items: [ 'Link', 'Unlink', 'Mailto' ] },
 		[ 'Scayt'], // spell checker
+		['Image'],
 		['Iframe'],
 		[ 'Source'],
 		[ 'Undo', 'Redo' ],
-		{ name: 'document', items: ['Maximize'] },
+		{ name: 'document', items: ['Maximize'] }
 	],
 	language: 'en-gb',
 	width: "600px",
