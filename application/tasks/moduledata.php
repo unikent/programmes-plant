@@ -227,8 +227,13 @@ class ModuleData_Task {
                 // loop through each cluster and assign it to the appropriate cluster type
                 foreach ($programme_modules->response->rubric->cluster as $cluster)
                 {
+
                     if (is_object($cluster) && $cluster != null)
                     {
+						$newCluster = clone $cluster;
+						$newCluster->modules = new stdClass();
+						$newCluster->modules->module= array();
+
                         // set the cluster type
                         $cluster_type = '';
                         if ($cluster->cluster_type == 'WILD')
@@ -251,9 +256,9 @@ class ModuleData_Task {
 
                         }
 
-						foreach ($cluster->modules->module as $module_index => &$module)
+						foreach ($cluster->modules->module as $module_index => $module)
 						{
-							if (is_object($module) && $module != null)
+							if (is_object($module) && $module != null && $module->module_status == "ACTIVE")
 							{
 								$module->synopsis = '';
 								if (isset($module->module_code))
@@ -266,6 +271,8 @@ class ModuleData_Task {
 										$module->sds_code = $apiData->sds_code;
 									}
 								}
+								$newCluster->modules->module[] = $module;
+
 							} // end module test
 
 						} // endforeach
@@ -274,14 +281,14 @@ class ModuleData_Task {
                         // rebuild the structure of the programmes modules object to make things easier on the frontend
                         // we now store modules in stages, with each stage broken into separate clusters
                         // convert stage 0 to 'foundation' as this prevents problems with index 0 arrays and json arrays vs objects
-                        $cluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
+						$newCluster->academic_study_stage = $cluster->academic_study_stage == '0' ? 'foundation' : $cluster->academic_study_stage;
 
                         // if a particular stage hasn't been set before, create it as a new object
-                        if ( ! isset($programme_modules_new->stages[$cluster->academic_study_stage]) ) $programme_modules_new->stages[$cluster->academic_study_stage] = new stdClass;
+                        if ( ! isset($programme_modules_new->stages[$newCluster->academic_study_stage]) ) $programme_modules_new->stages[$newCluster->academic_study_stage] = new stdClass;
 
                         // set the stage name and stage cluster array
-                        $programme_modules_new->stages[$cluster->academic_study_stage]->name = $cluster->stage_desc;
-                        $programme_modules_new->stages[$cluster->academic_study_stage]->clusters[$cluster_type][] = $cluster;
+                        $programme_modules_new->stages[$newCluster->academic_study_stage]->name = $newCluster->stage_desc;
+                        $programme_modules_new->stages[$newCluster->academic_study_stage]->clusters[$cluster_type][] = $newCluster;
 
 
                     } // end cluster test
