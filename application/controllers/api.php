@@ -143,27 +143,16 @@ class API_Controller extends Base_Controller {
 		// Obtain names for required fields
 		$title_field = $model::get_title_field();
 		$slug_field = $model::get_slug_field();
-		$subject_categories_field = $model::get_subject_categories_field();
 		$subject_to_approval_field = $model::get_subject_to_approval_field();
 		$new_programme_field = $model::get_new_programme_field();
-		$mode_of_study_field = $model::get_mode_of_study_field();
 		$ucas_code_field = $model::get_ucas_code_field();
-		$search_keywords_field = $model::get_search_keywords_field();
-		$awarding_institute_or_body_field = $model::get_awarding_institute_or_body_field();
-		$module_session_field = $model::get_module_session_field();
 		$award_field = $model::get_award_field();
-		$subject_area_1_field = $model::get_subject_area_1_field();
-		$subject_area_2_field = $model::get_subject_area_2_field();
 		$location_field = $model::get_location_field();
-		$additional_locations_field = $model::get_additional_locations_field();
 		$administrative_school_field = $model::get_administrative_school_field();
-		$additional_school_field = $model::get_additional_school_field();
 		$withdrawn_field = $model::get_programme_withdrawn_field();
 		$suspended_field = $model::get_programme_suspended_field();
 		$programme_type_field = $model::get_programme_type_field();
-		$study_abroad_option_field = $model::get_study_abroad_option_field();
-		$science_without_borders_field = $model::get_science_without_borders_field();
-		$attendance_mode_field = $model::get_attendance_mode_field();
+
 
 		$index_data = array();
 
@@ -174,33 +163,18 @@ class API_Controller extends Base_Controller {
 			$title_field,
 			$slug_field,
 			$award_field,
-			$subject_area_1_field,
-			$subject_categories_field,
 			$administrative_school_field,
-			$additional_school_field,
 			$location_field,
 			$new_programme_field,
 			$subject_to_approval_field,
-			$mode_of_study_field,
-			$search_keywords_field,
-			$awarding_institute_or_body_field,
-			$module_session_field,
-			$subject_area_2_field,
 			$programme_type_field,
 			$withdrawn_field,
 			$suspended_field,
-			$science_without_borders_field
-
 		);
+
 		// If UG, add ucas field
 		if ($type == 'UG') {
 			$fields[] = $ucas_code_field;
-		}
-		// if pg add additional locations field and study abroad
-		if ($type == 'PG') {
-			$fields[] = $additional_locations_field;
-			$fields[] = $study_abroad_option_field;
-			$fields[] = $attendance_mode_field;
 		}
 
 
