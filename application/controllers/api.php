@@ -113,6 +113,137 @@ class API_Controller extends Base_Controller {
 	}
 
 	/**
+	 * Routing for /$year/$type/courses
+	 *
+	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/courses
+	 * Provides a list of courses in a simple csv format
+	 *
+	 * @param int    $year The year.
+	 * @param string $type Undergraduate or postgraduate.
+	 */
+	public function get_fullsimplelist($year, $type)
+	{
+
+		switch($type){
+			case "ug":
+			case "undergraduate":
+				$type = "UG";
+				break;
+			case"pg":
+			case "postgraduate":
+				$type = "PG";
+				break;
+		}
+
+		$model = $type . "_Programme";
+		$revision_model = $type . "_ProgrammeRevision";
+		$subject_cat_model = $type . '_SubjectCategory';
+
+
+		// Obtain names for required fields
+		$title_field = $model::get_title_field();
+		$slug_field = $model::get_slug_field();
+		$subject_to_approval_field = $model::get_subject_to_approval_field();
+		$new_programme_field = $model::get_new_programme_field();
+		$ucas_code_field = $model::get_ucas_code_field();
+		$award_field = $model::get_award_field();
+		$location_field = $model::get_location_field();
+		$administrative_school_field = $model::get_administrative_school_field();
+		$withdrawn_field = $model::get_programme_withdrawn_field();
+		$suspended_field = $model::get_programme_suspended_field();
+		$programme_type_field = $model::get_programme_type_field();
+
+
+		$index_data = array();
+
+
+		$fields = array(
+			'id',
+			'instance_id',
+			$title_field,
+			$slug_field,
+			$award_field,
+			$administrative_school_field,
+			$location_field,
+			$new_programme_field,
+			$subject_to_approval_field,
+			$programme_type_field,
+			$withdrawn_field,
+			$suspended_field,
+		);
+
+		// If UG, add ucas field
+		if ($type == 'UG') {
+			$fields[] = $ucas_code_field;
+		}
+
+
+		$all_programmes = $model::where('year','=', $year)->where('hidden', '!=', 1)->get(array('live_revision','current_revision'));
+
+
+		$revisions_ids = array();
+		$live = array();
+
+		foreach($all_programmes as $programme_with_revisions){
+			if($programme_with_revisions->attributes['live_revision']!=0) {
+				$revisions_ids[] = $programme_with_revisions->attributes['live_revision'];
+				$live[] = $programme_with_revisions->attributes['live_revision'];
+			}else{
+				$revisions_ids[] = $programme_with_revisions->attributes['current_revision'];
+			}
+		}
+
+		// if nothing is live in $year, don't continue
+		if(empty($revisions_ids)){
+			return array();
+		}
+
+		$programmes = $revision_model::with(array('award', 'administrative_school', 'location'))
+			->where_in('id', $revisions_ids)
+			->get($fields);
+
+		$output = array();
+
+		foreach($programmes as $programme) {
+			// Get direct access data stores
+			$attributes = $programme->attributes;
+			$relationships = $programme->relationships;
+
+			if($type == 'PG') {
+				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
+				$awards = implode(', ', $awards);
+			} else {
+				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
+			}
+
+			$out = array(
+				'id' => $attributes['instance_id'],
+				'title' => $attributes[$title_field],
+				'awards' => $awards,
+				'administrative school' => isset($relationships["administrative_school"]) ? $relationships["administrative_school"]->attributes["name"] : '',
+				'location' => isset($relationships["location"]) ? $relationships["location"]->attributes["name"] : '',
+				'new programme' => isset($attributes[$new_programme_field]) ? $attributes[$new_programme_field] : '',
+				'subject to approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
+				'withdrawn' => isset($attributes[$withdrawn_field]) ? $attributes[$withdrawn_field] : '',
+				'suspended' => isset($attributes[$suspended_field]) ? $attributes[$suspended_field] : '',
+			);
+
+			if($type == 'UG'){
+				$out['ucas code'] = isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '';
+			}
+			if($type == 'PG'){
+				$out['taught/research'] = isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '';
+			}
+
+			$out["status"] = in_array($programme->id,$live)?"Published":"Unpublished";
+			$output[] = $out;
+		}
+
+		// output the data
+		return static::csv_download($output, "courses", time() );
+	}
+
+	/**
 	 * Routing for /$year/$type/course-ids
 	 *
 	 * eg http://webtools.kent.ac.uk/api/2014/postgraduate/course-ids
