@@ -154,6 +154,8 @@ Route::group(array('before' => ''), function(){
 	// bare-bones programme list
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist');
 
+	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/all_courses', 'api@fullsimplelist');
+
 	Route::get('/command/modulerefresh/([0-9]{4}|current)/(undergraduate|postgraduate)/(:num)','api@refresh_modules');
 	// Exports
 	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist'); // Duplicate of above, but in export url space
