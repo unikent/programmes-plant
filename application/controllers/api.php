@@ -242,7 +242,7 @@ class API_Controller extends Base_Controller {
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
 			}
 
-			$out = [
+			$out = array(
 				'id' => $attributes['instance_id'],
 				'title' => $attributes[$title_field],
 				'awards' => $awards,
@@ -252,7 +252,7 @@ class API_Controller extends Base_Controller {
 				'subject to approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
 				'withdrawn' => isset($attributes[$withdrawn_field]) ? $attributes[$withdrawn_field] : '',
 				'suspended' => isset($attributes[$suspended_field]) ? $attributes[$suspended_field] : '',
-			];
+			);
 
 			if($type == 'UG'){
 				$out['ucas code'] = isset($attributes[$ucas_code_field]) ? $attributes[$ucas_code_field] : '';
