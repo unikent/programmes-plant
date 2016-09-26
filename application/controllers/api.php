@@ -185,7 +185,7 @@ class API_Controller extends Base_Controller {
 		$live = array();
 
 		foreach($all_programmes as $programme_with_revisions){
-			if($programme_with_revisions->attributes['live_revision']!=0) {
+			if($programme_with_revisions->attributes['live_revision']>0) {
 				$revisions_ids[] = $programme_with_revisions->attributes['live_revision'];
 				$live[] = $programme_with_revisions->attributes['live_revision'];
 			}else{
