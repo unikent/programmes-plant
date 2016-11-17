@@ -1,102 +1,115 @@
+$.Redactor.prototype.bufferbuttons = function()
+{
+	return {
+		init: function()
+			  {
+				  var undo = this.button.addAfter('link','undo', 'Undo');
+				  var redo = this.button.addAfter('undo', 'redo', 'Redo');
 
-var ck_config = {
-	toolbar: [
-		{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'RemoveFormat' ] },
-		{ name: 'paragraph', items : [ 'BulletedList' ] },
-		{ name: 'styles', items: [ 'Format' ] },
-		{ name: 'links', items: [ 'Link', 'Unlink', 'Mailto' ] },
-		[ 'Scayt'], // spell checker
-		['Image'],
-		['Iframe'],
-		[ 'Source'],
-		[ 'Undo', 'Redo' ],
-		{ name: 'document', items: ['Maximize'] }
-	],
-	language: 'en-gb',
-	width: "600px",
-	height: "300px",
-	format_tags: 'p;h2;h3;h4;h5;h6',
-	resize_enabled: true
+				  this.button.addCallback(undo, this.buffer.undo);
+				  this.button.addCallback(redo, this.buffer.redo);
+			  }
+	};
 };
 
-$('textarea').each(function(){
-	//Add ckeditor
-	var ckedit = CKEDITOR.replace($(this)[0], ck_config);
 
-    //instanceReady listener, to set editors to readOnly where appropriate.
-    ckedit.on('instanceReady', function( evt ){
-		var editor = evt.editor;
-		var element = editor.element.$;
+$('textarea').each( function(){
 
-		if($(element).attr('readonly')){
-			editor.setReadOnly(true);
-		}
-    }, ckedit.element.$);
-
- 	if($(this).attr('data-limit')){
+	if($(this).attr('data-limit')) {
 		//Add word limiting logic
 		var self = {};
 		// Get word limit from item
-	    self.limit = $(this).attr("data-limit");
-	    self.limiting_on_words = false;
-	    self.dom = document.createElement('span');
-	    self.dom.className = 'text_limits';
+		self.limit = $(this).attr("data-limit");
+		self.limiting_on_words = false;
+		self.dom = document.createElement('span');
+		self.dom.className = 'text_limits';
 
-	    //remove html /formatting so length is based on only words
-	    self.stripHTML = function(html){
-	    	//strip html, new lines & nbsp;'s
-			return html.replace( /<[^<|>]+?>/gi,'' ).replace(/(\r\n|\n|\r)/gm,' ').replace(/(&nbsp;)*/g,'');
-		}
 		//How much of word limit is left
-		self.limit_left = function(field){
-	        if(self.limiting_on_words){
-	          //word limits
-	          //See http://stackoverflow.com/questions/6543917/count-number-of-word-from-given-string-using-javascript
-	          return self.limit - field.split(/\s+\b/).length;
-	        }else{
-	          //chars left
-	          return self.limit - field.length;
-	        }
-	    }
-	    //check the length
-	    self.checkLength = function(field){
-	        // How much if left
-	        var left = self.limit_left(self.stripHTML(field));
+		self.limit_left = function (field) {
+			if (self.limiting_on_words) {
+				//word limits
+				//See http://stackoverflow.com/questions/6543917/count-number-of-word-from-given-string-using-javascript
+				return self.limit - field.split(/\s+\b/).length;
+			} else {
+				//chars left
+				return self.limit - field.length;
+			}
+		};
 
-	        // If less than 5, display in Red
-	        if(left < 5){
-	          self.dom.style.color = 'red';
-	        }else{
-	          self.dom.style.color = '';
-	        }
+		//check the length
+		self.checkLength = function (field) {
+			// How much if left
+			var left = self.limit_left(field);
 
-	        //show message to user
-	        if(self.limiting_on_words){
-	          self.dom.innerHTML = left+' words left';
-	        }else{
-	          self.dom.innerHTML =  left+' characters left';
-	        }
-	    }
+			// If less than 5, display in Red
+			if (left < 5) {
+				self.dom.style.color = 'red';
+			} else {
+				self.dom.style.color = '';
+			}
 
-	    // Work out if limit should be word or char based
-	    if(self.limit.substring(self.limit.length-1) == 'w'){
-	        self.limiting_on_words = true;
-	        self.limit = parseInt(self.limit.substring(0, self.limit.length-1));
-	    }else{
-	        self.limit = parseInt(self.limit);
-	    }
+			//show message to user
+			if (self.limiting_on_words) {
+				self.dom.innerHTML = left + ' words left';
+			} else {
+				self.dom.innerHTML = left + ' characters left';
+			}
+		};
 
-	    // Add display span
-	    $(self.dom).insertAfter($(this));
-	    ckedit.on( 'key', function( evt ){ 
-	    	self.checkLength(evt.editor.getData());
-	    },ckedit.element.$ );
-	    ckedit.on( 'focus', function( evt ){ 
-	    	self.checkLength(evt.editor.getData());
-	    },ckedit.element.$ );
+		// Work out if limit should be word or char based
+		if (self.limit.substring(self.limit.length - 1) == 'w') {
+			self.limiting_on_words = true;
+			self.limit = parseInt(self.limit.substring(0, self.limit.length - 1));
+		} else {
+			self.limit = parseInt(self.limit);
+		}
 
-	    self.checkLength(ckedit.getData());
+		// Add display span
+		$(self.dom).insertAfter($(this));
 
+		$(this).redactor({
+			plugins: ['bufferbuttons'],
+			imageResizable: true,
+			imagePosition: true,
+			imageFloatMargin: '16px',
+			pastePlainText:true,
+			pasteLinkTarget: '_blank',
+			maxHeight: 600,
+			replaceTags: {
+				'b': 'strong',
+				'i': 'em',
+				'strike': 'del',
+				'h1':'h2'
+			},
+			callbacks: {
+				change: function () {
+					var text = this.clean.getPlainText(this.core.editor().text());
+					text = text.replace(/\u200B/g, '');
+					self.checkLength(text);
+				},
+				init: function() {
+					var text = this.clean.getPlainText(this.core.editor().text());
+					text = text.replace(/\u200B/g, '');
+					self.checkLength(text);
+				}
+			}
+		});
+
+	}else{
+		$(this).redactor({
+			plugins: ['bufferbuttons'],
+			imageResizable: true,
+			imagePosition: true,
+			imageFloatMargin: '16px',
+			pastePlainText:true,
+			pasteLinkTarget: '_blank',
+			maxHeight: 600,
+			replaceTags: {
+				'b': 'strong',
+				'i': 'em',
+				'strike': 'del',
+				'h1':'h2'
+			}
+		});
 	}
-
 });
