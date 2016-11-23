@@ -34,7 +34,7 @@ class Image_Data_Type {
 	 */
 	public function down()
 	{
-		Schema::drop('ug_programme_deliveries');
+		Schema::drop('images');
 	}
 
 }
