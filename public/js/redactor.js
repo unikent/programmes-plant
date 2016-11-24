@@ -5134,10 +5134,12 @@
     				var self = this;
     				var inlines = this.inline.inlines();
     				var current = this.selection.current();
-    				if (current)
-    				{
-    				    inlines.push(current);
-    				}
+					if (current)
+					{
+						if(inlines.indexOf(current) === -1) {
+							inlines.push(current);
+						}
+					}
 
     				this.selection.save();
 
