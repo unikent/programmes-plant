@@ -1,0 +1,70 @@
+@font-face{font-family:Century Schoolbook;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot);src:local("Century Schoolbook"),local("CenturySchoolbook"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff2) format("woff2"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.svg#CenturySchoolbook) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mtlight-webfont.svg#arial_mtmt_light) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.svg#arial_mtlight_italic) format("svg");font-weight:400;font-style:italic}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.svg#arial_mtmedium) format("svg");font-weight:700;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.svg#arial_mtmedium_italic) format("svg");font-weight:700;font-style:italic}
+
+
+.redactor-dropdown-box-format .redactor-dropdown-blockquote {
+    font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
+    font-size: 19px;
+    font-style: italic;
+    color: #05345C;
+}
+
+.redactor-box{
+    max-width: 725px;
+}
+.redactor-editor{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size: 16px;
+    color: #171717;
+    line-height: 1.5;
+}
+.redactor-editor h2{
+    font-size: 25.632px;
+    color: #05345C;
+}
+.redactor-editor h3{
+    font-size:20.256px;
+    color: #05345C;
+}
+
+.redactor-editor a{
+    color: #005689;
+    text-decoration: none;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.redactor-editor a:hover {
+    border-bottom: 1px solid #00263d;
+}
+
+.redactor-editor p.impact-statement{
+    font-size: 28.8px;
+    font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
+    text-align: center;
+    padding: 3rem 0;
+    color: #937227;
+}
+
+
+.redactor-editor blockquote.simple{
+    padding: 16px;
+    font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
+    font-size: 20.8px;
+    font-style: italic;
+    color: #05345C;
+    border:0;
+}
+
+.redactor-editor blockquote.simple:before{
+    font-size: 1.3em;
+    content: '\201C';
+    line-height: 16px;
+    line-height: calc(1rem);
+}
+
+.redactor-editor blockquote.simple:after{
+    font-size: 1.3em;
+    content: '\201D';
+    line-height: 16px;
+    line-height: 1rem;
+    line-height: calc(1rem);
+}
