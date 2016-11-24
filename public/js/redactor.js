@@ -1,7 +1,7 @@
 /*
 	Redactor II
-	Version 1.2.7
-	Updated: October 4, 2016
+	Version 1.3.2
+	Updated: November 15, 2016
 
 	http://imperavi.com/redactor/
 
@@ -101,7 +101,7 @@
 
 	// Options
 	$.Redactor = Redactor;
-	$.Redactor.VERSION = '1.2.7';
+	$.Redactor.VERSION = '1.3.2';
 	$.Redactor.modules = ['air', 'autosave', 'block', 'buffer', 'build', 'button', 'caret', 'clean', 'code', 'core', 'detect', 'dropdown',
 						  'events', 'file', 'focus', 'image', 'indent', 'inline', 'insert', 'keydown', 'keyup',
 						  'lang', 'line', 'link', 'linkify', 'list', 'marker', 'modal', 'observe', 'offset', 'paragraphize', 'paste', 'placeholder',
@@ -117,6 +117,8 @@
 		animation: false,
 		lang: 'en',
 		direction: 'ltr',
+		spellcheck: true,
+		overrideStyles: true,
 
 		focus: false,
 		focusEnd: false,
@@ -158,9 +160,13 @@
 		imageUploadParam: 'file',
 		imageUploadFields: false,
 		imageUploadForms: false,
-
+        imageTag: 'figure',
         imageEditable: true,
 		imageCaption: true,
+
+		imagePosition: false,
+		imageResizable: false,
+		imageFloatMargin: '10px',
 
 		dragImageUpload: true,
 		multipleImageUpload: true,
@@ -280,6 +286,12 @@
 
 				"bulletslist": "Bullets",
 				"numberslist": "Numbers",
+
+				"image-position": "Position",
+				"none": "None",
+				"left": "Left",
+				"right": "Right",
+				"center": "Center",
 
 				"accessibility-help-label": "Rich text editor"
 			}
@@ -497,6 +509,7 @@
 				this.$element.data(),
 				options
 			);
+
 		},
 		getModuleMethods: function(object)
 		{
@@ -1210,7 +1223,13 @@
 
 					// place
 					this.$box.insertAfter(this.$element).append(this.$editor).append(this.$element);
-					this.$editor.addClass('redactor-editor');
+                    this.$editor.addClass('redactor-editor');
+
+					if (this.opts.overrideStyles)
+					{
+					    this.$editor.addClass('redactor-styles');
+					}
+
 					this.$element.hide();
 
 					this.$box.prepend('<span class="redactor-voice-label" id="redactor-voice-' + this.uuid +'" aria-hidden="false">' + this.lang.get('accessibility-help-label') + '</span>');
@@ -1259,6 +1278,9 @@
 
 					}
 
+					// spellcheck
+					this.core.editor().attr('spellcheck', this.opts.spellcheck);
+
 					// structure
 					if (this.opts.structure)
 					{
@@ -1302,7 +1324,6 @@
 					{
 						this.core.editor().css({ 'max-width': this.opts.maxWidth, 'margin': 'auto' });
 					}
-
 
 				},
 				callEditor: function()
@@ -2455,6 +2476,13 @@
 						return '';
 					}
 
+
+					// remove image resize
+					html = html.replace(/<span(.*?)id="redactor-image-box"(.*?[^>])>([\w\W]*?)<img(.*?)><\/span>/gi, '$3<img$4>');
+					html = html.replace(/<span(.*?)id="redactor-image-resizer"(.*?[^>])>(.*?)<\/span>/gi, '');
+					html = html.replace(/<span(.*?)id="redactor-image-editter"(.*?[^>])>(.*?)<\/span>/gi, '');
+					html = html.replace(/<img(.*?)style="(.*?)opacity: 0\.5;(.*?)"(.*?)>/gi, '<img$1style="$2$3"$4>');
+
 					var $div = $("<div/>").html($.parseHTML(html, document, true));
 
 					// remove empty atributes
@@ -2477,6 +2505,9 @@
 						}
 					});
 
+					// remove rel attribute from img
+					$div.find('img').removeAttr('rel');
+
 					$div.find('.redactor-selection-marker, #redactor-insert-marker').remove();
 
 					html = $div.html();
@@ -2494,6 +2525,7 @@
 					html = html.replace(new RegExp('<br\\s?/?></h', 'gi'), '</h');
 					html = html.replace(new RegExp('<br\\s?/?></li>', 'gi'), '</li>');
 					html = html.replace(new RegExp('</li><br\\s?/?>', 'gi'), '</li>');
+
 
 					// pre class
 					html = html.replace(/<pre>/gi, "<pre>\n");
@@ -2527,6 +2559,9 @@
 
 					// remove empty paragpraphs
 					html = html.replace(/<p><\/p>/gi, "");
+
+					// remove new lines
+                    html = html.replace(/\n{2,}/g, "\n");
 
 					return html;
 				},
@@ -2824,17 +2859,34 @@
     					$links.attr('target', this.opts.pasteLinkTarget);
 					}
 
-					html = $div.html();
-
                     // links & images
-					if (data.links && this.opts.pasteLinks)
-					{
-						html = html.replace(/<a(.*?)href="(.*?)"(.*?)>(.*?)<\/a>/gi, '###a$1href="$2"$3###$4###/a###');
-					}
+                    if (data.links && this.opts.pasteLinks)
+                    {
+                    	$div.find('a').each(function(i, link)
+                    	{
+                    		if (link.href)
+                    		{
+                    			var tmp = '##%a href="' + link.href + '"';
+                    			var attr;
+                    			for (var j = 0, length = link.attributes.length; j < length; j++)
+                    			{
+                    				attr = link.attributes.item(j);
+                    				if (attr.name !== 'href')
+                    				{
+                    					tmp += ' ' + attr.name + '="' + attr.value + '"';
+                    				}
+                    			}
+
+                    			link.outerHTML = tmp + '%##' + link.innerHTML + '##%/a%##';
+                    		}
+                    	});
+                    }
+
+                    html = $div.html();
 
 					if (data.images && this.opts.pasteImages)
 					{
-						html = html.replace(/<img(.*?)src="(.*?)"(.*?[^>])>/gi, '###img$1src="$2"$3###');
+						html = html.replace(/<img(.*?)src="(.*?)"(.*?[^>])>/gi, '##%img$1src="$2"$3%##');
 					}
 
 					// plain text
@@ -2859,7 +2911,7 @@
 					var len = tags.length;
 					for (var i = 0; i < len; i++)
 					{
-						html = html.replace(new RegExp('</' + tags[i] + '>', 'gi'), '###/' + tags[i] + '###');
+						html = html.replace(new RegExp('<\/' + tags[i] + '>', 'gi'), '###/' + tags[i] + '###');
 
 						if (tags[i] === 'td' || tags[i] === 'th')
 						{
@@ -2871,29 +2923,23 @@
 						}
 					}
 
-
 					return html;
 
 				},
 				reconvertTags: function(html, data)
 				{
 					// links & images
-					if (data.links && this.opts.pasteLinks)
+					if ((data.links && this.opts.pasteLinks) || (data.images && this.opts.pasteImages))
 					{
-						html = html.replace(/###a(.*?)href="(.*?)"(.*?)###(.*?)###\/a###/gi, '<a$1href="$2"$3>$4</a>');
-					}
-
-					if (data.images && this.opts.pasteImages)
-					{
-						html = html.replace(/###img(.*?)src="(.*?)"###/gi, '<img src="$2">');
-					}
+						html = html.replace(new RegExp('##%', 'gi'), '<');
+						html = html.replace(new RegExp('%##', 'gi'), '>');
+                    }
 
 					// plain text
 					if (this.opts.pastePlainText)
 					{
 						return html;
 					}
-
 
 					var blockTags = (data.lists) ? ['ul', 'ol', 'li'] : this.opts.pasteBlockTags;
 
@@ -2910,9 +2956,13 @@
 					var len = tags.length;
 					for (var i = 0; i < len; i++)
 					{
-						html = html.replace(new RegExp('###/' + tags[i] + '###', 'gi'), '</' + tags[i] + '>');
-						html = html.replace(new RegExp('###' + tags[i] + '###', 'gi'), '<' + tags[i] + '>');
+						html = html.replace(new RegExp('###\/' + tags[i] + '###', 'gi'), '</' + tags[i] + '>');
                     }
+
+                    for (var i = 0; i < len; i++)
+					{
+    					html = html.replace(new RegExp('###' + tags[i] + '###', 'gi'), '<' + tags[i] + '>');
+    				}
 
 					for (var i = 0; i < len; i++)
 					{
@@ -2989,22 +3039,49 @@
 
 					$.each(pre, $.proxy(function(i,s)
 					{
-						var arr = s.match(/<pre(.*?)>([\w\W]*?)<\/pre>/i);
+    					var arr = [];
+    					var codeTag = false;
+    					var contents, attr1, attr2;
 
-						arr[2] = arr[2].replace(/<br\s?\/?>/g, '\n');
-						arr[2] = arr[2].replace(/&nbsp;/g, ' ');
+    					if (s.match(/<pre(.*?)><code(.*?)>/i))
+    					{
+        					arr = s.match(/<pre(.*?)><code(.*?)>([\w\W]*?)<\/code><\/pre>/i);
+        					codeTag = true;
+
+                            contents = arr[3];
+                            attr1 = arr[1];
+                            attr2 = arr[2];
+    					}
+                        else
+						{
+    						arr = s.match(/<pre(.*?)>([\w\W]*?)<\/pre>/i);
+
+                            contents = arr[2];
+                            attr1 = arr[1];
+                        }
+
+						contents = contents.replace(/<br\s?\/?>/g, '\n');
+						contents = contents.replace(/&nbsp;/g, ' ');
 
 						if (this.opts.preSpaces)
 						{
-							arr[2] = arr[2].replace(/\t/g, new Array(this.opts.preSpaces + 1).join(' '));
+							contents = contents.replace(/\t/g, new Array(this.opts.preSpaces + 1).join(' '));
 						}
 
-						arr[2] = this.clean.encodeEntities(arr[2]);
+                        contents = this.clean.encodeEntities(contents);
 
 						// $ fix
-						arr[2] = arr[2].replace(/\$/g, '&#36;');
+						contents = contents.replace(/\$/g, '&#36;');
 
-						html = html.replace(s, '<pre' + arr[1] + '>' + arr[2] + '</pre>');
+                        if (codeTag)
+                        {
+                            html = html.replace(s, '<pre' + attr1 + '><code' + attr2 + '>' + contents + '</code></pre>');
+                        }
+                        else
+                        {
+                            html = html.replace(s, '<pre' + attr1 + '>' + contents + '</pre>');
+                        }
+
 
 					}, this));
 
@@ -3149,7 +3226,6 @@
 				set: function(html, options)
 				{
 					html = $.trim(html);
-
 
                     options = options || {};
 
@@ -3375,7 +3451,7 @@
 					// help label
 					$('#redactor-voice-' + this.uuid).remove();
 
-					this.core.editor().removeClass('redactor-in redactor-structure redactor-editor-img-edit');
+					this.core.editor().removeClass('redactor-in redactor-styles redactor-structure redactor-editor-img-edit');
 
 					// caret service
 					this.core.editor().off('keydown.redactor-remove-textnode');
@@ -4309,7 +4385,7 @@
 					}
 
 					this.placeholder.hide();
-					var $figure = $('<figure>');
+					var $figure = $('<' + this.opts.imageTag + '>');
 
 					$img = $('<img>');
 					$img.attr('src', json.url);
@@ -4399,15 +4475,199 @@
 						e.preventDefault();
 					});
 
-					$image.off('click.redactor touchstart.redactor').on('click.redactor touchstart.redactor', $.proxy(function(e)
+                    if (this.opts.imageResizable)
+                    {
+    					var handler = $.proxy(function(e)
+    					{
+    						this.observe.image = $image;
+    						this.image.resizer = this.image.loadEditableControls($image);
+
+    						$(document).on('mousedown.redactor-image-resize-hide.' + this.uuid, $.proxy(this.image.hideResize, this));
+                            this.image.resizer.on('mousedown.redactor touchstart.redactor', $.proxy(function(e)
+    						{
+    							this.image.setResizable(e, $image);
+    						}, this));
+
+    					}, this);
+
+    					$image.off('mousedown.redactor').on('mousedown.redactor', $.proxy(this.image.hideResize, this));
+    					$image.off('click.redactor touchstart.redactor').on('click.redactor touchstart.redactor', handler);
+                    }
+                    else
+                    {
+    					$image.off('click.redactor touchstart.redactor').on('click.redactor touchstart.redactor', $.proxy(function(e)
+    					{
+    						setTimeout($.proxy(function()
+    						{
+    							this.image.showEdit($image);
+
+    						}, this), 200);
+
+    					}, this));
+                    }
+
+				},
+				setResizable: function(e, $image)
+				{
+					e.preventDefault();
+
+				    this.image.resizeHandle = {
+				        x : e.pageX,
+				        y : e.pageY,
+				        el : $image,
+				        ratio: $image.width() / $image.height(),
+				        h: $image.height()
+				    };
+
+				    e = e.originalEvent || e;
+
+				    if (e.targetTouches)
+				    {
+				         this.image.resizeHandle.x = e.targetTouches[0].pageX;
+				         this.image.resizeHandle.y = e.targetTouches[0].pageY;
+				    }
+
+					this.image.startResize();
+
+
+				},
+				startResize: function()
+				{
+					$(document).on('mousemove.redactor-image-resize touchmove.redactor-image-resize', $.proxy(this.image.moveResize, this));
+					$(document).on('mouseup.redactor-image-resize touchend.redactor-image-resize', $.proxy(this.image.stopResize, this));
+				},
+				moveResize: function(e)
+				{
+					e.preventDefault();
+
+					e = e.originalEvent || e;
+
+					var height = this.image.resizeHandle.h;
+
+		            if (e.targetTouches) height += (e.targetTouches[0].pageY -  this.image.resizeHandle.y);
+		            else height += (e.pageY -  this.image.resizeHandle.y);
+
+					var width = Math.round(height * this.image.resizeHandle.ratio);
+
+					if (height < 50 || width < 100) return;
+
+					var height = Math.round(this.image.resizeHandle.el.width() / this.image.resizeHandle.ratio);
+
+					this.image.resizeHandle.el.attr({width: width, height: height});
+		            this.image.resizeHandle.el.width(width);
+		            this.image.resizeHandle.el.height(height);
+
+		            this.code.sync();
+				},
+				stopResize: function()
+				{
+					this.handle = false;
+					$(document).off('.redactor-image-resize');
+
+					this.image.hideResize();
+				},
+                hideResize: function(e)
+				{
+					if (e && $(e.target).closest('#redactor-image-box', this.$editor[0]).length !== 0) return;
+					if (e && e.target.tagName == 'IMG')
 					{
-						setTimeout($.proxy(function()
+						var $image = $(e.target);
+					}
+
+					var imageBox = this.$editor.find('#redactor-image-box');
+					if (imageBox.length === 0) return;
+
+					$('#redactor-image-editter').remove();
+					$('#redactor-image-resizer').remove();
+
+					imageBox.find('img').css({
+						marginTop: imageBox[0].style.marginTop,
+						marginBottom: imageBox[0].style.marginBottom,
+						marginLeft: imageBox[0].style.marginLeft,
+						marginRight: imageBox[0].style.marginRight
+					});
+
+					imageBox.css('margin', '');
+					imageBox.find('img').css('opacity', '');
+					imageBox.replaceWith(function()
+					{
+						return $(this).contents();
+					});
+
+					$(document).off('mousedown.redactor-image-resize-hide.' + this.uuid);
+
+
+					if (typeof this.image.resizeHandle !== 'undefined')
+					{
+						this.image.resizeHandle.el.attr('rel', this.image.resizeHandle.el.attr('style'));
+					}
+				},
+				loadResizableControls: function($image, imageBox)
+				{
+					if (this.opts.imageResizable && !this.detect.isMobile())
+					{
+						var imageResizer = $('<span id="redactor-image-resizer" data-redactor="verified"></span>');
+
+						if (!this.detect.isDesktop())
+						{
+							imageResizer.css({ width: '15px', height: '15px' });
+						}
+
+						imageResizer.attr('contenteditable', false);
+						imageBox.append(imageResizer);
+						imageBox.append($image);
+
+						return imageResizer;
+					}
+					else
+					{
+						imageBox.append($image);
+						return false;
+					}
+				},
+				loadEditableControls: function($image)
+				{
+					var imageBox = $('<span id="redactor-image-box" data-redactor="verified">');
+					imageBox.css('float', $image.css('float')).attr('contenteditable', false);
+
+					if ($image[0].style.margin != 'auto')
+					{
+						imageBox.css({
+							marginTop: $image[0].style.marginTop,
+							marginBottom: $image[0].style.marginBottom,
+							marginLeft: $image[0].style.marginLeft,
+							marginRight: $image[0].style.marginRight
+						});
+
+						$image.css('margin', '');
+					}
+					else
+					{
+						imageBox.css({ 'display': 'block', 'margin': 'auto' });
+					}
+
+					$image.css('opacity', '.5').after(imageBox);
+
+
+					if (this.opts.imageEditable)
+					{
+						// editter
+						this.image.editter = $('<span id="redactor-image-editter" data-redactor="verified">' + this.lang.get('edit') + '</span>');
+						this.image.editter.attr('contenteditable', false);
+						this.image.editter.on('click', $.proxy(function()
 						{
 							this.image.showEdit($image);
+						}, this));
 
-						}, this), 200);
+						imageBox.append(this.image.editter);
 
-					}, this));
+						// position correction
+						var editerWidth = this.image.editter.innerWidth();
+						this.image.editter.css('margin-left', '-' + editerWidth/2 + 'px');
+					}
+
+					return this.image.loadResizableControls($image, imageBox);
+
 				},
 				showEdit: function($image)
 				{
@@ -4434,11 +4694,23 @@
 					}
 					else
 					{
-						var $next = ($link.length === 0) ? $image.next() : $link.next();
-						if ($next.length !== 0 && $next[0].tagName === 'FIGCAPTION')
+						var $parent = $image.closest(this.opts.imageTag, this.$editor[0]);
+						var $ficaption = $parent.find('figcaption');
+						if ($ficaption !== 0)
 						{
-							$('#redactor-image-caption').val($next.text()).show();
+
+							$('#redactor-image-caption').val($ficaption.text()).show();
 						}
+					}
+
+					if (!this.opts.imagePosition)
+					{
+    					$('.redactor-image-position-option').hide();
+    				}
+					else
+					{
+						var floatValue = ($image.css('display') == 'block' && $image.css('float') == 'none') ? 'center' : $image.css('float');
+						$('#redactor-image-align').val(floatValue);
 					}
 
 					$('#redactor-image-preview').html($('<img src="' + $image.attr('src') + '" style="max-width: 100%;">'));
@@ -4474,6 +4746,8 @@
 
 					var title = $('#redactor-image-title').val().replace(/(<([^>]+)>)/ig,"");
 					$image.attr('alt', title).attr('title', title);
+
+                    this.image.setFloating($image);
 
 					// as link
 					var link = $.trim($('#redactor-image-link').val()).replace(/(<([^>]+)>)/ig,"");
@@ -4528,10 +4802,36 @@
 					this.buffer.set();
 
 				},
+				setFloating: function($image)
+				{
+					var floating = $('#redactor-image-align').val();
+
+					var imageFloat = '';
+					var imageDisplay = '';
+					var imageMargin = '';
+
+					switch (floating)
+					{
+						case 'left':
+							imageFloat = 'left';
+							imageMargin = '0 ' + this.opts.imageFloatMargin + ' ' + this.opts.imageFloatMargin + ' 0';
+						break;
+						case 'right':
+							imageFloat = 'right';
+							imageMargin = '0 0 ' + this.opts.imageFloatMargin + ' ' + this.opts.imageFloatMargin;
+						break;
+						case 'center':
+							imageDisplay = 'block';
+							imageMargin = 'auto';
+						break;
+					}
+
+					$image.css({ 'float': imageFloat, display: imageDisplay, margin: imageMargin });
+					$image.attr('rel', $image.attr('style'));
+				},
 				addCaption: function($image, $link)
 				{
                     var caption = $('#redactor-image-caption').val();
-
 
                     var $target = ($link.length !== 0) ? $link : $image;
 					var $figcaption = $target.next();
@@ -4571,7 +4871,7 @@
 					this.events.stopDetectChanges();
 
 					var $link = $image.closest('a', this.core.editor()[0]);
-					var $figure = $image.closest('figure', this.core.editor()[0]);
+					var $figure = $image.closest(this.opts.imageTag, this.core.editor()[0]);
 					var $parent = $image.parent();
 
 					if ($('#redactor-image-box').length !== 0)
@@ -4637,7 +4937,7 @@
 					}
 
 					var $current = $(this.selection.current()).closest('li');
-					var $list = $current.closest('ul, ol');
+					var $list = $current.closest('ul, ol', this.core.editor()[0]);
 
 					var $li = $current.closest('li');
 					var $prev = $li.prev();
@@ -4680,12 +4980,11 @@
 					}
 
 					var $current = $(this.selection.current()).closest('li');
-					var $list = $current.closest('ul, ol');
+					var $list = $current.closest('ul, ol', this.core.editor()[0]);
 
 					this.buffer.set();
 
 					document.execCommand('outdent');
-
 
 					var $item = $(this.selection.current()).closest('li', this.core.editor()[0]);
 
@@ -4693,7 +4992,6 @@
 					{
 						this.indent.repositionItem($item);
 					}
-
 
 					if ($item.length === 0)
 					{
@@ -4715,6 +5013,12 @@
 				},
 				repositionItem: function($item)
 				{
+    				var $next = $item.next();
+    				if ($next.length !== 0 && ($next[0].tagName !== 'UL' || $next[0].tagName !== 'OL'))
+    				{
+        				$item.append($next);
+    				}
+
 					var $prev = $item.prev();
 					if ($prev.length !== 0 && $prev[0].tagName !== 'LI')
 					{
@@ -4878,7 +5182,6 @@
     				{
                         formatting = false;
     				}
-
 
                     this.selection.save();
                     if (tag !== 'u')
@@ -6611,6 +6914,9 @@
 					// buffer
 					this.buffer.set();
 
+					// callback
+					link = this.core.callback('beforeInsertingLink', link);
+
 					if ($el === false)
 					{
 						// insert
@@ -6753,7 +7059,7 @@
 					var re5 = new RegExp('^tel:(.*?)', 'i');
 
 					// add protocol
-					if (url.search(re1) === -1 && url.search(re2) !== -1 && url.search(re3) === -1)
+					if (url.search(re1) === -1 && url.search(re2) !== -1 && url.search(re3) === -1 && url.substring(0, 1) !== '/')
 					{
 						url = 'http://' + url;
 					}
@@ -6926,7 +7232,8 @@
 						return;
 					}
 
-					this.core.editor().find(":not(iframe,img,a,pre,.redactor-unlink)").addBack().contents().filter($.proxy(this.linkify.isFiltered, this)).each($.proxy(this.linkify.handler, this));
+
+					this.core.editor().find(":not(iframe,img,a,pre,code,.redactor-unlink)").addBack().contents().filter($.proxy(this.linkify.isFiltered, this)).each($.proxy(this.linkify.handler, this));
 
 					// collect
 					var $objects = this.core.editor().find('.redactor-linkify-object').each($.proxy(function(i,s)
@@ -7184,7 +7491,7 @@
     				var $prev = $(block).prev();
     				var $next = $(block).next();
                     var isEmptyBlock = (block && block.tagName === 'P' && (block.innerHTML === '<br>' || block.innerHTML === ''));
-                    var isBlockWrapped = ($prev.closest('ol, ul').length === 1 && $next.closest('ol, ul').length === 1);
+                    var isBlockWrapped = ($prev.closest('ol, ul', this.core.editor()[0]).length === 1 && $next.closest('ol, ul', this.core.editor()[0]).length === 1);
 
                     if (isEmptyBlock && isBlockWrapped)
                     {
@@ -7300,6 +7607,15 @@
 								+ '<section>'
 									+ '<label>' + this.lang.get('link') + '</label>'
 									+ '<input type="text" id="redactor-image-link" aria-label="' + this.lang.get('link') + '" />'
+								+ '</section>'
+								+ '<section>'
+        							+ '<label class="redactor-image-position-option">' + this.lang.get('image-position') + '</label>'
+        							+ '<select class="redactor-image-position-option" id="redactor-image-align" aria-label="' + this.lang.get('image-position') + '">'
+        								+ '<option value="none">' + this.lang.get('none') + '</option>'
+        								+ '<option value="left">' + this.lang.get('left') + '</option>'
+        								+ '<option value="center">' + this.lang.get('center') + '</option>'
+        								+ '<option value="right">' + this.lang.get('right') + '</option>'
+        							+ '</select>'
 								+ '</section>'
 								+ '<section>'
 									+ '<label class="checkbox"><input type="checkbox" id="redactor-image-link-blank" aria-label="' + this.lang.get('link-in-new-tab') + '"> ' + this.lang.get('link-in-new-tab') + '</label>'
@@ -8066,6 +8382,7 @@
 					// before
 					html = html.replace(/(<br\s?\/?>){1,}\n?<\/blockquote>/gi, '</blockquote>');
 					html = html.replace(/<\/pre>/gi, "</pre>\n\n");
+					html = html.replace(/<p>\s<br><\/p>/gi, '<p></p>');
 
 					html = this.paragraphize.getSafes(html);
 
@@ -8090,17 +8407,15 @@
 						return $(this).append('<br />').contents();
 					});
 
-
                     $div.find(this.opts.paragraphizeBlocks.join(', ')).each($.proxy(function(i,s)
 					{
 						this.paragraphize.z++;
 						this.paragraphize.safes[this.paragraphize.z] = s.outerHTML;
 
-						return $(s).replaceWith('\n#####replace' + this.paragraphize.z + '#####\n\n');
+						return $(s).replaceWith("\n#####replace" + this.paragraphize.z + "#####\n\n");
 
 
 					}, this));
-
 
                     // deal with redactor selection markers
                     $div.find('span.redactor-selection-marker').each($.proxy(function(i,s)
@@ -8108,7 +8423,7 @@
                         this.paragraphize.z++;
                         this.paragraphize.safes[this.paragraphize.z] = s.outerHTML;
 
-                        return $(s).replaceWith('n#####replace' + this.paragraphize.z + '#####nn');
+                        return $(s).replaceWith("\n#####replace" + this.paragraphize.z + "#####\n\n");
                     }, this));
 
 					return $div.html();
@@ -8189,14 +8504,17 @@
 					var pre = (this.opts.type === 'pre' || this.utils.isCurrentOrParent('pre')) ? true : false;
 
 					// clipboard event
-					if (!this.paste.pre && !this.detect.isMobile() && this.opts.clipboardImageUpload && this.opts.imageUpload && this.paste.detectClipboardUpload(e))
+					if (this.detect.isDesktop())
 					{
-						if (this.detect.isIe())
-						{
-							setTimeout($.proxy(this.paste.clipboardUpload, this), 100);
-						}
+    					if (!this.paste.pre && this.opts.clipboardImageUpload && this.opts.imageUpload && this.paste.detectClipboardUpload(e))
+    					{
+    						if (this.detect.isIe())
+    						{
+    							setTimeout($.proxy(this.paste.clipboardUpload, this), 100);
+    						}
 
-						return;
+    						return;
+    					}
 					}
 
 					this.utils.saveScroll();
@@ -8274,7 +8592,7 @@
 						}
 						else
 						{
-							$('body').append(this.$pasteBox);
+							$('body').prepend(this.$pasteBox);
 						}
 					}
 				},

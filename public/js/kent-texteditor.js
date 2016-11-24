@@ -12,6 +12,26 @@ $.Redactor.prototype.bufferbuttons = function()
 	};
 };
 
+var redactor_config = {
+	plugins: ['bufferbuttons'],
+	imageResizable: true,
+	imagePosition: true,
+	imageFloatMargin: '16px',
+	pastePlainText:true,
+	pasteLinkTarget: '_blank',
+	formatting: ['p', 'h2', 'h3'],
+	formattingAdd: {
+		"blockquote": {
+			title: 'Blockquote',
+			args:  ['blockquote', 'class', 'simple']
+		},
+		"impact": {
+			title: 'Impact Statement',
+			args:  ['p', 'class', 'impact-statement']
+		}
+	},
+	maxHeight: 600
+};
 
 $('textarea').each( function(){
 
@@ -67,20 +87,9 @@ $('textarea').each( function(){
 		// Add display span
 		$(self.dom).insertAfter($(this));
 
-		$(this).redactor({
-			plugins: ['bufferbuttons'],
-			imageResizable: true,
-			imagePosition: true,
-			imageFloatMargin: '16px',
-			pastePlainText:true,
-			pasteLinkTarget: '_blank',
-			maxHeight: 600,
-			replaceTags: {
-				'b': 'strong',
-				'i': 'em',
-				'strike': 'del',
-				'h1':'h2'
-			},
+
+
+		$(this).redactor($.extend({},redactor_config,{
 			callbacks: {
 				change: function () {
 					var text = this.clean.getPlainText(this.core.editor().text());
@@ -93,23 +102,9 @@ $('textarea').each( function(){
 					self.checkLength(text);
 				}
 			}
-		});
+		}));
 
 	}else{
-		$(this).redactor({
-			plugins: ['bufferbuttons'],
-			imageResizable: true,
-			imagePosition: true,
-			imageFloatMargin: '16px',
-			pastePlainText:true,
-			pasteLinkTarget: '_blank',
-			maxHeight: 600,
-			replaceTags: {
-				'b': 'strong',
-				'i': 'em',
-				'strike': 'del',
-				'h1':'h2'
-			}
-		});
+		$(this).redactor(redactor_config);
 	}
 });
