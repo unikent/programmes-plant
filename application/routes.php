@@ -83,6 +83,9 @@ Route::group(array('before' => ''), function(){
 	Route::any('faculties', 'faculties@index');
 	Route::any('faculties/(:any?)/(:num?)', 'faculties@(:1)');
 
+	// Customised routing for campuses
+	Route::any('images', 'images@index');
+	Route::any('images/(:any?)/(:num?)', 'images@(:1)');
 
 	// Customised routing for awards
 	Route::any('(ug|pg)/awards', 'awards@index');

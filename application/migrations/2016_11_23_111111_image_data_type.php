@@ -23,6 +23,7 @@ class Image_Data_Type {
 			$table->string('attribution_link', 255);
 						
 			$table->string('licence_link', 255);
+			$table->boolean('hidden')->default(0);
 		});
 
 	}
