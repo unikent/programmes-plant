@@ -9,7 +9,7 @@
 <!-- data tables js -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript" charset="utf8" ></script>
 <!-- CKeditor cdn -->
-<script src="<?php echo asset('js/ckeditor/ckeditor.js')?>"></script>
+<script src="<?php echo asset('js/redactor.js')?>"></script>
 <script src="<?php echo asset('js/kent-texteditor.js')?>" type="text/javascript" charset="utf8"></script>
 
 <!-- Additional js to make datatables & wysihtml5 work with bootstrap -->
