@@ -22,7 +22,7 @@ class Create_Student_Profiles_PG_Table {
 			$table->text('lead');
 			$table->text('content');
 			$table->text('links');
-			$table->integer('hidden');
+			$table->boolean('hidden')->default(0);
 			$table->timestamps();
 
 		});
