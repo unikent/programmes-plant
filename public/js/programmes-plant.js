@@ -239,7 +239,8 @@ $(document).ready(function (){
     *
     */
     init_simple_index_dataTable();
-    
+
+	init_profile_dataTable();
     /**
     *
     * data tables for programme index page
@@ -409,6 +410,28 @@ function init_simple_index_dataTable(){
     // Dont kill the page on error...
   }
 }
+
+function init_profile_dataTable(){
+
+
+
+		$('#profile-list').dataTable( {
+			"sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
+			"sPaginationType": "bootstrap",
+			"iDisplayLength": 20,
+			"oLanguage": {
+				"sSearch": ""
+			},
+			"aoColumns": [
+				{ "bSortable": true, 'iDataSort': 0 },
+				{ "bSortable": true},
+				{ "bSortable": false}
+			]
+		});
+
+
+}
+
 
 function init_NotesForm(){
 

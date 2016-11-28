@@ -32,7 +32,8 @@
 
                     <li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/ug/awards') ?>"><i class="icon-list-alt"></i> UG Awards</a></li>
                     <li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/ug/leaflets')?>"><i class="icon-list-alt"></i> UG Leaflets</a></li>
-                    <li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjects')?>"><i class="icon-list-alt"></i> UG Subjects</a></li>
+					<li class="<?php echo ( URI::segment(1) == 'profile' ? 'active' : false )?>"><a href="<?php echo url('/ug/profile')?>"><i class="icon-list-alt"></i> UG Student Profiles</a></li>
+					<li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjects')?>"><i class="icon-list-alt"></i> UG Subjects</a></li>
                     <li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/ug/subjectcategories')?>"><i class="icon-list-alt"></i> UG Subject categories</a></li>
                     <?php if (Auth::user()->can("edit_overridable_data")): ?>
                         <li class="<?php echo ( (URI::segment(2) == 'ug' && URI::segment(2) != 'fields' && URI::segment(3) == 'programmesettings') ? 'active' : false )?>"><a href="<?php echo url('/' . URLParams::$year . '/ug/programmesettings');?>"><i class="icon-list-alt"></i> UG Overridable fields</a></li>
@@ -43,7 +44,8 @@
         			<li class="nav-header">PG Data</li>
         			<li class="<?php echo ( URI::segment(1) == 'awards' ? 'active' : false )?>"><a href="<?php echo url('/pg/awards') ?>"><i class="icon-list-alt"></i> PG Awards</a></li>
         			<li class="<?php echo ( URI::segment(1) == 'leaflets' ? 'active' : false )?>"><a href="<?php echo url('/pg/leaflets')?>"><i class="icon-list-alt"></i> PG Leaflets</a></li>
-        			<li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjects')?>"><i class="icon-list-alt"></i> PG Subjects</a></li>
+					<li class="<?php echo ( URI::segment(1) == 'profile' ? 'active' : false )?>"><a href="<?php echo url('/pg/profile')?>"><i class="icon-list-alt"></i> PG Student Profiles</a></li>
+					<li class="<?php echo ( URI::segment(1) == 'subjects' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjects')?>"><i class="icon-list-alt"></i> PG Subjects</a></li>
         			<li class="<?php echo ( URI::segment(1) == 'subjectcategories' ? 'active' : false )?>"><a href="<?php echo url('/pg/subjectcategories')?>"><i class="icon-list-alt"></i> PG Subject categories</a></li>
         			<li class="<?php echo ( URI::segment(1) == 'staff' ? 'active' : false )?>"><a href="<?php echo url('staff')?>"><i class="icon-list-alt"></i> PG Research Staff</a></li>
         			<?php if (Auth::user()->can("edit_overridable_data")): ?>
