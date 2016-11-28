@@ -779,10 +779,12 @@ class API {
 	{
 		foreach ($final as &$element)
 		{
-
-			$search = '#(.*?)(?:href="https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch?.*?v=))([\w\-]{10,12}).*#x';
-			$replace = '<div class="video-launcher mb-2"><div class="video-player"><div data-video-id="$2" data-type="youtube"></div></div><img src="https://img.youtube.com/vi/$2/maxresdefault.jpg"></div>';
-			$element = preg_replace($search, $replace, $element);
+			if(is_string($element))
+			{
+				$search = '#(.*?)(?:href="https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch?.*?v=))([\w\-]{10,12}).*#x';
+				$replace = '<div class="video-launcher mb-2"><div class="video-player"><div data-video-id="$2" data-type="youtube"></div></div><img src="https://img.youtube.com/vi/$2/maxresdefault.jpg"></div>';
+				$element = preg_replace($search, $replace, $element);
+			}
 		}
 
 		return $final;
