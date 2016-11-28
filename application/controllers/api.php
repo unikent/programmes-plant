@@ -72,6 +72,65 @@ class API_Controller extends Base_Controller {
 	}
 
 
+	public function get_profiles($level, $format = 'json'){
+
+		$last_generated = API::get_last_change_time();
+
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)){
+			return Response::make('', '304');
+		}
+
+		$level = ($level=='postgraduate'?'UG':'PG');
+
+		/** @var Profile $class */
+		$class = $level . '_Profile';
+
+		$profiles = $class::get_api_data();
+
+		switch($format){
+			case 'xml':
+				return static::xml($profiles) ;
+			case 'csv':
+				return static::csv_download($profiles, "profiles-$level", $last_generated);
+			default :
+				return static::json($profiles, 200);
+		}
+
+	}
+
+	public function get_profile($level, $id, $format = 'json'){
+
+		$level = ($level=='postgraduate'?'UG':'PG');
+
+		/** @var Profile $class */
+		$class = $level . '_Profile';
+
+		$cache_key = "profile-" . strtolower($level) . '.' . $id;
+
+		if(Cache::has($cache_key)){
+			$profile = Cache::get($cache_key);
+		}else {
+			$profile = $class::find($id);
+			if($profile){
+				$profile = $profile->toArray();
+				Cache::put($cache_key, $profile, 2628000);
+
+			}else{
+				return Response::make('', 404);
+			}
+		}
+
+		switch($format){
+			case 'xml':
+				return static::xml($profile) ;
+			case 'csv':
+				return static::csv_download($profile, "profile-$level-$id", time());
+			default :
+				return static::json($profile, 200);
+		}
+	}
+
 	/**
 	 * Routing for /$year/$type/courses
 	 *
