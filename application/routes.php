@@ -44,6 +44,12 @@ Route::group(array('before' => ''), function(){
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/deliveries/(:num)', 'programmes@deliveries');
 
+
+	// Customised routing for student profiles
+	Route::any('(ug|pg)/profile', 'profiles@index');
+	Route::any('(ug|pg)/profile/(:any?)/(:num?)', 'profiles@(:2)');
+
+
 	// Access fields systems
 	Route::any('(ug|pg)/fields/standard', 'programmefields@index');
 	Route::any('(ug|pg)/fields/standard/(:any?)', 'programmefields@(:2)');
@@ -155,6 +161,12 @@ Route::group(array('before' => ''), function(){
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/courses', 'api@simplelist');
 
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/all_courses', 'api@fullsimplelist');
+
+	Route::get('/api/(undergraduate|postgraduate)/profiles', 'api@profiles');
+	Route::get(array(
+				   '/api/(undergraduate|postgraduate)/profile/(:num).(json|xml|csv)',
+				   '/api/(undergraduate|postgraduate)/profile/(:num)'
+   ), 'api@profile');
 
 	Route::get('/command/modulerefresh/([0-9]{4}|current)/(undergraduate|postgraduate)/(:num)','api@refresh_modules');
 	// Exports
