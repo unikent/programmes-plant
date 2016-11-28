@@ -16,7 +16,7 @@ class Create_Student_Profiles_UG_Table {
 			$table->string('course');
 			$table->integer('banner_image_id');
 			$table->integer('profile_image_id');
-			$table->integer('subject_category_id');
+			$table->integer('subject_categories');
 			$table->text('quote');
 			$table->string('video');
 			$table->text('lead');
