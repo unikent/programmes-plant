@@ -21,7 +21,7 @@
         <?php if(! $create): ?>
           <img src="<?php echo $item->url(); ?>" />
         <?php endif; ?>
-        <?php echo Form::file('image', array('placeholder'=>__('images.form.image.placeholder')))?>
+        <?php echo Form::file('image', array('placeholder'=>__('images.form.image.placeholder'), 'accept'=>'image/jpeg,image/jpg'))?>
       </div>
     </div>
 
