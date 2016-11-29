@@ -1227,6 +1227,52 @@ class API_Controller extends Base_Controller {
 		return $this->get_data_for_level(null, $type, $format);
 	}
 
+	public function get_data_single($type, $id, $format = 'json')
+	{
+		return $this->get_data_single_for_level(null, $type, $id, $format);
+	}
+
+
+	/**
+	 * get_data_single_for_level Return data from simpleData cache
+	 *
+	 * @param string $level   Undergraduate, Postgraduate
+	 * @param string $type    Type of data to return, ie. Campuses
+	 * @param string $format  Return in JSON or XML.
+	 * @return Response       json|xml data as a string or HTTP response.
+	 */
+	public function get_data_single_for_level($level, $type, $id, $format = 'json'){
+		switch($level){
+			case 'undergraduate':
+				$level = 'ug';
+				break;
+			case 'postgraduate':
+				$level = 'pg';
+				break;
+		}
+
+		// If cache is valid, send 304
+		$last_modified = API::get_last_change_time();
+
+		if($this->cache_still_valid($last_modified)){
+			return Response::make('', '304');
+		}
+
+		// Set data for cache
+		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_modified);
+
+		// If data exists, send it, else 404
+		try
+		{
+			$data = API::get_data_single($type, $id, $level);
+			return ($format=='xml') ? static::xml($data) : static::json($data, 200);
+		}
+		catch(NotFoundException $e)
+		{
+			return Response::make('', 404);
+		}
+	}
+
 	/**
 	 * get_data_for_level Return data from simpleData cache
 	 *
