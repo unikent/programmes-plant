@@ -30,14 +30,14 @@ class Images_Controller extends Simple_Admin_Controller {
 		$new->populate_from_input();
 		$new->save();
 
-		Input::upload('image', path('storage').'images', $new->id.'.jpg');
-
+		if(Input::has('image')){
+			Input::upload('image', path('storage').'images', $new->id.'.jpg');
+		}
+		
 		Messages::add('success', __($this->l . 'success.create'));
 
 		return Redirect::to($url);
 	}
-
-
 
 
 }

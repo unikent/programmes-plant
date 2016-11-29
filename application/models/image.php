@@ -24,4 +24,12 @@ class Image extends SimpleData
 
 		$this->fill($input);
 	}
+
+	public function url(){
+		return URL::base().'/media/'.$this->id.'.jpg';
+	}
+	
+	public function path(){
+		return  path('storage').'images/'.$new->id.'.jpg';
+	}
 }

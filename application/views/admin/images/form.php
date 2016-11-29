@@ -19,7 +19,7 @@
       <?php echo Form::label('image', __('images.form.image.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php if(! $create): ?>
-          <img src="<?php echo URL::base().'/media/'.$item->id.'.jpg'?>" />
+          <img src="<?php echo $item->url(); ?>" />
         <?php endif; ?>
         <?php echo Form::file('image', array('placeholder'=>__('images.form.image.placeholder')))?>
       </div>

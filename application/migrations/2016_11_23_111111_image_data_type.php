@@ -15,7 +15,6 @@ class Image_Data_Type {
 			$table->timestamps();
 
 			$table->string('name', 200);
-			$table->string('file_name', 255);
 			$table->string('focus', 50);
 
 			$table->string('caption', 255);
