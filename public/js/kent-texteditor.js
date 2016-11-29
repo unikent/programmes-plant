@@ -30,7 +30,8 @@ var redactor_config = {
 			args:  ['p', 'class', 'impact-statement']
 		}
 	},
-	maxHeight: 600
+	maxHeight: 600,
+	videoContainerClass: 'embed-responsive embed-responsive-16by9'
 };
 
 $('textarea').each( function(){
