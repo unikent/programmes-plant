@@ -17,7 +17,6 @@ class Profiles_Controller extends Simple_Admin_Controller {
 		parent::__construct();
 	}
 
-
 	/**
 	 * Return all data and send to an index view.
 	 */

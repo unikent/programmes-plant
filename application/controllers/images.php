@@ -6,6 +6,19 @@ class Images_Controller extends Simple_Admin_Controller {
 	public $model = 'Image';
 	public $custom_form = true;
 
+	/**
+	 * Return all data and send to an index view.
+	 */
+	public function get_index()
+	{
+		$model = $this->model;
+
+		$this->data['items'] = $model::all_active('name')->get();
+		$this->data['shared'] = $this->shared_data;
+		$this->layout->nest('content', 'admin.images.index', $this->data);
+	}
+
+
 	public function post_create()
 	{
 		$model = $this->model;
