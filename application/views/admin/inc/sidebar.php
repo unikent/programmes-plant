@@ -26,6 +26,8 @@
 	            <li class="<?php echo ( (URI::segment(1) != 'fields' && URI::segment(2) == 'globalsettings') ? 'active' : false )?>"><a href="<?php echo url(URLParams::$year.'/globalsettings')?>"><i class="icon-list-alt"></i> Immutable fields</a></li>
 	        <?php endif; ?>
 
+             <li class="<?php echo ( URI::segment(1) == 'images' ? 'active' : false )?>"><a href="<?php echo url('images')?>"><i class="icon-list-alt"></i> Images</a></li>      
+
             <?php if(strcmp(URL::current(), URL::to('/')) !== 0): ?>
                 <?php if(URLParams::get_type() == 'ug'): ?>
                     <li class="nav-header">UG Data</li>
