@@ -44,4 +44,12 @@ abstract class Profile extends SimpleData
 		return $data;
 	}
 
+	/**
+	 * Override Eloquent's save so that we generate a new json file for our API
+	 */
+	public function save()
+	{
+		Cache::purge('profile-'. static::$type);
+		return parent::save();
+	}
 }
