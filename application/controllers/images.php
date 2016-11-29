@@ -6,15 +6,23 @@ class Images_Controller extends Simple_Admin_Controller {
 	public $model = 'Image';
 	public $custom_form = true;
 
+	/**
+	 * Return all data and send to an index view.
+	 */
+	public function get_index()
+	{
+		$model = $this->model;
+
+		$this->data['items'] = $model::all_active('name')->get();
+		$this->data['shared'] = $this->shared_data;
+		$this->layout->nest('content', 'admin.images.index', $this->data);
+	}
+
+
 	public function post_create()
 	{
 		$model = $this->model;
 		$url = $this->get_base_page();
-
-
-		$rules = array(
-			'name'  => 'required|unique:' . $model::$table . '|max:255',
-		);
 
 		if (! $model::is_valid($rules))
 		{
@@ -50,8 +58,7 @@ class Images_Controller extends Simple_Admin_Controller {
 		$id = Input::get('id');
 		
 		$rules = array(
-			'id'  => 'required|exists:'. $model::$table .',id',
-			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id
+			'id'  => 'required|exists:'. $model::$table .',id'
 		);
 
 		if (! $model::is_valid($rules))
