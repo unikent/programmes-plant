@@ -321,6 +321,9 @@ class API {
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 		}
 
+
+		$final = static::add_youtube_video($final);
+
 		if($final['module_session']=='None' || $final['module_session'] == 'none'){
 			$final['modules'] = array();
 		}else{
@@ -770,6 +773,21 @@ class API {
 		}
 
 		return $prefix;
+	}
+
+	private static function add_youtube_video($final)
+	{
+		foreach ($final as &$element)
+		{
+			if(is_string($element))
+			{
+				$search = '#(.*?)(?:href="https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch?.*?v=))([\w\-]{10,12}).*#x';
+				$replace = '<div class="video-launcher mb-2"><div class="video-player"><div data-video-id="$2" data-type="youtube"></div></div><img src="https://img.youtube.com/vi/$2/maxresdefault.jpg"></div>';
+				$element = preg_replace($search, $replace, $element);
+			}
+		}
+
+		return $final;
 	}
 }
 
