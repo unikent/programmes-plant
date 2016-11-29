@@ -239,6 +239,25 @@ class API {
 		throw new NotFoundException("Request for unknown data type.");
 	}
 
+	public static function get_data_single($type, $uid, $level = null){
+
+		// Do some magic (ie. convert schools=>school & campuses to campus for models)
+		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
+		$type = $pluralizer->singular($type);
+
+		$prefix = API::_get_prefix($level);
+
+		// If type exists, return data
+		if(class_exists($prefix.$type)){
+			$type = $prefix.$type;
+			$data = $type::find($uid);
+			return $data->to_array();
+		}
+		// Else throw 404
+		throw new NotFoundException("Request for unknown data type.");
+	}
+	
+
 	/**
 	* Create a combined programme output
 	*

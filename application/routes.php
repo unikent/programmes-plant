@@ -147,7 +147,11 @@ Route::group(array('before' => ''), function(){
 	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num).(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)'), 'api@programme');
 	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');
 
+
+	Route::get(array('/api/(undergraduate|postgraduate)/(:any)/(:num).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)/(:num)'), 'api@data_single_for_level');
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
+
+	Route::get(array('/api/(:any)/(:num).(json|xml)', '/api/(:any)/(:num)'), 'api@data_single');
 
 	Route::get(array('/api/(:any).(json|xml)', '/api/(:any)'), 'api@data');
 

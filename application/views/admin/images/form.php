@@ -14,7 +14,6 @@
       </div>
     </div>
 
-
      <div class="control-group">
       <?php echo Form::label('image', __('images.form.image.label'), array('class'=>'control-label'))?>
       <div class="controls">
@@ -33,13 +32,27 @@
       </div>
     </div>
 
-
     <div class="control-group">
       <?php echo Form::label('caption', __('images.form.caption.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php echo Form::text('caption',  ( Input::old('caption') || $create ? Input::old('caption') : $item->caption ),array('placeholder'=>__('images.form.caption.placeholder')))?>
       </div>
     </div>
+
+    <div class="control-group">
+      <?php echo Form::label('title', __('images.form.title.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::text('title',  ( Input::old('title') || $create ? Input::old('title') : $item->title ),array('placeholder'=>__('images.form.title.placeholder')))?>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <?php echo Form::label('alt', __('images.form.alt.label'), array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::text('alt',  ( Input::old('alt') || $create ? Input::old('alt') : $item->alt ),array('placeholder'=>__('images.form.alt.placeholder')))?>
+      </div>
+    </div>
+
 
     <div class="control-group">
       <?php echo Form::label('attribution_text', __('images.form.attribution_text.label'), array('class'=>'control-label'))?>

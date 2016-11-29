@@ -63,5 +63,15 @@ class Image extends SimpleData
 		// return
 		return $data;
 	}
+	/**
+	 * to array, add extra vals
+	 */
+	public function to_array(){
+		$data = $this->attributes;
 
+		$data['url'] = $this->url();
+		$data['thumb'] = $this->thumb_url();
+
+		return $data;
+	}
 }
