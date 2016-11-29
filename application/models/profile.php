@@ -49,7 +49,12 @@ abstract class Profile extends SimpleData
 	 */
 	public function save()
 	{
-		Cache::purge('profile-'. static::$type);
+		try {
+			Cache::purge('profile-'. static::$type);
+		} catch (\Filch\FilchException $e ){
+			// we don't mind
+		}
+	
 		return parent::save();
 	}
 }
