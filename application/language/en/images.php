@@ -57,6 +57,14 @@ return array(
 			'label' => 'Licence Link',
 			'placeholder' => 'Like to image licence',
 		),
+		'title' => array(
+			'label' => 'Title text',
+			'placeholder' => 'Title text for image',
+		),
+		'alt' => array(
+			'label' => 'Alt text',
+			'placeholder' => 'Alt text for image',
+		),
 		'focus' => array(
 			'label' => 'Default image focus position',
 		),
