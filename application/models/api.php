@@ -259,6 +259,7 @@ class API {
 		// Use programme setttings as a base
 		$final = $programme_settings;
 
+
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
 		// Loop through them, adding them to the $final object.
 		$programme = API::load_external_data($programme, $level);
@@ -278,6 +279,8 @@ class API {
 		{
 			unset($final[$key]);
 		}
+
+		$final = static::add_youtube_video($final);
 
 		// Now remove IDs from our field names, they're not necessary and return.
 		// e.g. 'programme_title_1' simply becomes 'programme_title'.
@@ -322,7 +325,7 @@ class API {
 		}
 
 
-		$final = static::add_youtube_video($final);
+
 
 		if($final['module_session']=='None' || $final['module_session'] == 'none'){
 			$final['modules'] = array();
@@ -410,8 +413,10 @@ class API {
 		// get programme fields (mapping of columns to their datatypes)
 		$programme_fields = $field_model::get_api_data();
 
+
 		// For each column with a special data type, update its value in the record;
 		foreach($programme_fields as $field_name => $data_type){
+
 			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year']);
 		}
 
@@ -777,9 +782,18 @@ class API {
 
 	private static function add_youtube_video($final)
 	{
-		foreach ($final as &$element)
+
+		$fields = URLParams::get_type().'_ProgrammeField';
+		$field_list = array();
+
+		foreach($fields::programme_fields() as $field)
 		{
-			if(is_string($element))
+			$field_list[$field->original['colname']] = $field->original['field_type'];
+		}
+
+		foreach ($final as $key => &$element)
+		{
+			if(is_string($element) && isset($field_list[$key]) && $field_list[$key] == 'textarea')
 			{
 				$search = '#(.*?)(?:href="https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch?.*?v=))([\w\-]{10,12}).*#x';
 				$replace = '<div class="video-launcher mb-2"><div class="video-player"><div data-video-id="$2" data-type="youtube"></div></div><img src="https://img.youtube.com/vi/$2/maxresdefault.jpg"></div>';
