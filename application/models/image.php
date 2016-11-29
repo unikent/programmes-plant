@@ -28,6 +28,10 @@ class Image extends SimpleData
 		return URL::base().'/media/'.$this->id.'.jpg';
 	}
 
+	public function thumb_url(){
+		return URL::base().'/media/'.$this->id.'_thumb.jpg';
+	}
+
 	public function path(){
 		return  path('storage').'images/'.$new->id.'.jpg';
 	}
