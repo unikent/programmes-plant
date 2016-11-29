@@ -18,13 +18,15 @@ class Images_Controller extends Simple_Admin_Controller {
 		$this->layout->nest('content', 'admin.images.index', $this->data);
 	}
 
-
+	/**
+	 * Create an image via POST.
+	 */
 	public function post_create()
 	{
 		$model = $this->model;
 		$url = $this->get_base_page();
 
-		if (! $model::is_valid($rules))
+		if (! $model::is_valid())
 		{
 			Messages::add('error', $model::$validation->errors->all());
 			Input::flash();//Save previous inputs to avoid blanking form.
@@ -39,7 +41,7 @@ class Images_Controller extends Simple_Admin_Controller {
 
 		$img = Input::file('image');
 		if(isset( $img['error']) && $img['error'] === 0){
-			$u = Input::upload('image', path('storage').'images', $new->id.'.jpg');
+			$this->save_image($new->id);
 		}
 		
 		Messages::add('success', __($this->l . 'success.create'));
@@ -47,8 +49,8 @@ class Images_Controller extends Simple_Admin_Controller {
 		return Redirect::to($url);
 	}
 
-		/**
-	 * Edit an item via POST.
+	/**
+	 * Edit an image via POST.
 	 */
 	public function post_edit()
 	{
@@ -77,7 +79,7 @@ class Images_Controller extends Simple_Admin_Controller {
 
 		$img = Input::file('image');
 		if(isset( $img['error']) && $img['error'] === 0){
-			$u = Input::upload('image', path('storage').'images', $update->id.'.jpg');
+			$this->save_image($update->id);
 		}
 
 		Messages::add('success', __($this->l . 'success.edit'));
@@ -85,5 +87,39 @@ class Images_Controller extends Simple_Admin_Controller {
 		return Redirect::to($url);
 	}
 
+	/**
+	 * Save image - uploads image, saves it & generates a thumbnail
+	 */
+	public function save_image($img_id){
+		$path = path('storage').'images';
+		$u = Input::upload('image', path('storage').'images', $img_id.'.jpg');
+
+		if($u){
+			$this->make_thumb( path('storage').'images/'.$img_id.'.jpg', path('storage').'images/'.$img_id.'_thumb.jpg', 160);
+		}
+
+		return $u;
+	}
+
+	// see: https://davidwalsh.name/create-image-thumbnail-php
+	protected function make_thumb($src, $dest, $desired_width) {
+
+		/* read the source image */
+		$source_image = imagecreatefromjpeg($src);
+		$width = imagesx($source_image);
+		$height = imagesy($source_image);
+		
+		/* find the "desired height" of this thumbnail, relative to the desired width  */
+		$desired_height = floor($height * ($desired_width / $width));
+		
+		/* create a new, "virtual" image */
+		$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+		
+		/* copy source image at a resized size */
+		imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+		
+		/* create the physical thumbnail image to its destination */
+		imagejpeg($virtual_image, $dest);
+	}
 
 }

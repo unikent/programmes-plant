@@ -5,6 +5,7 @@ class Profiles_Controller extends Simple_Admin_Controller {
 	public $model = '';
 	public $level = null;
 	public $custom_form = true;
+	public $shared_data = false;
 
 	// Determine correct model (PG / UG)
 	public function __construct()
@@ -23,7 +24,7 @@ class Profiles_Controller extends Simple_Admin_Controller {
 	public function get_index()
 	{
 		$model = $this->model;
-
+	//	$this->data['shared'] = $this->shared_data;
 		$this->data['items'] = $model::all_active('course')->get();
 		$this->layout->nest('content', 'admin.profile.index', $this->data);
 	}

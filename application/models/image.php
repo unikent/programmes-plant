@@ -28,6 +28,10 @@ class Image extends SimpleData
 		return URL::base().'/media/'.$this->id.'.jpg';
 	}
 
+	public function thumb_url(){
+		return URL::base().'/media/'.$this->id.'_thumb.jpg';
+	}
+
 	public function path(){
 		return  path('storage').'images/'.$new->id.'.jpg';
 	}
@@ -52,6 +56,7 @@ class Image extends SimpleData
 			// since don't need to worry about realtions & things like that
 			$data[$record->attributes["id"]] = $record->attributes;
 			$data[$record->attributes["id"]]['url'] = URL::base().'/media/'.$record->attributes['id'].'.jpg';
+			$data[$record->attributes["id"]]['thumb'] = URL::base().'/media/'.$record->attributes['id'].'_thumb.jpg';
 		}
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);

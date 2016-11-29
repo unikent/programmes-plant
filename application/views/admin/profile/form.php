@@ -42,7 +42,7 @@ $subject_category_class = $level . '_SubjectCategory';
       <?php echo Form::label('subject_categories', __('profile.form.subject_categories.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php
-			echo ExtForm::multiselect('subject_categories[]', $subject_category_class::all_as_list(), explode(',',$item->subject_categories), array('style'=>'height:200px;width:600px;'))
+			echo ExtForm::multiselect('subject_categories[]', $subject_category_class::all_as_list(), $create ? array() : explode(',',$item->subject_categories), array('style'=>'height:200px;width:600px;'))
 		?>
 	  </div>
     </div>

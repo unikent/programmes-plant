@@ -3,7 +3,7 @@
 <?php echo Messages::get_html()?>
 
 <?php
-  $url_prefix = (!$shared) ? URLParams::$type.'/' : '';
+  $url_prefix =  URLParams::$type.'/';
 ?>  
 <div style="margin-top:20px; margin-bottom:20px">
     <a href="<?php echo action($url_prefix . $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>

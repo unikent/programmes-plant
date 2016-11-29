@@ -21,7 +21,7 @@
   <?php foreach($items as $item) : ?>
     <tr>
       <td>
-      <img src="<?php echo $item->url(); ?>" style="width:50px; margin-right:5px; " />
+      <img src="<?php echo $item->thumb_url(); ?>" style="width:50px; margin-right:5px; " />
 
       <?php echo $item->name ?></td>
         <td>
