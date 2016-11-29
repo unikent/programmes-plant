@@ -6,7 +6,6 @@ class Images_Controller extends Simple_Admin_Controller {
 	public $model = 'Image';
 	public $custom_form = true;
 
-
 	public function post_create()
 	{
 		$model = $this->model;
@@ -30,12 +29,52 @@ class Images_Controller extends Simple_Admin_Controller {
 		$new->populate_from_input();
 		$new->save();
 
-		if(Input::has('image')){
-			Input::upload('image', path('storage').'images', $new->id.'.jpg');
+		$img = Input::file('image');
+		if(isset( $img['error']) && $img['error'] === 0){
+			$u = Input::upload('image', path('storage').'images', $new->id.'.jpg');
 		}
 		
 		Messages::add('success', __($this->l . 'success.create'));
 
+		return Redirect::to($url);
+	}
+
+		/**
+	 * Edit an item via POST.
+	 */
+	public function post_edit()
+	{
+		$model = $this->model;
+		$url = $this->get_base_page();
+
+		$id = Input::get('id');
+		
+		$rules = array(
+			'id'  => 'required|exists:'. $model::$table .',id',
+			'name'  => 'required|max:255|unique:'. $model::$table . ',name,' . $id
+		);
+
+		if (! $model::is_valid($rules))
+		{
+			Messages::add('error', $model::$validation->errors->all());
+			Input::flash();//Save previous inputs to avoid blanking form.
+			return Redirect::to($url . '/edit/' . $id);
+		}
+
+		$update = $model::find($id);
+
+		$update->name = Input::get('name');
+		$update->populate_from_input();
+
+		$update->save();
+
+		$img = Input::file('image');
+		if(isset( $img['error']) && $img['error'] === 0){
+			$u = Input::upload('image', path('storage').'images', $update->id.'.jpg');
+		}
+
+		Messages::add('success', __($this->l . 'success.edit'));
+		
 		return Redirect::to($url);
 	}
 

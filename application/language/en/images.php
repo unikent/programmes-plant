@@ -74,7 +74,7 @@ return array(
 
 	'success' => array(
 		'delete' => 'Image successfully deleted.',
-		'create' => 'Image successfully deleted',
+		'create' => 'Image successfully uploaded',
 		'edit' => 'Image saved',
 	)
 );
