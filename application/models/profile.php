@@ -29,8 +29,8 @@ abstract class Profile extends SimpleData
 			$data[$record->attributes["id"]] = $record->attributes;
 			$cat_class = strtoupper(static::$type) . '_SubjectCategory';
 			$data[$record->attributes["id"]]['subject_categories'] = $cat_class::replace_ids_with_values($data[$record->attributes["id"]]['subject_categories'], false, true);
-			$data[$record->attributes["id"]]['banner_image_id'] = Image::replace_ids_with_values($data[$record->attributes["id"]]['banner_image_id'], false, false);
-			$data[$record->attributes["id"]]['profile_image_id'] = Image::replace_ids_with_values($data[$record->attributes["id"]]['profile_image_id'], false, false);
+			$data[$record->attributes["id"]]['banner_image_id'] = Image::replace_ids_with_values($data[$record->attributes["id"]]['banner_image_id'], false, false, true);
+			$data[$record->attributes["id"]]['profile_image_id'] = Image::replace_ids_with_values($data[$record->attributes["id"]]['profile_image_id'], false, false, true);
 		}
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
@@ -42,8 +42,8 @@ abstract class Profile extends SimpleData
 
 		$cat_class = strtoupper(static::$type) . '_SubjectCategory';
 		$data['subject_categories'] = $cat_class::replace_ids_with_values($data['subject_categories'], false, true);
-		$data['banner_image_id'] = Image::replace_ids_with_values($data['banner_image_id'], false, false);
-		$data['profile_image_id'] = Image::replace_ids_with_values($data['profile_image_id'], false, false);
+		$data['banner_image_id'] = Image::replace_ids_with_values($data['banner_image_id'], false, false, true);
+		$data['profile_image_id'] = Image::replace_ids_with_values($data['profile_image_id'], false, false, true);
 		return $data;
 	}
 
