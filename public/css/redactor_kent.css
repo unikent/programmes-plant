@@ -1,10 +1,38 @@
 @font-face{font-family:Century Schoolbook;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot);src:local("Century Schoolbook"),local("CenturySchoolbook"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff2) format("woff2"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.svg#CenturySchoolbook) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mtlight-webfont.svg#arial_mtmt_light) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.svg#arial_mtlight_italic) format("svg");font-weight:400;font-style:italic}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.svg#arial_mtmedium) format("svg");font-weight:700;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.svg#arial_mtmedium_italic) format("svg");font-weight:700;font-style:italic}
 
 
-.redactor-dropdown-box-format .redactor-dropdown-blockquote {
+.redactor-dropdown-box-format .redactor-dropdown-blockquote,
+.redactor-dropdown-box-format .redactor-dropdown-pullquote{
     font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
     font-size: 19px;
     font-style: italic;
+    color: #05345C;
+}
+.redactor-dropdown-box-format .redactor-dropdown-pullquote span{
+    padding: 5px 0;
+    border-color:#05345C;
+    border-style: solid;
+    border-width: 1px 0;
+}
+
+.redactor-dropdown-box-format .redactor-dropdown-p{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size: 16px;
+    color: #171717;
+}
+.redactor-dropdown-box-format .redactor-dropdown-impact{
+    font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
+    font-size: 19px;
+    color: #937227;
+}
+.redactor-dropdown-box-format .redactor-dropdown-h2{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size: 25.632px;
+    color: #05345C;
+}
+.redactor-dropdown-box-format .redactor-dropdown-h3{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size:20.256px;
     color: #05345C;
 }
 
@@ -67,4 +95,186 @@
     line-height: 16px;
     line-height: 1rem;
     line-height: calc(1rem);
+}
+
+.redactor-editor blockquote.pull-quote{
+    border:       1px solid #05345C;
+    border-width: 1px 0;
+    padding:      2rem;
+    margin: 16px 0;
+}
+
+.redactor-editor figure:hover .media-wrap{
+    overflow: hidden;
+}
+.redactor-editor figure:hover img{
+    filter: blur(3px);
+}
+.redactor-editor figure:hover .media-wrap:after{
+    content: "Edit";
+    display: block;
+    position: absolute;
+    top:calc(50% - 17px);
+    left: calc(50% - 24px);
+    padding: 5px 10px;
+    background: #FFF;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.redactor-editor figure .media-wrap img{
+    max-width: 100%;
+    height: auto;
+}
+
+.redactor-editor figure .media-wrap{
+    position:relative;
+}
+.redactor-editor figure .attribution {
+    position:   absolute;
+    bottom:     0;
+    right:      0;
+    display:    block;
+    height:     36px;
+    width:      45px;
+    background: url(img/attribution_icon.png);
+    font-size: 0;
+}
+
+.redactor-editor figure figcaption{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size: .9rem;
+    color: #636c72;
+    font-style: normal;
+}
+
+.redactor-editor figure.figure-center{
+    display: block;
+    text-align: center;
+    margin:auto;
+}
+
+.redactor-editor figure.figure-right,
+.redactor-editor figure.figure-pull-right{
+    float:right;
+    clear:right;
+    max-width: 50%;
+    margin-left:2rem;
+    margin-bottom: 2rem;
+}
+
+.redactor-editor figure.figure-left,
+.redactor-editor figure.figure-pull-left
+{
+    float:left;
+    clear:left;
+    max-width: 50%;
+    margin-right:2rem;
+    margin-bottom: 2rem;
+}
+
+#img-gallery{
+    height:320px;
+    overflow: auto;
+}
+
+#img-gallery .gallery-img-wrap{
+    overflow: hidden;
+    display: flex;
+    width: 140px;
+    height: 140px;
+    margin: 5px 5px 0;
+    background: #DDD;
+    position: relative;
+    float:left;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+#img-gallery .gallery-img-wrap img{
+    position: relative;
+    z-index: 2;
+}
+#img-gallery .gallery-img-wrap:hover img{
+    filter: blur(3px);
+    z-index: 0;
+}
+#img-gallery .gallery-img-wrap .img-name{
+    display: flex;
+    vertical-align: middle;
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
+    z-index: 1;
+    background: rgba(255,255,255,0.3);
+    padding: 16px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+#img-gallery .gallery-img-wrap .img-name span{
+    background: rgba(255,255,255,0.5);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+#redactor-modal-body .original{
+    color: #777;
+    margin-top: 5px;
+    font-size: 13px;
+}
+#redactor-modal-body .original .value{
+    font-style: italic;
+}
+#redactor-modal-body .original button{
+    padding: 5px 10px;
+    height: auto;
+    float:right;
+    font-size: 13px;
+}
+
+#redactor-modal-body input[disabled]{
+    background-color: #CCC;
+}
+#redactor-modal #redactor-modal-body section{
+    margin-bottom: 10px;
+}
+#redactor-modal #redactor-modal-tabber{
+    margin-bottom: 15px;
+}
+#redactor-modal #img-gallery-search{
+    margin-bottom: 15px;
+}
+
+.img-picker .redactor-editor{
+    min-height: 20px !important;
+    height: 20px !important;
+    padding: 4px 6px;
+    border-radius: 4px;
+    width: 100px !important;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+.img-picker .redactor-editor p{
+    margin:0;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+.img-picker .redactor-box{
+    background: transparent;
+}
+
+.img-picker .img-wrapper{
+    overflow: hidden;
+    display: block;
+    width: 160px;
+    height: 160px;
+    margin: 10px 0;
+    background: #DDD;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
 }

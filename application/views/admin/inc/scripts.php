@@ -8,7 +8,11 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js" type="text/javascript" charset="utf8" ></script>
 <!-- data tables js -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript" charset="utf8" ></script>
-<!-- CKeditor cdn -->
+
+<script type='text/javascript' charset="utf8">
+	var base_url = '<?php echo URL::to('/');?>';
+</script>
+
 <script src="<?php echo asset('js/redactor.js')?>"></script>
 <script src="<?php echo asset('js/kent-texteditor.js')?>" type="text/javascript" charset="utf8"></script>
 
@@ -25,7 +29,5 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js" type="text/javascript" charset="utf8" ></script>
 
 <!-- our js -->
-<script type='text/javascript' charset="utf8">
-  var base_url = '<?php echo URL::to('/');?>';
-</script>
+
 <script src="<?php echo asset('js/programmes-plant.js')?>"></script>

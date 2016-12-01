@@ -91,6 +91,7 @@ Route::group(array('before' => ''), function(){
 
 	// Customised routing for campuses
 	Route::any('images', 'images@index');
+	Route::post('images/upload','images@upload');
 	Route::any('images/(:any?)/(:num?)', 'images@(:1)');
 
 	// Customised routing for awards

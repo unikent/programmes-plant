@@ -346,4 +346,15 @@ class Form extends \Laravel\Form {
 
 		return false;
 	}
+
+	public static function imagePicker($name, $value=null)
+	{
+		$image= null;
+		$imgTag= '';
+		if(!empty($value)){
+			$image = \Image::find($value);
+			$imgTag = '<img src="' . $image->thumb_url() . '" alt="' . $image->alt . '">';
+		}
+		return '<div class="img-picker"><textarea class="picker" rows="1" name="' . $name . '">' . $value .'</textarea><div class="img-wrapper">' . $imgTag . '</div><strong class="img-name">' . ($image? $image->name: '<em>Unassigned</em>') . '</strong></div>';
+	}
 }

@@ -18,7 +18,7 @@
       <?php echo Form::label('image', __('images.form.image.label'), array('class'=>'control-label'))?>
       <div class="controls">
         <?php if(! $create): ?>
-          <img src="<?php echo $item->url(); ?>" />
+          <a href="<?php echo $item->url(); ?>" target="_blank"><img src="<?php echo $item->thumb_url(); ?>" /></a>
         <?php endif; ?>
         <?php echo Form::file('image', array('placeholder'=>__('images.form.image.placeholder'), 'accept'=>'image/jpeg,image/jpg'))?>
       </div>

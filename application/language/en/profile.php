@@ -40,6 +40,12 @@ return array(
 		'course' => array(
 			'label' => 'Course'
 		),
+		'banner_image_id' => array(
+			'label' => 'Banner Image'
+		),
+		'profile_image_id'=>array(
+			'label' => 'Profile Image'
+		),
 		'subject_categories' => array(
 			'label' => 'Subject Categories'
 		),

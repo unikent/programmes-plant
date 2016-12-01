@@ -164,9 +164,9 @@ abstract class ProgrammeField extends Field
 
         $data = array();
         
-        $fields = static::where_in('field_type', array('table_select', 'table_multiselect'))->get(array('colname', 'field_meta'));
+        $fields = static::where_in('field_type', array('table_select', 'table_multiselect','image'))->get(array('colname', 'field_type', 'field_meta'));
         foreach ($fields as $record) {   
-                $data[$record->attributes["colname"]] =  $record->attributes["field_meta"];
+                $data[$record->attributes["colname"]] =  $record->attributes["field_type"]=='image'?'Image': $record->attributes["field_meta"];
         }
         // Store data in to cache
         Cache::put($cache_key, $data, 2628000);

@@ -81,6 +81,11 @@ foreach($section as $field):
         $form_element = Form::select_if_permitted($column_name, $model::all_as_list($year, $field->empty_default_value), $current_value);
         break;
 
+	  case 'image':
+		  if($current_value == '' && $field->prefill == 1) $current_value = $field->field_initval;
+		  $form_element = Form::imagePicker($column_name, $current_value);
+	  break;
+
       case 'table_multiselect':
         $model = $field->field_meta;
         $form_element = ExtForm::multiselect($column_name.'[]', $model::all_as_list($year), explode(',',$current_value), array('style'=>'height:200px;width:600px;'));
