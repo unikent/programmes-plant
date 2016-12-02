@@ -52,12 +52,9 @@ class Image extends SimpleData
 		// make data
 		$data = array();
 		foreach (static::where('hidden', '=', 0)->get() as $record) {
-			// Direct grab of attributes is faster than to_array 
-			// since don't need to worry about realtions & things like that
-			$data[$record->attributes["id"]] = $record->attributes;
-			$data[$record->attributes["id"]]['url'] = URL::base().'/media/'.$record->attributes['id'].'.jpg';
-			$data[$record->attributes["id"]]['thumb'] = URL::base().'/media/'.$record->attributes['id'].'_thumb.jpg';
+			$data[$record->attributes["id"]] = $record->to_array();
 		}
+
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
 		// return
@@ -69,8 +66,23 @@ class Image extends SimpleData
 	public function to_array(){
 		$data = $this->attributes;
 
-		$data['url'] = $this->url();
-		$data['thumb'] = $this->thumb_url();
+		$data['alt_text'] = $data['alt'];
+		$data['mime_type'] = "image/jpeg";
+
+		$data['attribution'] = array(
+			'link' => $data['attribution_link'],
+			'author' => $data['attribution_text'],
+			'license' => $data['licence_link']
+		);
+
+		$data['sizes'] = array(
+			'full' => array('url' => $this->url()),
+			'thumbnail' => array('url' => $this->thumb_url()),
+		);
+
+		foreach(array('alt','attribution_link','attribution_text','licence_link','hidden') as $k){
+			unset($data[$k]);
+		}
 
 		return $data;
 	}

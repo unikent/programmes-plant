@@ -28,7 +28,7 @@
       <?php echo Form::label('focus', __('images.form.focus.label'), array('class'=>'control-label'))?>
       <div class="controls">
 
-          <?php echo Form::select('focus', array("top","bottom","center"),  ( Input::old('focus') || $create ? Input::old('focus') : $item->focus ))?>
+          <?php echo Form::select('focus', array("top"=>"Top","bottom"=>"Bottom","center"=>"Center"),  ( Input::old('focus') || $create ? Input::old('focus') : $item->focus ))?>
       </div>
     </div>
 
