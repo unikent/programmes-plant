@@ -434,7 +434,8 @@ class API {
 		// For each column with a special data type, update its value in the record;
 		foreach($programme_fields as $field_name => $data_type){
 
-			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year']);
+			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
+
 		}
 
 		return $record;

@@ -31,12 +31,25 @@ $subject_category_class = $level . '_SubjectCategory';
   </div>
 
 	  <div class="control-group">
+		  <?php echo Form::label('banner_image_id', __('profile.form.banner_image_id.label') , array('class'=>'control-label'))?>
+		  <div class="controls">
+		  <?php echo Form::imagePicker('banner_image_id',( Input::old('banner_image_id') || $create ? Input::old('banner_image_id') : $item->banner_image_id ))?>
+		  </div>
+	  </div>
+
+	  <div class="control-group">
+		  <?php echo Form::label('profile_image_id', __('profile.form.profile_image_id.label') , array('class'=>'control-label'))?>
+		  <div class="controls">
+			  <?php echo Form::imagePicker('profile_image_id',( Input::old('profile_image_id') || $create ? Input::old('profile_image_id') : $item->profile_image_id ))?>
+		  </div>
+	  </div>
+
+	  <div class="control-group">
 		  <?php echo Form::label('course', __('profile.form.course.label') , array('class'=>'control-label'))?>
 		  <div class="controls">
 			  <?php echo Form::text('course',  ( Input::old('course') || $create ? Input::old('course') : $item->course ),array())?>
 		  </div>
 	  </div>
-
 
     <div class="control-group">
       <?php echo Form::label('subject_categories', __('profile.form.subject_categories.label'), array('class'=>'control-label'))?>

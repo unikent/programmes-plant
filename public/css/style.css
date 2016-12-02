@@ -175,7 +175,7 @@ display: none;
     border-radius: 6px; 
     border: 1px solid #e3e3e3;
     text-align:right;
-    z-index:9999;
+    z-index:9;
 }
 .floating_save .pull-right{
     padding-left:20px;

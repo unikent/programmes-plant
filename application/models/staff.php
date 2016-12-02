@@ -60,7 +60,7 @@ class Staff extends SimpleData
 	}
 
 	// custom replace with ids function, since "name" doesn't exist for this type
-	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
+	public static function replace_ids_with_values($ids, $year = false, $titles_only = false, $single = false)
 	{
 		// If nothing is set, return an empty array
 		if(trim($ids) == '') return array();
