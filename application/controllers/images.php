@@ -151,8 +151,12 @@ class Images_Controller extends Simple_Admin_Controller {
 			return static::json(array('error'=>'invalid input'), 422);
 		}
 
+		$size = getimagesize($img['tmp_name']);
+	
 		$new = new $this->model;
 		$new->name = $name;
+		$new->height = $size[1];
+		$new->width = $size[0];
 		$new->populate_from_input();
 
 		$new->save();
