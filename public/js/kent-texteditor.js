@@ -134,7 +134,6 @@ $.Redactor.prototype.imagemanager = function()
 			// insert
 			this.air.collapsed();
 
-			console.log(this);
 			var picker = this.$element.closest('.img-picker');
 			picker.find('.img-name').html(json.name);
 			picker.find('.img-wrapper').html('<img src="' + json.sizes.thumbnail.url + '" alt="' + json.alt_text + '">');
