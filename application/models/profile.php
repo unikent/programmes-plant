@@ -4,7 +4,9 @@ abstract class Profile extends SimpleData
 
 	public static $type = null;
 
-	public static $rules = array();
+	public static $rules = array(
+		'slug' => 'required'
+	);
 
 	// Use all these fields when producing a "list box"
 	public static $list_fields = array('id', 'name', 'course');
@@ -13,7 +15,7 @@ abstract class Profile extends SimpleData
 	// Pretty print name when requested
 	public function get_name()
 	{
-		return $this->attributes['course'].' - '.$this->attributes['name'];
+		return $this->attributes['course'].' - '.$this->attributes['name'] . ' - (' . ucfirst($this->attributes['type']) . ')';
 	}
 
 	public static function generate_api_data($year = false, $data = false)
