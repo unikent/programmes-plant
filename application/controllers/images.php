@@ -13,7 +13,7 @@ class Images_Controller extends Simple_Admin_Controller {
 	{
 		$model = $this->model;
 
-		$this->data['items'] = $model::all_active('name')->get();
+		$this->data['items'] = $model::all_active('created_at')->get();
 		$this->data['shared'] = $this->shared_data;
 		$this->layout->nest('content', 'admin.images.index', $this->data);
 	}
