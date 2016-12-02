@@ -104,6 +104,9 @@
     margin: 16px 0;
 }
 
+.redactor-editor figure{
+    clear:both;
+}
 .redactor-editor figure:hover .media-wrap{
     overflow: hidden;
 }

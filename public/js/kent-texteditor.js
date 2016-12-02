@@ -26,19 +26,19 @@ $.Redactor.prototype.imagemanager = function()
 			if(typeof json.title !== 'undefined') {
 				$attribution += json.title +' : ';
 			}
-			if(typeof json.attribution_text !== 'undefined') {
+			if(typeof json.attribution.author !== 'undefined') {
 				$attribution += 'Picture by ';
-				if(typeof json.attribution_link !== 'undefined') {
-					$attribution += '<a href="' + json.attribution_link + '">';
+				if(typeof json.attribution.link !== 'undefined') {
+					$attribution += '<a href="' + json.attribution.link + '">';
 				}
-				$attribution += json.attribution_text;
-				if(typeof json.attribution_link !== 'undefined') {
+				$attribution += json.attribution.author;
+				if(typeof json.attribution.link !== 'undefined') {
 					$attribution += '</a>';
 				}
 				$attribution += '.';
 			}
-			if(typeof json.licence_link !== 'undefined') {
-				$attribution += ' <a href="' + json.licence_link + '">Licence</a>';
+			if(typeof json.attribution.license !== 'undefined') {
+				$attribution += ' <a href="' + json.attribution.license + '">Licence</a>';
 			}
 			$attribution += '</span></div>';
 			return $attribution;
@@ -94,7 +94,7 @@ $.Redactor.prototype.imagemanager = function()
 								   thumbtitle = val.name;
 							   }
 
-							   var img = $('<div class="gallery-img-wrap"><img src="' + val.thumb + '"  alt="' + thumbtitle + '" style="width:160px; height: auto; cursor: pointer;" /><div class="img-name"><span>' + val.name + '</span></div></div>');
+							   var img = $('<div class="gallery-img-wrap"><img src="' + val.sizes.thumbnail.url + '"  alt="' + thumbtitle + '" style="width:160px; height: auto; cursor: pointer;" /><div class="img-name"><span>' + val.name + '</span></div></div>');
 							   img.data('params',val);
 							   $gallery.append(img);
 							   $(img).click($.proxy(this.imagemanager.insertFromGallery, this));
@@ -137,7 +137,7 @@ $.Redactor.prototype.imagemanager = function()
 			console.log(this);
 			var picker = this.$element.closest('.img-picker');
 			picker.find('.img-name').html(json.name);
-			picker.find('.img-wrapper').html('<img src="' + json.thumb + '" alt="' + json.alt + '">');
+			picker.find('.img-wrapper').html('<img src="' + json.sizes.thumbnail.url + '" alt="' + json.alt_text + '">');
 
 			this.code.set(json.id);
 			this.code.sync();
@@ -165,7 +165,7 @@ $.Redactor.prototype.imagemanager = function()
 
 						this.core.callback('imageDelete', $img[0].src, $img);
 
-						$img.attr('src', json.url);
+						$img.attr('src', json.sizes.full.url);
 
 						var id = (typeof json.id === 'undefined') ? '' : json.id;
 						var type = (typeof json.s3 === 'undefined') ? 'image' : 's3';
@@ -180,11 +180,11 @@ $.Redactor.prototype.imagemanager = function()
 					var $figure = $('<' + this.opts.imageTag + '>');
 
 					$img = $('<img>');
-					$img.attr('src', json.url);
+					$img.attr('src', json.sizes.full.url);
 
 					//start kent edit
-					if (typeof json.alt !== 'undefined') {
-						$img.attr('alt', json.alt);
+					if (typeof json.alt_text !== 'undefined') {
+						$img.attr('alt', json.alt_text);
 					}
 					if (typeof json.title !== 'undefined') {
 						$img.attr('title', json.title);
@@ -200,8 +200,11 @@ $.Redactor.prototype.imagemanager = function()
 
 					//start kent edit
 					$img.wrap('<div class="media-wrap"></div>');
+					if(json.attribution.author.length > 0 || json.attribution.license.length > 0 ) {
+						$attribution = this.imagemanager.buildAttribution(json);
+						$img.after($attribution);
+					}
 					//end kent edit
-
 					//start kent edit
 					if(typeof json.caption !== 'undefined') {
 						$figcaption = $('<figcaption>' + json.caption + '</figcaption>');
@@ -209,12 +212,7 @@ $.Redactor.prototype.imagemanager = function()
 					}
 					//end kent edit
 
-					//start kent edit
-					if(typeof json.attribution_text.length > 0 || typeof json.licence_link.length > 0 ) {
-						$attribution = this.imagemanager.buildAttribution(json);
-						$img.after($attribution);
-					}
-					//end kent edit
+
 
 					var pre = this.utils.isTag(this.selection.current(), 'pre');
 
@@ -399,7 +397,7 @@ $.Redactor.prototype.imagemanager = function()
 
 								  var alt = $('#redactor-image-alt');
 								  var altOrginal = original.clone();
-								  altOrginal.find('.value').html(json.alt);
+								  altOrginal.find('.value').html(json.alt_text);
 								  alt.after(altOrginal);
 
 								  var cap = $('#redactor-image-caption');
@@ -407,9 +405,9 @@ $.Redactor.prototype.imagemanager = function()
 								  capOrginal.find('.value').html(json.caption);
 								  cap.after(capOrginal);
 
-								  $('#redactor-image-attribution-text').val(json.attribution_text);
-								  $('#redactor-image-attribution-link').val(json.attribution_link);
-								  $('#redactor-image-licence-link').val(json.licence_link);
+								  $('#redactor-image-attribution-text').val(json.attribution.author);
+								  $('#redactor-image-attribution-link').val(json.attribution.link);
+								  $('#redactor-image-licence-link').val(json.attribution.license);
 							  }
 						  }
 					  });
@@ -428,12 +426,14 @@ $.Redactor.prototype.imagemanager = function()
 					$image.attr('alt', alt);
 					var attribData = {
 						title : title,
-						attribution_text : $('#redactor-image-attribution-text').val(),
-						attribution_link : $('#redactor-image-attribution-link').val(),
-						licence_link : $('#redactor-image-licence-link').val()
+						attribution : {
+							author:  $('#redactor-image-attribution-text').val(),
+							link:    $('#redactor-image-attribution-link').val(),
+							license: $('#redactor-image-licence-link').val()
+						}
 					};
 
-					if(attribData.attribution_text.length > 0 || attribData.licence_link.length > 0) {
+					if(attribData.attribution.author.length > 0 || attribData.attribution.license.length > 0) {
 						$attribution = this.imagemanager.buildAttribution(attribData);
 						$image.parent().find('.attribution').remove();
 						$image.parent().append($attribution);
