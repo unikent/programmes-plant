@@ -24,14 +24,23 @@ class Image extends SimpleData
 		$this->fill($input);
 	}
 
+	/**
+	 * Web path to image
+	 */
 	public function url(){
 		return URL::base().'/media/'.$this->id.'.jpg';
 	}
 
+	/**
+	 * Web path to thumb
+	 */
 	public function thumb_url(){
 		return URL::base().'/media/'.$this->id.'_thumb.jpg';
 	}
 
+	/**
+	 * File path to image
+	 */
 	public function path(){
 		return  path('storage').'images/'.$new->id.'.jpg';
 	}
@@ -75,15 +84,35 @@ class Image extends SimpleData
 			'license' => $data['licence_link']
 		);
 
+		//die($data['width'], $data['height']);
+		list($thumb_height, $thumb_width) = static::getThumbSize(170, $data['width'], $data['height']);
+
 		$data['sizes'] = array(
-			'full' => array('url' => $this->url()),
-			'thumbnail' => array('url' => $this->thumb_url()),
+			'full' => array('url' => $this->url(), 'width'=> (int) $data['width'], 'height'=> (int)$data['height']),
+			'thumbnail' => array('url' => $this->thumb_url(), 'width'=> $thumb_width, 'height'=> $thumb_height),
 		);
 
-		foreach(array('alt','attribution_link','attribution_text','licence_link','hidden') as $k){
+		foreach(array('alt','width','height','attribution_link','attribution_text','licence_link','hidden') as $k){
 			unset($data[$k]);
 		}
 
 		return $data;
+	}
+
+	/**
+	 * get thumb Size from full image dimensions
+	 */
+	public static function getThumbSize($desired_width, $original_width, $original_height){
+		// check valid values are provided
+		if(empty($original_height) || empty($original_width)) return array(null,null);
+
+		if($original_width > $original_height){
+			$desired_height = floor($original_height * ($desired_width / $original_width));
+		}else{
+			$desired_height = $desired_width;
+			$desired_width = floor($original_width * ($desired_height / $original_height));
+		}	
+
+		return array($desired_height, $desired_width);
 	}
 }
