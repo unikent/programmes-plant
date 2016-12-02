@@ -129,6 +129,8 @@ Route::group(array('before' => ''), function(){
 			
 	), 'api@index');
 
+
+
 	Route::get(array(
 				   '/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear.(json|xml|csv)',
 				   '/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear'
@@ -145,16 +147,22 @@ Route::group(array('before' => ''), function(){
 		'/api/([0-9]{4}|current)/(undergraduate|postgraduate)/fees/([0-9]{4})'
 	), 'api@fees_index_for_year');
 
+
+
 	Route::get(array('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num).(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)'), 'api@programme');
 	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');
-
+	Route::get('/api/(undergraduate|postgraduate)/year', 'api@years');
 
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any)/(:num).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)/(:num)'), 'api@data_single_for_level');
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
+
+
 	Route::get(array('/api/(:any)/(:num).(json|xml)', '/api/(:any)/(:num)'), 'api@data_single');
 
 	Route::get(array('/api/(:any).(json|xml)', '/api/(:any)'), 'api@data');
+
+
 
 
 	Route::any('/api/preview/(undergraduate|postgraduate)/(:any?)', 'api@preview');
@@ -191,6 +199,7 @@ Route::group(array('before' => ''), function(){
 
     Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
     Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/(taught|research|taught-research)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
+
 
 });
 

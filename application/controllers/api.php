@@ -1552,4 +1552,26 @@ class API_Controller extends Base_Controller {
 		// output the data
 		return static::json($programmes);
 	}
+
+	public function get_years($type)
+	{
+		if($type == 'undergraduate')
+		{
+			$data['current'] = Setting::get_setting('ug_current_year');
+		}
+		else
+		{
+			$data['current'] = Setting::get_setting('pg_current_year');
+		}
+
+		$years = DB::query('SELECT year FROM programmes.global_settings WHERE disable_apply_46 = "false"');
+
+		$data['years'] = array();
+		foreach($years as $year)
+		{
+			array_push($data['years'], $year->year);
+		}
+
+		return static::json($data, 200);
+	}
 }
