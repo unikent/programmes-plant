@@ -42,14 +42,20 @@ class Images_Controller extends Simple_Admin_Controller {
 			Input::flash();//Save previous inputs to avoid blanking form.
 			return Redirect::to($url.'/create');//->with_input();
 		}
-	
+
+		$img = Input::file('image');
+		$size = getimagesize($img['tmp_name']);
+
 		$new = new $this->model;
 
 		$new->name = Input::get('name');
 		$new->populate_from_input();
+		$new->height = $size[1];
+		$new->width = $size[0];
 		$new->save();
 
 		$img = Input::file('image');
+
 		if(isset( $img['error']) && $img['error'] === 0){
 			if(!$this->save_image($new->id)){
 				$new->raw_delete();
@@ -62,7 +68,6 @@ class Images_Controller extends Simple_Admin_Controller {
 
 		return Redirect::to($url);
 	}
-
 	/**
 	 * Edit an image via POST.
 	 */
@@ -70,6 +75,7 @@ class Images_Controller extends Simple_Admin_Controller {
 	{
 		$model = $this->model;
 		$url = $this->get_base_page();
+		$img = Input::file('image');
 
 		$id = Input::get('id');
 		
@@ -89,12 +95,15 @@ class Images_Controller extends Simple_Admin_Controller {
 		$update->name = Input::get('name');
 		$update->populate_from_input();
 
-		$update->save();
-
-		$img = Input::file('image');
+		// If new image was submitted, update width/height then save it
 		if(isset( $img['error']) && $img['error'] === 0){
+			$size = getimagesize($img['tmp_name']);
+			$update->height = $size[1];
+			$update->width = $size[0];
 			$this->save_image($update->id);
 		}
+
+		$update->save();
 
 		API::purge_output_cache();
 
@@ -117,6 +126,9 @@ class Images_Controller extends Simple_Admin_Controller {
 		return $u;
 	}
 
+	/**
+	 * upload image - called from redactor
+	 */
 	public function post_upload(){
 
 		$model = $this->model;
@@ -196,14 +208,8 @@ class Images_Controller extends Simple_Admin_Controller {
 		$width = imagesx($source_image);
 		$height = imagesy($source_image);
 		
-		/* find the "desired height" of this thumbnail, relative to the desired width  */
-		if($width > $height){
-			$desired_height = floor($height * ($desired_width / $width));
-		}else{
-			$desired_height = $desired_width;
-			$desired_width = floor($width * ($desired_height / $height));
-		}
-		
+		// Get thumb sizeing
+		list($desired_height, $desired_width) = Image::getThumbSize($desired_width, $width, $height);
 		/* create a new, "virtual" image */
 		$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
 		
