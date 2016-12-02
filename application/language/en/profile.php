@@ -34,6 +34,9 @@ return array(
 		'name' => array(
 			'label' => 'Student Name'
 		),
+		'type' => array(
+			'label' => 'Student Type'
+		),
 		'slug' => array(
 			'label' => 'Url slug'
 		),

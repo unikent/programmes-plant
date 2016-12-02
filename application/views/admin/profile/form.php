@@ -23,6 +23,13 @@ $subject_category_class = $level . '_SubjectCategory';
       </div>
     </div>
 
+	  <div class="control-group">
+		  <?php echo Form::label('type', __('profile.form.type.label') , array('class'=>'control-label'))?>
+		  <div class="controls">
+			  <?php echo Form::select('type', array('student'=>'Student', 'alumni'=>'Alumni'), ( Input::old('type') || $create ? Input::old('type') : $item->attributes['type'] ))?>
+		  </div>
+	  </div>
+
   <div class="control-group">
 	  <?php echo Form::label('slug', __('profile.form.slug.label') , array('class'=>'control-label'))?>
 	  <div class="controls">
