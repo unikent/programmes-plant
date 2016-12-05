@@ -116,11 +116,13 @@ class Images_Controller extends Simple_Admin_Controller {
 	 * Save image - uploads image, saves it & generates a thumbnail
 	 */
 	public function save_image($img_id){
-		$path = path('storage').'images';
-		$u = Input::upload('image', path('storage').'images', $img_id.'.jpg');
+
+		$path = Config::get('images.image_directory', path('storage').'images');
+
+		$u = Input::upload('image', $path, $img_id.'.jpg');
 
 		if($u){
-			$this->make_thumb( path('storage').'images/'.$img_id.'.jpg', path('storage').'images/'.$img_id.'_thumb.jpg', 160);
+			$this->make_thumb( $path.'/'.$img_id.'.jpg', $path.'/'.$img_id.'_thumb.jpg', 160);
 		}
 
 		return $u;

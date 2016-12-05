@@ -28,21 +28,24 @@ class Image extends SimpleData
 	 * Web path to image
 	 */
 	public function url(){
-		return URL::base().'/media/'.$this->id.'.jpg';
+		$path = Config::get('images.image_public_url', URL::base().'/media');
+		return $path .'/'.$this->id.'.jpg';
 	}
 
 	/**
 	 * Web path to thumb
 	 */
 	public function thumb_url(){
-		return URL::base().'/media/'.$this->id.'_thumb.jpg';
+		$path = Config::get('images.image_public_url', URL::base().'/media');
+		return $path.'/'.$this->id.'_thumb.jpg';
 	}
 
 	/**
 	 * File path to image
 	 */
 	public function path(){
-		return  path('storage').'images/'.$new->id.'.jpg';
+		$path = Config::get('images.image_directory', path('storage').'images');
+		return  $path.'/'.$new->id.'.jpg';
 	}
 
 
