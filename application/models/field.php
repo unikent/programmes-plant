@@ -21,7 +21,7 @@ class Field extends Eloquent
 	 */
 	public static $rules = array(
 		'title'  => 'required|max:255',
-		'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect'
+		'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect,image'
 	);
 
 	/**
@@ -163,8 +163,11 @@ class Field extends Eloquent
 			{
 				if ($field_type=='textarea') {
 					$table->text($column);
-				} else {
-					$table->string($column, 255)->default($inital_value);
+				} else if ($field_type=='image') {
+					$table->integer($column);
+				}else{
+						$table->string($column, 255)->default($inital_value);
+
 				}
 			});
 		}

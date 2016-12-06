@@ -24,7 +24,8 @@
 
     <!-- Call our own stylesheets -->
     <link href="<?php echo asset('css/style.css')?>" rel="stylesheet">
-
+	  <link href="<?php echo asset('css/redactor.css')?>" rel="stylesheet">
+	  <link href="<?php echo asset('css/redactor_kent.css')?>" rel="stylesheet">
     <style type='text/css'>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */

@@ -209,7 +209,8 @@ class Simple_Admin_Controller extends Admin_Controller {
 	 * Get path to current "base" page
 	 * - ug/type or /type depending on if shared
 	 */
-	private function get_base_page(){
+	protected function get_base_page(){
+
 		$prefix = (!$this->shared_data) ? URLParams::$type.'/' : '';
 		return $prefix.$this->views;
 	}

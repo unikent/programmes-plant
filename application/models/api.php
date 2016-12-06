@@ -239,6 +239,25 @@ class API {
 		throw new NotFoundException("Request for unknown data type.");
 	}
 
+	public static function get_data_single($type, $uid, $level = null){
+
+		// Do some magic (ie. convert schools=>school & campuses to campus for models)
+		$pluralizer = new \Laravel\Pluralizer(Config::get('strings'));
+		$type = $pluralizer->singular($type);
+
+		$prefix = API::_get_prefix($level);
+
+		// If type exists, return data
+		if(class_exists($prefix.$type)){
+			$type = $prefix.$type;
+			$data = $type::find($uid);
+			return $data->to_array();
+		}
+		// Else throw 404
+		throw new NotFoundException("Request for unknown data type.");
+	}
+	
+
 	/**
 	* Create a combined programme output
 	*
@@ -258,6 +277,7 @@ class API {
 		// Start combining to create final super object for output
 		// Use programme setttings as a base
 		$final = $programme_settings;
+
 
 		// Pull in all programme dependencies eg an award id 1 will pull in all that award's data.
 		// Loop through them, adding them to the $final object.
@@ -320,6 +340,9 @@ class API {
 			// Add modules
 			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
 		}
+
+
+
 
 		if($final['module_session']=='None' || $final['module_session'] == 'none'){
 			$final['modules'] = array();
@@ -407,9 +430,12 @@ class API {
 		// get programme fields (mapping of columns to their datatypes)
 		$programme_fields = $field_model::get_api_data();
 
+
 		// For each column with a special data type, update its value in the record;
 		foreach($programme_fields as $field_name => $data_type){
-			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year']);
+
+			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
+
 		}
 
 		return $record;

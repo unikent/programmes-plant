@@ -201,7 +201,7 @@ abstract class Programme extends Revisionable {
 	 * @param $year Year course should be returned from.
 	 * @return array of objects matching id's
 	 */
-	public static function replace_ids_with_values($ids, $year = false, $titles_only = false)
+	public static function replace_ids_with_values($ids, $year = false, $titles_only = false, $single = false)
 	{
 
 		// If nothing is set, return an empty array
