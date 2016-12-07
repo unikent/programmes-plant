@@ -537,7 +537,7 @@ var redactor_config = {
 	imageManagerJson: base_url + 'api/images',
 	pastePlainText:true,
 	pasteLinkTarget: '_blank',
-	formatting: ['p', 'h2', 'h3'],
+	formatting: ['p', 'h2', 'h3', 'h4'],
 	formattingAdd: {
 		"blockquote": {
 			title: 'Blockquote',
