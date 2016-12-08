@@ -23,21 +23,21 @@ $.Redactor.prototype.imagemanager = function()
 		},
 		buildAttribution: function(json){
 			$attribution = '<div class="attribution"><i class="kf-camera"></i><span class="attribution-text">';
-			if(typeof json.title !== 'undefined') {
+			if(typeof json.title !== 'undefined' && json.title.length > 0) {
 				$attribution += json.title +' : ';
 			}
-			if(typeof json.attribution.author !== 'undefined') {
+			if(typeof json.attribution.author !== 'undefined' && json.attribution.author.length > 0 ) {
 				$attribution += 'Picture by ';
-				if(typeof json.attribution.link !== 'undefined') {
+				if(typeof json.attribution.link !== 'undefined' && json.attribution.link.length > 0 ) {
 					$attribution += '<a href="' + json.attribution.link + '">';
 				}
 				$attribution += json.attribution.author;
-				if(typeof json.attribution.link !== 'undefined') {
+				if(typeof json.attribution.link !== 'undefined' && json.attribution.link.length > 0 ) {
 					$attribution += '</a>';
 				}
 				$attribution += '.';
 			}
-			if(typeof json.attribution.license !== 'undefined') {
+			if(typeof json.attribution.license !== 'undefined' && json.attribution.license.length > 0 ) {
 				$attribution += ' <a href="' + json.attribution.license + '">Licence</a>';
 			}
 			$attribution += '</span></div>';
