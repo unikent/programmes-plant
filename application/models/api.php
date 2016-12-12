@@ -378,9 +378,9 @@ class API {
 			});
 		}
 
-		$related_courses = array_filter($related_courses, function($v,$k){
+		$related_courses = array_filter($related_courses, function($v){
 			return empty($v['withdrawn']) && empty($v['suspended']);
-		},ARRAY_FILTER_USE_BOTH);
+		});
 
 
 
