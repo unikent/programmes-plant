@@ -106,14 +106,14 @@ if (!empty($errors->messages)){
         <div class="control-group">
             <label for="note" class="control-label">Notes</label>
             <div class="controls">
-                <textarea id="note"><?php echo $notes->note; ?></textarea>
+                <textarea id="note"><?php echo htmlspecialchars($notes->note); ?></textarea>
                 <span class="help-block">For Internal use only. This field will NOT be displayed publicly anywhere.</span>
             </div>
         </div>
         <div class="control-group">
             <label for="short_note" class="control-label">Short Note</label>
             <div class="controls">
-                <input type="text" id="short_note" value="<?php echo $notes->short_note; ?>">
+                <input type="text" id="short_note" value="<?php echo htmlspecialchars($notes->short_note); ?>">
                 <span class="help-block">For Internal use only. This field will NOT be displayed publicly anywhere.</span>
             </div>
         </div>
