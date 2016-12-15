@@ -257,6 +257,8 @@ class API_Controller extends Base_Controller {
 			$programme_type_field,
 			$withdrawn_field,
 			$suspended_field,
+			'made_live_by', 
+			'published_at'
 		);
 
 		// If UG, add ucas field
@@ -289,12 +291,20 @@ class API_Controller extends Base_Controller {
 			->where_in('id', $revisions_ids)
 			->get($fields);
 
+		// Create map of instance ID to first created date for each programme 
+		$programme_first_added_map = array();
+		$programme_first_added = DB::query('select instance_id, min(created_at) as created_at from programmes_revisions_'.$type.' group by instance_id');
+		foreach($programme_first_added as $added_programme){
+			$programme_first_added_map[$added_programme->instance_id] = $added_programme->created_at;
+		}
+		
 		$output = array();
 
 		foreach($programmes as $programme) {
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
+			$is_live = in_array($programme->id, $live);
 
 			if($type == 'PG') {
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
@@ -313,6 +323,9 @@ class API_Controller extends Base_Controller {
 				'subject to approval' => isset($attributes[$subject_to_approval_field]) ? $attributes[$subject_to_approval_field] : '',
 				'withdrawn' => isset($attributes[$withdrawn_field]) ? $attributes[$withdrawn_field] : '',
 				'suspended' => isset($attributes[$suspended_field]) ? $attributes[$suspended_field] : '',
+				'Last published at' => isset($attributes['published_at']) && $is_live ? $attributes['published_at'] : '',
+				'Last published by' => isset($attributes['made_live_by']) ? $attributes['made_live_by'] : '',
+				'First created at' => isset($programme_first_added_map[$attributes['instance_id']]) ? $programme_first_added_map[$attributes['instance_id']] : 'Unknown'
 			);
 
 			if($type == 'UG'){
@@ -322,7 +335,7 @@ class API_Controller extends Base_Controller {
 				$out['taught/research'] = isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '';
 			}
 
-			$out["status"] = in_array($programme->id,$live)?"Published":"Unpublished";
+			$out["status"] = $is_live?"Published":"Unpublished";
 			$output[] = $out;
 		}
 
@@ -1551,5 +1564,27 @@ class API_Controller extends Base_Controller {
 
 		// output the data
 		return static::json($programmes);
+	}
+
+	public function get_years($type)
+	{
+		if($type == 'undergraduate')
+		{
+			$data['current'] = Setting::get_setting('ug_current_year');
+		}
+		else
+		{
+			$data['current'] = Setting::get_setting('pg_current_year');
+		}
+
+		$years = DB::query('SELECT year FROM programmes.global_settings WHERE disable_apply_46 = "false"');
+
+		$data['years'] = array();
+		foreach($years as $year)
+		{
+			array_push($data['years'], $year->year);
+		}
+
+		return static::json($data, 200);
 	}
 }
