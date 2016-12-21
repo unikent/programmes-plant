@@ -535,8 +535,9 @@ var redactor_config = {
 	imageUpload: base_url + 'images/upload',
 	imageUploadParam: 'image',
 	imageManagerJson: base_url + 'api/images',
-	pastePlainText:true,
 	pasteLinkTarget: '_blank',
+	pasteBlockTags: ['h2','h3', 'p', 'blockquote', 'li', 'ol', 'ul'],
+	structure: true,
 	formatting: ['p', 'h2', 'h3'],
 	formattingAdd: {
 		"blockquote": {
