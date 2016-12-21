@@ -35,6 +35,11 @@
     font-size:20.256px;
     color: #05345C;
 }
+.redactor-dropdown-box-format .redactor-dropdown-h4{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size:18px;
+    color: #05345C;
+}
 
 .redactor-box{
     max-width: 725px;
@@ -46,11 +51,18 @@
     line-height: 1.5;
 }
 .redactor-editor h2{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: 25.632px;
     color: #05345C;
 }
 .redactor-editor h3{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size:20.256px;
+    color: #05345C;
+}
+.redactor-editor h4{
+    font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
+    font-size:18px;
     color: #05345C;
 }
 

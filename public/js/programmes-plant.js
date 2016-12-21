@@ -413,8 +413,6 @@ function init_simple_index_dataTable(){
 
 function init_profile_dataTable(){
 
-
-
 		$('#profile-list').dataTable( {
 			"sDom": "<'navbar'<'navbar-inner'<'navbar-search pull-left'f>>r>t<'muted pull-right'i><'clearfix'>p",
 			"sPaginationType": "bootstrap",
@@ -428,15 +426,12 @@ function init_profile_dataTable(){
 				{ "bSortable": false}
 			]
 		});
-
-
 }
-
 
 function init_NotesForm(){
 
     $('#submit_notes','#notes').click(function(){
-        $('#actual_note','#notesform').val(CKEDITOR.instances['note'].getData());
+        $('#actual_note','#notesform').val($('#note', '#notes').val());
         $('#actual_short_note','#notesform').val($('#short_note','#notes').val());
 
         $form = $('#notesform');
@@ -446,6 +441,4 @@ function init_NotesForm(){
             $('#notes_fail','#notes').show().delay(2000).fadeOut();
         });
     })
-
 }
-

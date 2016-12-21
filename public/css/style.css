@@ -12,12 +12,6 @@ h1 {
     background: url(img/icon-link.png) no-repeat center center;
 }
 
-textarea { 
-    width:600px !important;
-    height: 300px !important;
-    overflow: scroll;
-}
-
 .sortable_fields {
     min-height: 20px;
 }
