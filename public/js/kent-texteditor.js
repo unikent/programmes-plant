@@ -92,6 +92,16 @@ $.Redactor.prototype.imagemanager = function()
 				"choose": "Choose"
 			}
 		},
+		show: function()
+		{
+			// build modal
+			this.modal.load('image', this.lang.get('image'), 700);
+
+			// build upload
+			this.upload.init('#redactor-modal-image-droparea', this.opts.imageUpload, !this.opts.picker ? this.imagemanager.insert : this.imagemanager.pick);
+			this.modal.show();
+
+		},
 		buildAttribution: function(json){
 			$attribution = '<div class="attribution"><i class="kf-camera"></i><span class="attribution-text">';
 			if(typeof json.title !== 'undefined' && json.title.length > 0) {
@@ -132,6 +142,7 @@ $.Redactor.prototype.imagemanager = function()
 				   this.image.showEdit = this.imagemanager.showEdit;
 				   this.image.update = this.imagemanager.update;
 				   this.image.setFloating = this.imagemanager.setFloating;
+				   this.image.show = this.imagemanager.show;
 			   },
 		load: function()
 			   {
