@@ -719,7 +719,8 @@ $('.img-picker textarea').each(function(){
 	$(this).redactor($.extend({},redactor_config,{
 		picker:true,
 		toolbar: false,
-		callbacks: {
+        paragraphize: false,
+        callbacks: {
 			click: function(e)
 				   {
 					  this.image.show();
