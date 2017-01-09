@@ -49,7 +49,7 @@ class Profiles_Controller extends Simple_Admin_Controller {
 
 		Messages::add('success', __($this->l . 'success.create'));
 
-		return Redirect::to($url);
+		return Redirect::to($url.'/edit/'.$new->id);
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Profiles_Controller extends Simple_Admin_Controller {
 		$update->save();
 
 		Messages::add('success', __($this->l . 'success.edit'));
-		return Redirect::to($url);
+		return Redirect::to($url.'/edit/'.$update->id);
 	}
 
 }
