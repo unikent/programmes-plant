@@ -141,7 +141,7 @@ class API_Controller extends Base_Controller {
 		}else {
 			$profile = $class::where('id','=',$idOrSlug)->or_where('slug','=',$idOrSlug)->first();
 			if($profile){
-				$profile = $profile->toArray();
+				$profile = $profile->to_array();
 				Cache::put($cache_key, $profile, 2628000);
 
 			}else{
@@ -1255,6 +1255,7 @@ class API_Controller extends Base_Controller {
 	 * @return Response       json|xml data as a string or HTTP response.
 	 */
 	public function get_data_single_for_level($level, $type, $id, $format = 'json'){
+
 		switch($level){
 			case 'undergraduate':
 				$level = 'ug';

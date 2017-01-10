@@ -250,8 +250,24 @@ class API {
 		// If type exists, return data
 		if(class_exists($prefix.$type)){
 			$type = $prefix.$type;
-			$data = $type::find($uid);
-			return $data->to_array();
+
+			if(!$type::$item_output_cache){
+				$data = $type::find($uid);
+				return $data->to_array();
+			}else{
+				// Handle caching of single items
+				$cache_key = $type::get_cache_key($uid);
+
+				if(Cache::has($cache_key)){
+					$payload = Cache::get($cache_key);
+				} else {
+					$data = $type::find($uid);
+					$payload = $data->to_array();
+					Cache::put($cache_key, $payload, 2628000);
+				}
+			}
+
+			return $payload;
 		}
 		// Else throw 404
 		throw new NotFoundException("Request for unknown data type.");
