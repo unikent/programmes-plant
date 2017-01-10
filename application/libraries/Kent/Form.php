@@ -353,7 +353,12 @@ class Form extends \Laravel\Form {
 		$imgTag= '';
 		if(!empty($value)){
 			$image = \Image::find($value);
-			$imgTag = '<img src="' . $image->thumb_url() . '" alt="' . $image->alt . '">';
+			if($image !== null){
+				$imgTag = '<img src="' . $image->thumb_url() . '" alt="' . $image->alt . '">';
+			}else {
+				// invalid image, switch to unselected mode
+				$value = '';
+			}
 		}
 		return '<div class="img-picker"><textarea class="picker" rows="1" name="' . $name . '">' . $value .'</textarea><div class="img-wrapper">' . $imgTag . '</div><strong class="img-name">' . ($image? $image->name: '<em>Unassigned</em>') . '</strong></div>';
 	}
