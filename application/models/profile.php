@@ -3,6 +3,7 @@ abstract class Profile extends SimpleData
 {
 
 	public static $type = null;
+	public static $item_output_cache = true;
 
 	public static $rules = array(
 		'slug' => 'required'
@@ -37,9 +38,10 @@ abstract class Profile extends SimpleData
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
 		// return
-		return $data;	}
+		return $data;
+	}
 
-	public function toArray(){
+	public function to_array(){
 		$data = $this->attributes;
 
 		$cat_class = strtoupper(static::$type) . '_SubjectCategory';
