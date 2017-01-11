@@ -153,6 +153,15 @@ Route::group(array('before' => ''), function(){
 	Route::any(array('/api/([0-9]{4})/(undergraduate|postgraduate)/subjects.(json|xml|csv)','/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects'), 'api@subject_index');
 	Route::get('/api/(undergraduate|postgraduate)/year', 'api@years');
 
+
+	Route::get('/api/profiles', 'api@allProfiles');
+	Route::get('/api/(undergraduate|postgraduate)/profiles', 'api@profiles');
+	Route::get(array(
+				   '/api/(undergraduate|postgraduate)/profile/(:any).(json|xml|csv)',
+				   '/api/(undergraduate|postgraduate)/profile/(:any)'
+   ), 'api@profile');
+
+
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any)/(:num).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)/(:num)'), 'api@data_single_for_level');
 	Route::get(array('/api/(undergraduate|postgraduate)/(:any).(json|xml|csv)', '/api/(undergraduate|postgraduate)/(:any)'), 'api@data_for_level');
 
@@ -178,12 +187,7 @@ Route::group(array('before' => ''), function(){
 
 	Route::get('/api/([0-9]{4}|current)/(undergraduate|postgraduate)/all_courses', 'api@fullsimplelist');
 
-	Route::get('/api/profiles', 'api@allProfiles');
-	Route::get('/api/(undergraduate|postgraduate)/profiles', 'api@profiles');
-	Route::get(array(
-				   '/api/(undergraduate|postgraduate)/profile/(:any).(json|xml|csv)',
-				   '/api/(undergraduate|postgraduate)/profile/(:any)'
-   ), 'api@profile');
+
 
 	Route::get('/command/modulerefresh/([0-9]{4}|current)/(undergraduate|postgraduate)/(:num)','api@refresh_modules');
 	// Exports

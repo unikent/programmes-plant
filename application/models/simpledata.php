@@ -34,6 +34,11 @@ abstract class SimpleData extends Eloquent {
 	public static $api_cache = array();
 
 	/**
+	 * Should this data type create output caches for each item?
+	 */
+	public static $item_output_cache = false;
+
+	/**
 	 * Validates input for Field.
 	 * 
 	 * @param array $input The input in Laravel input format.
@@ -192,11 +197,16 @@ abstract class SimpleData extends Eloquent {
 				if(in_array($type,array('UG','PG'))) {
 					$model = $type . '_Programme';
 					$model::forget_api_index();
-				}else{
+				} else {
 					PG_Programme::forget_api_index();
 					UG_Programme::forget_api_index();
 				}
 				API::purge_output_cache();
+
+				// Clear this single cache if neeeded
+				if(static::$item_output_cache){
+					Cache::forget(static::get_cache_key($this->id));
+				}
 			}
 			
 		}
@@ -235,6 +245,12 @@ abstract class SimpleData extends Eloquent {
 
 		// Get data from cache (or generate it)
 		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data($year);
+	}
+
+	public static function get_cache_key($id = null){
+		// generate keys
+		$model = strtolower(get_called_class());
+		return ($id) ? 'api-'.$model.'-single.'.$id : 'api-'.$model ;
 	}
 
 	/**

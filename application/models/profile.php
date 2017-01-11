@@ -3,6 +3,7 @@ abstract class Profile extends SimpleData
 {
 
 	public static $type = null;
+	public static $item_output_cache = true;
 
 	public static $rules = array(
 		'slug' => 'required'
@@ -25,7 +26,7 @@ abstract class Profile extends SimpleData
 		$cache_key = 'api-'.$model;
 		// make data
 		$data = array();
-		foreach (static::where('hidden', '=', 0)->get() as $record) {
+		foreach (static::where('hidden', '=', 0)->where('type', '!=', 'alumni')->get() as $record) {
 			// Direct grab of attributes is faster than to_array
 			// since don't need to worry about realtions & things like that
 			$data[$record->attributes["id"]] = $record->attributes;
@@ -37,9 +38,10 @@ abstract class Profile extends SimpleData
 		// Store data in to cache
 		Cache::put($cache_key, $data, 2628000);
 		// return
-		return $data;	}
+		return $data;
+	}
 
-	public function toArray(){
+	public function to_array(){
 		$data = $this->attributes;
 
 		$cat_class = strtoupper(static::$type) . '_SubjectCategory';
