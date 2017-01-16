@@ -220,12 +220,13 @@ class API_Controller extends Base_Controller {
 			case "postgraduate":
 				$type = "PG";
 				break;
+			default:
+				return false;
 		}
 
 		$model = $type . "_Programme";
 		$revision_model = $type . "_ProgrammeRevision";
 		$subject_cat_model = $type . '_SubjectCategory';
-
 
 		// Obtain names for required fields
 		$title_field = $model::get_title_field();
@@ -242,7 +243,6 @@ class API_Controller extends Base_Controller {
 
 
 		$index_data = array();
-
 
 		$fields = array(
 			'id',
@@ -293,7 +293,7 @@ class API_Controller extends Base_Controller {
 
 		// Create map of instance ID to first created date for each programme 
 		$programme_first_added_map = array();
-		$programme_first_added = DB::query('select instance_id, min(created_at) as created_at from programmes_revisions_'.$type.' group by instance_id');
+		$programme_first_added = DB::query('select instance_id, min(created_at) as created_at from programmes_revisions_'.strtolower($type).' group by instance_id');
 		foreach($programme_first_added as $added_programme){
 			$programme_first_added_map[$added_programme->instance_id] = $added_programme->created_at;
 		}
