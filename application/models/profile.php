@@ -10,8 +10,7 @@ abstract class Profile extends SimpleData
 	);
 
 	// Use all these fields when producing a "list box"
-	public static $list_fields = array('id', 'name', 'course');
-
+	public static $list_fields = array('id', 'name', 'course', 'type');
 
 	// Pretty print name when requested
 	public function get_name()
@@ -26,7 +25,7 @@ abstract class Profile extends SimpleData
 		$cache_key = 'api-'.$model;
 		// make data
 		$data = array();
-		foreach (static::where('hidden', '=', 0)->where('type', '!=', 'alumni')->get() as $record) {
+		foreach (static::where('hidden', '=', 0)->get() as $record) {
 			// Direct grab of attributes is faster than to_array
 			// since don't need to worry about realtions & things like that
 			$data[$record->attributes["id"]] = $record->attributes;
