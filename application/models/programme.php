@@ -880,4 +880,15 @@ abstract class Programme extends Revisionable {
 		return $return;
 	}
 
+	/**
+	 * @param $iid Instance Id of programme
+	 * @return array Array containing the years where the course existed. Doesn't necessarily mean that it is still running
+	 */
+	public function get_years($iid)
+	{
+		$model = API::get_programme_model();
+		$years = $model::where('instance_id','=',$iid)->lists('year');
+		return $years;
+	}
+
 }
