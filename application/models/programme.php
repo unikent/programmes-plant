@@ -887,7 +887,7 @@ abstract class Programme extends Revisionable {
 	public function get_years($iid)
 	{
 		$model = API::get_programme_model();
-		$years = $model::where('instance_id','=',$iid)->lists('year');
+		$years = $model::where('instance_id','=',$iid)->where('live_revision', '>' , 0)->lists('year');
 		return $years;
 	}
 
