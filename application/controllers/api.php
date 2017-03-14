@@ -1567,7 +1567,7 @@ class API_Controller extends Base_Controller {
 		return static::json($programmes);
 	}
 
-	public function get_years($type)
+	public static function get_years($type)
 	{
 		if($type == 'undergraduate')
 		{
