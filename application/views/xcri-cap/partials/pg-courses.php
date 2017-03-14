@@ -32,6 +32,7 @@ foreach ($programmes as $programme): ?>
 					</xhtml:p>
 					<xhtml:br />
 					<?php echo XMLHelper::makeXMLSafe($programme['schoolsubject_overview']); ?>
+					
 
 					<?php if (count($programme['award']) > 1 && !empty($programme['attendance_text'])): ?>
 						<xhtml:p><xhtml:strong>Duration</xhtml:strong></xhtml:p>
