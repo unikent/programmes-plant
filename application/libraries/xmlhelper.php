@@ -324,7 +324,10 @@ class XMLHelper
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);
 		$safexml = str_replace(':o:', ':', $safexml); //remove office namespace
-		$safexml = str_replace(' & ', ' &amp; ', $safexml);
+		
+		// all & which aren't followed by # or amp; should be converted to &amp;
+		$safexml = preg_replace('&(?!#|amp;)', '&amp;', $safexml);
+		
 		return $safexml;
 	}
 }
