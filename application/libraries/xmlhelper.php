@@ -282,6 +282,9 @@ class XMLHelper
 	{
 		$result = strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><li><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
 
+		// <br> needs to be <br /> for xhtml
+		$result = strtr($result, "<br>", "<br />");
+		
 		// remove target attribute
 		$result = preg_replace('/(<[^>]+) target=".*?"/i', '$1', $result);
 
