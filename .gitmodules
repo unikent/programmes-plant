@@ -3,4 +3,4 @@
 	url = https://github.com/unikent/laravel.git
 [submodule "bundles/verify"]
 	path = bundles/verify
-	url = git://github.com/unikent/Verify.git
+	url = https://github.com/unikent/Verify.git

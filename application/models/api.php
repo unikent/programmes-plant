@@ -94,9 +94,7 @@ class API {
 	*/
 	public static function get_programme($level, $year, $id)
 	{
-
 		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
-
 		$cache_key = "api-output-{$level}.programme-$year-$id";
 		return (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_programme_data($level, $year, $id);
 	}
@@ -130,6 +128,7 @@ class API {
 
 		// Get programme itself
 		$programme 	= $programme_model::get_api_programme($iid, $year);
+		$years = $programme_model::get_years($iid);
 
 		// If programe does not exist/is not published.
 		if($programme === false){
@@ -153,6 +152,7 @@ class API {
 		}
 		$statuses = $statuses == '(' ? '' : $statuses . ')';
 		$final['programmme_status_text'] = $statuses;
+		$final['years'] = $years;
 
 		// Store data in to cache
 		Cache::put($cache_key, $final, 2628000);
