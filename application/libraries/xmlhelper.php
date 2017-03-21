@@ -283,8 +283,8 @@ class XMLHelper
 		$result = strip_tags($text, '<p><h1><h2><h3><h4><h5><h6><div><ul><li><ol><dl><pre><hr><blockquote><address><fieldset><table><form><a><br><bdo><map><object><img><tt><i><b><big><small><em><strong><dfn><code><q><samp><kbd><var><cite><abbr><acronym><sub><sup><input><select><textarea><label><button><noscript><ins><del><script>');
 
 		// <br> needs to be <br /> for xhtml
-		$result = strtr($result, "<br>", "<br />");
-		
+		$result = str_replace("<br>", "<br />", $result);
+
 		// remove target attribute
 		$result = preg_replace('/(<[^>]+) target=".*?"/i', '$1', $result);
 
@@ -324,10 +324,10 @@ class XMLHelper
 		$safexml = static::fixRelativeURLs($safexml);
 		$safexml = strtr($safexml, static::$HTML401NamedToNumeric);
 		$safexml = str_replace(':o:', ':', $safexml); //remove office namespace
-		
+
 		// all & which aren't followed by # or amp; should be converted to &amp;
-		$safexml = preg_replace('&(?!#|amp;)', '&amp;', $safexml);
-		
+		$safexml = preg_replace('/\&(?!#|amp;)/', '&amp;', $safexml);
+
 		return $safexml;
 	}
 }
