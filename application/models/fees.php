@@ -18,6 +18,8 @@ class Fees {
 	 * @return Fee Data array | false
 	 */
 	public static function getFeeInfoForPos($pos, $fee_year){
+		//trim just in case extra spaces from SITS
+		$pos = trim($pos);
 		// Load fee mapping, and if fees exist return them, else false
 		$fees = static::get_fee_mapping($fee_year);
 		return (isset($fees[$pos])) ? $fees[$pos] : false;
