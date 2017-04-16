@@ -192,7 +192,8 @@ abstract class Revisionable extends SimpleData {
 		// For example a revision of a programme has revisions with a column called programme_id that express this relationship
 		// We need to use $this->data_type_id to work this out.
 		$data_type_key = $this->data_type_id . '_id';
-
+		error_log($data_type_key);
+		error_log($revision->$data_type_key . ' == ' . $this->id);
 		if ($revision->$data_type_key == $this->id)
 		{
 			return $revision;

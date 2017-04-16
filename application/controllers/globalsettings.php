@@ -137,14 +137,14 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 	 * @param int    $subject_id  The subject ID we are promoting a given revision to be live.
 	 * @param int    $revision_id The revision ID we are promote to the being the live output for the subject.
 	 */
-	public function get_difference($year, $revision_id = false)
+	public function get_difference($year, $subject_id, $revision_id = false)
 	{
 		// Get revision specified
 		$globalsetting = GlobalSetting::where('year', '=', $year)->first();
 
 		if (!$globalsetting) return Redirect::to($year.'/'.$this->views);
 
-		$revision = $globalsetting->find_revision($revision_id);
+		$revision = $globalsetting->get_revision($revision_id);
 		
 		if (!$revision) return Redirect::to($year.'/'.$this->views);
 
@@ -168,7 +168,7 @@ class GlobalSettings_Controller extends Revisionable_Controller {
 		$this->data['diff'] = $diff;
 		$this->data['new'] = $revision_for_diff;
 		$this->data['old'] = $revision_attributes;
-		$this->data['attributes'] = GlobalSetting::getAttributesList();
+		$this->data['attributes'] = GlobalSetting::get_attributes_list();
 
 		$this->data['revision'] = $revision;
 		$this->data['globalsetting'] = $globalsetting;
