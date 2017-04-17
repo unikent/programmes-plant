@@ -267,7 +267,7 @@ abstract class SimpleData extends Eloquent {
 		$cache_key = 'api-'.$model;
 		// make data
 		$data = array();
-		foreach (static::where('hidden', '=', 0)->get() as $record) {
+		foreach (static::all_active(static::$title_field)->get() as $record) {
 			// Direct grab of attributes is faster than to_array 
 			// since don't need to worry about realtions & things like that
 			$data[$record->attributes["id"]] = $record->attributes;
