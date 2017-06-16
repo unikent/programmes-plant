@@ -20,16 +20,15 @@ class ModuleData_Task {
             echo $parameters['help'];
             exit;
         }
+		Cache::purge('api-index-ug');
+		// load UG
+		$parameters['type']='ug';
+		$this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
 
-        Cache::purge('api-index-ug');
-        // load UG
-        $parameters['type']='ug';
-        $this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
-
-        Cache::purge('api-index-pg');
         // load PG
         $parameters['type']='pg';
         $this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'pg') );
+
 
         // clear out the api output cache completely so we can regenerate the cache now including the new module data
          API::purge_output_cache();
@@ -37,16 +36,16 @@ class ModuleData_Task {
 
     protected function load_modules($parameters, $programmes = array()){
 
-        // loop through each programme in the index and call the two web services for each
-        $n = 0;
-        foreach ($programmes as $id => $programme)
-        {
-            // make sure we don't get past the counter limit
-            $n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
+		// loop through each programme in the index and call the two web services for each
+		$n = 0;
+		foreach ($programmes as $id => $programme)
+		{
+			// make sure we don't get past the counter limit
+			$n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 
-            echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+			echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
 
-            $deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
+			$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
             // Get deliveries
             $deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
             if(sizeof($deliveries) === 0)continue;
@@ -122,8 +121,8 @@ class ModuleData_Task {
 
         // set defaults for the parameters in case they're not set
         $parameters = array();
-        $parameters['programme_session'] = '2014';
-        $parameters['sleeptime'] = 5;
+        $parameters['programme_session'] = '2016';
+        $parameters['sleeptime'] = 1;
         $parameters['counter'] = 1;
         $parameters['test_mode'] = false;
 
@@ -139,7 +138,9 @@ class ModuleData_Task {
                 // sleep before the next iteration
                 case '-t':
                     $parameters['sleeptime'] = str_replace('-t', '', $argument) != '' ? str_replace('-t', '', $argument) : 5;
-                    break;
+                    break;I avoid this by never using crontab -e (edit crontab) or crontab with no arguments (which reads from stdin). Instead, I keep my crontab entries in a separate file, which I maintain in a source control system, and run the crontab command with that file name as an argument.
+
+
                 // counter
                 case '-c':
                     $parameters['counter'] = str_replace('-c', '', $argument) != '' ? str_replace('-c', '', $argument) : 1;

@@ -14,7 +14,6 @@ class API {
 		// Get index of programmes
 		$level =  ($level === false) ? URLParams::get_type() : $level;
 		if($year == 'current') $year = Setting::get_setting("{$level}_current_year");
-
 		$model =  $level.'_Programme';
 		return $model::get_api_index($year);
 	}

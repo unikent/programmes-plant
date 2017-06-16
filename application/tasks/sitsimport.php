@@ -100,7 +100,7 @@ class SITSImport_Task {
 
 	libxml_use_internal_errors(true);
 
-	$path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
+	$path = '/home/dom/Documents/SITSCourseData.xml';
 
 	if(filemtime($path) < (time()-(24 * 60 * 60))){
 		Log::error('XML file has not been modified for more than 24 hours.');
