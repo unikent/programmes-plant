@@ -623,5 +623,30 @@ class TestAPI extends ModelTestCase
         );
 	}
 
-	
+    /**
+     * Provides examples of invalid (xhtml) data that should be sanitised
+     * @return array
+     */
+	public function data_to_sanitise()
+    {
+        return [
+           'tef-example' => [file_get_contents(dirname(__FILE__).'/../fixtures/invalid-xml-1.xml')],
+            'good-img' => ['<img src="foo.jpg" />'],
+            'bad-img' => ['<img src="foo.jpg">'],
+            'bad-br' => ['<br>']
+        ];
+    }
+
+    /**
+     * @dataProvider data_to_sanitise
+     */
+	public function test_sanitizetagsandattributes_is_sane($text)
+    {
+        $helper = new XMLHelper();
+        $sanitized_xhml = $helper::sanitizeTagsAndAttributes($text);
+        libxml_use_internal_errors(true);
+        libxml_clear_errors();
+        simplexml_load_string($sanitized_xhml);
+        $this->assertEmpty(libxml_get_errors());
+    }
 }
