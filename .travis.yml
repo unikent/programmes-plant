@@ -7,8 +7,8 @@ php:
   - 5.4
 
 before_script:
-  - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g -- disable-tls true || true'
-  - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g -- secure-http true || true'
+  - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g disable-tls true || true'
+  - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g secure-http true || true'
   - composer install
 
 script: "php artisan test"
