@@ -7,7 +7,7 @@ php:
   - 5.4
 
 before_script:
-  - 'echo $TRAVIS_PHP_VERSION'
+  - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && echo running on 5.3.3 || true'
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g disable-tls true || true'
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g secure-http true || true'
   - composer install
