@@ -2,16 +2,9 @@ language: php
 
 php:
   - 5.3.3
+    dist: precise
   - 5.4
-
-matrix:
-  include:
-    - php: 5.3.3
-      dist: precise
-  
-  include:
-    - php: 5.4
-      dist: trusty
+    dist: trusty
 
 before_script:
   - '[[ "$TRAVIS_PHP_VERSION" == 5.3* ]] && composer config -g -- disable-tls true || true'
