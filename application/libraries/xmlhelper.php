@@ -285,6 +285,9 @@ class XMLHelper
 		// <br> needs to be <br /> for xhtml
 		$result = str_replace("<br>", "<br />", $result);
 
+		// as does <img>... and probably others
+		$result = preg_replace('/<(img\s)([^>]*)([^\/])>/i', '<$1$2$3 />', $result);
+
 		// remove target attribute
 		$result = preg_replace('/(<[^>]+) target=".*?"/i', '$1', $result);
 
