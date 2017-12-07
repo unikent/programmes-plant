@@ -62,6 +62,30 @@ To run all the seeds type `php artisan seed --env=local`.
 
 Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.
 
+## API
+
+The JSON API exposes data endpoints that can be consumed for external application. Here is a brief summary of the endpoints available. These endpoints should be prefixed with the application's base url. A more thorough list can be found in the [routes.php](application/routes.php) file.
+
+Programmes indexes:
+	/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)
+	/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/programmes
+
+Programmes
+	/api/([0-9]{4}|current)/(undergraduate|postgraduate)/programmes/(:num)
+
+Subjects
+	/api/([0-9]{4}|current)/(undergraduate|postgraduate)/subjects
+
+Profiles indexes
+	/api/profiles'
+	/api/(undergraduate|postgraduate)/profiles'
+
+Profiles
+	/api/(undergraduate|postgraduate)/profile/(:any).(json|xml|csv)'
+	/api/(undergraduate|postgraduate)/profile/(:any)
+
+
+
 ## Other Projects
 
 Want to consume the data from a Programmes Plant API? Consider using our [PHP library for this](https://github.com/unikent/of-course).
@@ -73,7 +97,6 @@ Want to see what a front-end to this data might look like using this library? Se
 The task file `sitsimport.php` can be run manually on the server, but is set up to run as a cron every night at 4am (under user fm200). The task reads a SITS export XML file sitting in our shared `/data` folder. The task then reads in data from the file and creates entries in the current year of UG (in the programme and programme_revisions) and PG (in deliveries). The data imported is IPO, POS code, MCR code, ARI code, description, award, and full-time/part-time.
 
 The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS when the click the 'apply', 'enquire', or 'order prospectus' links on a course page.
-
 
 ## Licensing
 
