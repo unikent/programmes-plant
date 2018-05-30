@@ -8,7 +8,8 @@ class TestAPI extends ModelTestCase
 		return array(
 			'programme_title_1' => 'Thing',
 			'year' => "2014",
-            'hidden' => 0,
+			'hidden' => 0,
+			// 'instance_id' => rand(),
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
 	        UG_Programme::get_subject_area_1_field()  => '1',
@@ -428,6 +429,14 @@ class TestAPI extends ModelTestCase
 		$programme4 = $this->publish_programme();
 		$programme5 = $this->publish_programme();
 
+		// @TODO can we move this to the creation of the programme?
+		// set random values for instance_id which will not clash with $id
+		$programme1->instance_id = rand(5, 1000); // @TODO why does this make it fail
+		$programme2->instance_id = rand(5, 1000);
+		$programme3->instance_id = rand(5, 1000);
+		$programme4->instance_id = rand(5, 1000);
+		$programme5->instance_id = rand(5, 1000);
+
 		// create two sets of data types, but we'll only need the subjects
 		$data_type_objects1 = $this->create_data_types();
 		$data_type_objects2 = $this->create_data_types();
@@ -443,7 +452,7 @@ class TestAPI extends ModelTestCase
 		$programme1->$title_field = "programme1";
 		$programme1->$subject_area_1_field = $data_type_objects1['ug_subject']->id;
 		$programme1->$subject_area_2_field = $data_type_objects2['ug_subject']->id;
-		$programme1->$related_courses_field = $programme5->id;
+		$programme1->$related_courses_field = $programme5->instance_id;
 		$programme1->save();	
 		$programme1->make_revision_live($programme1->get_active_revision());
 
@@ -472,16 +481,20 @@ class TestAPI extends ModelTestCase
 
 		// get api representation of programme1,
 		// for the purpose of getting directly related courses
-		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
+		$programme1_api = UG_Programme::get_api_programme($programme1->instance_id, $programme1->year);
 		$programme1_api = API::load_external_data($programme1_api, 'ug');
 		$programme1_api = API::remove_ids_from_field_names($programme1_api);
 
 		// get the related courses linked by subject areas
-		$programme1_related_courses = UG_Programme::get_programmes_in($data_type_objects1['ug_subject']->id, $data_type_objects2['ug_subject']->id, $programme1->year, $programme1->id);
+		$programme1_related_courses = UG_Programme::get_programmes_in(
+			$data_type_objects1['ug_subject']->id,
+			$data_type_objects2['ug_subject']->id,
+			$programme1->year,
+			$programme1->instance_id
+		);
 		
-		// get all the related courses
 		$related_courses = API::merge_related_courses($programme1_related_courses, $programme1_api['related_courses']);
-
+		
 		// put our expected related programme titles in an array
 		$programme_titles = array(
 				"programme2" => $programme2->$title_field,
@@ -552,7 +565,7 @@ class TestAPI extends ModelTestCase
 		$programme1->$award_field = $data_type_objects['ug_award']->id;
 		$programme1->$campus_field = $data_type_objects['campus']->id;
 		$programme1->$subject_area_1_field = $data_type_objects['ug_subject']->id;
-		$programme1->$related_courses_field = $programme2->id;
+		$programme1->$related_courses_field = $programme2->instance_id;
 		$programme1->save();	
 		$programme1->make_revision_live($programme1->get_active_revision());
 
