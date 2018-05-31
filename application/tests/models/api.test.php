@@ -9,7 +9,7 @@ class TestAPI extends ModelTestCase
 			'programme_title_1' => 'Thing',
 			'year' => "2014",
 			'hidden' => 0,
-			// 'instance_id' => rand(),
+			'instance_id' => rand(10,100), // otherwise this is set in sequence and then matches id, thus masking errors
 			UG_Programme::get_programme_suspended_field() => '',
 	        UG_Programme::get_programme_withdrawn_field() => '',
 	        UG_Programme::get_subject_area_1_field()  => '1',
@@ -41,11 +41,15 @@ class TestAPI extends ModelTestCase
 	}
 
 	// Test data
+	// @TODO sometimes this seems not to work...
 	private function publish_programme(){
 		$programme = UG_Programme::create(static::test_programme());
         $revision = $programme->get_active_revision();
-        $programme->make_revision_live($revision);
-
+		$programme->make_revision_live($revision);
+		
+		if (!$programme) {
+			echo 'YIKES';
+		}
         return $programme;
 	}
 	private function publish_globals(){
@@ -139,33 +143,33 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme();
 
 		$result = API::get_programme( 'ug', '2014',1);
-	}
-	/**
+	}	
+	/**	
 	* @expectedException MissingDataException
 	*/
 	public function testget_programme_without_programmesetting(){
 		$this->publish_globals();
 		$this->publish_programme();
 
-		$result = API::get_programme( 'ug', '2014',1);
+		$result = API::get_programme('ug', '2014',1);
 		$this->assertEquals(false, $result);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_cached(){
 		$this->publish_globals();
 		$this->publish_programme_settings();
-		$this->publish_programme();
+		$programme = $this->publish_programme();
 
-		$result = API::get_programme( 'ug', '2014',1);
+		$result = API::get_programme('ug', '2014', $programme->instance_id);
 		$this->assertEquals('Thing', $result['programme_title']);
-	}
+	}	
 	public function testget_programme_with_global_and_programmesetting_works_when_not_cached(){
 		$this->publish_globals();
 		$this->publish_programme_settings();
-		$this->publish_programme();
+		$programme = $this->publish_programme();
 		Cache::flush();
-		$result = API::get_programme( 'ug', '2014',1);
-		$this->assertEquals('Thing',  $result['programme_title']);
-	}
+		$result = API::get_programme('ug', '2014', $programme->instance_id);
+		$this->assertEquals('Thing', $result['programme_title']);
+	}	
 
 	/**
 	* @expectedException NotFoundException
@@ -183,11 +187,10 @@ class TestAPI extends ModelTestCase
 		$data_type_objects = $this->create_data_types();
 
 		$subject_area = $data_type_objects['ug_subject'];
-		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
 		$programme->save();
-        $programme->make_revision_live($programme->get_active_revision());
+		$programme->make_revision_live($programme->get_active_revision());
 		
 		$subjects_index = API::get_subjects_index($programme->year);
 
@@ -197,7 +200,7 @@ class TestAPI extends ModelTestCase
 			if ($subject_index['id'] == $subject_area->id){
 				$subject_found_in_index = true;
 				$title_field = UG_Programme::get_title_field();
-				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				$this->assertEquals($subject_index['courses'][$programme->instance_id]['name'], $programme->$title_field);
 				break;
 			}
 		}
@@ -226,7 +229,7 @@ class TestAPI extends ModelTestCase
 			if ($subject_index['id'] == $subject_area->id){
 				$subject_found_in_index = true;
 				$title_field = UG_Programme::get_title_field();
-				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				$this->assertEquals($subject_index['courses'][$programme->instance_id]['name'], $programme->$title_field);
 				break;
 			}
 		}
@@ -406,7 +409,7 @@ class TestAPI extends ModelTestCase
 		$globals = $this->publish_globals();
 		$programme_settings = $this->publish_programme_settings();
 
-		$api_programme 	= UG_Programme::get_api_programme($programme->id, $programme->year);
+		$api_programme 	= UG_Programme::get_api_programme($programme->instance_id, $programme->year);
 		$api_globals = GlobalSetting::get_api_data($globals->year);
 		$api_programme_settings = UG_ProgrammeSetting::get_api_data($programme_settings->year);
 		
@@ -428,15 +431,6 @@ class TestAPI extends ModelTestCase
 		$programme3 = $this->publish_programme();
 		$programme4 = $this->publish_programme();
 		$programme5 = $this->publish_programme();
-
-		// @TODO can we move this to the creation of the programme?
-		// set random values for instance_id which will not clash with $id
-		$programme1->instance_id = rand(5, 1000); // @TODO why does this make it fail
-		$programme2->instance_id = rand(5, 1000);
-		$programme3->instance_id = rand(5, 1000);
-		$programme4->instance_id = rand(5, 1000);
-		$programme5->instance_id = rand(5, 1000);
-
 		// create two sets of data types, but we'll only need the subjects
 		$data_type_objects1 = $this->create_data_types();
 		$data_type_objects2 = $this->create_data_types();
@@ -574,7 +568,7 @@ class TestAPI extends ModelTestCase
 		$programme2->save();	
 		$programme2->make_revision_live($programme2->get_active_revision());
 
-		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
+		$programme1_api = UG_Programme::get_api_programme($programme1->instance_id, $programme1->year);
 		$programme1_api = API::load_external_data($programme1_api, 'ug');
 		$programme1_api = API::remove_ids_from_field_names($programme1_api);
 
@@ -618,8 +612,7 @@ class TestAPI extends ModelTestCase
      */
 	public function testget_xcrified_programme_no_globals_or_settings(){
 		$programme = $this->publish_programme();
-
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
+		$xcrified_programme = API::get_xcrified_programme($programme->instance_id, $programme->year, 'ug');
 	}
 
 	public function testget_xcrified_programme(){
@@ -627,8 +620,8 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme_settings();
 
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
-		
+		$xcrified_programme = API::get_xcrified_programme($programme->instance_id, $programme->year, 'ug');
+
 		$this->assertNotEmpty($xcrified_programme);
 
 		$this->markTestIncomplete(

@@ -636,7 +636,15 @@ var redactor_config = {
 		}
 	},
 	maxHeight: 600,
-	videoContainerClass: 'embed-responsive embed-responsive-16by9'
+	videoContainerClass: 'embed-responsive embed-responsive-16by9',
+	callbacks: {
+		    paste: function(html)
+		    {
+		//       console.log(html,this.block.removeAttr('style'));
+		      console.log(html);
+		      return html;
+		    }
+		  }  
 };
 
 $('textarea').not('.picker').each( function(){
