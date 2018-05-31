@@ -87,8 +87,7 @@ class API {
 
 	/**
 	* Return fully combined programme item from the API
-	* @TODO $id seems to be $iid here - confirm
-	* @param id ID of programme
+	* @param id the instance ID of programme
 	* @param year Year to get index for
 	* @return combined Programme data array
 	*/
