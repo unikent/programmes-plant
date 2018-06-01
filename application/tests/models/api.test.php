@@ -2,26 +2,8 @@
 
 class TestAPI extends ModelTestCase 
 {
-	/*
-		keep track of instance_ids already generated in test data
-	*/
-	public static $random_numbers;
-
-	public static function unique_rand($min = 0, $max = 100)
-	{
-		/*
-			instance_id is stored as int(11) so just use current unix timestamp if duplicate generated
-			NOTE: potential year 5138 problem
-		*/
-		$number = rand($min, $max);
-		if (in_array($number, self::$random_numbers, true)) {
-			sleep(1); //ensure that time passes
-			$number = time();
-		}
-		array_push(self::$random_numbers, $number);
-	
-		return $number;
-	}
+	// used to keep id and instance_id different
+	public static $instance_id_offset; 
 
 	public static function test_programme ()
 	{
@@ -29,7 +11,7 @@ class TestAPI extends ModelTestCase
 			'programme_title_1' => 'Thing',
 			'year' => "2014",
 			'hidden' => 0,
-			'instance_id' => self::unique_rand(10,10000),
+			'instance_id' => self::$instance_id_offset++,
 			UG_Programme::get_programme_suspended_field() => '',
 			UG_Programme::get_programme_withdrawn_field() => '',
 			UG_Programme::get_subject_area_1_field()  => '1',
@@ -45,7 +27,7 @@ class TestAPI extends ModelTestCase
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
-		self::$random_numbers = array();
+		self::$instance_id_offset = 10;
 
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
