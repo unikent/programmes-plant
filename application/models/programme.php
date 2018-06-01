@@ -891,4 +891,20 @@ abstract class Programme extends Revisionable {
 		return $years;
 	}
 
+	/**
+	 * Gives a flat array of instance_id => item_title for all items.
+	 * 
+	 * wraps around simpledata::all_as_list
+	 * 
+	 * @param string $year The year from which to get the array.
+	 *
+	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
+	 * 
+	 * @return array $options List of items in the format id => item_title.
+	 *
+	 */
+	public static function all_as_list($year, $empty_default_value = 0) {
+		return  parent::all_as_list($year, 0, "instance_id");
+	}
+
 }
