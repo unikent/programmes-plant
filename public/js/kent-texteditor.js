@@ -1,18 +1,13 @@
-$.Redactor.prototype.bufferbuttons = function()
-{
-	return {
-		init: function()
-			  {
-				  var undo = this.button.addAfter('link','undo', 'Undo');
-				  var redo = this.button.addAfter('undo', 'redo', 'Redo');
 
-				  this.button.addCallback(undo, this.buffer.undo);
-				  this.button.addCallback(redo, this.buffer.redo);
-			  }
-	};
-};
+/*
+TODO undo / redo
+added to the config
+*/
 
-$.Redactor.prototype.source = function()
+/*
+TODO show HTML
+
+$R.prototype.source = function()
 {
 	return {
 		init: function()
@@ -83,7 +78,12 @@ $.Redactor.prototype.source = function()
 	};
 };
 
-$.Redactor.prototype.imagemanager = function()
+*/
+
+/* 
+
+TODO image stuff
+$R.prototype.imagemanager = function()
 {
 	return {
 		langs: {
@@ -609,7 +609,11 @@ $.Redactor.prototype.imagemanager = function()
 
 	};
 };
+*/
 
+
+/*
+TODO config  
 var redactor_config = {
 	plugins: ['bufferbuttons', 'imagemanager', 'source'],
 	imageResizable: false,
@@ -637,6 +641,41 @@ var redactor_config = {
 	},
 	maxHeight: 600,
 	videoContainerClass: 'embed-responsive embed-responsive-16by9'
+};
+
+*/
+
+
+var redactor_config = {
+	styles: true,
+	buttons: ['format', 'bold', 'italic', 'deleted', 'lists', 'image', 'link', 'undo', 'redo', 'html'],
+	formatting: ['p', 'h2', 'h3', 'h4'],
+	formattingAdd: {
+		"blockquote": {
+			title: 'Blockquote',
+			api: 'module.block.format',
+			args: {
+				'tag': 'blockquote',
+				'class': 'simple'
+			}
+		},
+		"pullquote": {
+			title: 'Pullquote',
+			api: 'module.block.format',
+			args: {
+				'tag': 'blockquote',
+				'class': 'simple pull-quote'
+			}
+		},
+		"impact": {
+			title: 'Impact Statement',
+			api: 'module.block.format',
+			args: {
+				'tag': 'p',
+				'class': 'impact-statement'
+			}
+		}
+	}
 };
 
 $('textarea').not('.picker').each( function(){
