@@ -1,41 +1,41 @@
 @font-face{font-family:Century Schoolbook;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot);src:local("Century Schoolbook"),local("CenturySchoolbook"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff2) format("woff2"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/CenturySchoolbook.svg#CenturySchoolbook) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-light-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mtlight-webfont.svg#arial_mtmt_light) format("svg");font-weight:400;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-lightitalic-webfont.svg#arial_mtlight_italic) format("svg");font-weight:400;font-style:italic}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-medium-webfont.svg#arial_mtmedium) format("svg");font-weight:700;font-style:normal}@font-face{font-family:ArialLight;src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot);src:url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.eot?#iefix) format("embedded-opentype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.woff) format("woff"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.ttf) format("truetype"),url(https://beta.kent.ac.uk/pantheon/kent-theme-assets/assets/fonts/arialmt/arialmt-mediumitalic-webfont.svg#arial_mtmedium_italic) format("svg");font-weight:700;font-style:italic}
 
 
-.redactor-dropdown-box-format .redactor-dropdown-blockquote,
-.redactor-dropdown-box-format .redactor-dropdown-pullquote{
+.redactor-dropdown .redactor-dropdown-item-blockquote,
+.redactor-dropdown .redactor-dropdown-item-pullquote{
     font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
     font-size: 19px;
     font-style: italic;
     color: #05345C;
 }
-.redactor-dropdown-box-format .redactor-dropdown-pullquote span{
+.redactor-dropdown .redactor-dropdown-item-pullquote span{
     padding: 5px 0;
     border-color:#05345C;
     border-style: solid;
     border-width: 1px 0;
 }
 
-.redactor-dropdown-box-format .redactor-dropdown-p{
+.redactor-dropdown .redactor-dropdown-item-p{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: 16px;
     color: #171717;
 }
-.redactor-dropdown-box-format .redactor-dropdown-impact{
+.redactor-dropdown .redactor-dropdown-item-impact{
     font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
     font-size: 19px;
     color: #937227;
 }
-.redactor-dropdown-box-format .redactor-dropdown-h2{
+.redactor-dropdown .redactor-dropdown-item-h2{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: 25.632px;
     color: #05345C;
 }
-.redactor-dropdown-box-format .redactor-dropdown-h3{
+.redactor-dropdown .redactor-dropdown-item-h3{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size:20.256px;
     color: #05345C;
 }
-.redactor-dropdown-box-format .redactor-dropdown-h4{
+.redactor-dropdown .redactor-dropdown-item-h4{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size:18px;
     color: #05345C;
@@ -44,39 +44,39 @@
 .redactor-box{
     max-width: 725px;
 }
-.redactor-editor{
+.redactor-styles{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: 16px;
     color: #171717;
     line-height: 1.5;
 }
-.redactor-editor h2{
+.redactor-styles h2{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: 25.632px;
     color: #05345C;
 }
-.redactor-editor h3{
+.redactor-styles h3{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size:20.256px;
     color: #05345C;
 }
-.redactor-editor h4{
+.redactor-styles h4{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size:18px;
     color: #05345C;
 }
 
-.redactor-editor a{
+.redactor-styles a{
     color: #005689;
     text-decoration: none;
     border-bottom: 1px solid #CCCCCC;
 }
 
-.redactor-editor a:hover {
+.redactor-styles a:hover {
     border-bottom: 1px solid #00263d;
 }
 
-.redactor-editor p.impact-statement{
+.redactor-styles p.impact-statement{
     font-size: 28.8px;
     font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
     text-align: center;
@@ -85,7 +85,7 @@
 }
 
 
-.redactor-editor blockquote.simple{
+.redactor-styles blockquote.simple{
     padding: 16px;
     font-family: "Century Schoolbook", Georgia, "Times New Roman", Times, serif;
     font-size: 20.8px;
@@ -94,14 +94,14 @@
     border:0;
 }
 
-.redactor-editor blockquote.simple:before{
+.redactor-styles blockquote.simple:before{
     font-size: 1.3em;
     content: '\201C';
     line-height: 16px;
     line-height: calc(1rem);
 }
 
-.redactor-editor blockquote.simple:after{
+.redactor-styles blockquote.simple:after{
     font-size: 1.3em;
     content: '\201D';
     line-height: 16px;
@@ -109,23 +109,23 @@
     line-height: calc(1rem);
 }
 
-.redactor-editor blockquote.pull-quote{
+.redactor-styles blockquote.pull-quote{
     border:       1px solid #05345C;
     border-width: 1px 0;
     padding:      2rem;
     margin: 16px 0;
 }
 
-.redactor-editor figure{
+.redactor-styles figure{
     clear:both;
 }
-.redactor-editor figure:hover .media-wrap{
+.redactor-styles figure:hover .media-wrap{
     overflow: hidden;
 }
-.redactor-editor figure:hover img{
+.redactor-styles figure:hover img{
     filter: blur(3px);
 }
-.redactor-editor figure:hover .media-wrap:after{
+.redactor-styles figure:hover .media-wrap:after{
     content: "Edit";
     display: block;
     position: absolute;
@@ -137,15 +137,15 @@
     pointer-events: none;
 }
 
-.redactor-editor figure .media-wrap img{
+.redactor-styles figure .media-wrap img{
     max-width: 100%;
     height: auto;
 }
 
-.redactor-editor figure .media-wrap{
+.redactor-styles figure .media-wrap{
     position:relative;
 }
-.redactor-editor figure .attribution {
+.redactor-styles figure .attribution {
     position:   absolute;
     bottom:     0;
     right:      0;
@@ -156,21 +156,21 @@
     font-size: 0;
 }
 
-.redactor-editor figure figcaption{
+.redactor-styles figure figcaption{
     font-family: 'ArialLight', Arial, "Helvetica Neue", Helvetica, Tahoma, sans-serif;
     font-size: .9rem;
     color: #636c72;
     font-style: normal;
 }
 
-.redactor-editor figure.figure-center{
+.redactor-styles figure.figure-center{
     display: block;
     text-align: center;
     margin:auto;
 }
 
-.redactor-editor figure.figure-right,
-.redactor-editor figure.figure-pull-right{
+.redactor-styles figure.figure-right,
+.redactor-styles figure.figure-pull-right{
     float:right;
     clear:right;
     max-width: 50%;
@@ -178,8 +178,8 @@
     margin-bottom: 2rem;
 }
 
-.redactor-editor figure.figure-left,
-.redactor-editor figure.figure-pull-left
+.redactor-styles figure.figure-left,
+.redactor-styles figure.figure-pull-left
 {
     float:left;
     clear:left;
@@ -264,7 +264,7 @@
     margin-bottom: 15px;
 }
 
-.img-picker .redactor-editor{
+.img-picker .redactor-styles{
     min-height: 20px !important;
     height: 20px !important;
     padding: 4px 6px;
@@ -273,7 +273,7 @@
     overflow: hidden;
     border: 1px solid #ccc;
 }
-.img-picker .redactor-editor p{
+.img-picker .redactor-styles p{
     margin:0;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
