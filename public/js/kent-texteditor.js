@@ -1,82 +1,9 @@
 
 /*
-TODO undo / redo
-added to the config
-*/
+TODO
 
-/*
-TODO show HTML
-
-$R.prototype.source = function()
-{
-	return {
-		init: function()
-			  {
-				  var button = this.button.add('html', 'View HTML');
-				  this.button.addCallback(button, this.source.toggle);
-
-				  var style = {
-					  'width': '100%',
-					  'margin': '0',
-					  'background': '#111',
-					  'box-sizing': 'border-box',
-					  'color': 'rgba(255, 255, 255, .8)',
-					  'font-size': '14px',
-					  'outline': 'none',
-					  'padding': '16px',
-					  'line-height': '22px',
-					  'font-family': 'Menlo, Monaco, Consolas, "Courier New", monospace'
-				  };
-
-				  this.source.$textarea = $('<textarea disabled readonly></textarea>');
-				  this.source.$textarea.css(style).hide();
-
-				  if (this.opts.type === 'textarea')
-				  {
-					  this.core.box().append(this.source.$textarea);
-				  }
-				  else
-				  {
-					  this.core.box().after(this.source.$textarea);
-				  }
-
-				  this.core.element().on('destroy.callback.redactor', $.proxy(function()
-				  {
-					  this.source.$textarea.remove();
-
-				  }, this));
-
-			  },
-		toggle: function()
-			  {
-				  return (this.source.$textarea.hasClass('open')) ? this.source.hide() : this.source.show();
-			  },
-		hide: function()
-			  {
-				  this.source.$textarea.removeClass('open').hide();
-
-				  this.button.enableAll();
-				  this.core.editor().show().focus();
-
-				  this.core.callback('visual');
-			  },
-		show: function()
-			  {
-				  this.selection.save();
-
-				  var height = this.core.editor().innerHeight();
-				  var code = this.code.get();
-
-				  // callback
-				  code = this.core.callback('source', code);
-
-				  this.core.editor().hide();
-				  this.button.disableAll('html');
-				  this.source.$textarea.html(code).height(height).addClass('open').show();
-
-			  }
-	};
-};
+- something with the image uploads
+- is there a better way to do length limits?
 
 */
 
@@ -621,24 +548,12 @@ var redactor_config = {
 	imageUpload: base_url + 'images/upload',
 	imageUploadParam: 'image',
 	imageManagerJson: base_url + 'api/images',
+	
 	pasteLinkTarget: '_blank',
 	formatting: ['p', 'h2', 'h3', 'h4'],
 	pasteBlockTags: ['h2','h3','h4', 'p', 'blockquote', 'li', 'ol', 'ul'],
 	structure: true,
-	formattingAdd: {
-		"blockquote": {
-			title: 'Blockquote',
-			args:  ['blockquote', 'class', 'simple']
-		},
-		"pullquote": {
-			title: 'Pullquote',
-			args:  ['blockquote', 'class', 'simple pull-quote']
-		},
-		"impact": {
-			title: 'Impact Statement',
-			args:  ['p', 'class', 'impact-statement']
-		}
-	},
+	
 	maxHeight: 600,
 	videoContainerClass: 'embed-responsive embed-responsive-16by9'
 };
@@ -647,11 +562,20 @@ var redactor_config = {
 
 
 var redactor_config = {
+	plugins: ['imagemanager'],
+
+	imageResizable: false,
+	imagePosition: true,
+	imageUpload: base_url + 'images/upload',
+	imageUploadParam: 'image',
+	imageManagerJson: base_url + 'api/images',
+	
 	styles: true,
+	
 	buttons: ['format', 'bold', 'italic', 'deleted', 'lists', 'image', 'link', 'undo', 'redo', 'html'],
 	formatting: ['p', 'h2', 'h3', 'h4'],
 	formattingAdd: {
-		"blockquote": {
+		'blockquote': {
 			title: 'Blockquote',
 			api: 'module.block.format',
 			args: {
@@ -659,7 +583,7 @@ var redactor_config = {
 				'class': 'simple'
 			}
 		},
-		"pullquote": {
+		'pullquote': {
 			title: 'Pullquote',
 			api: 'module.block.format',
 			args: {
@@ -667,7 +591,7 @@ var redactor_config = {
 				'class': 'simple pull-quote'
 			}
 		},
-		"impact": {
+		'impact': {
 			title: 'Impact Statement',
 			api: 'module.block.format',
 			args: {
@@ -684,7 +608,7 @@ $('textarea').not('.picker').each( function(){
 		//Add word limiting logic
 		var self = {};
 		// Get word limit from item
-		self.limit = $(this).attr("data-limit");
+		self.limit = $(this).attr('data-limit');
 		self.limiting_on_words = false;
 		self.dom = document.createElement('span');
 		self.dom.className = 'text_limits';
@@ -758,17 +682,15 @@ $('.img-picker textarea').each(function(){
 	$(this).redactor($.extend({},redactor_config,{
 		picker:true,
 		toolbar: false,
-        paragraphize: false,
-        callbacks: {
-			click: function(e)
-				   {
-					  this.image.show();
-					   //this.button.get('image').callback();
-				   },
-			syncBefore: function(html)
-				  {
-					 return html.replace(/\D/g,'');
-				  }
+		paragraphize: false,
+		callbacks: {
+			click: function(e) {
+				this.image.show();
+				//this.button.get('image').callback();
+			},
+			syncBefore: function(html) {
+				return html.replace(/\D/g,'');
+			}
 		}
 	}));
 });
