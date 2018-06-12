@@ -14,6 +14,7 @@
 </script>
 
 <script src="<?php echo asset('js/redactor.js')?>"></script>
+<script src="<?php echo asset('js/imagemanager.js')?>" type="text/javascript" charset="utf8"></script>
 <script src="<?php echo asset('js/kent-texteditor.js')?>" type="text/javascript" charset="utf8"></script>
 
 <!-- Additional js to make datatables & wysihtml5 work with bootstrap -->
