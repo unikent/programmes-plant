@@ -567,6 +567,85 @@ var redactor_config = {
 	imageResizable: false,
 	imagePosition: true,
 	imageUpload: base_url + 'images/upload',
+
+
+
+	imageUploadExample: function(data, files, e, upload)
+	{
+		return new Promise(function(resolve, reject)
+		{
+			var url = base_url + 'images/upload';
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(e)
+			{
+				if (xhr.readyState === 4)
+				{
+					if (xhr.status === 200)
+					{
+						resolve(xhr.response);
+					}
+					else
+					{
+						reject(xhr.status);
+					}
+				}
+			}
+
+			xhr.open('post', url);
+			xhr.send();
+
+		}).then(function(response)
+		{
+			// success
+			upload.complete(response);
+
+		}).catch(function(response)
+		{
+			// fail
+			upload.complete(response);
+		});
+	},
+
+
+
+
+	imageUpload2: function(formData, files, event, upload) {
+
+		console.log(upload);
+		console.log(formData);
+		// post to url
+		var file = files[0];
+
+		var image = {
+			image: file
+		}
+		
+		$.ajax({
+			type: "POST",
+			url: base_url + 'images/upload',
+			data: formData,
+			success: function (data) {
+				console.log(data);
+			},
+			// dataType: 'json'
+		});
+		
+
+		/* data should be link 
+		$value
+			name: "Sibson-Building .....
+			type: "image/jpeg"
+			tmp_name: "/tmp/phpDw201g"
+			error: 0
+			size: 669339
+
+		*/
+		// return the json from the url
+
+		console.log(formData);
+		console.log(files);
+		console.log(event);
+	},
 	imageUploadParam: 'image',
 	imageManagerJson: base_url + 'api/images',
 	

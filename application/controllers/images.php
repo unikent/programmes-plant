@@ -131,25 +131,39 @@ class Images_Controller extends Simple_Admin_Controller {
 	/**
 	 * upload image - called from redactor
 	 */
-	public function post_upload(){
+	public function post_upload() 
+	{
 
 		$model = $this->model;
+
 
 		$rules = array(
 			'image' => 'required|mimes:jpg|max:1000',
 			'name' => ''
 		);
+		
+		// jiggle the uploaded data into the format we'd like
+		$uploaded_img = Input::file('image');
+		
+		$img = array();
+		$img['name'] = $uploaded_img['name'][0];
+		$img['type'] = $uploaded_img['type'][0];
+		$img['tmp_name'] = $uploaded_img['tmp_name'][0];
+		$img['error'] = $uploaded_img['error'][0];
+		$img['size'] = $uploaded_img['size'][0];
+		
+		$uploaded_input = array();
+		$uploaded_input['image'] = $img;
 
-		if(!$model::is_valid($rules)){
+		if (!$model::is_valid($rules, $uploaded_input)) {
 			return static::json(array('error'=>'invalid input','errors'=> $model::$validation->errors->all()), 422);
 		}
 
-		$img = Input::file('image');
-		if(isset( $img['error']) && $img['error'] === 0){
-			$name = explode('.',$img['name']);
+		if (isset($img['error']) && $img['error'] === 0) {
+			$name = explode('.', $img['name']);
 			array_pop($name);
-			$name = implode('.',$name);
-		}else{
+			$name = implode('.', $name);
+		} else {
 			return static::json(array('error'=>'invalid input'), 422);
 		}
 
@@ -159,20 +173,22 @@ class Images_Controller extends Simple_Admin_Controller {
 		$new->name = $name;
 		$new->height = $size[1];
 		$new->width = $size[0];
-		$new->populate_from_input();
+		
+		// FIXME - why was this even unsetting the image element??
+		$new->populate_from_input($uploaded_input);
 
 		$new->save();
 
-		$img = Input::file('image');
-		if(isset( $img['error']) && $img['error'] === 0){
-			if(!$this->save_image($new->id)){
+		
+		if (isset($img['error']) && $img['error'] === 0) {
+			if (!$this->save_image($new->id)) {
 				$new->raw_delete();
 			}
-		}else{
+		} else {
 			$new->raw_delete();
 		}
-
-		return static::json(API::get_data_single('image',$new->id));
+		
+		return static::json(API::get_data_single('image', $new->id));
 	}
 
 	/**

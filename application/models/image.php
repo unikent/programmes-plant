@@ -1,6 +1,11 @@
 <?php
 class Image extends SimpleData
 {
+	/**
+	 * Validation object once it has been created.
+	 */
+	public static $validation = null;
+
 	public static $table = 'images';
 
 	public static $rules = array(
@@ -8,14 +13,48 @@ class Image extends SimpleData
 		'image' => 'mimes:jpg|max:1000'
 	);
 
-	public function populate_from_input()
+	//FIXME because clearly this is terrible - cfc 
+	/**
+	 * Validates input for Field. Overrides parent method
+	 * 
+	 * @param array $input The input in Laravel input format.
+	 * @param array $rules An array of Laravel validations which will overwrite the defaults for the class.
+	 * @return $validaton The Laravel validation object.
+	 */
+	public static function is_valid($rules = null, $input = null)
+	{
+		if (!is_null($rules)) {
+			static::$rules = array_merge(static::$rules, $rules);
+		}
+
+		if (!$input) {
+			$input = Input::all();
+		}
+		
+		static::$validation = Validator::make($input, static::$rules);
+
+		return static::$validation->passes();
+	}
+
+
+
+
+	/**
+	 * Populates the model from Input or an array
+	 * 
+	 * @param array $input
+	 * @return void
+	 */
+	public function populate_from_input($input = null)
 	{
 		if (is_null(static::$validation))
 		{
 			throw new NoValidationException('No validation');
 		}
 
-		$input = Input::all();
+		if (!$input) {
+			$input = Input::all();
+		}
 
 		// Remove _wysihtml5_mode entirely.
 		unset($input['image']);
