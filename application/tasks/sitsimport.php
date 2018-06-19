@@ -1,6 +1,7 @@
 <?php
 
 use Kent\Log;
+
 /**
  * This task file is used to load an XML feed provided from SITS
  * and import the data into the Programmes Plant
@@ -20,6 +21,7 @@ class SITSImport_Task {
   public function run( $args = array() ) {
 
     $parameters = $this->parse_arguments($args);
+
     // display help if needed
     if ( isset($parameters['help']) ) {
       echo $parameters['help'];
@@ -33,8 +35,15 @@ class SITSImport_Task {
     Log::$logfile = path('storage') . '/logs/sits_import.log';
     Log::purge();
 
-    // Load XML file
-    $xml = $this->loadXML();
+    $data = $this->loadPPAPIData();
+
+    if(!$data) {
+      Log::error('Unable to fetch PP data from Kent API.');
+      exit;
+    }
+
+    var_dump($data[0]);
+    exit;
 
     // If XML file is good, purge old caches before starting import
     $this->purgeOldPGData($this->processYears['pg']);
@@ -95,27 +104,34 @@ class SITSImport_Task {
     DB::table('ug_programme_deliveries')->where_in('programme_id',$to_del)->delete();
   }
 
-  public function loadXML() {
+  public function loadPPAPIData($year = null) {
 
-    libxml_use_internal_errors(true);
+    $ch = curl_init(
+      Config::get('module.api_base', 'http://api.kent.test:8080') .
+      '/v1/sits/programmesheader' .
+      (empty($year) ? '' : '/' . $year)
+    );
 
-    $path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+    // curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    if(filemtime($path) < (time()-(24 * 60 * 60))){
-    	Log::error('XML file has not been modified for more than 24 hours.');
-    }
+    $result = curl_exec($ch);
 
-    $courses = simplexml_load_file($path);
-
-    if ( $courses === false ) {
-      Log::error('XML file does not exist or is invalid.');
-      foreach(libxml_get_errors() as $error) {
-        Log::error($error->message);
+    if (!curl_errno($ch)) {
+      switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+        case 200:
+            // cache results?
+          break;
+        default:
+          // unexpected HTTP code, do something?
       }
-      exit;
     }
 
-    return $courses;
+    curl_close($ch);
+
+    return $result ? json_decode($result) : false;
   }
 
   /**
