@@ -21,8 +21,7 @@ class SITSImport_Task {
 
     $parameters = $this->parse_arguments($args);
     // display help if needed
-    if ( isset($parameters['help']) )
-    {
+    if ( isset($parameters['help']) ) {
       echo $parameters['help'];
       exit;
     }
@@ -31,8 +30,8 @@ class SITSImport_Task {
       $this->processYears[$type] = ($year=='current')?$this->getCurrentYear( $type ):$year;
     }
 
-	Log::$logfile = path('storage') . '/logs/sits_import.log';
-	Log::purge();
+    Log::$logfile = path('storage') . '/logs/sits_import.log';
+    Log::purge();
 
     // Load XML file
     $xml = $this->loadXML();
@@ -74,7 +73,7 @@ class SITSImport_Task {
 
 
     }
-    
+
     // clear output cache
     API::purge_output_cache();
 
@@ -98,22 +97,22 @@ class SITSImport_Task {
 
   public function loadXML() {
 
-	libxml_use_internal_errors(true);
+    libxml_use_internal_errors(true);
 
-	$path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
+    $path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
 
-	if(filemtime($path) < (time()-(24 * 60 * 60))){
-		Log::error('XML file has not been modified for more than 24 hours.');
-	}
+    if(filemtime($path) < (time()-(24 * 60 * 60))){
+    	Log::error('XML file has not been modified for more than 24 hours.');
+    }
 
     $courses = simplexml_load_file($path);
 
     if ( $courses === false ) {
-		Log::error('XML file does not exist or is invalid.');
-		foreach(libxml_get_errors() as $error) {
-			Log::error($error->message);
-		}
-		exit;
+      Log::error('XML file does not exist or is invalid.');
+      foreach(libxml_get_errors() as $error) {
+        Log::error($error->message);
+      }
+      exit;
     }
 
     return $courses;
@@ -234,18 +233,15 @@ class SITSImport_Task {
    * @param array $arguments
    * @return array $parameters
    */
-  public function parse_arguments($arguments = array())
-  {
-
+  public function parse_arguments($arguments = array()) {
     // set defaults for the parameters in case they're not set
     $parameters = array();
     $parameters['year'] = array('pg'=>'current','ug'=>'current');
 
-    foreach ($arguments as $argument)
-    {
+    foreach ($arguments as $argument) {
       $switch_name = substr($argument, 0, 2);
-      switch($switch_name)
-      {
+
+      switch($switch_name) {
         // level
         case '-p':
           $parameters['year']['pg'] = str_replace('-p', '', $argument) != '' ? str_replace('-p', '', $argument) : 'current';
@@ -262,8 +258,7 @@ class SITSImport_Task {
     return $parameters;
   }
 
-  public function help_argument()
-  {
+  public function help_argument() {
     return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
   }
 
