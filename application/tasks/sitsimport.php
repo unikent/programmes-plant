@@ -44,7 +44,12 @@ class SITSImport_Task {
 	    }
 
 	    // If API data is good, purge old caches before starting import
-	    $this->purgeOldPGData($this->processYears[$level]);
+	    if ($level == 'pg') {
+	    	$this->purgeOldPGData($this->processYears[$level]);
+	    }
+	    else {
+	    	$this->purgeOldUGData($this->processYears[$level]);
+	    }
 
 		# code...
 	    foreach ( $data as $delivery ) {
