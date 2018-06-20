@@ -35,23 +35,6 @@ class TestSITSImport_Task extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_numeric( $currPGYear ) );
 	}
 
-	public function testCheckingCourseIsValid() {
-
-		$invalidCourse = (object)array( 'progID' => '' );
-
-        $this->assertTrue( $this->task->checkCourseIsValid( $this->validPGCourse ) );
-        $this->assertFalse( $this->task->checkCourseIsValid( $invalidCourse ) );
-
-	}
-
-	public function testCheckingIPOIsValid() {
-		$validIPO = array( 'inUse' => 'Y' );
-		$invalidIPO = array( 'inUse' => 'N' );
-
-		$this->assertTrue( $this->task->checkIPOIsValid( (object)$validIPO ) );
-		$this->assertFalse( $this->task->checkIPOIsValid( (object)$invalidIPO ) );
-	}
-
 	public function testCourseLevelIsDetectedFromProgID() {
 
 		$ugCourse = $this->validUGCourse;
