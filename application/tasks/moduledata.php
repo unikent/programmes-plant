@@ -344,7 +344,7 @@ class ModuleData_Task {
 			return self::$moduleCache[$code];
 		}
 
-		$ch = curl_init( Config::get('module.api_base') . "/v1/modules/module/" . $code);
+		$ch = curl_init( Config::get('application.api_base') . "/v1/modules/module/" . $code);
 
 		curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
 		//curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
