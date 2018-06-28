@@ -141,6 +141,10 @@ class SITSImport_Task {
 	 * ]
 	 */
   public function loadProgrammeDeliveries($level = null, $year = null) {
+    // Note for year used in API url:
+    // - 'SITS year' = calendar year the academic year ends
+    // - 'Programmes Plant year' = calendar year the academic year begins
+    // so the api call uses programmes plant $year + 1 
   	$url = Config::get('application.api_base') .
 		'/v1/sits/programmesheader' .
 		(empty($level) ? '' : '/' . $level).
