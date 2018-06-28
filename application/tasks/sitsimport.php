@@ -144,7 +144,7 @@ class SITSImport_Task {
   	$url = Config::get('application.api_base') .
 		'/v1/sits/programmesheader' .
 		(empty($level) ? '' : '/' . $level).
-		(empty($year) ? '' : '/' . (intval($year) - 1));
+		(empty($year) ? '' : '/' . (intval($year) + 1));
     $ch = curl_init(
       $url
     );
