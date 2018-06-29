@@ -1,87 +1,102 @@
 <?php
 
 use Kent\Log;
+
 /**
- * This task file is used to load an XML feed provided from SITS
- * and import the data into the Programmes Plant
+ * This task retrieves data about programmes from SITS via api.kent
+ * and imports the data into the Programmes Plant (pg|ug)_programme_deliveries tables.
  *
- * Data imported is IPO, POS code, MCR code, ARI code, description,
- * award and attendance type (full-time or part-time)
+ * A logfile is generated (purged at the start of each request) in {storage}/logs/sits_import.log.
+ *
+ * Another script "sitsimport_check.php" can be run to check if this log file contains any errors.
+ *
+ * The data imported is:
+ *
+ * - MCR code - "Marketing Course Record" - Identifies a programme that can be applied to
+ * - IPO - Institution Published Programme Occurrence - Seems to be a 4-digit (zero-padded) number...
+ * 		  (shire docs say A single start date for an IPP (MCR) - but looks more like a version or something...)
+ * - POS code - Code identifying a Programme of Study.
+ * - ARI code - Area of Interest code.
+ * - description,
+ * - award
+ * - attendance type (full-time or part-time)
  *
  * The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS
- * when they click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+ * when they click the 'apply', 'enquire', or 'order prospectus' links on a course page (of-course).
+ *
+ * The data was previously imported from an XML file provided by SITS.
+ *
+ * The task imports a single undergraduate (ug) year and a single postgraduate (pg) year worth of
+ * programmes at at time. It defaults to "current" for both years if not specified.
+ *
+ * The value "current" can be substituted instead of an actual year.
+ *
+ * Usage:
+ * - php artisan sitsimport -u2018 (import data from undergraduate 2018 programmes and postgraduate "current")
+ * - php artisan sitsimport -pcurrent (import data from current year postgraduate programmes and for undergraduate "current")
+ * - php artisan sitsimport -u2018 -p2018 (import data from undergraduate and postgraduate 2018 programmes)
  */
 class SITSImport_Task {
 
   public $processYears = array();
   public $seenProgrammes = array();
-  public $ipos = array();
 
   public function run( $args = array() ) {
 
     $parameters = $this->parse_arguments($args);
+
     // display help if needed
-    if ( isset($parameters['help']) )
-    {
+    if ( isset($parameters['help']) ) {
       echo $parameters['help'];
       exit;
     }
 
-    foreach ($parameters['year'] as $type=>$year){
-      $this->processYears[$type] = ($year=='current')?$this->getCurrentYear( $type ):$year;
+    foreach ($parameters['year'] as $level=>$year){
+      $this->processYears[$level] = ($year=='current')?$this->getCurrentYear( $level ):$year;
     }
 
-	Log::$logfile = path('storage') . '/logs/sits_import.log';
-	Log::purge();
+    Log::$logfile = path('storage') . '/logs/sits_import.log';
+    Log::purge();
 
-    // Load XML file
-    $xml = $this->loadXML();
+	foreach ($this->processYears as $level => $year) {
 
-    // If XML file is good, purge old caches before starting import
-    $this->purgeOldPGData($this->processYears['pg']);
-    $this->purgeOldUGData($this->processYears['ug']);
+	    $data = $this->loadProgrammeDeliveries($level, $year);
 
-    foreach ( $xml as $course ) {
-      //make sure it has a programme ID in the progsplant
-      if ( !$this->checkCourseIsValid( $course ) ) {
-        continue;
-      }
+	    if(!$data) {
+	      Log::error("Unable to fetch {$level} {$year} programme deliveries from Kent API.");
+	      exit;
+	    }
 
-      $this->ipos = array();
+	    // If API data is good, purge old caches before starting import
+	    if ($level == 'pg') {
+	    	$this->purgeOldPGData($this->processYears[$level]);
+	    }
+	    else {
+	    	$this->purgeOldUGData($this->processYears[$level]);
+	    }
 
-      foreach ( $course->ipo as $ipo ) {
-        //only get IPOs that are in use in SITS
-        if ( !$this->checkIPOIsValid( $ipo ) ) {
-          continue;
-        }
+	    foreach ( $data as $delivery ) {
 
-        $this->ipos[] = $ipo;
-      }
+	      $programme   = $this->getProgramme( $delivery, $level );
+	      $year = $this->processYears[$level];
 
-      //get rid of 'UG'/'PG' that SITS concat to our progsplant ID
-      $course->pos = $this->trimPOSCode( $course->pos );
-      $courseLevel = $this->getCourseLevel( $course );
-      $programme   = $this->getProgramme( $course, $courseLevel );
-      $year = $this->processYears[$courseLevel];
+	      if ( empty( $programme ) || !is_object( $programme ) ) {
+	        continue;
+	      }
 
-      if ( empty( $programme ) || !is_object( $programme ) ) {
-        continue;
-      }
+	      URLParams::$type = $level;
+	      $this->createDelivery( $delivery, $programme, $year, $level );
+	    }
+	}
 
-
-      URLParams::$type = $courseLevel;
-      $delivery = $this->createDelivery( $course, $programme, $year, $courseLevel );
-
-
-    }
-    
     // clear output cache
     API::purge_output_cache();
 
   }
 
   /**
-   * Remove all PG deliveries
+   * Remove all PG deliveries for the specified year
+   * @param string $year - The year
    */
   public function purgeOldPGData($year) {
     $to_del = DB::table('programmes_pg')->where('year', '=', $year)->lists('id');
@@ -89,82 +104,114 @@ class SITSImport_Task {
   }
 
   /**
-   * Remove all UG deliveries
+   * Remove all UG deliveries for the specified year
+   * @param string $year - The year
    */
   public function purgeOldUGData($year) {
     $to_del = DB::table('programmes_ug')->where('year', '=', $year)->lists('id');
     DB::table('ug_programme_deliveries')->where_in('programme_id',$to_del)->delete();
   }
 
-  public function loadXML() {
+	/**
+	 * Retrieve programme delivery information from the API.
+	 * @param null $level
+	 * @param null $year
+	 * @return bool|array - false if error, otherwise an array of objects like:
+	 *	[
+	 * 	 {
+	 *		"in_use": "Y",
+	 *		"ipo_seqn": "0005",
+	 *		"academic_year": "2018",
+	 *		"start_date": "Sep 16 2017 12:00:00:000AM",
+	 *		"close_date": "Sep 16 2017 12:00:00:000AM",
+	 *		"mcr_code": "UACFECO201BA-PD",
+	 *		"mcr_name": "Accounting and Finance and Economics ",
+	 *		"crs_code": "UACFECO2X2BA-F",
+	 *		"pp_award_id_ug": "2",
+	 *		"pp_award_id_pg": null,
+	 *		"campus_id": "UKC",
+	 *		"campus_name": "Canterbury",
+	 *		"attendance_mode": "PT",
+	 *		"ari_code": "MCR000001366",
+	 *		"pp_id": "1",
+	 *		"pp_prospectus": "UG",
+	 *		"pos_code": "ACCF-ECON:BA2"
+	 *	},
+	 * ...
+	 * ]
+	 */
+  public function loadProgrammeDeliveries($level = null, $year = null) {
+    // Note for year used in API url:
+    // - 'SITS year' = calendar year the academic year ends
+    // - 'Programmes Plant year' = calendar year the academic year begins
+    // so the api call uses programmes plant $year + 1 
+  	$url = Config::get('application.api_base') .
+		'/v1/sits/programmesheader' .
+		(empty($level) ? '' : '/' . $level).
+		(empty($year) ? '' : '/' . (intval($year) + 1));
+    $ch = curl_init(
+      $url
+    );
 
-	libxml_use_internal_errors(true);
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+    // curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-	$path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
+    $result = curl_exec($ch);
 
-	if(filemtime($path) < (time()-(24 * 60 * 60))){
-		Log::error('XML file has not been modified for more than 24 hours.');
+    if (!curl_errno($ch)) {
+      switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+        case 200:
+            // cache results?
+          break;
+        default:
+          // unexpected HTTP code, do something?
+      }
+    }
+    else {
+    	Log::error(curl_error($ch));
 	}
 
-    $courses = simplexml_load_file($path);
+    curl_close($ch);
 
-    if ( $courses === false ) {
-		Log::error('XML file does not exist or is invalid.');
-		foreach(libxml_get_errors() as $error) {
-			Log::error($error->message);
-		}
-		exit;
-    }
-
-    return $courses;
+    return $result ? json_decode($result) : false;
   }
 
   /**
    * Get the live Programmes Plant Year for each level
+   * @param string $level - Either 'ug' or 'pg' (for undergraduate or postgraduate)
+   * @return int - The current year.
    */
   public function getCurrentYear( $level ) {
     return Setting::get_setting( $level . "_current_year" );
-  }
-
-  public function checkCourseIsValid( $course ) {
-    if ( $course->progID == '' ) {
-      return false;
-    }
-    return true;
-  }
-
-  public function checkIPOIsValid( $ipo ) {
-    if ( $ipo->inUse != 'Y' ) {
-      return false;
-    }
-    return true;
-  }
-
-  public function trimPOSCode( $pos ) {
-    return preg_replace( "/\d+$/", "", $pos );
   }
 
   /**
    * Use the concatenated XML progID element from SITS
    * to determine whether we update UG or PG
    */
-  public function getCourseLevel( $course ) {
-    if ( stripos( $course->progID, 'ug' ) !== false ) {
-      return 'ug';
-    }
-    return 'pg';
+  public function getCourseLevel( $delivery ) {
+    return strtolower($delivery->pp_prospectus);
   }
 
-  public function getProgramme( $course, $level, $processYears = null ) {
+	/**
+	 * Get a programme model from either the programmes_pg (UG_Programme) or programmes_ug (PG_Programm) table
+	 * @param object $delivery - Delivery object item from the array returned by $this->loadProgrammeDeliveries()
+	 * @param string $level - 'ug' or 'pg' (undergraduate or postgraduate)
+	 * @param null|array $processYears
+	 * @return UG_Programme|PG_Programme|null - The programme that matches the delivery, level and year.
+	 */
+  public function getProgramme( $delivery, $level, $processYears = null ) {
     if ($processYears === null) {
       $processYears = $this->processYears;
     }
 
     $model = $level === "ug" ? "UG_Programme" : "PG_Programme";
-    $courseID = substr( $course->progID, 0, count( $course->progID ) - 3 );
+    ;
 
     return $model::where(
-      "instance_id", "=", $courseID
+      "instance_id", "=", $delivery->pp_id
     )->where(
       "year", "=", $processYears[$level]
     )->first();
@@ -175,7 +222,7 @@ class SITSImport_Task {
    * We add a number of fields from the XML to the database in
    * this function.
    */
-  public function createDelivery( $course, $programme, $year, $level, $delivery = null ) {
+  public function createDelivery( $api_delivery, $programme, $year, $level, $delivery = null ) {
     $delivery_class = "PG_Delivery";
     $award_class = "PG_Award";
 
@@ -191,16 +238,18 @@ class SITSImport_Task {
 
     $delivery->programme_id = $programme->id;
 
-    $award = intval($course->award);
+    $award = intval($api_delivery->{"pp_award_id_" . $this->getCourseLevel($api_delivery)});
+    $award_array = $award_class::replace_ids_with_values($award, false, true);
+    $award_name = isset($award_array[0]) ? $award_array[0] : '';
     $delivery->award = empty($award) ? 0 : $award;
 
-    $delivery->pos_code = (string)$course->pos;
-    $delivery->mcr = (string)$course->mcr;
-    $delivery->ari_code = (string)$course->ari_code;
-    $delivery->description = (string)$course->description;
-    $delivery->attendance_pattern = strtolower( $course->attendanceType );
+    $delivery->pos_code = $api_delivery->pos_code;
+    $delivery->mcr = $api_delivery->mcr_code;
+    $delivery->ari_code = $api_delivery->ari_code;
+    $delivery->attendance_pattern = strtolower( $api_delivery->attendance_mode ) === 'pt' ? 'part-time' : 'full-time';
+    $delivery->description = trim($api_delivery->mcr_name) . ' - ' . $award_name . ' - ' . $delivery->attendance_pattern . ' at ' . $api_delivery->campus_name;
 
-    $delivery->current_ipo = $this->extractCurrentIPO( $course, $year );
+    $delivery->current_ipo = $api_delivery->ipo_seqn;
     $delivery->previous_ipo='';
 
     $delivery->save();
@@ -209,43 +258,20 @@ class SITSImport_Task {
   }
 
   /**
-   * Get the IPOs that are inUse in SITS
-   * We use this function to get the sequence number for the relevant academicYear
-   */
-  public function extractCurrentIPO( $course, $year ) {
-
-    if ( $course->inUse == 'N' ) {
-      return "";
-    }
-
-    foreach ( $course->ipo as $ipo ) {
-      if ( intval( $ipo->academicYear ) - 1 === intval( $year ) && $ipo->inUse == 'Y' ) {
-        return (string)$ipo->sequence;
-      }
-    }
-
-    return "";
-
-  }
-
-  /**
    * parse_arguments - parses command line options
    *
    * @param array $arguments
    * @return array $parameters
    */
-  public function parse_arguments($arguments = array())
-  {
-
+  public function parse_arguments($arguments = array()) {
     // set defaults for the parameters in case they're not set
     $parameters = array();
     $parameters['year'] = array('pg'=>'current','ug'=>'current');
 
-    foreach ($arguments as $argument)
-    {
+    foreach ($arguments as $argument) {
       $switch_name = substr($argument, 0, 2);
-      switch($switch_name)
-      {
+
+      switch($switch_name) {
         // level
         case '-p':
           $parameters['year']['pg'] = str_replace('-p', '', $argument) != '' ? str_replace('-p', '', $argument) : 'current';
@@ -262,8 +288,7 @@ class SITSImport_Task {
     return $parameters;
   }
 
-  public function help_argument()
-  {
+  public function help_argument() {
     return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
   }
 

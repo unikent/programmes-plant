@@ -4,17 +4,18 @@ require_once dirname( dirname( dirname( __FILE__ ) ) ) . '/tasks/sitsimport.php'
 
 class TestSITSImport_Task extends PHPUnit_Framework_TestCase {
 
-	private $validUGCourse = array( 'progID' => '394UG' );
-	private $validPGCourse = array( 'progID' => '71PG' );
+	private $validUGCourse = array( 'pp_prospectus' => 'UG', 'pp_id' => '394' );
+	private $validPGCourse = array( 'pp_prospectus' => 'PG', 'pp_id' => '71' );
 
 	private $fullCourse = array (
-		'progID' => '174PG'
-		, 'award' => 'Master of Science'
-		, 'mcr' => 'PAAS000101MS-FD'
+		'pp_prospectus' => 'PG'
+		, 'pp_id' => '174'
+		, 'pp_award_id_pg' => '1'
+		, 'mcr_code' => 'PAAS000101MS-FD'
 		, 'pos_code' => 'ACTSCIAP:MSC-T1'
 		, 'ari_code' => 'MCR000000013'
-		, 'description' => 'Applied Actuarial Science - MSc - full-time at Canterbury'
-		, 'attendance_pattern' => 'full-time');
+		, 'mcr_name' => 'Applied Actuarial Science - MSc - full-time at Canterbury'
+		, 'attendance_mode' => 'FT');
 
 	private $task;
 
@@ -35,24 +36,7 @@ class TestSITSImport_Task extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( is_numeric( $currPGYear ) );
 	}
 
-	public function testCheckingCourseIsValid() {
-
-		$invalidCourse = (object)array( 'progID' => '' );
-
-        $this->assertTrue( $this->task->checkCourseIsValid( $this->validPGCourse ) );
-        $this->assertFalse( $this->task->checkCourseIsValid( $invalidCourse ) );
-
-	}
-
-	public function testCheckingIPOIsValid() {
-		$validIPO = array( 'inUse' => 'Y' );
-		$invalidIPO = array( 'inUse' => 'N' );
-
-		$this->assertTrue( $this->task->checkIPOIsValid( (object)$validIPO ) );
-		$this->assertFalse( $this->task->checkIPOIsValid( (object)$invalidIPO ) );
-	}
-
-	public function testCourseLevelIsDetectedFromProgID() {
+	public function testCourseLevelIsDetectedFromDelivery() {
 
 		$ugCourse = $this->validUGCourse;
 		$pgCourse = $this->validPGCourse;
