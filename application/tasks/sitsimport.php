@@ -175,13 +175,15 @@ class SITSImport_Task {
     $delivery->programme_id = $programme->id;
 
     $award = intval($api_delivery->{"pp_award_id_" . $this->getCourseLevel($api_delivery)});
+    $award_array = $award_class::replace_ids_with_values($award, false, true);
+    $award_name = isset($award_array[0]) ? $award_array[0] : '';
     $delivery->award = empty($award) ? 0 : $award;
 
-    $delivery->pos_code = (string)$api_delivery->pos_code;
-    $delivery->mcr = (string)$api_delivery->mcr_code;
-    $delivery->ari_code = (string)$api_delivery->ari_code;
-    $delivery->description = (string)$api_delivery->mcr_name;
+    $delivery->pos_code = $api_delivery->pos_code;
+    $delivery->mcr = $api_delivery->mcr_code;
+    $delivery->ari_code = $api_delivery->ari_code;
     $delivery->attendance_pattern = strtolower( $api_delivery->attendance_mode ) === 'pt' ? 'part-time' : 'full-time';
+    $delivery->description = trim($api_delivery->mcr_name) . ' - ' . $award_name . ' - ' . $delivery->attendance_pattern . ' at ' . $api_delivery->campus_name;
 
     $delivery->current_ipo = $api_delivery->ipo_seqn;
     $delivery->previous_ipo='';
