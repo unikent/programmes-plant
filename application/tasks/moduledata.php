@@ -67,14 +67,18 @@ class ModuleData_Task {
                 if(array_key_exists($cache_key,$module_cache)){
                     continue;
                 }else {
-                    $programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
+                    $programme_modules_new = $this->load_module_data($delivery['crs_code'], $institution, $campus_id, $module_session);
                     if($programme_modules_new!==null) {
                         $module_cache[$cache_key] = $programme_modules_new;
                     }
                 }
 
-                echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
-
+                if($programme_modules_new) {
+					echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
+				}
+				else {
+                	echo"\nStages count: 0 - Could not load_module_data\n\n";
+				}
                 if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
                 sleep($parameters['sleeptime']);
             }
@@ -163,18 +167,14 @@ class ModuleData_Task {
 
 
     //$institution = '0122';
-    public function load_module_data($pos_code, $institution, $campus_id, $module_session, $module = false){
+    public function load_module_data($crs_code, $institution, $campus_id, $module_session, $module = false){
 
         if(!$module) $module = new ProgrammesPlant\ModuleData();
 
         if(empty($module_session)){ return false; }
 
         // build request
-        $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session);
-
-        // auth
-        $module->login['username'] = Config::get('module.programme_module_user');
-        $module->login['password'] = Config::get('module.programme_module_pass');
+        $webservice_request = $this->build_module_webservice_url($crs_code, $institution, $campus_id, $module_session);
 
         // load data &
         echo "Requesting: " . $webservice_request . ' - ';
@@ -188,16 +188,23 @@ class ModuleData_Task {
 
         return $data;
     }
-    public static function build_module_webservice_url( $pos_code, $institution, $campus_id, $module_session){
+    public static function build_module_webservice_url( $crs_code, $institution, $campus_id, $module_session){
 
         if($module_session == 'None' || $module_session == 'none') return '';
 
-        return Config::get('module.programme_module_base_url') .
-            Config::get('module.pos_code_param') . '=' . $pos_code . '&' .
-            Config::get('module.institution_param') . '=' . $institution . '&' .
-            Config::get('module.campus_param') . '=' . $campus_id . '&' .
-            Config::get('module.session_param') . '=' . $module_session . '&' .
-            'format=json';
+        return str_replace(array(
+        	'{crs_code}',
+			'{session}',
+			'{institution}',
+			'{campus}',
+		),array(
+    		$crs_code,
+			$module_session,
+			$institution,
+			$campus_id
+			),
+			Config::get('module.programme_module_base_url')
+		);
     }
 
     public function parse_module_data($programme_modules)
@@ -265,7 +272,8 @@ class ModuleData_Task {
 								{
 
 									$apiData = self::getModuleAPIData($module->module_code);
-									if(!empty($apiData)){
+									// getModuleAPIData may return "module not found"
+									if(is_object($apiData)){
 										$module->synopsis = str_replace("\r\n", '<br>', $apiData->synopsis);
 										$module->module_code = $apiData->code;
 										$module->sds_code = $apiData->sds_code;
