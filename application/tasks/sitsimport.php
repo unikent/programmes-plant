@@ -14,7 +14,7 @@ use Kent\Log;
  *
  * - MCR code - "Marketing Course Record" - Identifies a programme that can be applied to
  * - IPO - Institution Published Programme Occurrence - Seems to be a 4-digit (zero-padded) number...
- * 		  (shire docs say A single start date for an IPP (MCR) - but looks more like a version or something...)
+ *          (shire docs say A single start date for an IPP (MCR) - but looks more like a version or something...)
  * - POS code - Code identifying a Programme of Study.
  * - ARI code - Area of Interest code.
  * - description,
@@ -36,164 +36,173 @@ use Kent\Log;
  * - php artisan sitsimport -pcurrent (import data from current year postgraduate programmes and for undergraduate "current")
  * - php artisan sitsimport -u2018 -p2018 (import data from undergraduate and postgraduate 2018 programmes)
  */
-class SITSImport_Task {
+class SITSImport_Task
+{
 
-  public $processYears = array();
-  public $seenProgrammes = array();
+	public $processYears = array();
+	public $seenProgrammes = array();
 
-  public function run( $args = array() ) {
+	public function run($args = array())
+	{
 
-    $parameters = $this->parse_arguments($args);
+		$parameters = $this->parse_arguments($args);
 
-    // display help if needed
-    if ( isset($parameters['help']) ) {
-      echo $parameters['help'];
-      exit;
-    }
+		// display help if needed
+		if (isset($parameters['help'])) {
+			echo $parameters['help'];
+			exit;
+		}
 
-    foreach ($parameters['year'] as $level=>$year){
-      $this->processYears[$level] = ($year=='current')?$this->getCurrentYear( $level ):$year;
-    }
+		foreach ($parameters['year'] as $level => $year) {
+			$this->processYears[$level] = ($year == 'current') ? $this->getCurrentYear($level) : $year;
+		}
 
-    Log::$logfile = path('storage') . '/logs/sits_import.log';
-    Log::purge();
+		Log::$logfile = path('storage') . '/logs/sits_import.log';
+		Log::purge();
 
-	foreach ($this->processYears as $level => $year) {
+		foreach ($this->processYears as $level => $year) {
 
-	    $data = $this->loadProgrammeDeliveries($level, $year);
+			$data = $this->loadProgrammeDeliveries($level, $year);
 
-	    if(!$data) {
-	      Log::error("Unable to fetch {$level} {$year} programme deliveries from Kent API.");
-	      exit;
-	    }
+			if (!$data) {
+				Log::error("Unable to fetch {$level} {$year} programme deliveries from Kent API.");
+				exit;
+			}
 
-	    // If API data is good, purge old caches before starting import
-	    if ($level == 'pg') {
-	    	$this->purgeOldPGData($this->processYears[$level]);
-	    }
-	    else {
-	    	$this->purgeOldUGData($this->processYears[$level]);
-	    }
+			// If API data is good, purge old caches before starting import
+			if ($level == 'pg') {
+				$this->purgeOldPGData($this->processYears[$level]);
+			} else {
+				$this->purgeOldUGData($this->processYears[$level]);
+			}
 
-	    foreach ( $data as $delivery ) {
+			foreach ($data as $delivery) {
 
-	      $programme   = $this->getProgramme( $delivery, $level );
-	      $year = $this->processYears[$level];
+				$programme = $this->getProgramme($delivery, $level);
+				$year = $this->processYears[$level];
 
-	      if ( empty( $programme ) || !is_object( $programme ) ) {
-	        continue;
-	      }
+				if (empty($programme) || !is_object($programme)) {
+					continue;
+				}
 
-	      URLParams::$type = $level;
-	      $this->createDelivery( $delivery, $programme, $year, $level );
-	    }
+				URLParams::$type = $level;
+				$this->createDelivery($delivery, $programme, $year, $level);
+			}
+		}
+
+		// clear output cache
+		API::purge_output_cache();
+
 	}
 
-    // clear output cache
-    API::purge_output_cache();
+	/**
+	 * Remove all PG deliveries for the specified year
+	 * @param string $year - The year
+	 */
+	public function purgeOldPGData($year)
+	{
+		$to_del = DB::table('programmes_pg')->where('year', '=', $year)->lists('id');
+		if (count($to_del) > 0) {
+			DB::table('pg_programme_deliveries')->where_in('programme_id', $to_del)->delete();
+		}
+	}
 
-  }
-
-  /**
-   * Remove all PG deliveries for the specified year
-   * @param string $year - The year
-   */
-  public function purgeOldPGData($year) {
-    $to_del = DB::table('programmes_pg')->where('year', '=', $year)->lists('id');
-    DB::table('pg_programme_deliveries')->where_in('programme_id',$to_del)->delete();
-  }
-
-  /**
-   * Remove all UG deliveries for the specified year
-   * @param string $year - The year
-   */
-  public function purgeOldUGData($year) {
-    $to_del = DB::table('programmes_ug')->where('year', '=', $year)->lists('id');
-    DB::table('ug_programme_deliveries')->where_in('programme_id',$to_del)->delete();
-  }
+	/**
+	 * Remove all UG deliveries for the specified year
+	 * @param string $year - The year
+	 */
+	public function purgeOldUGData($year)
+	{
+		$to_del = DB::table('programmes_ug')->where('year', '=', $year)->lists('id');
+		if (count($to_del) > 0) {
+			DB::table('ug_programme_deliveries')->where_in('programme_id', $to_del)->delete();
+		}
+	}
 
 	/**
 	 * Retrieve programme delivery information from the API.
 	 * @param null $level
 	 * @param null $year
 	 * @return bool|array - false if error, otherwise an array of objects like:
-	 *	[
-	 * 	 {
-	 *		"in_use": "Y",
-	 *		"ipo_seqn": "0005",
-	 *		"academic_year": "2018",
-	 *		"start_date": "Sep 16 2017 12:00:00:000AM",
-	 *		"close_date": "Sep 16 2017 12:00:00:000AM",
-	 *		"mcr_code": "UACFECO201BA-PD",
-	 *		"mcr_name": "Accounting and Finance and Economics ",
-	 *		"crs_code": "UACFECO2X2BA-F",
-	 *		"pp_award_id_ug": "2",
-	 *		"pp_award_id_pg": null,
-	 *		"campus_id": "UKC",
-	 *		"campus_name": "Canterbury",
-	 *		"attendance_mode": "PT",
-	 *		"ari_code": "MCR000001366",
-	 *		"pp_id": "1",
-	 *		"pp_prospectus": "UG",
-	 *		"pos_code": "ACCF-ECON:BA2"
-	 *	},
+	 *    [
+	 *     {
+	 *        "in_use": "Y",
+	 *        "ipo_seqn": "0005",
+	 *        "academic_year": "2018",
+	 *        "start_date": "Sep 16 2017 12:00:00:000AM",
+	 *        "close_date": "Sep 16 2017 12:00:00:000AM",
+	 *        "mcr_code": "UACFECO201BA-PD",
+	 *        "mcr_name": "Accounting and Finance and Economics ",
+	 *        "crs_code": "UACFECO2X2BA-F", // course code
+	 *        "pp_award_id_ug": "2",
+	 *        "pp_award_id_pg": null,
+	 *        "campus_id": "UKC",
+	 *        "campus_name": "Canterbury",
+	 *        "attendance_mode": "PT",
+	 *        "ari_code": "MCR000001366",
+	 *        "pp_id": "1",
+	 *        "pp_prospectus": "UG",
+	 *        "pos_code": "ACCF-ECON:BA2"
+	 *    },
 	 * ...
 	 * ]
 	 */
-  public function loadProgrammeDeliveries($level = null, $year = null) {
-    // Note for year used in API url:
-    // - 'SITS year' = calendar year the academic year ends
-    // - 'Programmes Plant year' = calendar year the academic year begins
-    // so the api call uses programmes plant $year + 1 
-  	$url = Config::get('application.api_base') .
-		'/v1/sits/programmesheader' .
-		(empty($level) ? '' : '/' . $level).
-		(empty($year) ? '' : '/' . (intval($year) + 1));
-    $ch = curl_init(
-      $url
-    );
+	public function loadProgrammeDeliveries($level = null, $year = null)
+	{
+		// Note for year used in API url:
+		// - 'SITS year' = calendar year the academic year ends
+		// - 'Programmes Plant year' = calendar year the academic year begins
+		// so the api call uses programmes plant $year + 1
+		$url = Config::get('application.api_base') .
+			'/v1/sits/programmesheader' .
+			(empty($level) ? '' : '/' . $level) .
+			(empty($year) ? '' : '/' . (intval($year) + 1));
+		$ch = curl_init(
+			$url
+		);
 
-    curl_setopt($ch, CURLOPT_HTTPGET, true);
-    // curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPGET, true);
+		// curl_setopt($ch, CURLOPT_PROXY, 'advocate.kent.ac.uk:3128');
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    $result = curl_exec($ch);
+		$result = curl_exec($ch);
 
-    if (!curl_errno($ch)) {
-      switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-        case 200:
-            // cache results?
-          break;
-        default:
-          // unexpected HTTP code, do something?
-      }
-    }
-    else {
-    	Log::error(curl_error($ch));
+		if (!curl_errno($ch)) {
+			switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+				case 200:
+					// cache results?
+					break;
+				default:
+					// unexpected HTTP code, do something?
+			}
+		} else {
+			Log::error(curl_error($ch));
+		}
+
+		curl_close($ch);
+
+		return $result ? json_decode($result) : false;
 	}
 
-    curl_close($ch);
+	/**
+	 * Get the live Programmes Plant Year for each level
+	 * @param string $level - Either 'ug' or 'pg' (for undergraduate or postgraduate)
+	 * @return int - The current year.
+	 */
+	public function getCurrentYear($level)
+	{
+		return Setting::get_setting($level . "_current_year");
+	}
 
-    return $result ? json_decode($result) : false;
-  }
-
-  /**
-   * Get the live Programmes Plant Year for each level
-   * @param string $level - Either 'ug' or 'pg' (for undergraduate or postgraduate)
-   * @return int - The current year.
-   */
-  public function getCurrentYear( $level ) {
-    return Setting::get_setting( $level . "_current_year" );
-  }
-
-  /**
-   * Use the concatenated XML progID element from SITS
-   * to determine whether we update UG or PG
-   */
-  public function getCourseLevel( $delivery ) {
-    return strtolower($delivery->pp_prospectus);
-  }
+	/**
+	 * Use the concatenated XML progID element from SITS
+	 * to determine whether we update UG or PG
+	 */
+	public function getCourseLevel($delivery)
+	{
+		return strtolower($delivery->pp_prospectus);
+	}
 
 	/**
 	 * Get a programme model from either the programmes_pg (UG_Programme) or programmes_ug (PG_Programm) table
@@ -202,94 +211,99 @@ class SITSImport_Task {
 	 * @param null|array $processYears
 	 * @return UG_Programme|PG_Programme|null - The programme that matches the delivery, level and year.
 	 */
-  public function getProgramme( $delivery, $level, $processYears = null ) {
-    if ($processYears === null) {
-      $processYears = $this->processYears;
-    }
+	public function getProgramme($delivery, $level, $processYears = null)
+	{
+		if ($processYears === null) {
+			$processYears = $this->processYears;
+		}
 
-    $model = $level === "ug" ? "UG_Programme" : "PG_Programme";
-    ;
+		$model = $level === "ug" ? "UG_Programme" : "PG_Programme";;
 
-    return $model::where(
-      "instance_id", "=", $delivery->pp_id
-    )->where(
-      "year", "=", $processYears[$level]
-    )->first();
-  }
+		return $model::where(
+			"instance_id", "=", $delivery->pp_id
+		)->where(
+			"year", "=", $processYears[$level]
+		)->first();
+	}
 
-  /**
-   * Create deliveries for Postgraduate courses
-   * We add a number of fields from the XML to the database in
-   * this function.
-   */
-  public function createDelivery( $api_delivery, $programme, $year, $level, $delivery = null ) {
-    $delivery_class = "PG_Delivery";
-    $award_class = "PG_Award";
+	/**
+	 * Create deliveries for Postgraduate courses
+	 * We add a number of fields from the XML to the database in
+	 * this function.
+	 */
+	public function createDelivery($api_delivery, $programme, $year, $level, $delivery = null)
+	{
+		$delivery_class = "PG_Delivery";
+		$award_class = "PG_Award";
 
-    if($level === 'ug'){
-      $delivery_class = "UG_Delivery";
-      $award_class = "UG_Award";
-    }
+		if ($level === 'ug') {
+			$delivery_class = "UG_Delivery";
+			$award_class = "UG_Award";
+		}
 
-    // Quick dependency injector
-    if ($delivery === null) {
-      $delivery = new $delivery_class;
-    }
+		// Quick dependency injector
+		if ($delivery === null) {
+			$delivery = new $delivery_class;
+		}
 
-    $delivery->programme_id = $programme->id;
+		$delivery->programme_id = $programme->id;
 
-    $award = intval($api_delivery->{"pp_award_id_" . $this->getCourseLevel($api_delivery)});
-    $award_array = $award_class::replace_ids_with_values($award, false, true);
-    $award_name = isset($award_array[0]) ? $award_array[0] : '';
-    $delivery->award = empty($award) ? 0 : $award;
+		$award = intval($api_delivery->{"pp_award_id_" . $this->getCourseLevel($api_delivery)});
+		$award_array = $award_class::replace_ids_with_values($award, false, true);
+		$award_name = isset($award_array[0]) ? $award_array[0] : '';
+		$delivery->award = empty($award) ? 0 : $award;
 
-    $delivery->pos_code = $api_delivery->pos_code;
-    $delivery->mcr = $api_delivery->mcr_code;
-    $delivery->ari_code = $api_delivery->ari_code;
-    $delivery->attendance_pattern = strtolower( $api_delivery->attendance_mode ) === 'pt' ? 'part-time' : 'full-time';
-    $delivery->description = trim($api_delivery->mcr_name) . ' - ' . $award_name . ' - ' . $delivery->attendance_pattern . ' at ' . $api_delivery->campus_name;
+		$delivery->pos_code = $api_delivery->pos_code;
+		$delivery->mcr = $api_delivery->mcr_code;
+		$delivery->ari_code = $api_delivery->ari_code;
+		$delivery->attendance_pattern = strtolower($api_delivery->attendance_mode) === 'pt' ? 'part-time' : 'full-time';
+		$delivery->description = trim($api_delivery->mcr_name) . ' - ' . $award_name . ' - ' . $delivery->attendance_pattern . ' at ' . $api_delivery->campus_name;
 
-    $delivery->current_ipo = $api_delivery->ipo_seqn;
-    $delivery->previous_ipo='';
+		$delivery->current_ipo = $api_delivery->ipo_seqn;
+		$delivery->previous_ipo = '';
 
-    $delivery->save();
+		$delivery->crs_code = $api_delivery->crs_code;
 
-    return $delivery;
-  }
+		$delivery->save();
 
-  /**
-   * parse_arguments - parses command line options
-   *
-   * @param array $arguments
-   * @return array $parameters
-   */
-  public function parse_arguments($arguments = array()) {
-    // set defaults for the parameters in case they're not set
-    $parameters = array();
-    $parameters['year'] = array('pg'=>'current','ug'=>'current');
+		return $delivery;
+	}
 
-    foreach ($arguments as $argument) {
-      $switch_name = substr($argument, 0, 2);
+	/**
+	 * parse_arguments - parses command line options
+	 *
+	 * @param array $arguments
+	 * @return array $parameters
+	 */
+	public function parse_arguments($arguments = array())
+	{
+		// set defaults for the parameters in case they're not set
+		$parameters = array();
+		$parameters['year'] = array('pg' => 'current', 'ug' => 'current');
 
-      switch($switch_name) {
-        // level
-        case '-p':
-          $parameters['year']['pg'] = str_replace('-p', '', $argument) != '' ? str_replace('-p', '', $argument) : 'current';
-          break;
-        // programme session
-        case '-u':
-          $parameters['year']['ug'] = str_replace('-u', '', $argument) != '' ? str_replace('-u', '', $argument) : 'current';
-          break;
-        default:
-          $parameters['help'] = $this->help_argument();
-      }
-    }
+		foreach ($arguments as $argument) {
+			$switch_name = substr($argument, 0, 2);
 
-    return $parameters;
-  }
+			switch ($switch_name) {
+				// level
+				case '-p':
+					$parameters['year']['pg'] = str_replace('-p', '', $argument) != '' ? str_replace('-p', '', $argument) : 'current';
+					break;
+				// programme session
+				case '-u':
+					$parameters['year']['ug'] = str_replace('-u', '', $argument) != '' ? str_replace('-u', '', $argument) : 'current';
+					break;
+				default:
+					$parameters['help'] = $this->help_argument();
+			}
+		}
 
-  public function help_argument() {
-    return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
-  }
+		return $parameters;
+	}
+
+	public function help_argument()
+	{
+		return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
+	}
 
 }
