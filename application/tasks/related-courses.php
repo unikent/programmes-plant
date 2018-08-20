@@ -15,8 +15,6 @@
 	// to update the related courses so that they are related by instance id rather than id
 	php artisan related-courses:update
 	
-	// @TODO - saving the programmes in the update function is not working yet!
-	
 	See Christian for more details if needed
 
 */
