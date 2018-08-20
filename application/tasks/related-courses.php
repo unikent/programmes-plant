@@ -4,7 +4,7 @@
 	2018-07-10 
 	this is a one off task to update the IDs used for the related courses 
 
-	Situation was that the IDs which has been saved for the related courses where the course ids rather than their instance ids
+	Situation was that the IDs which has been saved for the related courses were the course ids rather than their instance ids
 	done as part of https://github.com/unikent/programmes-plant/pull/959
 	
 	usage:
@@ -21,13 +21,14 @@
 
 */
 class Related_Courses_Task {
-
-	public function run($arguments = array())
-	{
-		print_r($arguments);
-	}
-
 	
+	/**
+	 * getProgramme - gets a programme
+	 *
+	 * @param int 	$id	
+	 * @param string level - 'ug' or 'pg'
+	 * @return stdClass - the programme
+	 */
 	private function getProgramme($id, $level = 'ug')
 	{
 		$programmes_table = "programmes_$level";
@@ -38,13 +39,52 @@ class Related_Courses_Task {
 		return $programme;
 	}
 
+	/**
+	 * replaces the related courses for a given programme at a given level 
+	 *
+	 * @param mixed 	$programme - the programme to update
+	 * @param string 	level - 'ug' or 'pg'
+	 * @param array 	$updatedRelatedCoursesIDsArray - instance IDs for courses to relate tp $programme
+	 * @return void
+	 */
+	private function updateRelatedProgrammes($programme, $level, $updatedRelatedCoursesIDsArray)
+	{
+		if (0 === count($updatedRelatedCoursesIDsArray)) {
+			return;
+		}
 
-	public function view($arguments = array())
+		// the original data began with a ',' so I'm keeping that here 
+		$updatedRelatedCoursesIDs = ',' . implode(',', $updatedRelatedCoursesIDsArray);
+
+		// figure out database cols
+		$programmes_table = "programmes_$level";
+		$programmes_model = strtoupper($level) . '_Programme';
+		$related_courses_field = $programmes_model::get_related_courses_field();
+		
+		if ($updatedRelatedCoursesIDs === $programme->$related_courses_field) {
+			echo "\tCourse already related by Instance ID - no update required\n\n";
+			return; 
+		}
+
+		echo "\tUpdating with: $updatedRelatedCoursesIDs\n\n";
+
+		DB::table($programmes_table)
+			->where('id', '=', $programme->id)
+			->update(array($related_courses_field => $updatedRelatedCoursesIDs));
+	}
+
+	/**
+	 * view or update the related programmes
+	 *
+	 * @param string $mode (either 'view' or 'update')
+	 * @return void
+	 */
+	private function progressProgrammes($mode = view)
 	{
 		Auth::login(1);
-
+	
 		$levels = array('ug', 'pg');
-
+	
 		foreach($levels as $level) {
 			$programmesTable = "programmes_$level";
 			$programmesModel = strtoupper($level) . '_Programme';
@@ -57,53 +97,37 @@ class Related_Courses_Task {
 				if (strlen($relatedCoursesIDs) !== 0) {
 					$relatedCoursesIDsArray =  explode(',', $relatedCoursesIDs);
 					echo "\n{$programme->$programme_title_field} is related to programmes: $relatedCoursesIDs \n";
+					
+					$relatedCourseInstanceIDsArray = array();
+
 					foreach($relatedCoursesIDsArray as $relatedCourseID) {
 						$relatedCourse = static::getProgramme($relatedCourseID, $level);
-						echo "\tID: $relatedCourseID - InstanceID: {$relatedCourse->instance_id}\t{$relatedCourse->$programme_title_field}\n";
+						$relatedCourseInstanceIDsArray[] = $relatedCourse->instance_id;
+						printf(
+							"\t(ID: %4d / instanceID: %4d) - %s\n",
+							$relatedCourseID,
+							$relatedCourse->instance_id,
+							$relatedCourse->$programme_title_field
+						);
+					}
+					
+					if ('update' === $mode) {
+						self::updateRelatedProgrammes($programme, $level, $relatedCourseInstanceIDsArray);
 					}
 				}
 			}
 		}	
 	}
 
+	public function view()
+	{
+		self::progressProgrammes('view');
+	}
+
 
 	public function update()
 	{
-		Auth::login(1);
-
-		$levels = array('ug', 'pg');
-
-		foreach($levels as $level) {
-			$programmesTable = "programmes_$level";
-			$programmesModel = strtoupper($level) . '_Programme';
-			$related_courses_field = $programmesModel::get_related_courses_field();
-			$programme_title_field = $programmesModel::get_programme_title_field();
-		
-			foreach(DB::table($programmesTable)->get() as $programme) {
-				$relatedCoursesIDs = trim($programme->$related_courses_field, ',');
-	
-				if (strlen($relatedCoursesIDs) !== 0) {
-					$relatedCoursesIDsArray =  explode(',', $relatedCoursesIDs);
-					echo "\n{$programme->$programme_title_field} is related to programmes: $relatedCoursesIDs \n";
-
-					$updatedRelatedCoursesIDsArray = array();
-					
-					foreach($relatedCoursesIDsArray as $relatedCourseID) {
-						$relatedCourse = static::getProgramme($relatedCourseID, $level);
-						echo "\tID: $relatedCourseID - InstanceID: {$relatedCourse->instance_id}\t{$relatedCourse->$programme_title_field}\n";
-						$updatedRelatedCoursesIDsArray[] = $relatedCourse->instance_id;
-					}
-
-					// the original data began with a ',' so I'm keeping that here 
-					$updatedRelatedCoursesIDs = ',' . implode(',', $updatedRelatedCoursesIDsArray);
-					echo "Updating with: $updatedRelatedCoursesIDs\n\n";
-					$programme->$related_courses_field = implode(',', $updatedRelatedCoursesIDsArray);
-					
-					// @TODO this isn't working yet
-					$programme->save();
-				}
-			}
-		}	
+		self::progressProgrammes('update');
 	}
 }
 	
