@@ -899,12 +899,20 @@ abstract class Programme extends Revisionable {
 	 * @param string $year The year from which to get the array.
 	 *
 	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
+	 *
+	 * @param string $id_field - this is ignored - see comments below
 	 * 
 	 * @return array $options List of items in the format id => item_title.
 	 *
 	 */
-	public static function all_as_list($year, $empty_default_value = 0) {
-		return  parent::all_as_list($year, 0, "instance_id");
+	public static function all_as_list($year = false, $empty_default_value = 0, $id_field = 'id') {
+		/*
+		 this deliberatly ignores the id_field to always prefer to use 'instance_id'
+
+		 However, since simpledata->all_as_list has a default set we need to keep the 
+		 same defaults here to prevent a php warning.
+		*/
+		return  parent::all_as_list($year, $empty_default_value, 'instance_id');
 	}
 
 }
