@@ -62,6 +62,8 @@ To run all the seeds type `php artisan seed --env=local`.
 
 Unit tests are written in PHPUnit. To run the tests run `php artisan test`. The tests use an in memory SQLite database to make them significantly faster.
 
+If PHPUnit is not in your path then add it by `export PATH=$PATH:`pwd`/bin` from the programmes-plant directory.
+
 ## API
 
 The JSON API exposes data endpoints that can be consumed for external application. Here is a brief summary of the endpoints available. These endpoints should be prefixed with the application's base url. A more thorough list can be found in the [routes.php](application/routes.php) file.

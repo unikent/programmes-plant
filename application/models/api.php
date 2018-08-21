@@ -87,8 +87,7 @@ class API {
 
 	/**
 	* Return fully combined programme item from the API
-	*
-	* @param id ID of programme
+	* @param id the instance ID of programme
 	* @param year Year to get index for
 	* @return combined Programme data array
 	*/
@@ -365,7 +364,6 @@ class API {
 		}else{
 			$final['modules'] = $modules;
 		}
-
 
 		return $final;
 	}
@@ -646,6 +644,7 @@ class API {
 	* Creates a flat representation of a programme for use in XCRI.
 	*
 	* @return StdClass A flattened and simplified XCRI ready representation of this object.
+	* @todo: $id seems to be $iid - can we confirm???
 	*/
 	public static function get_xcrified_programme($id, $year, $type = false)
 	{
