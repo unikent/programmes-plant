@@ -2,21 +2,24 @@
 
 class TestAPI extends ModelTestCase 
 {
+	// used to keep id and instance_id different
+	public static $instance_id_offset; 
 
 	public static function test_programme ()
 	{
 		return array(
 			'programme_title_1' => 'Thing',
 			'year' => "2014",
-            'hidden' => 0,
+			'hidden' => 0,
+			'instance_id' => self::$instance_id_offset++,
 			UG_Programme::get_programme_suspended_field() => '',
-	        UG_Programme::get_programme_withdrawn_field() => '',
-	        UG_Programme::get_subject_area_1_field()  => '1',
+			UG_Programme::get_programme_withdrawn_field() => '',
+			UG_Programme::get_subject_area_1_field()  => '1',
 			UG_Programme::get_mode_of_study_field()=>'Full-time only',
-    	);
-    }
+		);
+	}
 
-    public static $data_types = array('campus', 'ug_award', 'faculty', 'ug_leaflet', 'school', 'ug_subject', 'ug_subjectcategory');
+	public static $data_types = array('campus', 'ug_award', 'faculty', 'ug_leaflet', 'school', 'ug_subject', 'ug_subjectcategory');
 
 	/**
 	 * Set up the database.
@@ -24,10 +27,10 @@ class TestAPI extends ModelTestCase
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
+		self::$instance_id_offset = 10;
 
 		// Remove all elements in the awards table.
 		// These are added by the Create_Intial_Awards migration.
-
 		static::clear_models();
 	}
 
@@ -42,24 +45,24 @@ class TestAPI extends ModelTestCase
 	// Test data
 	private function publish_programme(){
 		$programme = UG_Programme::create(static::test_programme());
-        $revision = $programme->get_active_revision();
-        $programme->make_revision_live($revision);
+		$revision = $programme->get_active_revision();
+		$programme->make_revision_live($revision);
 
-        return $programme;
+		return $programme;
 	}
 	private function publish_globals(){
 		$global = GlobalSetting::create(array('year' => '2014'));
-        $revision = $global->get_active_revision();
-        $global->make_revision_live($revision);
+		$revision = $global->get_active_revision();
+		$global->make_revision_live($revision);
 
-        return $global;
+		return $global;
 	}
 	private function publish_programme_settings(){
 		$setting = UG_ProgrammeSetting::create(array('year' => '2014'));
-        $revision = $setting->get_active_revision();
-        $setting->make_revision_live($revision);
+		$revision = $setting->get_active_revision();
+		$setting->make_revision_live($revision);
 
-        return $setting;
+		return $setting;
 	}
 
 	public function create_data_types(){
@@ -125,7 +128,7 @@ class TestAPI extends ModelTestCase
 		
 		$result = API::get_index('2014');
 
-		$this->assertEquals(3, sizeof($result));
+		$this->assertEquals(3, sizeof($result));	
 	}
 
 	// Test we can get programme
@@ -138,33 +141,33 @@ class TestAPI extends ModelTestCase
 		$this->publish_programme();
 
 		$result = API::get_programme( 'ug', '2014',1);
-	}
-	/**
+	}	
+	/**	
 	* @expectedException MissingDataException
 	*/
 	public function testget_programme_without_programmesetting(){
 		$this->publish_globals();
 		$this->publish_programme();
 
-		$result = API::get_programme( 'ug', '2014',1);
+		$result = API::get_programme('ug', '2014',1);
 		$this->assertEquals(false, $result);
 	}
 	public function testget_programme_with_global_and_programmesetting_works_when_cached(){
 		$this->publish_globals();
 		$this->publish_programme_settings();
-		$this->publish_programme();
+		$programme = $this->publish_programme();
 
-		$result = API::get_programme( 'ug', '2014',1);
+		$result = API::get_programme('ug', '2014', $programme->instance_id);
 		$this->assertEquals('Thing', $result['programme_title']);
-	}
+	}	
 	public function testget_programme_with_global_and_programmesetting_works_when_not_cached(){
 		$this->publish_globals();
 		$this->publish_programme_settings();
-		$this->publish_programme();
+		$programme = $this->publish_programme();
 		Cache::flush();
-		$result = API::get_programme( 'ug', '2014',1);
-		$this->assertEquals('Thing',  $result['programme_title']);
-	}
+		$result = API::get_programme('ug', '2014', $programme->instance_id);
+		$this->assertEquals('Thing', $result['programme_title']);
+	}	
 
 	/**
 	* @expectedException NotFoundException
@@ -182,11 +185,10 @@ class TestAPI extends ModelTestCase
 		$data_type_objects = $this->create_data_types();
 
 		$subject_area = $data_type_objects['ug_subject'];
-		
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
 		$programme->save();
-        $programme->make_revision_live($programme->get_active_revision());
+		$programme->make_revision_live($programme->get_active_revision());
 		
 		$subjects_index = API::get_subjects_index($programme->year);
 
@@ -196,7 +198,7 @@ class TestAPI extends ModelTestCase
 			if ($subject_index['id'] == $subject_area->id){
 				$subject_found_in_index = true;
 				$title_field = UG_Programme::get_title_field();
-				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				$this->assertEquals($subject_index['courses'][$programme->instance_id]['name'], $programme->$title_field);
 				break;
 			}
 		}
@@ -213,7 +215,7 @@ class TestAPI extends ModelTestCase
 		$subject_area_1_field = UG_Programme::get_subject_area_1_field();
 		$programme->$subject_area_1_field = $subject_area->id;
 		$programme->save();
-        $programme->make_revision_live($programme->get_active_revision());
+		$programme->make_revision_live($programme->get_active_revision());
 		
 		$subjects_index = API::get_subjects_index($programme->year);
 
@@ -225,7 +227,7 @@ class TestAPI extends ModelTestCase
 			if ($subject_index['id'] == $subject_area->id){
 				$subject_found_in_index = true;
 				$title_field = UG_Programme::get_title_field();
-				$this->assertEquals($subject_index['courses'][$programme->id]['name'], $programme->$title_field);
+				$this->assertEquals($subject_index['courses'][$programme->instance_id]['name'], $programme->$title_field);
 				break;
 			}
 		}
@@ -272,8 +274,8 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException NotFoundException
-     */
+	 * @expectedException NotFoundException
+	 */
 	public function testget_preview_without_cache(){
 		$programme = $this->publish_programme();
 		$this->publish_globals();
@@ -294,8 +296,8 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException RevisioningException
-     */
+	 * @expectedException RevisioningException
+	 */
 	public function testcreate_preview_invalid_revision(){
 		$programme = $this->publish_programme();
 		$this->publish_globals();
@@ -347,8 +349,8 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException NotFoundException
-     */
+	 * @expectedException NotFoundException
+	 */
 	public function testget_simpleview_without_cache(){
 		$programme = $this->publish_programme();
 		$this->publish_globals();
@@ -369,8 +371,8 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException RevisioningException
-     */
+	 * @expectedException RevisioningException
+	 */
 	public function testcreate_simpleview_invalid_revision(){
 		$programme = $this->publish_programme();
 		$this->publish_globals();
@@ -393,8 +395,8 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException NotFoundException
-     */
+	 * @expectedException NotFoundException
+	 */
 	public function testget_unknown_data_type(){
 		$data = API::get_data("blahBlah");
 	}
@@ -405,7 +407,7 @@ class TestAPI extends ModelTestCase
 		$globals = $this->publish_globals();
 		$programme_settings = $this->publish_programme_settings();
 
-		$api_programme 	= UG_Programme::get_api_programme($programme->id, $programme->year);
+		$api_programme 	= UG_Programme::get_api_programme($programme->instance_id, $programme->year);
 		$api_globals = GlobalSetting::get_api_data($globals->year);
 		$api_programme_settings = UG_ProgrammeSetting::get_api_data($programme_settings->year);
 		
@@ -414,8 +416,8 @@ class TestAPI extends ModelTestCase
 		$this->assertNotEmpty($combined_programme);
 
 		$this->markTestIncomplete(
-          'This needs further tests to check that various aspects of the combine worked'
-        );
+		  'This needs further tests to check that various aspects of the combine worked'
+		);
 	}
 
 
@@ -427,7 +429,6 @@ class TestAPI extends ModelTestCase
 		$programme3 = $this->publish_programme();
 		$programme4 = $this->publish_programme();
 		$programme5 = $this->publish_programme();
-
 		// create two sets of data types, but we'll only need the subjects
 		$data_type_objects1 = $this->create_data_types();
 		$data_type_objects2 = $this->create_data_types();
@@ -443,7 +444,7 @@ class TestAPI extends ModelTestCase
 		$programme1->$title_field = "programme1";
 		$programme1->$subject_area_1_field = $data_type_objects1['ug_subject']->id;
 		$programme1->$subject_area_2_field = $data_type_objects2['ug_subject']->id;
-		$programme1->$related_courses_field = $programme5->id;
+		$programme1->$related_courses_field = $programme5->instance_id;
 		$programme1->save();	
 		$programme1->make_revision_live($programme1->get_active_revision());
 
@@ -472,16 +473,20 @@ class TestAPI extends ModelTestCase
 
 		// get api representation of programme1,
 		// for the purpose of getting directly related courses
-		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
+		$programme1_api = UG_Programme::get_api_programme($programme1->instance_id, $programme1->year);
 		$programme1_api = API::load_external_data($programme1_api, 'ug');
 		$programme1_api = API::remove_ids_from_field_names($programme1_api);
 
 		// get the related courses linked by subject areas
-		$programme1_related_courses = UG_Programme::get_programmes_in($data_type_objects1['ug_subject']->id, $data_type_objects2['ug_subject']->id, $programme1->year, $programme1->id);
+		$programme1_related_courses = UG_Programme::get_programmes_in(
+			$data_type_objects1['ug_subject']->id,
+			$data_type_objects2['ug_subject']->id,
+			$programme1->year,
+			$programme1->instance_id
+		);
 		
-		// get all the related courses
 		$related_courses = API::merge_related_courses($programme1_related_courses, $programme1_api['related_courses']);
-
+		
 		// put our expected related programme titles in an array
 		$programme_titles = array(
 				"programme2" => $programme2->$title_field,
@@ -508,8 +513,8 @@ class TestAPI extends ModelTestCase
 
 	public function testget_module_data(){
 		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		  'This test has not been implemented yet.'
+		);
 	}
 
 
@@ -552,7 +557,7 @@ class TestAPI extends ModelTestCase
 		$programme1->$award_field = $data_type_objects['ug_award']->id;
 		$programme1->$campus_field = $data_type_objects['campus']->id;
 		$programme1->$subject_area_1_field = $data_type_objects['ug_subject']->id;
-		$programme1->$related_courses_field = $programme2->id;
+		$programme1->$related_courses_field = $programme2->instance_id;
 		$programme1->save();	
 		$programme1->make_revision_live($programme1->get_active_revision());
 
@@ -561,7 +566,7 @@ class TestAPI extends ModelTestCase
 		$programme2->save();	
 		$programme2->make_revision_live($programme2->get_active_revision());
 
-		$programme1_api = UG_Programme::get_api_programme($programme1->id, $programme1->year);
+		$programme1_api = UG_Programme::get_api_programme($programme1->instance_id, $programme1->year);
 		$programme1_api = API::load_external_data($programme1_api, 'ug');
 		$programme1_api = API::remove_ids_from_field_names($programme1_api);
 
@@ -575,8 +580,8 @@ class TestAPI extends ModelTestCase
 
 	public function testpurge_output_cache(){
 		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		  'This test has not been implemented yet.'
+		);
 	}
 
 
@@ -601,12 +606,11 @@ class TestAPI extends ModelTestCase
 	}
 
 	/**
-     * @expectedException MissingDataException
-     */
+	 * @expectedException MissingDataException
+	 */
 	public function testget_xcrified_programme_no_globals_or_settings(){
 		$programme = $this->publish_programme();
-
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
+		$xcrified_programme = API::get_xcrified_programme($programme->instance_id, $programme->year, 'ug');
 	}
 
 	public function testget_xcrified_programme(){
@@ -614,13 +618,13 @@ class TestAPI extends ModelTestCase
 		$this->publish_globals();
 		$this->publish_programme_settings();
 
-		$xcrified_programme = API::get_xcrified_programme($programme->id, $programme->year, 'ug');
-		
+		$xcrified_programme = API::get_xcrified_programme($programme->instance_id, $programme->year, 'ug');
+
 		$this->assertNotEmpty($xcrified_programme);
 
 		$this->markTestIncomplete(
-          'This test has not been implemented yet. Possibly test for more specific cases'
-        );
+		  'This test has not been implemented yet. Possibly test for more specific cases'
+		);
 	}
 
 	

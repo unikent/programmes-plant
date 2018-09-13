@@ -81,10 +81,12 @@ abstract class SimpleData extends Eloquent {
 	 * @param string $year The year from which to get the array.
 	 *
 	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
-	 *
+	 * 
 	 * @return array $options List of items in the format id => item_title.
+	 *
+	 * @param string $id_field the field to use as the ID if you need to override it with for instance 'instance_id'.  Defaults to 'id'
 	 */
-	public static function all_as_list($year = false, $empty_default_value = 0)
+	public static function all_as_list($year = false, $empty_default_value = 0, $id_field = 'id')
 	{
 		$model = get_called_class();
 
@@ -96,7 +98,7 @@ abstract class SimpleData extends Eloquent {
 
 		if (isset(static::$list_cache[$cache_key])) return static::$list_cache[$cache_key];
 		
-		return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model, $empty_default_value)
+		return static::$list_cache[$cache_key] = Cache::remember($cache_key, function() use ($year, $model, $empty_default_value, $id_field)
 		{
 			$options = array();
 			// set the 'none' select value, as per the $empty_default_value param
@@ -112,7 +114,7 @@ abstract class SimpleData extends Eloquent {
 				$list_fields = $model::$list_fields;
 			}else{
 				// else just use id and title
-				$list_fields = array('id', $title_field);
+				$list_fields = array($id_field, $title_field);
 			}
 
 			if (! $year)
@@ -126,7 +128,7 @@ abstract class SimpleData extends Eloquent {
 
 			foreach ($data as $record)
 			{
-				$options[$record->id] = $record->$title_field;
+				$options[$record->$id_field] = $record->$title_field;
 			}
 
 			return $options;
