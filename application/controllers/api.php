@@ -140,7 +140,7 @@ class API_Controller extends Base_Controller {
 			$profile = Cache::get($cache_key);
 		}else {
 			$profile = $class::where('id','=',$idOrSlug)->or_where('slug','=',$idOrSlug)->first();
-			if($profile){
+			if($profile && !$profile->hidden){
 				$profile = $profile->to_array();
 				Cache::put($cache_key, $profile, 2628000);
 
