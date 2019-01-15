@@ -664,7 +664,7 @@ class API_Controller extends Base_Controller {
 			$output['Title'] = $programme['name'];
 
 			foreach ($programme_api['deliveries'] as $delivery) {
-					$output['POS'][] = $delivery['pos_code'];
+				$output['POS'][] = $delivery['pos_code'];
 			}
 			$output['POS'] = implode(', ', array_unique($output['POS']));
 
@@ -699,6 +699,30 @@ class API_Controller extends Base_Controller {
 
 		// output the data
 		return static::csv_download($lising, "{$year} KIS Export", $last_generated);
+	}
+
+	/**
+	 * Routing for /export/$year/$type/all-fields
+	 *
+	 * Export CSV of data for
+	 *
+	 * @param int|string    $year The year or "current".
+	 * @param string $type undergraduate or postgraduate.
+	 */
+	public function get_export_allfields($year, $type)
+	{
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+		// Get real year
+		if($year == 'current') $year = Setting::get_setting(URLParams::$type."_current_year");
+
+		$table = 'programmes_' . ('undergraduate' == $type ? 'ug' : 'pg');
+		$sql = "SELECT * FROM $table WHERE year=? ORDER BY programme_title_1";
+		$programmes = DB::query($sql, $year);
+		return static::csv_download($programmes, "{$year}-$type Programmes Export", $last_generated);
 	}
 
 	/**
@@ -1443,8 +1467,12 @@ class API_Controller extends Base_Controller {
 		static::$headers['Last-Modified'] = API::get_last_change_date_for_headers($last_generated);
 		static::$headers['Content-Disposition'] =  'attachment;filename='.$name.'.csv';
 
+		$first_row = current($output);
+		if(!is_array($first_row)) {
+			$first_row = (array)$first_row;
+		}
 		// Header line
-		$headings = array_keys( current($output) );
+		$headings = array_keys( $first_row );
 		$csv = API::array_to_csv($headings). "\r\n";
 		// csv body
 		foreach($output as $data){
