@@ -457,10 +457,12 @@ class API {
 
 
 		// For each column with a special data type, update its value in the record;
-		foreach($programme_fields as $field_name => $data_type){
-
-			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
-
+		foreach ($programme_fields as $field_name => $data_type) {
+			// avoid replacing ids when we do not have a field_name or data_type
+			if (strlen($field_name) && strlen($data_type)) {
+				$record[$field_name]
+					= $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
+			}
 		}
 
 		return $record;
