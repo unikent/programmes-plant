@@ -353,7 +353,13 @@ class API {
 			$delivery['fees'] = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], $final['globals']['fees_year']);
 
 			// Add modules
-			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			// inject the some delivery information here so we can choose between different deliveries in of-course easier
+			$tmp_modules = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			$tmp_modules->attendance_pattern = $delivery['attendance_pattern'];
+			$tmp_modules->award_name = $delivery['award_name'];
+			$tmp_modules->mcr = $delivery['mcr'];
+			$tmp_modules->pos_code = $delivery['pos_code'];
+			$modules[] = $tmp_modules;
 		}
 
 
