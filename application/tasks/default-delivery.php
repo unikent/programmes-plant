@@ -26,6 +26,7 @@ class Default_Delivery_Task
 		foreach($programmes as $programme) {
 			$deliveries = $programme->deliveries;
 			$default_delivery = $programme->getDefaultDelivery($deliveries);
+			$preferred_delivery = null;
 			$preferred_delivery = $programme->getPreferredDelivery($deliveries);
 			echo $programme->programme_title_1 . "\n";
 			foreach ($deliveries as $delivery) {

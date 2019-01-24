@@ -30,7 +30,7 @@ class PG_Programme extends Programme {
 		$deliveries = (null === $deliveries) ? $this->deliveries()->with('award')->get() : $deliveries;
 		$mcr_field = static::get_display_course_structure_mcr_field();
 		$award_field = static::get_display_course_structure_award_field();
-		$pattern_field = static::get_attendance_pattern_field();
+		$pattern_field = static::get_display_course_structure_attendance_pattern_field();
 		foreach($deliveries as $delivery) {
 			if($this->$mcr_field) {
 				if($delivery->mcr === $this->$mcr_field) {
