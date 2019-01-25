@@ -10,6 +10,11 @@ abstract class Delivery extends SimpleData
 		return $success;
 	}
 
+	public function relatedaward()
+	{
+		return $this->award();
+	}
+
 	public function delete(){
 		$programme_model = static::$level . "_programme";
 		$p = $programme_model::where('id','=',$this->programme_id)->first(array('id','instance_id','year'));
