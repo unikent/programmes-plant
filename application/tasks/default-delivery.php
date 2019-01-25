@@ -114,12 +114,16 @@ class Default_Delivery_Task
 			if(!$dry) {
 				$this->savePreferredDelivery($programme);
 			}
-			echo $programme->programme_title_1 . "\n";
+			echo $programme->programme_title_1 . " - " . $programme->instance_id . "\n";
 			foreach ($deliveries as $delivery) {
 				$is_default = ($default_delivery && $delivery->id == $default_delivery->id) ? '* ' : '';
 				$is_preferred = ($preferred_delivery && $delivery->id == $preferred_delivery->id) ? '+' : '';
 				echo "$is_preferred\t$is_default$delivery->description\n";
 			}
+		}
+		if(!$dry){
+			// from Revisionable::make_revision_live()
+			API::purge_output_cache();
 		}
 	}
 
@@ -150,6 +154,12 @@ class Default_Delivery_Task
 		DB::table($revision_model::$table)
 			->where('programme_id','=',$programme->id)
 			->update($updates);
+
+		// from simpledata::save()
+		PG_Programme::clear_all_as_list_cache($programme->year);
+		// from Programme::generate_api_data() called by Programme::make_revision_live()
+		PG_Programme::generate_api_programme($programme->instance_id, $programme->year);
+		PG_Programme::generate_api_index($programme->year);
 	}
 
 	private function printUsage()
