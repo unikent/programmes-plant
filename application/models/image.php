@@ -42,13 +42,23 @@ class Image extends SimpleData
 
 	/**
 	 * File path to image
+	 * @param bool $hidden - Do we want path for hidden version of this image?
+	 * @return string Path for this image (whether or not a file actually exists)
 	 */
-	public function path(){
+	public function path($hidden = false){
 		$path = Config::get('images.image_directory', path('storage').'images');
-		return  $path.'/'.$new->id.'.jpg';
+		return  $path.'/'.($hidden ? '.' : '') . $this->id.'.jpg';
 	}
 
-
+	/**
+	 * File path to thumbnail
+	 * @param bool $hidden - Do we want path for hidden version of this image?
+	 * @return string Path for this image (whether or not a file actually exists)
+	 */
+	public function thumb_path($hidden = false){
+		$path = Config::get('images.image_directory', path('storage').'images');
+		return  $path.'/'.($hidden ? '.' : '') . $this->id.'_thumb.jpg';
+	}
 	/**
 	 * generate API data
 	 * Get live version of API data from database
@@ -117,5 +127,22 @@ class Image extends SimpleData
 		}	
 
 		return array($desired_height, $desired_width);
+	}
+
+	/**
+	 * When an image is deleted (actually just hidden) we need to also hide the actual
+	 * image files so that they are not accessible when their URL is known (eg google search)
+	 */
+	public function delete()
+	{
+		parent::delete();
+		$visible_path = $this->path(false);
+		if (file_exists($visible_path)) {
+			rename($visible_path, $this->path(true));
+		}
+		$thumb_path = $this->thumb_path(false);
+		if (file_exists($thumb_path)) {
+			rename($thumb_path, $this->thumb_path(true));
+		}
 	}
 }
