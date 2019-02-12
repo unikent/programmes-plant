@@ -64,7 +64,7 @@ class Default_Delivery_Task
 
 	/**
 	 * Sets the default award and attendance pattern. Default options will only set defaults if no default is already set.
-	 * php artisan default-delivery:set year=<year> [filter=<filter-text>] [ids=<comma,separated,programme,ids] [--force] [--dry-run] [--clear-mcr]
+	 * php artisan default-delivery:set year=<year> [filter=<filter-text>] [ids=<comma,separated,programme,ids] [-f] [-d] [-c]
 	 * @param array $arguments - key => value arguments
 	 * - year is required
 	 * - -d - just outputs the result without doing anything
@@ -170,13 +170,13 @@ class Default_Delivery_Task
 php artisan default-delivery year=<year>
 
 // to set the defaults use:
-php artisan default-delivery:set year=<year> [filter=<filter-text>] [ids=<comma,separated,programme,ids] [--force] [--dry-run] [--clear-mcr]
+php artisan default-delivery:set year=<year> [filter=<filter-text>] [ids=<comma,separated,programme,ids] [-f] [-d] [-c]
 - year is required
 - filter=<filter-text> - only affect programmes whose title matches the filter
 - ids=<programme_ids> - only affect programmes whose ids are in the comma separated list.
-- --dry-run - just outputs the result without doing anything
-- --force - overwrite existing values
-- --clear-mcr - clear the mcr value if it is set.
+- -d - dry run - just outputs the result without doing anything
+- -f - force - overwrite existing values
+- -c - clear the mcr value if it is set.
 ';
 		die();
 	}
