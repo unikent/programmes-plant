@@ -353,7 +353,13 @@ class API {
 			$delivery['fees'] = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], $final['globals']['fees_year']);
 
 			// Add modules
-			$modules[] = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			// inject the some delivery information here so we can choose between different deliveries in of-course easier
+			$tmp_modules = API::get_module_data($programme['instance_id'], $delivery['pos_code'], $programme['year'], $level);
+			$tmp_modules->attendance_pattern = $delivery['attendance_pattern'];
+			$tmp_modules->award_name = $delivery['award_name'];
+			$tmp_modules->mcr = $delivery['mcr'];
+			$tmp_modules->pos_code = $delivery['pos_code'];
+			$modules[] = $tmp_modules;
 		}
 
 
@@ -451,10 +457,12 @@ class API {
 
 
 		// For each column with a special data type, update its value in the record;
-		foreach($programme_fields as $field_name => $data_type){
-
-			$record[$field_name] = $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
-
+		foreach ($programme_fields as $field_name => $data_type) {
+			// avoid replacing ids when we do not have a field_name or data_type
+			if (strlen($field_name) && strlen($data_type)) {
+				$record[$field_name]
+					= $data_type::replace_ids_with_values($record[$field_name], $record['year'], false, ($data_type=='Image'));
+			}
 		}
 
 		return $record;

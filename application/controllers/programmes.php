@@ -128,7 +128,8 @@ class Programmes_Controller extends Revisionable_Controller {
 		$model = $this->model;
 
 		// Ensure we have a corresponding course in the database
-		$programme = $model::where('instance_id', '=', $id)->where('year', '=', $year)->first();
+		$programme = $model::where('instance_id', '=', $id)->where('year', '=', $year);
+			$programme = $programme->first();
 
 		if (! $programme) return Redirect::to($year . '/' . $type . '/' . $this->views);
 		

@@ -210,7 +210,7 @@ Route::group(array('before' => ''), function(){
     Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
     Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/(taught|research|taught-research)/pos-codes', 'api@export_poscodes'); // get pos code list per programme
 
-
+	Route::get('/export/([0-9]{4}|current)/(undergraduate|postgraduate)/all-fields', 'api@export_allfields'); // get all fields for all courses
 });
 
 // Login/out
