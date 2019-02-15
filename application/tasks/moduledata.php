@@ -63,7 +63,7 @@ class ModuleData_Task {
 			if(empty($parameters['id']) || $parameters['id'] == $programme['id']) {
 
 				echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
-
+				flush();
 				$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
 				// Get deliveries
 				$deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
@@ -95,6 +95,7 @@ class ModuleData_Task {
 
 					if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
 					sleep($parameters['sleeptime']);
+					flush();
 				}
 
 			}
@@ -302,6 +303,15 @@ class ModuleData_Task {
 
 									$apiData = self::getModuleAPIData($module->module_code);
 									if(!empty($apiData)){
+										if(empty($apiData->code)) {
+											echo "WARNING - Missing SITS Module Code for {$module->module_code} " . print_r($apiData,true)."\n";
+										}
+										if(empty($apiData->sds_code)) {
+											echo "WARNING - Missing SDS Module Code for {$module->module_code}" . print_r($apiData,true)."\n";
+										}
+										if(empty($apiData->synopsis)) {
+											echo "WARNING - Missing synopsis for {$module->module_code}\n";
+										}
 										$module->synopsis = str_replace("\r\n", '<br>', $apiData->synopsis);
 										$module->module_code = $apiData->code;
 										$module->sds_code = $apiData->sds_code;
