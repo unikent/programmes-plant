@@ -49,40 +49,7 @@ class ModuleData_Task {
 
 	protected function load_programme_modules($parameters, $programme)
 	{
-		echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
 
-		$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
-		// Get deliveries
-		$deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
-		if(sizeof($deliveries) === 0)continue;
-		// Kent
-		$institution = '0122';
-		// get campus
-		$campus_id = $programme['campus_id'];
-		$module_session = $this->parse_module_session($programme['module_session'], $parameters);
-		echo "Module session: {$module_session}\n";
-		if(empty($module_session))continue;
-
-		$module_cache =array();
-		// cache modules for each delivery
-		foreach($deliveries as $delivery){
-
-			$cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
-
-			if(array_key_exists($cache_key,$module_cache)){
-				continue;
-			}else {
-				$programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
-				if($programme_modules_new!==null) {
-					$module_cache[$cache_key] = $programme_modules_new;
-				}
-			}
-
-			echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
-
-			if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
-			sleep($parameters['sleeptime']);
-		}
 	}
 
 	protected function load_modules($parameters, $programmes = array()){
@@ -94,7 +61,42 @@ class ModuleData_Task {
 			// make sure we don't get past the counter limit
 			$n++; if ($parameters['counter'] > 0 && $n > $parameters['counter']) break;
 			if(empty($parameters['id']) || $parameters['id'] == $programme['id']) {
-				$this->load_programme_modules($parameters, $programme);
+
+				echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+
+				$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
+				// Get deliveries
+				$deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
+				if(sizeof($deliveries) === 0) continue;
+				// Kent
+				$institution = '0122';
+				// get campus
+				$campus_id = $programme['campus_id'];
+				$module_session = $this->parse_module_session($programme['module_session'], $parameters);
+				echo "Module session: {$module_session}\n";
+				if(empty($module_session))continue;
+
+				$module_cache =array();
+				// cache modules for each delivery
+				foreach($deliveries as $delivery){
+
+					$cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
+
+					if(array_key_exists($cache_key,$module_cache)){
+						continue;
+					}else {
+						$programme_modules_new = $this->load_module_data($delivery['pos_code'], $institution, $campus_id, $module_session);
+						if($programme_modules_new!==null) {
+							$module_cache[$cache_key] = $programme_modules_new;
+						}
+					}
+
+					echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
+
+					if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
+					sleep($parameters['sleeptime']);
+				}
+
 			}
 		}
 	}
