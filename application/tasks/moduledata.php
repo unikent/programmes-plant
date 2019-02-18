@@ -47,11 +47,6 @@ class ModuleData_Task {
 		API::purge_output_cache();
 	}
 
-	protected function load_programme_modules($parameters, $programme)
-	{
-
-	}
-
 	protected function load_modules($parameters, $programmes = array()){
 
 		// loop through each programme in the index and call the two web services for each
@@ -91,7 +86,8 @@ class ModuleData_Task {
 						}
 					}
 
-					echo "\nStages count:" . count($programme_modules_new->stages) . "\n\n";
+					$n_stages = ($programme_modules_new && $programme_modules_new->stages) ? count($programme_modules_new->stages) : 0;
+					echo "\nStages count:" . $n_stages . "\n\n";
 
 					if ( ! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) Cache::put($cache_key, $programme_modules_new, 2628000);
 					sleep($parameters['sleeptime']);
