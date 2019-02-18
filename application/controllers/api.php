@@ -1549,7 +1549,7 @@ class API_Controller extends Base_Controller {
 		return $content;
 	}
 
-	public function get_hear($year, $type)
+	public function get_hear($year, $type, $format)
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
@@ -1583,7 +1583,13 @@ class API_Controller extends Base_Controller {
 				$poscodes= array();
 				foreach($programme_api['deliveries'] as $d) {
 					if(!in_array($d['pos_code'],$poscodes)) {
-						$programme['deliveries'][] = array('pos_code' => $d['pos_code']);
+						$programme['deliveries'][] = array(
+							'pos_code' => $d['pos_code'],
+							'mcr' => $d['mcr'],
+							'ari' => $d['ari_code'],
+							'ipo_sequence' => $d['current_ipo'],
+							'rou_code' => '',
+						);
 						$poscodes[] = $d['pos_code'];
 					}
 				}
@@ -1591,8 +1597,15 @@ class API_Controller extends Base_Controller {
 			Cache::put($cache_key,$programmes,86000); //just under 24 hours
 		}
 
-		// output the data
-		return static::json($programmes);
+		// Return the cached index file with the correct headers.
+		switch($format){
+			case 'xml':
+				return static::xml($programmes) ;
+			case 'csv':
+				return static::csv_download($programmes, "hear-data-$type-$year", $last_generated);
+			default :
+				return static::json($programmes, 200);
+		}
 	}
 
 	public static function get_years($type)
