@@ -135,6 +135,11 @@ Route::group(array('before' => ''), function(){
 		'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear'
 	), 'api@hear');
 
+	Route::get(array(
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear2.(json|xml|csv)',
+		'/api/([0-9]{4}|current)/(undergraduate|postgraduate|all)/hear2'
+	), 'api@hear2');
+
 	// Routing for API fees
 	Route::any(array(
 		'/api/([0-9]{4}|current|preview)/(undergraduate|postgraduate)/fees.(json|xml|csv)',
