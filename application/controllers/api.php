@@ -1549,7 +1549,71 @@ class API_Controller extends Base_Controller {
 		return $content;
 	}
 
-	public function get_hear($year, $type)
+	public function get_hear2($year, $type, $format)
+	{
+		// get last generated date
+		$last_generated = API::get_last_change_time();
+		// If cache is valid, send 304
+		if($this->cache_still_valid($last_generated)) return Response::make('', '304');
+
+
+		$cache_key = "hear2-$year-$type";
+		$programmes = (Cache::has($cache_key)) ? Cache::get($cache_key) : false;
+
+		if(!$programmes) {
+			// Get real year
+			if($year == 'current') {
+				$year = Setting::get_setting(URLParams::$type . "_current_year");
+			}
+
+			// get the list of courses
+			$programmes = API::get_index($year);
+
+			//die($type);
+			// Generate data format
+			foreach($programmes as &$programme) {
+				$programme_api = API::get_programme($type == 'undergraduate' ? 'ug' : 'pg', $year, $programme['id']);
+				$programme['programme_aims'] = $programme_api['programme_aims'];
+				if($type == 'undergraduate') {
+					$programme['learning_outcomes'] = $programme_api['learning_outcomes'];
+				} else {
+					$programme['learning_outcomes'] = $programme_api['knowledge_and_understanding_learning_outcomes'];
+				}
+				$programme['deliveries'] = array();
+				$poscodes= array();
+				foreach($programme_api['deliveries'] as $d) {
+					if(!in_array($d['pos_code'],$poscodes)) {
+						$mcr_len = strlen($d['mcr']);
+						// create the crs_code (course code) by trimming last character from mcr code
+						// (this route is currently for testing future sits things by ssdt)
+						$crs_code = $mcr_len ? substr($d['mcr'],0, $mcr_len - 1) : '';
+						$programme['deliveries'][] = array(
+							'pos_code' => $d['pos_code'],
+							'mcr' => $d['mcr'],
+							'ari' => $d['ari_code'],
+							'ipo_sequence' => $d['current_ipo'],
+							'rou_code' => '',
+							'crs_code' => $crs_code,
+						);
+						$poscodes[] = $d['pos_code'];
+					}
+				}
+			}
+			Cache::put($cache_key,$programmes,86000); //just under 24 hours
+		}
+
+		// Return the cached index file with the correct headers.
+		switch($format){
+			case 'xml':
+				return static::xml($programmes) ;
+			case 'csv':
+				return static::csv_download($programmes, "hear-data-$type-$year", $last_generated);
+			default :
+				return static::json($programmes, 200);
+		}
+	}
+
+	public function get_hear($year, $type, $format)
 	{
 		// get last generated date
 		$last_generated = API::get_last_change_time();
@@ -1583,7 +1647,9 @@ class API_Controller extends Base_Controller {
 				$poscodes= array();
 				foreach($programme_api['deliveries'] as $d) {
 					if(!in_array($d['pos_code'],$poscodes)) {
-						$programme['deliveries'][] = array('pos_code' => $d['pos_code']);
+						$programme['deliveries'][] = array(
+							'pos_code' => $d['pos_code'],
+						);
 						$poscodes[] = $d['pos_code'];
 					}
 				}
@@ -1591,8 +1657,15 @@ class API_Controller extends Base_Controller {
 			Cache::put($cache_key,$programmes,86000); //just under 24 hours
 		}
 
-		// output the data
-		return static::json($programmes);
+		// Return the cached index file with the correct headers.
+		switch($format){
+			case 'xml':
+				return static::xml($programmes) ;
+			case 'csv':
+				return static::csv_download($programmes, "hear-data-$type-$year", $last_generated);
+			default :
+				return static::json($programmes, 200);
+		}
 	}
 
 	public static function get_years($type)
