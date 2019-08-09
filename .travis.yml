@@ -8,7 +8,10 @@ php:
 services:
  - mysql
 
+
+
 before_script:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS programmes;'
   - composer install
 
 script: "php artisan test"
