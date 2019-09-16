@@ -18,6 +18,46 @@ class Profiles_Controller extends Simple_Admin_Controller {
 		$this->layout->nest('content', 'admin.profile.index', $this->data);
 	}
 
+	public function get_export()
+	{
+		$model = $this->model;
+		// create a file pointer connected to the output stream
+		$output = fopen('php://output', 'w');
+		header('content-type: text/csv');
+		header('charset:utf-8');
+		fputcsv($output, array(
+			'Name',
+			'Slug',
+			'Course',
+			'Subject Categories',
+			'Video',
+			'Type',
+			'Created At',
+			'Updated At',
+			'Links',
+			'Quote',
+			'Lead',
+			'Content'
+		));
+		foreach($model::all_active('course')->get() as $profile) {
+			fputcsv($output, array(
+				$profile->attributes['name'],
+				$profile->slug,
+				$profile->course,
+				$profile->subject_categories,
+				$profile->video,
+				$profile->type,
+				$profile->created_at,
+				$profile->updated_at,
+				$profile->links,
+				$profile->quote,
+				$profile->lead,
+				$profile->content,
+			));
+		}
+		exit();
+	}
+
 	/**
 	 * Create a new item via POST.
 	 */
