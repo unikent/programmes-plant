@@ -40,6 +40,12 @@ return array(
 		'slug' => array(
 			'label' => 'Url slug'
 		),
+		'interview_month' => array(
+			'label' => 'Interview Month',
+		),
+		'interview_year' => array(
+			'label' => 'Interview Year',
+		),
 		'course' => array(
 			'label' => 'Course'
 		),
