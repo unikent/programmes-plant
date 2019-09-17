@@ -10,12 +10,21 @@ abstract class Profile extends SimpleData
 	);
 
 	// Use all these fields when producing a "list box"
-	public static $list_fields = array('id', 'name', 'course', 'type');
+	public static $list_fields = array('id', 'name', 'course', 'type', 'interview_date');
 
 	// Pretty print name when requested
 	public function get_name()
 	{
 		return $this->attributes['course'].' - '.$this->attributes['name'] . ' - (' . ucfirst($this->attributes['type']) . ')';
+	}
+
+	public function get_interview_date()
+	{
+		$idate = $this->interview_year;
+		if($idate && $this->interview_month) {
+			$idate = date('F', mktime(0,0,0,$this->interview_month,1,date('Y'))) . ' ' . $idate;
+		}
+		return $idate;
 	}
 
 	public static function generate_api_data($year = false, $data = false)

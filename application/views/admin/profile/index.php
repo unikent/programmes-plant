@@ -15,6 +15,7 @@
     <tr>
       <th><?php echo Str::title(Str::singular($type)); ?></th>
 		<th>Last modified</th>
+		<th>Interviewed</th>
       <th></th>
     </tr>
   </thead>
@@ -23,6 +24,7 @@
     <tr>
       <td><?php echo $item->name ?></td>
 		<td><?php echo $item->updated_at; ?></td>
+		<td><?php echo $item->interview_date?></td>
         <td>
           <a class="btn btn-primary" href="<?php echo action($url_prefix . $type . '@edit', array($item->id)); ?>"><?php echo __($type . '.edit') ?></a>
            <a href="#remove" class="popup_toggler btn btn-danger" rel="<?php echo action($url_prefix . $type . '@delete', array($item->id)); ?>"><?php echo __($type . '.delete') ?></a>

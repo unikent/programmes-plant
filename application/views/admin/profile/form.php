@@ -38,6 +38,40 @@ $subject_category_class = $level . '_SubjectCategory';
   </div>
 
 	  <div class="control-group">
+		  <?php echo Form::label('interview_month', __('profile.form.interview_month.label'), array('class' => 'control-label'))?>
+		  <div class="controls">
+			  <?php echo Form::select('interview_month', array(
+				  '' => 'Unknown',
+				  '1' => 'January',
+				  '2' => 'February',
+				  '3' => 'March',
+				  '4' => 'April',
+				  '5' => 'May',
+				  '6' => 'June',
+				  '7' => 'July',
+				  '8' => 'August',
+				  '9' => 'September',
+				  '10' => 'October',
+				  '11' => 'November',
+				  '12' => 'December',
+			  ), ( Input::old('interview_month') || $create ? null : $item->attributes['interview_month']))?>
+		  </div>
+	  </div>
+
+	  <div class="control-group">
+		  <?php echo Form::label('interview_year', __('profile.form.interview_year.label'), array('class' => 'control-label'))?>
+		  <div class="controls">
+			  <?php
+			  	$years = array( '' => 'Unknown');
+			  	for($year = date('Y'); $year >= 2014; $year--) {
+			  		$years[$year] = $year;
+				}
+			  	echo Form::select('interview_year', $years, ( Input::old('interview_year') || $create ? null : $item->attributes['interview_year']))
+			  ?>
+		  </div>
+	  </div>
+
+	  <div class="control-group">
 		  <?php echo Form::label('banner_image_id', __('profile.form.banner_image_id.label') , array('class'=>'control-label'))?>
 		  <div class="controls">
 		  <?php echo Form::imagePicker('banner_image_id',( Input::old('banner_image_id') || $create ? Input::old('banner_image_id') : $item->banner_image_id ))?>
