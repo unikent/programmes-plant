@@ -19,6 +19,54 @@ class Profiles_Controller extends Simple_Admin_Controller {
 	}
 
 	/**
+	 * Export student profiles as a csv
+	 */
+	public function get_export()
+	{
+		$model = $this->model;
+		// create a file pointer connected to the output stream
+		$output = fopen('php://output', 'w');
+		header('content-type: text/csv');
+		header('charset:utf-8');
+		header('content-disposition: attachment;filename='.$model.'.csv');
+		fputcsv($output, array(
+			'Name',
+			'Slug',
+			'Course',
+			'Subject Categories',
+			'Video',
+			'Type',
+			'Interview Year',
+			'Interview Month',
+			'Created At',
+			'Updated At',
+			'Links',
+			'Quote',
+			'Lead',
+			'Content'
+		));
+		foreach($model::all_active('course')->get() as $profile) {
+			fputcsv($output, array(
+				$profile->attributes['name'],
+				$profile->slug,
+				$profile->course,
+				$profile->subject_categories,
+				$profile->video,
+				$profile->type,
+				$profile->interview_year,
+				$profile->interview_month,
+				$profile->created_at,
+				$profile->updated_at,
+				$profile->links,
+				$profile->quote,
+				$profile->lead,
+				$profile->content,
+			));
+		}
+		exit();
+	}
+
+	/**
 	 * Create a new item via POST.
 	 */
 	public function post_create()

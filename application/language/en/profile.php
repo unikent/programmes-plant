@@ -8,6 +8,7 @@ return array(
 	'edit' => 'Edit',
 	'delete' => 'Remove',
 	'create' => 'Add new Student Profile',
+	'export' => 'Export Student Profiles as CSV',
 	'back' => 'Cancel',
 	'save' => 'Save',
 
