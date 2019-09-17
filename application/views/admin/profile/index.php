@@ -6,7 +6,8 @@
   $url_prefix =  URLParams::$type.'/';
 ?>  
 <div style="margin-top:20px; margin-bottom:20px">
-    <a href="<?php echo action($url_prefix . $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
+	<a href="<?php echo action($url_prefix . $type . '@create')?>" class="btn btn-primary"><?php echo __($type . '.create') ?></a>
+	<a href="<?php echo action($url_prefix . $type . '@export')?>" class="btn btn-primary"><?php echo __($type . '.export') ?></a>
 </div>
 
 <?php if ($items) : ?>

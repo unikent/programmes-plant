@@ -18,6 +18,9 @@ class Profiles_Controller extends Simple_Admin_Controller {
 		$this->layout->nest('content', 'admin.profile.index', $this->data);
 	}
 
+	/**
+	 * Export student profiles as a csv
+	 */
 	public function get_export()
 	{
 		$model = $this->model;
@@ -25,6 +28,7 @@ class Profiles_Controller extends Simple_Admin_Controller {
 		$output = fopen('php://output', 'w');
 		header('content-type: text/csv');
 		header('charset:utf-8');
+		header('content-disposition: attachment;filename='.$model.'.csv');
 		fputcsv($output, array(
 			'Name',
 			'Slug',
@@ -32,6 +36,8 @@ class Profiles_Controller extends Simple_Admin_Controller {
 			'Subject Categories',
 			'Video',
 			'Type',
+			'Interview Year',
+			'Interview Month',
 			'Created At',
 			'Updated At',
 			'Links',
@@ -47,6 +53,8 @@ class Profiles_Controller extends Simple_Admin_Controller {
 				$profile->subject_categories,
 				$profile->video,
 				$profile->type,
+				$profile->interview_year,
+				$profile->interview_month,
 				$profile->created_at,
 				$profile->updated_at,
 				$profile->links,
