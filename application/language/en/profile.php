@@ -8,6 +8,7 @@ return array(
 	'edit' => 'Edit',
 	'delete' => 'Remove',
 	'create' => 'Add new Student Profile',
+	'export' => 'Export Student Profiles as CSV',
 	'back' => 'Cancel',
 	'save' => 'Save',
 
@@ -39,6 +40,12 @@ return array(
 		),
 		'slug' => array(
 			'label' => 'Url slug'
+		),
+		'interview_month' => array(
+			'label' => 'Interview Month',
+		),
+		'interview_year' => array(
+			'label' => 'Interview Year',
 		),
 		'course' => array(
 			'label' => 'Course'

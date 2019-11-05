@@ -48,7 +48,7 @@ Route::group(array('before' => ''), function(){
 	// Customised routing for student profiles
 	Route::any('(ug|pg)/profile', 'profiles@index');
 	Route::any('(ug|pg)/profile/(:any?)/(:num?)', 'profiles@(:2)');
-
+	Route::get('(ug|pg)/profile/export', 'profiles@index');
 
 	// Access fields systems
 	Route::any('(ug|pg)/fields/standard', 'programmefields@index');
