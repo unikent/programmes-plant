@@ -332,10 +332,6 @@ class API {
 			$subject_area_2 = $final['subject_area_2'][0]['id'];
 		}
 
-		// Related courses
-		$related_courses = $programme_model::get_programmes_in($subject_area_1, $subject_area_2, $programme['year'], $programme['instance_id']);
-		$final['related_courses'] = static::merge_related_courses($related_courses, $final['related_courses']);
-
 		// Add global settings data
 		$final['globals'] = static::remove_ids_from_field_names($globals);
 
