@@ -10,7 +10,7 @@ abstract class Profile extends SimpleData
 	);
 
 	// Use all these fields when producing a "list box"
-	public static $list_fields = array('id', 'name', 'course', 'type', 'interview_date');
+	public static $list_fields = array('id', 'name', 'course', 'type');
 
 	// Pretty print name when requested
 	public function get_name()
