@@ -5,6 +5,7 @@
 		<h4><?php echo __('revisions.draft_warning'); ?></h4>
 		<p>&nbsp;</p>
 
+
 		<?php if ($revision->under_review == 1) : ?>
 			<p><?php echo __('revisions.under_review_warning'); ?></p>
 		<?php else: ?>
@@ -80,7 +81,7 @@
 	</div>
 	<div class="modal-body">
 	  <p><?php echo __('revisions.modals.live_warning'); ?></p>
-	  <p><?php echo __('modals.confirm_body'); ?></p>
+      <p><?php echo __('modals.confirm_body'); ?></p>
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
@@ -98,6 +99,20 @@
 		<?php echo __('revisions.modals.under_review_warning'); ?>
 	<?php else : ?>
 	  <p><?php echo __('revisions.modals.review_warning'); ?></p>
+
+
+        <p>
+            <label for="change_description">Please give a brief description of the change:</label>
+            <textarea rows="6" id="change_description" class="picker" name="change_description"></textarea>
+            <br>
+            <label for="material_change" id="material_change">Is this a material change?</label>
+            <select name="material_change">
+                <option value=""></option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </p>
+
 	  <p><?php echo __('modals.confirm_body'); ?></p>
 	<?php endif; ?>
 	</div>
