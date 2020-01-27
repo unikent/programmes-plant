@@ -362,4 +362,20 @@ class Form extends \Laravel\Form {
 		}
 		return '<div class="img-picker"><textarea class="picker" rows="1" name="' . $name . '">' . $value .'</textarea><div class="img-wrapper">' . $imgTag . '</div><strong class="img-name">' . ($image? $image->name: '<em>Unassigned</em>') . '</strong></div>';
 	}
+
+	public static function fileUploader($name, $value = null)
+	{
+		$output = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($value) . '" />';
+		if($value) {
+			$url = \Config::get('images.upload_public_url', url('/uploads')) . '/' . $value;
+			$output .= '<br /><a href="' . $url . '" target="_blank">' . preg_replace('/^.*\//', '', $value) . '</a>';
+			// option to remove the link to the specification
+			$output .= '<br /><br /><label><input type="checkbox" name="' . $name . '_clear" value="1" /> Remove link</label>';
+		}
+		else {
+			$output .= '<br /><strong class="img-name"><em>Unassigned</em></strong>';
+		}
+		$output .= '<br /><input type="file" name="' . $name . '_upload" />';
+		return $output;
+	}
 }

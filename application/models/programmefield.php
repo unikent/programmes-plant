@@ -93,6 +93,17 @@ abstract class ProgrammeField extends Field
             // make sure the field is being used (if it's in section 0 then it isn't so ignore it completely)
             if ($programme_field->section > 0)
             {
+            	// if the field is a file type...
+            	if('file' === $programme_field->field_type ) {
+					// has the user asked to forget the current field?
+		            if(isset($input_fields[$colname . '_clear'])) {
+		            	$input_fields[$colname] = '';
+		            }
+		            // process the upload if it is present
+	                if(Input::file($colname . '_upload')) {
+		                $input_fields[$colname] = self::process_file_input_field($programme_obj, $programme_field, Input::file($colname . '_upload'));
+	                }
+	            }
                 // if the field is being used add its value to the appropriate colname in the programme object
                 //if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
                 if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
@@ -106,6 +117,37 @@ abstract class ProgrammeField extends Field
             }
         }
         return $programme_obj;
+    }
+
+    public static function process_file_input_field($programme, $programme_field, $upload)
+    {
+    	if(is_uploaded_file($upload['tmp_name'])) {
+    		$relative_path = 'programmes/' . $programme->id . '/' . static::niceifyFilename($programme_field->field_name);
+    		$upload_path = Config::get('images.upload_directory', path('storage').'/uploads') . '/' . $relative_path;
+    		$filename = static::niceifyFilename(date('YmdHis') . '_' . $upload['name']);
+			if(!file_exists($upload_path)) {
+				mkdir($upload_path, Config::get('images.upload_dir_mode', 0754), true);
+			}
+		    if( move_uploaded_file($upload['tmp_name'], $upload_path . '/' . $filename)) {
+			    return $relative_path . '/' . $filename;
+		    }
+	    }
+    	return '';
+    }
+
+	/**
+	 * Replace any non alphanumeric or ._- characters with _, ensure there are no more than one _- or . in a row
+	 * @param $input - Input filename
+	 * @return string
+	 */
+    public static function niceifyFilename($input)
+    {
+        return
+	        preg_replace('/[_-]{2,}/', '_',
+		        preg_replace('/\.{2,}/', '.',
+			        preg_replace('/[^a-z0-9_.-]/i', '_', $input)
+		        )
+            );
     }
 
     /**

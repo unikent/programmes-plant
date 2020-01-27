@@ -21,7 +21,7 @@ class Field extends Eloquent
 	 */
 	public static $rules = array(
 		'title'  => 'required|max:255',
-		'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect,image'
+		'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect,image,file'
 	);
 
 	/**
