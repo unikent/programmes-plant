@@ -309,9 +309,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'programme' => $programme,
-				'diff' => $diff
+				'diff' => $diff,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
 			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name.'_pre_live', $data);
 		}
 		else{
@@ -321,9 +322,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'diff' => $diff,
-				'programme' => $programme
+				'programme' => $programme,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
  			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name, $data);
 		}
 	}
