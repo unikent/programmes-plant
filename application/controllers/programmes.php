@@ -166,9 +166,14 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$this->check_user_can("create_programmes");
 
+		// get the programme fields
+		$programme_fields = $fieldModel::programme_fields();
+
+		$input = Input::all();
+
 		// placeholder for any future validation rules
-		$rules = array(
-		);
+		$rules = $this->getValidationRules($programme_fields, $input);
+
 		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails()) 
 		{
@@ -180,10 +185,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$programme = new $model;
 			$programme->year = Input::get('year');
 			$programme->created_by = Auth::user()->username;
-			
-			// get the programme fields
-			$programme_fields = $fieldModel::programme_fields();
-			
+
 			// assign the input data to the programme fields
 			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 			

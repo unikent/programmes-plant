@@ -122,7 +122,8 @@ abstract class ProgrammeField extends Field
     public static function process_file_input_field($programme, $programme_field, $upload)
     {
     	if(is_uploaded_file($upload['tmp_name'])) {
-    		$relative_path = 'programmes/' . $programme->id . '/' . static::niceifyFilename($programme_field->field_name);
+    		$id = $programme->id ? $programme->id : 'new';
+    		$relative_path = 'programmes/' . $id . '/' . static::niceifyFilename($programme_field->field_name);
     		$upload_path = Config::get('images.upload_directory', path('storage').'/uploads') . '/' . $relative_path;
     		$filename = static::niceifyFilename(date('YmdHis') . '_' . $upload['name']);
 			if(!file_exists($upload_path)) {
