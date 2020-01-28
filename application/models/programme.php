@@ -159,11 +159,15 @@ abstract class Programme extends Revisionable {
 	 *
 	 * @param int|Revision  Revision object or integer to send for editing.
 	 */
-	public function submit_revision_for_editing($revision)
+	public function submit_revision_for_editing($revision, $material_change, $changelog)
 	{
 		if (! is_numeric($revision) and ! is_object($revision))
 		{
 			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
+		}
+
+		if(strlen($changelog) < 1) {
+			throw new RevisioningException('submit_revision_for_editing requires a description of the changes.');
 		}
 
 		// If we got an ID, then convert it to a revision.
@@ -176,6 +180,8 @@ abstract class Programme extends Revisionable {
 		$revision_model::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
 
 		// Set this revision to be under review
+		$revision->changelog = $changelog;
+		$revision->material_change = $material_change;
 		$revision->under_review = 1;
 		$revision->save();
 	}

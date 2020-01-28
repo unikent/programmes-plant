@@ -43,7 +43,7 @@ Route::group(array('before' => ''), function(){
 	Route::any('([0-9]{4})/(ug|pg)/programmes/(:any?)/(:num?)', 'programmes@(:3)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/(:num)/(:any)/(:num)', 'programmes@(:4)');
 	Route::get('([0-9]{4})/(ug|pg)/programmes/deliveries/(:num)', 'programmes@deliveries');
-
+	Route::post('([0-9]{4})/(ug|pg)/programmes/(:num)/submit_programme_for_editing/(:num)', 'programmes@submit_programme_for_editing');
 
 	// Customised routing for student profiles
 	Route::any('(ug|pg)/profile', 'profiles@index');
