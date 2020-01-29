@@ -1,6 +1,10 @@
 
-  <h1><?php echo  __('programmes.rev_header'); ?></h2>
+  <h1><?php echo  __('programmes.rev_header'); ?></h1>
   <p><?php echo  __('programmes.rev_intro'); ?></p>
+	  <div class="alert alert-block <?php echo ($material_change  ? '' : 'alert-info')?>">
+		  <h4><?php echo ($material_change ? '' : 'Non-')?>Material Change</h4>
+		  <?php echo nl2br(htmlspecialchars($changelog))?>
+	  </div>
   <table class="table table-striped table-bordered">
     <thead>
       <th></th>

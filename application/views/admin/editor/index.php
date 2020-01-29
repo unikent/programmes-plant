@@ -6,6 +6,7 @@
     <table class="table table-striped table-bordered">
         <thead>
         <tr>
+	        <th>!</th>
             <th>Programme title</th>
             <th>Programme type</th>
             <th>Year</th>
@@ -23,7 +24,12 @@
             $note = $revision->programme->note;
             ?>
             <tr>
-                <td><?php echo $revision->$title_field ?><?php echo !empty($note)?'<br/><em class="admin-note">'.$note->short_note . '</em>':''; ?></td>
+	            <td><?php echo $revision->material_change ? '<strong>Yes</strong>' : 'No'?></td>
+                <td>
+	                <?php echo $revision->$title_field ?>
+	                <?php echo !empty($note)?'<br/><em class="admin-note">'.$note->short_note . '</em>':''; ?>
+	                <?php echo !empty($revision->changelog)?'<br/><em class="admin-note">'.nl2br(htmlspecialchars($revision->changelog)) . '</em>':''; ?>
+                </td>
                 <td><?php echo strstr($model, 'UG') ? "Undergraduate" : "Postgraduate"; ?></td>
                 <td><?php echo $revision->year ?></td>
                 <td>

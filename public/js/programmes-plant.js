@@ -46,8 +46,10 @@ $(document).ready(function (){
 	
 	
     //Generic way of creating popups (avoid duplicated code. #value used as id of popup)
-    $(".popup_toggler").click(function(){  
+    $(".popup_toggler").click(function(){
       $($(this).attr('href')).find('.yes_action').attr('href', $(this).attr('rel'));
+      $($(this).attr('href')).find('.yes_action').attr('data-target', $(this).attr('rel'));
+
       $($(this).attr('href')).modal('toggle');
     });
 
@@ -442,3 +444,17 @@ function init_NotesForm(){
         });
     })
 }
+
+function sendForEditing(frm, url) {
+	frm.action = url;
+	if(!frm.change_description.value) {
+		alert('You must enter a change description.');
+		return;
+	}
+	if(frm.material_change.selectedIndex === 0) {
+		alert('You must select whether or not this change is a material change.');
+		return;
+	}
+	frm.submit();
+}
+

@@ -330,9 +330,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'programme' => $programme,
-				'diff' => $diff
+				'diff' => $diff,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
 			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name.'_pre_live', $data);
 		}
 		else{
@@ -342,9 +343,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'diff' => $diff,
-				'programme' => $programme
+				'programme' => $programme,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
  			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name, $data);
 		}
 	}
@@ -356,8 +358,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param string $type         The type of programme, either ug or pg (not currently used).
 	 * @param int    $revision_id  The ID of the revision being submitted for editing.
 	 */
-	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
-	{	
+	public function post_submit_programme_for_editing($year, $type, $object_id, $revision_id)
+	{
 		$this->check_user_can('submit_programme_for_editing');
 
 		$model = $this->model;
@@ -368,7 +370,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$revision = $revision_model::find($revision_id);
 
 		if(!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
-		$programme->submit_revision_for_editing($revision->id);
+		$programme->submit_revision_for_editing($revision->id, Input::get('material_change'), Input::get('change_description'));
 
 		// Send email notification to the approval list
 		if(Config::get('programme_revisions.notifications.on')){

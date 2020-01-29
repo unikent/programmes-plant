@@ -5,6 +5,7 @@
 		<h4><?php echo __('revisions.draft_warning'); ?></h4>
 		<p>&nbsp;</p>
 
+
 		<?php if ($revision->under_review == 1) : ?>
 			<p><?php echo __('revisions.under_review_warning'); ?></p>
 		<?php else: ?>
@@ -80,14 +81,16 @@
 	</div>
 	<div class="modal-body">
 	  <p><?php echo __('revisions.modals.live_warning'); ?></p>
-	  <p><?php echo __('modals.confirm_body'); ?></p>
+      <p><?php echo __('modals.confirm_body'); ?></p>
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn"><?php echo __("revisions.cancel"); ?></a>
    		<a class="btn btn-danger yes_action"><?php echo __("revisions.make_live"); ?></a>
 	</div>
 </div>
+
 <div class="modal hide fade" id="send_for_editing">
+	<form action="#" method="post">
 	<div class="modal-header">
 	  <a class="close" data-dismiss="modal">×</a>
 	  <h3><?php echo __('modals.confirm_title'); ?></h3>
@@ -98,13 +101,31 @@
 		<?php echo __('revisions.modals.under_review_warning'); ?>
 	<?php else : ?>
 	  <p><?php echo __('revisions.modals.review_warning'); ?></p>
-	  <p><?php echo __('modals.confirm_body'); ?></p>
 	<?php endif; ?>
+
+		<p>
+			<label for="change_description">Please give a brief description of the change:</label>
+			<textarea rows="6" id="change_description" class="picker" name="change_description"><?php echo htmlspecialchars($revision->changelog)?></textarea>
+			<br>
+			<label for="material_change" id="material_change">Is this a material change?</label>
+			<select name="material_change">
+				<option value=""></option>
+				<option value="1">Yes</option>
+				<option value="0">No</option>
+			</select>
+		</p>
+
+
+		<p><?php echo __('modals.confirm_body'); ?></p>
+
+
 	</div>
 	<div class="modal-footer">
 	    <a data-dismiss="modal" href="#" class="btn"><?php echo __('revisions.cancel'); ?></a>
-   		<a class="btn btn-danger yes_action"><?php echo __('revisions.send_for_editing'); ?></a>
+   		<button data-target="" class="btn btn-danger yes_action" onclick="sendForEditing(this.form, this.dataset.target); return false;"><?php echo __('revisions.send_for_editing'); ?></button>
 	</div>
+
+	</form>
 </div>
 
 <?php endif; ?>
