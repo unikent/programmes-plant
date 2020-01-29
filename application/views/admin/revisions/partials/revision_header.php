@@ -110,8 +110,8 @@
 			<label for="material_change" id="material_change">Is this a material change?</label>
 			<select name="material_change">
 				<option value=""></option>
-				<option value="yes">Yes</option>
-				<option value="no">No</option>
+				<option value="1">Yes</option>
+				<option value="0">No</option>
 			</select>
 		</p>
 
