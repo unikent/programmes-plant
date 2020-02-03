@@ -122,7 +122,7 @@ class Images_Controller extends Simple_Admin_Controller {
 		$u = Input::upload('image', $path, $img_id.'.jpg');
 
 		if($u){
-			$this->make_thumb( $path.'/'.$img_id.'.jpg', $path.'/'.$img_id.'_thumb.jpg', 160);
+			$this->make_thumb( $path.'/'.$img_id.'.jpg', $path.'/'.$img_id.'_thumb.jpg', Config::get('images.thumbnail_max_width', 160));
 		}
 
 		return $u;

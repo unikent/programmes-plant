@@ -8,19 +8,22 @@ class ResizeThumbnails_Task {
 	/**
 	 * Run the setinitaluser task
 	 *
-	 * @param array  $arguments The arguments sent to the seed command.
+	 * @param array  $arguments The arguments sent to the command. Optional maxWidth
 	 */
 	public function run($arguments = array())
 	{
 		// Dont run if no username provided
 		if(sizeof($arguments) === 0){
-			echo "\n Error: Please specify the desired maximum width. \n";
-			return;
+			$maxWidth = Config::get('images.thumbnail_max_width');
 		}
-		$maxWidth = (int)$arguments[0];
+		else {
+			$maxWidth = (int)$arguments[0];
+		}
 		if($maxWidth < 50) {
 			echo "\n Error: width cannot be less than 50. \n";
 		}
+		echo "Resizing images to maximum width of $maxWidth\n\n";
+		$images = Image::get();
 
 		foreach( Image::get() as $image) {
 			$path = Config::get('images.image_directory', path('storage').'images');
@@ -33,6 +36,7 @@ class ResizeThumbnails_Task {
 			else {
 				echo "FAILED\n";
 			}
+			flush();
 		}
 	}
 

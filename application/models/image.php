@@ -98,7 +98,7 @@ class Image extends SimpleData
 		);
 
 		//die($data['width'], $data['height']);
-		list($thumb_height, $thumb_width) = static::getThumbSize(170, $data['width'], $data['height']);
+		list($thumb_height, $thumb_width) = static::getThumbSize(Config::get('images.thumbnail_max_width', 160), $data['width'], $data['height']);
 
 		$data['sizes'] = array(
 			'full' => array('url' => $this->url(), 'width'=> (int) $data['width'], 'height'=> (int)$data['height']),
