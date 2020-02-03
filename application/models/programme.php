@@ -434,8 +434,8 @@ abstract class Programme extends Revisionable {
 			$programme_type_field,
 			$withdrawn_field,
 			$suspended_field,
-			$science_without_borders_field
-
+			$science_without_borders_field,
+			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
 		if ($type == 'ug') {
