@@ -440,8 +440,8 @@ abstract class Programme extends Revisionable {
 			$programme_type_field,
 			$withdrawn_field,
 			$suspended_field,
-			$science_without_borders_field
-
+			$science_without_borders_field,
+			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
 		if ($type == 'ug') {
@@ -469,7 +469,7 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
-		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
+		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location', 'banner_image'))
 			->where_in('id', $live_revisions_ids)
 			->get($fields);
 
@@ -520,7 +520,8 @@ abstract class Programme extends Revisionable {
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : '',
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
-				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : ''
+				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
+				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
 
 			$statuses = '(';
