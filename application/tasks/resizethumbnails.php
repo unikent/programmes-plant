@@ -12,15 +12,14 @@ class ResizeThumbnails_Task {
 	 */
 	public function run($arguments = array())
 	{
-		// Dont run if no username provided
 		if(sizeof($arguments) === 0){
-			$maxWidth = Config::get('images.thumbnail_max_width');
-		}
-		else {
+			$maxWidth =(int)Config::get('images.thumbnail_max_width');
+		} else {
 			$maxWidth = (int)$arguments[0];
 		}
 		if($maxWidth < 50) {
 			echo "\n Error: width cannot be less than 50. \n";
+            die();
 		}
 		echo "Resizing images to maximum width of $maxWidth\n\n";
 		$images = Image::get();
