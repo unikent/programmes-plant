@@ -7,7 +7,7 @@ class ResizeThumbnails_Task
 {
 
 	/**
-	 * Run the setinitaluser task
+	 * Regenerate the thumbnails from the original images
 	 *
 	 * @param array  $arguments The arguments sent to the command. Optional maxWidth
 	 */
