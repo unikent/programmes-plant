@@ -166,9 +166,14 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$this->check_user_can("create_programmes");
 
+		// get the programme fields
+		$programme_fields = $fieldModel::programme_fields();
+
+		$input = Input::all();
+
 		// placeholder for any future validation rules
-		$rules = array(
-		);
+		$rules = $this->getValidationRules($programme_fields, $input);
+
 		$validation = Validator::make(Input::all(), $rules);
 		if ($validation->fails()) 
 		{
@@ -180,10 +185,7 @@ class Programmes_Controller extends Revisionable_Controller {
 			$programme = new $model;
 			$programme->year = Input::get('year');
 			$programme->created_by = Auth::user()->username;
-			
-			// get the programme fields
-			$programme_fields = $fieldModel::programme_fields();
-			
+
 			// assign the input data to the programme fields
 			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 			
@@ -212,10 +214,14 @@ class Programmes_Controller extends Revisionable_Controller {
 		$fieldModel = $this->model.'Field';
 		$model = $this->model;
 
-		// placeholder for any future validation rules
-		$rules = array(
+		// get the programme fields
+		$programme_fields = $fieldModel::programme_fields();
 
-		);
+		$input = Input::all();
+
+		// placeholder for any future validation rules
+		$rules = $this->getValidationRules($programme_fields, $input);
+
 		$messages = array();
 		if ($model === 'PG_Programme') {
 			//Get mode_of_study, duration and parttime_duration fields
@@ -247,9 +253,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		
 			$programme->year = Input::get('year');
 			
-			// get the programme fields
-			$programme_fields = $fieldModel::programme_fields();
-		
 			// assign the input data to the programme fields
 			$programme_modified = $fieldModel::assign_fields($programme, $programme_fields, Input::all());
 
@@ -263,6 +266,24 @@ class Programmes_Controller extends Revisionable_Controller {
 			// redirect back to the same page we were on
 			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit/'.$programme->instance_id);
 		}
+	}
+
+	/**
+	 * Gets validation rules for defined fields
+	 * @param $fields
+	 * @param $input
+	 * @return array
+	 */
+	public function getValidationRules($fields, $input)
+	{
+		// currently only adds validation for 'file' fields
+		$rules = array();
+		foreach($fields as $field) {
+			if('file' === $field->field_type) {
+				$rules[$field->colname . '_upload'] = 'mimes:pdf,doc,docx';
+			}
+		}
+		return $rules;
 	}
 
 	/**
@@ -309,9 +330,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'programme' => $programme,
-				'diff' => $diff
+				'diff' => $diff,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
 			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name.'_pre_live', $data);
 		}
 		else{
@@ -321,9 +343,10 @@ class Programmes_Controller extends Revisionable_Controller {
 
 			$data = array(
 				'diff' => $diff,
-				'programme' => $programme
+				'programme' => $programme,
+				'material_change' => $revision->material_change,
+				'changelog' => $revision->changelog,
 			);
-
  			return $this->layout->nest('content', 'admin.'.$this->views.'.'.$view_name, $data);
 		}
 	}
@@ -335,8 +358,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * @param string $type         The type of programme, either ug or pg (not currently used).
 	 * @param int    $revision_id  The ID of the revision being submitted for editing.
 	 */
-	public function get_submit_programme_for_editing($year, $type, $object_id, $revision_id)
-	{	
+	public function post_submit_programme_for_editing($year, $type, $object_id, $revision_id)
+	{
 		$this->check_user_can('submit_programme_for_editing');
 
 		$model = $this->model;
@@ -347,7 +370,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$revision = $revision_model::find($revision_id);
 
 		if(!$programme || !$revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
-		$programme->submit_revision_for_editing($revision->id);
+		$programme->submit_revision_for_editing($revision->id, Input::get('material_change'), Input::get('change_description'));
 
 		// Send email notification to the approval list
 		if(Config::get('programme_revisions.notifications.on')){

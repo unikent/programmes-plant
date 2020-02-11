@@ -140,7 +140,7 @@ class TestProgramme extends ModelTestCase {
         $revision = $item->get_revision(1);
         
         // submit the revision for editing
-        $item->submit_revision_for_editing($revision);
+        $item->submit_revision_for_editing($revision, false, 'testing');
         
         // make the revision live
         $item->make_revision_live($revision);

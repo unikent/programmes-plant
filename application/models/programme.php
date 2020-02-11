@@ -159,11 +159,15 @@ abstract class Programme extends Revisionable {
 	 *
 	 * @param int|Revision  Revision object or integer to send for editing.
 	 */
-	public function submit_revision_for_editing($revision)
+	public function submit_revision_for_editing($revision, $material_change, $changelog)
 	{
 		if (! is_numeric($revision) and ! is_object($revision))
 		{
 			throw new RevisioningException('submit_revision_for_editing only accepts revision objects or integers as parameters.');
+		}
+
+		if(strlen($changelog) < 1) {
+			throw new RevisioningException('submit_revision_for_editing requires a description of the changes.');
 		}
 
 		// If we got an ID, then convert it to a revision.
@@ -176,6 +180,8 @@ abstract class Programme extends Revisionable {
 		$revision_model::where('under_review', '=', 1)->where('programme_id', '=', $revision->programme_id)->update(array('under_review'=>0));
 
 		// Set this revision to be under review
+		$revision->changelog = $changelog;
+		$revision->material_change = $material_change;
 		$revision->under_review = 1;
 		$revision->save();
 	}
@@ -434,8 +440,8 @@ abstract class Programme extends Revisionable {
 			$programme_type_field,
 			$withdrawn_field,
 			$suspended_field,
-			$science_without_borders_field
-
+			$science_without_borders_field,
+			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
 		if ($type == 'ug') {
@@ -463,7 +469,7 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Pull out all revisions that have there id within the above array (as these are what need to be published)
-		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location'))
+		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location', 'banner_image'))
 			->where_in('id', $live_revisions_ids)
 			->get($fields);
 
@@ -514,7 +520,8 @@ abstract class Programme extends Revisionable {
 				'programme_type' => isset($attributes[$programme_type_field]) ? $attributes[$programme_type_field] : '',
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : '',
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
-				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : ''
+				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
+				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
 
 			$statuses = '(';
@@ -802,7 +809,7 @@ abstract class Programme extends Revisionable {
 		foreach(array_keys($revision_1->attributes) as $attribute){
 
 			// Ignore these columns
-			if(in_array($attribute, array('id', 'programme_id', 'under_review', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id'))) continue;
+			if(in_array($attribute, array('id', 'programme_id', 'under_review', 'status', 'created_by', 'published_by', 'created_at', 'updated_at', 'hidden', 'edits_by', 'published_at', 'made_live_by', 'instance_id', 'material_change', 'changelog'))) continue;
 
 			// Add attribute to "attributes" array with label and "attribute_id"
 			$attributes[] = array(

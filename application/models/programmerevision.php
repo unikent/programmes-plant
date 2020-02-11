@@ -32,6 +32,12 @@ abstract class ProgrammeRevision extends Revision
         return $this->belongs_to('School', $model::get_additional_school_field());
     }
 
+	public function banner_image()
+	{
+		$model = static::$programme_model;
+		return $this->belongs_to('Image', $model::get_banner_image_field());
+	}
+
     /**
      * Get this programme's campus.
      * 

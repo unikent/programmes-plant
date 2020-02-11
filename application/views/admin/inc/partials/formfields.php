@@ -86,6 +86,9 @@ foreach($section as $field):
 		  $form_element = Form::imagePicker($column_name, $current_value);
 	  break;
 
+          case 'file':
+          	$form_element = Form::fileUploader($column_name, $current_value);
+          	break;
       case 'table_multiselect':
         $model = $field->field_meta;
         $form_element = ExtForm::multiselect($column_name.'[]', $model::all_as_list($year), explode(',',$current_value), array('style'=>'height:200px;width:600px;'));
@@ -121,6 +124,12 @@ foreach($section as $field):
 				<br><br>
 			<p class="alert alert-danger"><?php echo $errors->first($column_name); ?></p>
 			<?php
+			} ?>
+			<?php if ($errors->has($column_name . '_upload')){
+				?>
+                <br><br>
+                <p class="alert alert-danger"><?php echo $errors->first($column_name.'_upload'); ?></p>
+				<?php
 			} ?>
 			<?php if(isset($field->programme_field_type) && $field->programme_field_type == $field_model::$types['OVERRIDABLE_DEFAULT']): ?>
 

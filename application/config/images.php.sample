@@ -1,5 +1,9 @@
 <?php
 return array(
 	'image_directory' => '',
-	'image_public_url' => ''
+	'image_public_url' => '',
+	'thumbnail_max_width' => 320,
+	'upload_directory' => dirname(__FILE__)  . '/../../../storage/uploads',
+	'upload_public_url' => '/uploads',
+	'upload_dir_mode' => 0754,
 );
