@@ -145,7 +145,7 @@ foreach ($programmes as $programme): ?>
 				<dcterms:educationLevel><?php echo ucfirst(__("programmes.{$programme['type']}")); ?></dcterms:educationLevel>
 				<awardedBy><?php echo ($globalsettings->institution_name); ?></awardedBy>
 				<?php if (isset($programme['accredited_by'])): ?>
-					<accreditedBy><?php echo ($programme['accredited_by']); ?></accreditedBy>
+					<accreditedBy><?php echo XMLHelper::makeXMLSafe($programme['accredited_by']); ?></accreditedBy>
 				<?php endif; ?>
 			</mlo:qualification>
 
