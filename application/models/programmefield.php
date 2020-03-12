@@ -130,7 +130,7 @@ abstract class ProgrammeField extends Field
 				mkdir($upload_path, Config::get('images.upload_dir_mode', 0754), true);
 			}
 		    if( move_uploaded_file($upload['tmp_name'], $upload_path . '/' . $filename)) {
-			    return $relative_path . '/' . $filename;
+			    return Config::get('images.upload_public_url') . '/' . $relative_path . '/' . $filename;
 		    }
 	    }
     	return '';

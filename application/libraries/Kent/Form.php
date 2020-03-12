@@ -367,8 +367,7 @@ class Form extends \Laravel\Form {
 	{
 		$output = '<input type="hidden" name="' . $name . '" value="' . htmlspecialchars($value) . '" />';
 		if($value) {
-			$url = \Config::get('images.upload_public_url', url('/uploads')) . '/' . $value;
-			$output .= '<br /><a href="' . $url . '" target="_blank">' . preg_replace('/^.*\//', '', $value) . '</a>';
+			$output .= '<br /><a href="' . $value . '" target="_blank">' . preg_replace('/^.*\//', '', $value) . '</a>';
 			// option to remove the link to the specification
 			$output .= '<br /><br /><label><input type="checkbox" name="' . $name . '_clear" value="1" /> Remove link</label>';
 		}
