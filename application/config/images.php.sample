@@ -4,6 +4,10 @@ return array(
 	'image_public_url' => '',
 	'thumbnail_max_width' => 320,
 	'upload_directory' => dirname(__FILE__)  . '/../../../storage/uploads',
-	'upload_public_url' => '/uploads',
+
+	// should be full url, not relative,
+	// as it will be output in api and consumed from elsewhere
+	'upload_public_url' => 'https://plant.test/uploads',
+
 	'upload_dir_mode' => 0754,
 );
