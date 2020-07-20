@@ -98,10 +98,14 @@ abstract class ProgrammeField extends Field
 					// has the user asked to forget the current field?
 		            if(isset($input_fields[$colname . '_clear'])) {
 		            	$input_fields[$colname] = '';
-		            }
-		            // process the upload if it is present
-	                if(Input::file($colname . '_upload')) {
-		                $input_fields[$colname] = self::process_file_input_field($programme_obj, $programme_field, Input::file($colname . '_upload'));
+					}
+					
+		            // process the upload if a file has been uploaded
+					$uploadDetails = Input::file($colname . '_upload');
+	                if(null != $uploadDetails) {
+						if ($uploadDetails['error'] === UPLOAD_ERR_OK) {
+							$input_fields[$colname] = self::process_file_input_field($programme_obj, $programme_field, Input::file($colname . '_upload'));
+						}
 	                }
 	            }
                 // if the field is being used add its value to the appropriate colname in the programme object
