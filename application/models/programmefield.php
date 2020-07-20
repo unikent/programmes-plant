@@ -40,7 +40,7 @@ abstract class ProgrammeField extends Field
 		$sectionModel = static::$type.'_ProgrammeSection';
 
 		// get the section and field data
-		$sections = $sectionModel::with("programmefields")->order_by('order','asc')->get();
+		$sections = $sectionModel::with("programmefields")->order_by('order', 'asc')->get();
 
 		$sections_array = array();
 
@@ -66,7 +66,9 @@ abstract class ProgrammeField extends Field
 	public static function programme_fields()
 	{
 		$fieldModel = URLParams::get_type()."_ProgrammeField";
-		return static::where('active','=','1')->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $fieldModel::$types['NORMAL']))->order_by('order','asc')->get();
+		return static::where('active', '=', '1')
+			->where_in('programme_field_type', array(ProgrammeField::$types['OVERRIDABLE_DEFAULT'], $fieldModel::$types['NORMAL']))
+			->order_by('order', 'asc')->get();
 	}
 	
 	/**
@@ -79,7 +81,7 @@ abstract class ProgrammeField extends Field
 	* @param array $input_fields user input fields from the form
 	* @return object $programme_obj modified programme object
 	*/
-	public static function assign_fields($programme_obj, $programme_fields, $input_fields, $user=null)
+	public static function assign_fields($programme_obj, $programme_fields, $input_fields, $user = null)
 	{
 		if ($user == null)
 		{
@@ -94,15 +96,15 @@ abstract class ProgrammeField extends Field
 			if ($programme_field->section > 0)
 			{
 				// if the field is a file type...
-				if('file' === $programme_field->field_type ) {
+				if ('file' === $programme_field->field_type) {
 					// has the user asked to forget the current field?
-					if(isset($input_fields[$colname . '_clear'])) {
+					if (isset($input_fields[$colname . '_clear'])) {
 						$input_fields[$colname] = '';
 					}
 					
 					// process the upload if a file has been uploaded
 					$uploadDetails = Input::file($colname . '_upload');
-					if(null != $uploadDetails) {
+					if (null != $uploadDetails) {
 						if ($uploadDetails['error'] === UPLOAD_ERR_OK) {
 							$input_fields[$colname] = self::process_file_input_field($programme_obj, $programme_field, Input::file($colname . '_upload'));
 						}
@@ -112,8 +114,7 @@ abstract class ProgrammeField extends Field
 				//if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
 				if (isset($input_fields[$colname]) && $user->can(\URLParams::get_type()."_fields_write_{$colname}")) {
 					// if the field's value is an array, convert it into a comma-separated string
-					if (is_array($input_fields[$colname]))
-					{
+					if (is_array($input_fields[$colname])) {
 						$input_fields[$colname] = implode(',', $input_fields[$colname]);
 					}
 					$programme_obj->$colname = $input_fields[$colname];
@@ -125,15 +126,15 @@ abstract class ProgrammeField extends Field
 
 	public static function process_file_input_field($programme, $programme_field, $upload)
 	{
-		if(is_uploaded_file($upload['tmp_name'])) {
+		if (is_uploaded_file($upload['tmp_name'])) {
 			$id = $programme->id ? $programme->id : 'new';
 			$relative_path = 'programmes/' . $id . '/' . static::niceifyFilename($programme_field->field_name);
 			$upload_path = Config::get('images.upload_directory', path('storage').'/uploads') . '/' . $relative_path;
 			$filename = static::niceifyFilename(date('YmdHis') . '_' . $upload['name']);
-			if(!file_exists($upload_path)) {
+			if (!file_exists($upload_path)) {
 				mkdir($upload_path, Config::get('images.upload_dir_mode', 0754), true);
 			}
-			if( move_uploaded_file($upload['tmp_name'], $upload_path . '/' . $filename)) {
+			if (move_uploaded_file($upload['tmp_name'], $upload_path . '/' . $filename)) {
 				return Config::get('images.upload_public_url') . '/' . $relative_path . '/' . $filename;
 			}
 		}
@@ -193,7 +194,7 @@ abstract class ProgrammeField extends Field
 		$model = strtolower(get_called_class());
 		$cache_key = 'api-'.$model;
 
-		if(isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
+		if (isset(static::$api_cache[$cache_key])) return static::$api_cache[$cache_key];
 
 		// Get data from cache (or generate it)
 		return static::$api_cache[$cache_key] = (Cache::has($cache_key)) ? Cache::get($cache_key) : static::generate_api_data();
