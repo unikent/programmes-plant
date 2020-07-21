@@ -95,6 +95,7 @@ abstract class ProgrammeField extends Field
 					if (isset($input_fields[$colname . '_clear'])) {
 						$input_fields[$colname] = '';
 					}
+					// process the name of any newly uploaded files
 					$uploadDetails = Input::file($colname . '_upload');
 					if (null != $uploadDetails) {
 						if ($uploadDetails['error'] === UPLOAD_ERR_OK) {
@@ -116,11 +117,20 @@ abstract class ProgrammeField extends Field
 		return $programme_obj;
 	}
 
+	/**
+	 * process_file_input_field
+	 * renames uploaded files to append a timestamp
+	 *
+	 * @param mixed $programme
+	 * @param mixed $programme_field
+	 * @param mixed $upload
+	 * @return string empty string
+	 */
 	public static function process_file_input_field($programme, $programme_field, $upload)
 	{
 		if (is_uploaded_file($upload['tmp_name'])) {
 			$id = $programme->id ? $programme->id : 'new';
-			$relative_path = 'programmes/' . $id . '/' . static::niceifyFilename($programme_field->field_name);
+			$relative_path = 'programmes/' . $id . '/' . $programme_field->id;
 			$upload_path = Config::get('images.upload_directory', path('storage').'/uploads') . '/' . $relative_path;
 			$filename = static::niceifyFilename(date('YmdHis') . '_' . $upload['name']);
 			if (!file_exists($upload_path)) {
