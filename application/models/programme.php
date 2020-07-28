@@ -416,6 +416,7 @@ abstract class Programme extends Revisionable {
 		$study_abroad_option_field = static::get_study_abroad_option_field();
 		$science_without_borders_field = static::get_science_without_borders_field();
 		$attendance_mode_field = static::get_attendance_mode_field();
+		$clearing_exemption_field = static::get_clearing_exemption_field();
 
 		$index_data = array();
 
@@ -441,6 +442,7 @@ abstract class Programme extends Revisionable {
 			$withdrawn_field,
 			$suspended_field,
 			$science_without_borders_field,
+			$clearing_exemption_field,
 			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
@@ -521,6 +523,7 @@ abstract class Programme extends Revisionable {
 				'study_abroad_option' => isset($attributes[$study_abroad_option_field]) ? $attributes[$study_abroad_option_field] : '',
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
+				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
 
