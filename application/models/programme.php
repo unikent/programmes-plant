@@ -270,8 +270,8 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function generate_api_programme($iid, $year, $revision = false)
 	{
-
 		$tbl = static::$table;
+
 		$cache_key = "api-{$tbl}.{$year}.{$iid}";
 
 		$revision_model = static::$revision_model;
@@ -431,6 +431,7 @@ abstract class Programme extends Revisionable {
 			$administrative_school_field,
 			$additional_school_field,
 			$location_field,
+			$additional_locations_field,
 			$new_programme_field,
 			$subject_to_approval_field,
 			$mode_of_study_field,
@@ -451,7 +452,6 @@ abstract class Programme extends Revisionable {
 		}
 		// if pg add additional locations field and study abroad
 		if ($type == 'pg') {
-			$fields[] = $additional_locations_field;
 			$fields[] = $study_abroad_option_field;
 			$fields[] = $attendance_mode_field;
 		}
@@ -474,10 +474,13 @@ abstract class Programme extends Revisionable {
 		$programmes = $revision_model::with(array('award', 'subject_area_1', 'administrative_school', 'additional_school', 'location', 'banner_image'))
 			->where_in('id', $live_revisions_ids)
 			->get($fields);
-
 		// Build index array
 		foreach($programmes as $programme)
 		{
+			$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
+			$additional_locations = implode(', ', $additional_locations);
+			$additional_locations = preg_replace("/, ([^,]+)$/", " and $1", $additional_locations);
+
 			// Get direct access data stores
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
@@ -487,14 +490,10 @@ abstract class Programme extends Revisionable {
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
 				$awards = implode(', ', $awards);
 
-				$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
-				$additional_locations = implode(', ', $additional_locations);
-				$additional_locations = preg_replace("/, ([^,]+)$/", " and $1", $additional_locations);
 			}
 			else
 			{
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
-				$additional_locations = '';
 			}
 
 			$index_data[$attributes['instance_id']] = array(
