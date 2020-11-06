@@ -525,10 +525,9 @@ abstract class Programme extends Revisionable {
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
-				'by_research' => isset($attributes[$by_research]) ? $attributes[$by_research] : '',
+				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
-
 			$statuses = '(';
 			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
 				$statuses .= "subject to approval";
