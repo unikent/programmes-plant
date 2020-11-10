@@ -417,6 +417,7 @@ abstract class Programme extends Revisionable {
 		$science_without_borders_field = static::get_science_without_borders_field();
 		$attendance_mode_field = static::get_attendance_mode_field();
 		$clearing_exemption_field = static::get_clearing_exemption_field();
+		$by_research_field = static::get_by_research_field();
 
 		$index_data = array();
 
@@ -444,6 +445,7 @@ abstract class Programme extends Revisionable {
 			$suspended_field,
 			$science_without_borders_field,
 			$clearing_exemption_field,
+			$by_research_field,
 			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
@@ -523,9 +525,9 @@ abstract class Programme extends Revisionable {
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
+				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
-
 			$statuses = '(';
 			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
 				$statuses .= "subject to approval";
@@ -619,7 +621,7 @@ abstract class Programme extends Revisionable {
 				}
 
 				$fee = Fees::getCondensedFeeInfoForPos($delivery['pos_code'], ($is_preview?'preview':$fees_year));
-				
+
 				$delivery_awards = $award_model::replace_ids_with_values($delivery['award'],false,true);
 				$delivery['award_name'] = isset($delivery_awards[0]) ? $delivery_awards[0] : '';
 
@@ -902,15 +904,15 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * Gives a flat array of instance_id => item_title for all items.
-	 * 
+	 *
 	 * wraps around simpledata::all_as_list
-	 * 
+	 *
 	 * @param string $year The year from which to get the array.
 	 *
 	 * @param boolean $empty_default_value some select lists can have an empty 'please select' or 'none' value in them. Defaults to false.
 	 *
 	 * @param string $id_field - this is ignored - see comments below
-	 * 
+	 *
 	 * @return array $options List of items in the format id => item_title.
 	 *
 	 */
@@ -918,7 +920,7 @@ abstract class Programme extends Revisionable {
 		/*
 		 this deliberatly ignores the id_field to always prefer to use 'instance_id'
 
-		 However, since simpledata->all_as_list has a default set we need to keep the 
+		 However, since simpledata->all_as_list has a default set we need to keep the
 		 same defaults here to prevent a php warning.
 		*/
 		return  parent::all_as_list($year, $empty_default_value, 'instance_id');
