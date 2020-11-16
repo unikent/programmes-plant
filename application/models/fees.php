@@ -58,7 +58,9 @@ class Fees {
 			'home_full_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'full-time']),
 			'home_part_time'	=>		empty($fee['home']) || empty($fee['home'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['home'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['home'][$fee_amount_prefix . 'part-time']),
 			'int_full_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'full-time']),
-			'int_part_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'part-time'])
+			'int_part_time'		=>		empty($fee['int']) || empty($fee['int'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['int'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['int'][$fee_amount_prefix . 'part-time']),
+			'eu_full_time'		=>		empty($fee['eu']) || empty($fee['eu'][$fee_amount_prefix . 'full-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['eu'][$fee_amount_prefix . 'full-time'])) == 'na' ? 'N/A' : $fee['eu'][$fee_amount_prefix . 'full-time']),
+			'eu_part_time'		=>		empty($fee['eu']) || empty($fee['eu'][$fee_amount_prefix . 'part-time']) ? 'TBC' : (strtolower(str_replace('/', '', $fee['eu'][$fee_amount_prefix . 'part-time'])) == 'na' ? 'N/A' : $fee['eu'][$fee_amount_prefix . 'part-time'])
 		);
 	}
 
@@ -102,8 +104,12 @@ class Fees {
             $courses = Fees::load_csv_from_webservice("{$path}/preview-mapping.csv");
         }else {
             // If no cache, open up feedbands and mapping csv files for given year
-            $fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
-            $courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+            //$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
+            //$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+			
+			//temp for testing
+			$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands-with-eu.csv");
+			$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping-with-eu.csv");
         }
 
 		// Ensure data was found
@@ -137,8 +143,9 @@ class Fees {
 		foreach($courses as $course){
 
 			$mapping[$course['Pos Code']] = array(
-					'home' => isset($fee_map[$course["UK/EU Fee Band"]]) ? $fee_map[$course["UK/EU Fee Band"]] : false ,
-					'int' => isset($fee_map[$course["Int Fee Band"]]) ? $fee_map[$course["Int Fee Band"]] :false
+					'home' => isset($fee_map[$course["UK Fee Band"]]) ? $fee_map[$course["UK Fee Band"]] : false ,
+					'int' => isset($fee_map[$course["Int Fee Band"]]) ? $fee_map[$course["Int Fee Band"]] :false,
+					'eu' => isset($fee_map[$course["EU Fee Band"]]) ? $fee_map[$course["EU Fee Band"]] :false
 				);
 		}	
 
