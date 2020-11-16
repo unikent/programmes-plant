@@ -13,7 +13,7 @@
 			<th>Part Time</th>
 		</tr>
 		<tr>
-			<td>Home/EU</td>
+			<td>Home</td>
 			<td><?php echo $feedata['home']['band']; ?></td>
 			<td><?php echo $feedata['home']['full-time']; ?></td>
 			<td><?php echo $feedata['home']['part-time']; ?></td>
@@ -23,6 +23,12 @@
 			<td><?php echo $feedata['int']['band']; ?></td>
 			<td><?php echo $feedata['int']['full-time']; ?></td>
 			<td><?php echo $feedata['int']['part-time']; ?></td>
+		</tr>
+		<tr>
+			<td>EU</td>
+			<td><?php echo $feedata['eu']['band']; ?></td>
+			<td><?php echo $feedata['eu']['full-time']; ?></td>
+			<td><?php echo $feedata['eu']['part-time']; ?></td>
 		</tr>
 	</table>
 
