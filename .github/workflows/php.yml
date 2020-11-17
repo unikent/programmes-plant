@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Setup PHP 5.4 with composer
-      uses: shivammathur/setup-php@2
+      uses: shivammathur/setup-php@v2
       with:
         php-version: '5.4'
         coverage: none
