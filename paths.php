@@ -78,18 +78,12 @@ $GLOBALS['laravel_paths']['base'] = __DIR__.DS;
 // --------------------------------------------------------------
 foreach ($paths as $name => $path)
 {
-	//@todo remove this 
-	echo "\n\n$name $path\n";
 	if ( ! isset($GLOBALS['laravel_paths'][$name]))
 	{
-		echo "realpath for $name is: " . realpath($path).DS;
 		$GLOBALS['laravel_paths'][$name] = realpath($path).DS;
 	}
 }
 
-//@todo remove this - cfc7 2020-11-17
-var_dump($paths);
-var_dump($GLOBALS);
 /**
  * A global path helper function.
  * 
