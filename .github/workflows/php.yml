@@ -14,16 +14,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup PHP Action
-      uses: shivammathur/setup-php@2.7.0
+    - name: Setup PHP 5.4 with composer
+      uses: shivammathur/setup-php@2
       with:
         php-version: '5.4'
         coverage: none
         tools: composer, phpunit
 
-    - name: Check php version
-      run: which php && php -v
-      
     - name: Validate composer.json and composer.lock
       run: composer validate
 
@@ -36,8 +33,8 @@ jobs:
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
           # Use composer.json for key, if composer.lock is not committed.
-          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
     
     - name: Install dependencies
