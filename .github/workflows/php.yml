@@ -18,19 +18,11 @@ jobs:
       uses: shivammathur/setup-php@2.7.0
       with:
         php-version: '5.4'
+        coverage: none
         tools: composer, phpunit
 
     - name: Validate composer.json and composer.lock
       run: composer validate
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
