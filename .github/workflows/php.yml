@@ -21,7 +21,7 @@ jobs:
       with:
         php-version: '5.4'
         coverage: none
-        tools: composer
+        tools: composer, phpunit
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -43,4 +43,4 @@ jobs:
       run: composer install --no-progress --prefer-dist --optimize-autoloader
     
     - name: Execute PHP tests (Unit and Feature tests) via PHPUnit
-      run: PATH=$PATH:`pwd`/bin` php artisan test
+      run: php artisan test
