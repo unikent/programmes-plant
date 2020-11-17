@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: Setup PHP 5.4 with composer
       uses: shivammathur/setup-php@v2
