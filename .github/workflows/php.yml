@@ -21,6 +21,9 @@ jobs:
         coverage: none
         tools: composer, phpunit
 
+    - name: Check php version
+      run: which php && php -v
+      
     - name: Validate composer.json and composer.lock
       run: composer validate
 
