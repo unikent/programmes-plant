@@ -84,6 +84,8 @@ foreach ($paths as $name => $path)
 	}
 }
 
+//@todo remove this - cfc7 2020-11-17
+var_dump($paths);
 /**
  * A global path helper function.
  * 
