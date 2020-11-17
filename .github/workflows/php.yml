@@ -19,7 +19,7 @@ jobs:
       with:
         php-version: '5.4'
         coverage: none
-        tools: composer, phpunit
+        tools: composer
 
     - name: Validate composer.json and composer.lock
       run: composer validate
