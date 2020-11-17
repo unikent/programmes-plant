@@ -1,4 +1,6 @@
 {
+	"name": "unikent/programmes-plant",
+	"description": "The Programmes Plant is part of the XCRI-CAP project at the University of Kent",
     "require": {
         "phpunit/phpunit": "3.7.*@dev",
         "unikent/programmes-plant-modules": "dev-master",
