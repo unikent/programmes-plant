@@ -104,12 +104,9 @@ class Fees {
             $courses = Fees::load_csv_from_webservice("{$path}/preview-mapping.csv");
         }else {
             // If no cache, open up feedbands and mapping csv files for given year
-            //$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
-            //$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+            $fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
+            $courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 			
-			//temp for testing
-			$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands-with-eu.csv");
-			$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping-with-eu.csv");
         }
 
 		// Ensure data was found

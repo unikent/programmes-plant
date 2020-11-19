@@ -132,7 +132,7 @@ class TestFees extends ModelTestCase
 	{
 		$year = 2021;
 		$path = Config::get('fees.path');
-		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands-with-eu.csv");
+		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
 		$first_fee = $fees[0];
 		$this->assertArrayHasKey('band', $first_fee);
 		$this->assertArrayHasKey('full-time', $first_fee);
@@ -145,7 +145,7 @@ class TestFees extends ModelTestCase
 	{
 		$year = 2021;
 		$path = Config::get('fees.path');
-		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping-with-eu.csv");
+		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 		$first_course = $courses[0];
 		$this->assertArrayHasKey('Pos Code', $first_course);
 		$this->assertArrayHasKey('UK Fee Band', $first_course);
