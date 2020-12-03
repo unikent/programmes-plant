@@ -37,7 +37,7 @@ class TestFees extends ModelTestCase
 	public function testGenerateFeeMapReturnsFalseWhenPathIsEmpty()
 	{
 		Config::set('fees.path', '');
-		$result = Fees::generate_fee_map(2015);
+		$result = Fees::generate_fee_map(2021);
 		$this->assertFalse($result);
 	}
 
@@ -46,7 +46,7 @@ class TestFees extends ModelTestCase
 	 */
 	public function testGenerateFeeMapReturnEmptyArrayWhenPathIsWrong()
 	{
-		$year = 2015;
+		$year = 2021;
 		Config::set('fees.path', '/tmp/blah');
 		$result = Fees::generate_fee_map($year);
 		
@@ -56,7 +56,7 @@ class TestFees extends ModelTestCase
 
 	public function testGenerateFeeMapGeneratesDataHash()
 	{
-		$year = 2015;
+		$year = 2021;
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
 
 		$hash_pre_function = Cache::get($mapping_hash_cache);
@@ -69,7 +69,7 @@ class TestFees extends ModelTestCase
 
 	public function testGenerateFeeMapReturnsTrueWhenOldAndNewCacheAreTheSame()
 	{
-		$year = 2015;
+		$year = 2021;
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
 
 		$result = Fees::generate_fee_map($year);
@@ -84,7 +84,7 @@ class TestFees extends ModelTestCase
 
 	public function testGenerateFeeMapGeneratesNewMapWhenCacheDoesNotExist()
 	{
-		$year = 2015;
+		$year = 2021;
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
 
 		$result = Fees::generate_fee_map($year);
@@ -97,7 +97,7 @@ class TestFees extends ModelTestCase
 
 	public function testGenerateFeeMapGeneratesNewMapWhenDataChanges()
 	{
-		$year = 2015;
+		$year = 2021;
 		$mapping_hash_cache = "fee-mapping-hash-{$year}";
 
 		$result = Fees::generate_fee_map($year);
@@ -114,7 +114,7 @@ class TestFees extends ModelTestCase
 
 	public function testGenerateFeeMapGeneratesMapInCorrectFormat()
 	{
-		$year = 2015;
+		$year = 2021;
 		$result = Fees::generate_fee_map($year);
 
 		foreach ($result as $key => $value) {
@@ -123,13 +123,14 @@ class TestFees extends ModelTestCase
 
 			$this->assertArrayHasKey('home', $value);
 			$this->assertArrayHasKey('int', $value);
+			$this->assertArrayHasKey('eu', $value);
 		}
 
 	}
 
 	public function testLoadCSVFromWebserviceReturnsFeebandsInCorrectFormat()
 	{
-		$year = 2015;
+		$year = 2021;
 		$path = Config::get('fees.path');
 		$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
 		$first_fee = $fees[0];
@@ -142,13 +143,14 @@ class TestFees extends ModelTestCase
 
 	public function testLoadCSVFromWebserviceReturnsMappingInCorrectFormat()
 	{
-		$year = 2015;
+		$year = 2021;
 		$path = Config::get('fees.path');
 		$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 		$first_course = $courses[0];
 		$this->assertArrayHasKey('Pos Code', $first_course);
-		$this->assertArrayHasKey('UK/EU Fee Band', $first_course);
+		$this->assertArrayHasKey('UK Fee Band', $first_course);
 		$this->assertArrayHasKey('Int Fee Band', $first_course);
+		$this->assertArrayHasKey('EU Fee Band', $first_course);
 	}
 
 
