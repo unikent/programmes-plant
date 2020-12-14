@@ -18,6 +18,7 @@ class SITSImport_Task
 	public $processYears = array();
 	public $seenProgrammes = array();
 	public $ipos = array();
+	public $path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
 
 	public function run($args = array())
 	{
@@ -37,8 +38,7 @@ class SITSImport_Task
 		Log::purge();
 
 	  // Load XML file
-		$xml = $this->loadXML();
-
+		$xml = $this->loadXML($parameters['path']);
 	  // If XML file is good, purge old caches before starting import
 		$this->purgeOldPGData($this->processYears['pg']);
 		$this->purgeOldUGData($this->processYears['ug']);
@@ -97,13 +97,11 @@ class SITSImport_Task
 		DB::table('ug_programme_deliveries')->where_in('programme_id', $to_del)->delete();
 	}
 
-	public function loadXML()
+	public function loadXML($path)
 	{
 
 		libxml_use_internal_errors(true);
-
-		$path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
-
+		
 		if (filemtime($path) < (time()-(24 * 60 * 60))) {
 			Log::error('XML file has not been modified for more than 24 hours.');
 		}
@@ -253,7 +251,9 @@ class SITSImport_Task
 	  // set defaults for the parameters in case they're not set
 		$parameters = array();
 		$parameters['year'] = array('pg'=>'current','ug'=>'current');
-
+		$parameters['path'] = $this->path;
+		
+		
 		foreach ($arguments as $argument) {
 			$switch_name = substr($argument, 0, 2);
 			switch ($switch_name) {
@@ -265,16 +265,30 @@ class SITSImport_Task
 				case '-u':
 					$parameters['year']['ug'] = str_replace('-u', '', $argument) != '' ? str_replace('-u', '', $argument) : 'current';
 					break;
+				// XML file path
+				case '-f':
+					$parameters['path'] = str_replace('-f', '', $argument) != '' ? str_replace('-f', '', $argument) : $parameters['path'];
+					break;
 				default:
 					$parameters['help'] = $this->help_argument();
 			}
 		}
-
 		return $parameters;
 	}
 
+	/**
+	 * help_argument - display usage summary
+	 *
+	 * @return void
+	 */
 	public function help_argument()
 	{
-		return "\n\n-p - postgraduate year. Defaults to current.\n-u - undergraduate year. Defaults to current.\n\n";
+		return <<< TXT
+-p - postgraduate year. Defaults to current.
+-u - undergraduate year. Defaults to current.
+-f - path to XML feed from SITS feed. Defaults to $this->path
+
+
+TXT;
 	}
 }
