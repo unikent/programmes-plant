@@ -163,10 +163,10 @@ class SITSImport_Task
 		}
 
 		// is ug and can be applied to directly
-		if (('U' === $mcr[1]) && ('D' === $mcr[-1])) {
+		if (('U' === $mcr[0]) && ('D' === $mcr[strlen($mcr)-1])) {
 			return true;
 		}
-
+		
 		return false;
 	}
 
