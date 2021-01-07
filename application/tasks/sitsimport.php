@@ -48,6 +48,13 @@ class SITSImport_Task
 			if (!$this->checkCourseIsValid($course)) {
 				continue;
 			}
+			
+			// skip ug direct application courses which are not in use
+			if ($this->checkCourseIsUndergraduateAndAppliedToDirectly($course)) {
+				if (!$this->checkCourseIsInUse($course)) {
+					continue;
+				}
+			}
 
 			$this->ipos = array();
 
@@ -130,6 +137,49 @@ class SITSImport_Task
 	public function checkCourseIsValid($course)
 	{
 		if ($course->progID == '') {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * checkCourseIsUndergraduateAndAppliedToDirectly
+	 *
+	 * checks to see if a given course is an undergraduate course which accepts direct (SITS) applications
+	 * Notes:
+	 * - ug courses have an MCR starting with 'U' for undergraduate
+	 * - direct application courses have an MCR ending with 'D' for direct
+	 *
+	 * @param mixed $course
+	 * @return bool
+	 */
+	public function checkCourseIsUndergraduateAndAppliedToDirectly($course)
+	{
+		$mcr = (string)$course->mcr;
+		
+		// invalid mcr
+		if (0 == strlen($mcr)) {
+			return false;
+		}
+
+		// is ug and can be applied to directly
+		if (('U' === $mcr[1]) && ('D' === $mcr[-1])) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * checkCourseIsInUse
+	 * is this course open for direct applications via sits
+	 *
+	 * @param mixed $course
+	 * @return bool
+	 */
+	public function checkCourseIsInUse($course)
+	{
+		if ($course->inUse != 'Y') {
 			return false;
 		}
 		return true;
