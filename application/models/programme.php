@@ -418,6 +418,8 @@ abstract class Programme extends Revisionable {
 		$attendance_mode_field = static::get_attendance_mode_field();
 		$clearing_exemption_field = static::get_clearing_exemption_field();
 		$by_research_field = static::get_by_research_field();
+		$parent_course = static::get_parent_course_field();
+		$group_courses = static::get_group_courses_field();
 
 		$index_data = array();
 
@@ -446,6 +448,8 @@ abstract class Programme extends Revisionable {
 			$science_without_borders_field,
 			$clearing_exemption_field,
 			$by_research_field,
+			$parent_course_field,
+			$group_courses_field,
 			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
@@ -526,6 +530,8 @@ abstract class Programme extends Revisionable {
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
 				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',
+				'parent_course' => isset($attributes[$parent_course_field]) ? $attributes[$parent_course_field] : '',
+				'group_courses' => isset($attributes[$group_courses_field]) ? $attributes[$group_courses_field] : '',
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
 			$statuses = '(';
