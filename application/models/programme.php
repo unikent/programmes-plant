@@ -233,6 +233,21 @@ abstract class Programme extends Revisionable {
 	}
 
 	/**
+	 * This function gives us a course suffix name where it is part of a grouping of courses
+	 * eg 'Accounting and Finance with a Year Abroad' is a child of 'Accounting and Finance'
+	 * so the suffix is 'with a Year Abroad'
+	 *
+	 * @param $parent_id Id of the parent course
+	 * @param $name Name of the child course
+	 * @return string suffix name
+	 */
+	public static function set_suffix($parent_id, $name)
+	{
+		$parent_name = Programme::replace_ids_with_values($parent_id, false, true)
+		return str_replace($parent_name, "", $name);
+	}
+
+	/**
 	 * Generate fresh copy of data, triggered on save.
 	 *
 	 * @param $year year data is for
@@ -418,8 +433,9 @@ abstract class Programme extends Revisionable {
 		$attendance_mode_field = static::get_attendance_mode_field();
 		$clearing_exemption_field = static::get_clearing_exemption_field();
 		$by_research_field = static::get_by_research_field();
-		$parent_course = static::get_parent_course_field();
-		$group_courses = static::get_group_courses_field();
+		$parent_course_field = static::get_parent_course_field();
+		$group_courses_field = static::get_group_courses_field();
+
 
 		$index_data = array();
 
@@ -450,6 +466,7 @@ abstract class Programme extends Revisionable {
 			$by_research_field,
 			$parent_course_field,
 			$group_courses_field,
+			'suffix', // name of an option such as 'with a year abroad' etc
 			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
@@ -530,8 +547,12 @@ abstract class Programme extends Revisionable {
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
 				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',
-				'parent_course' => isset($attributes[$parent_course_field]) ? $attributes[$parent_course_field] : '',
-				'group_courses' => isset($attributes[$group_courses_field]) ? $attributes[$group_courses_field] : '',
+
+				// course groupings and parent course
+				'parent_course' => isset($attributes[$parent_course_field]) ? Programme::replace_ids_with_values($attributes[$parent_course_field], false, true) : '',
+				'group_courses' => isset($attributes[$group_courses_field]) ? Programme::replace_ids_with_values($attributes[$group_courses_field], false, true) : '',
+				'suffix' => isset($attributes[$parent_course_field]) && !empty($attributes[$parent_course_field]) ? Programme::set_suffix($attributes[$parent_course_field], $attributes[$title_field]) : '',
+
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
 			$statuses = '(';
