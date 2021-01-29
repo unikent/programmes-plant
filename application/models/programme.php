@@ -435,7 +435,7 @@ abstract class Programme extends Revisionable {
 		$by_research_field = static::get_by_research_field();
 		$parent_course_field = static::get_parent_course_field();
 		$group_courses_field = static::get_group_courses_field();
-
+		$suffix_field = static::get_suffix_field();
 
 		$index_data = array();
 
@@ -466,7 +466,7 @@ abstract class Programme extends Revisionable {
 			$by_research_field,
 			$parent_course_field,
 			$group_courses_field,
-			'suffix', // name of an option such as 'with a year abroad' etc
+			$suffix_field, // name of an option such as 'with a year abroad' etc
 			static::get_banner_image_field(),
 		);
 		// If UG, add ucas field
@@ -551,7 +551,7 @@ abstract class Programme extends Revisionable {
 				// course groupings and parent course
 				'parent_course' => isset($attributes[$parent_course_field]) ? Programme::replace_ids_with_values($attributes[$parent_course_field], false, true) : '',
 				'group_courses' => isset($attributes[$group_courses_field]) ? Programme::replace_ids_with_values($attributes[$group_courses_field], false, true) : '',
-				'suffix' => isset($attributes[$parent_course_field]) && !empty($attributes[$parent_course_field]) ? Programme::set_suffix($attributes[$parent_course_field], $attributes[$title_field]) : '',
+				'suffix' => isset($attributes[$suffix_field]) ? Programme::set_suffix($attributes[$parent_course_field], $attributes[$title_field]) : '',
 
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
