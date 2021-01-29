@@ -243,7 +243,7 @@ abstract class Programme extends Revisionable {
 	 */
 	public static function set_suffix($parent_id, $name)
 	{
-		$parent_name = Programme::replace_ids_with_values($parent_id, false, true)
+		$parent_name = Programme::replace_ids_with_values($parent_id, false, true);
 		return str_replace($parent_name, "", $name);
 	}
 
