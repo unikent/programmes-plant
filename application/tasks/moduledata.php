@@ -196,45 +196,74 @@ class ModuleData_Task {
 
 
 	//$institution = '0122';
-	public function load_module_data($pos_code, $institution, $campus_id, $module_session, $module = false){
+	/**
+	 * @todo need: pp_id, study_level
+	 * 
+	 * load_module_data($pp_id, $institution, $campus_id, $module_session, $module = false)
+	 */
+	public function load_module_data($pos_code, $institution, $campus_id, $module_session, $module = false)
+	{
 
-		if(!$module) $module = new ProgrammesPlant\ModuleData();
+		/*
 
-		if(empty($module_session)){ return false; }
+		pp_id
+		study_level 
+		delivery_institution = $institution
+		academic_year = module_session
+		*/
+		if (!$module) {
+			$module = new ProgrammesPlant\ModuleData();
+		}
+
+		if (empty($module_session)) {
+			return false;
+		}
+
+		$sql = <<< SQL
+		SELECT module_code, legacy_module_code,  module_name, module_credit, pdm_type, selection_status, block_desc 
+		FROM Integ.vw_SITS_WEB_programmes_plant 
+		WHERE 
+			pp_id=:pp_id AND
+			study_level=:study_level AND
+			academic_year=:acaedmic_year AND
+			delivery_institution=:delivery_institution
+			ORDER BY block
+SQL;
+
+		// idea: move the sql into the kent api and instead query that here
+		/api/v1/programme_structure/<pp_id>/<year>
+
+		// do the query with the commection details from the config somehow
+		
+
 
 		// build request
-		$webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session);
+		// $webservice_request = $this->build_module_webservice_url($pos_code, $institution, $campus_id, $module_session);
 
-		// auth
-		$module->login['username'] = Config::get('module.programme_module_user');
-		$module->login['password'] = Config::get('module.programme_module_pass');
+		// // auth
+		// $module->login['username'] = Config::get('module.programme_module_user');
+		// $module->login['password'] = Config::get('module.programme_module_pass');
 
-		// load data &
-		echo "Requesting: " . $webservice_request . ' - ';
-		$data = $module->get_programme_modules($webservice_request);
+		// // load data &
+		// echo "Requesting: " . $webservice_request . ' - ';
+		// $data = $module->get_programme_modules($webservice_request);
 
-		// clear auth
-		$module->login = array();
+		// // clear auth
+		// $module->login = array();
 
-		//parse modules
-		$data = $this->parse_module_data($data);
+		// //parse modules
+		// $data = $this->parse_module_data($data);
 
-		return $data;
-	}
-	public static function build_module_webservice_url( $pos_code, $institution, $campus_id, $module_session){
-
-		if($module_session == 'None' || $module_session == 'none') return '';
-
-		return Config::get('module.programme_module_base_url') .
-			Config::get('module.pos_code_param') . '=' . $pos_code . '&' .
-			Config::get('module.institution_param') . '=' . $institution . '&' .
-			Config::get('module.campus_param') . '=' . $campus_id . '&' .
-			Config::get('module.session_param') . '=' . $module_session . '&' .
-			'format=json';
+		// return $data;
 	}
 
-	public function parse_module_data($programme_modules)
+	/**
+	 * @todo refactor to break modules into sets of stages 
+	 * and specify if any of those stages allows wild modules
+	 * 
+	 */public function parse_module_data($programme_modules)
 	{
+		xdebug_berak();
 		// set up the output object
 		$programme_modules_new = new stdClass;
 		$programme_modules_new->stages = array();
@@ -382,6 +411,7 @@ class ModuleData_Task {
 
 	public static function getModuleAPIData($code){
 
+		xdebug_break();
 		if(array_key_exists($code,self::$moduleCache)){
 			return self::$moduleCache[$code];
 		}
