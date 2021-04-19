@@ -33,7 +33,6 @@ class ModuleData_Task
 			$parameters['type'] = 'pg';
 			$this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'pg'));
 		} else {
-			// @todo does specifying a single id actually work? - what is the prupose of the module() method
 			if ($parameters['type']) {
 				Cache::purge('api-index-' . $parameters['type']);
 				$this->load_modules($parameters, \API::get_index($parameters['programme_session'], $parameters['type']));
