@@ -23,18 +23,31 @@ class ModuleData_Task
 
 		// if no id is specified, just do everything
 		if (empty($parameters['id'])) {
-			Cache::purge('api-index-ug');
+
+			try {
+				Cache::purge('api-index-ug')
+			} catch (\Throwable $th) {
+				// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
+			}
 			// load UG
 			$parameters['type'] = 'ug';
 			$this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'ug'));
 
-			Cache::purge('api-index-pg');
+			try {
+				Cache::purge('api-index-pg');
+			} catch (\Throwable $th) {
+				// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
+			}
 			// load PG
 			$parameters['type'] = 'pg';
 			$this->load_modules($parameters, \API::get_index($parameters['programme_session'], 'pg'));
 		} else {
 			if ($parameters['type']) {
-				Cache::purge('api-index-' . $parameters['type']);
+				try {
+					Cache::purge('api-index-' . $parameters['type']);
+				} catch (\Throwable $th) {
+					// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
+				}
 				$this->load_modules($parameters, \API::get_index($parameters['programme_session'], $parameters['type']));
 			} else {
 				echo "ERROR - cannot specify a programme id without also specifying type (-p or -u)\n";
@@ -89,7 +102,7 @@ class ModuleData_Task
 						}
 					}
 
-					$n_stages = ($programme_modules_new) ? count(get_object_vars($programme_modules_new)) : 0;
+					$n_stages = ($programme_modules_new) ? count($programme_modules_new) : 0;
 					echo "\nStages count:" . $n_stages . "\n\n";
 
 					if (! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) {
