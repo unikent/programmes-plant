@@ -25,7 +25,7 @@ class ModuleData_Task
 		if (empty($parameters['id'])) {
 
 			try {
-				Cache::purge('api-index-ug')
+				Cache::purge('api-index-ug');
 			} catch (\Throwable $th) {
 				// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
 			}
@@ -71,6 +71,7 @@ class ModuleData_Task
 			}
 			if (empty($parameters['id']) || $parameters['id'] == $programme['id']) {
 				echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+				ob_flush();
 				flush();
 				$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
 				// Get deliveries
@@ -109,6 +110,7 @@ class ModuleData_Task
 						Cache::put($cache_key, $programme_modules_new, 2628000);
 					}
 					sleep($parameters['sleeptime']);
+					ob_flush();
 					flush();
 				}
 			}
