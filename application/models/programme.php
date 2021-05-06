@@ -533,6 +533,8 @@ abstract class Programme extends Revisionable {
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
 				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',	
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
+				'parent_course_id' => isset($attributes[$parent_course_field]) ? $attributes[$parent_course_field] : '',
+				'group_courses_ids' => isset($attributes[$group_courses_field]) ? $attributes[$group_courses_field] : '',
 			);
 			
 			$statuses = '(';
@@ -551,29 +553,6 @@ abstract class Programme extends Revisionable {
 
 		}
 
-		// add parent and group course files to the index
-		foreach ($programmes as $programme) {
-			$instance_id 	= $programme->attributes["instance_id"];
-			// include parent course if one exists
-			$parent_course = empty($programme->attributes[$parent_course_field]) ? null : static::replace_ids_with_values($programme->attributes[$parent_course_field], $year, false, true);
-			if ($parent_course) {
-				// remove any deep nested included courses
-				$parent_course['group_courses'] = null;
-				$parent_course['parent_course'] = null;
-			}
-			$index_data[$instance_id]['parent_course'] = $parent_course;
-
-			// include group courses if they exist
-			$group_courses = empty($programme->attributes[$group_courses_field]) ? null : static::replace_ids_with_values($programme->attributes[$group_courses_field], $year, false);
-			if ($group_courses) {
-				// remove any deep nested included courses
-				for ($i=0; $i < count($group_courses); $i++) {
-					$group_courses[$i]['group_courses'] = null;
-					$group_courses[$i]['parent_course'] = null;
-				}
-			}
-			$index_data[$instance_id]['group_courses'] = $group_courses;
-		}
 		// Store index data in to cache
 		Cache::put($cache_key_index, $index_data, 2628000);
 
