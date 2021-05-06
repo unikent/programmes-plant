@@ -229,6 +229,10 @@ abstract class Programme extends Revisionable {
 			}
 		}
 
+		if ($single) {
+			$values = empty($values) ? null : $values[0];
+		}
+
 		return $values;
 	}
 
@@ -375,6 +379,9 @@ abstract class Programme extends Revisionable {
 
 	/**
 	 * generate new copy of programmes listing data from live DB
+	 * and caches that index for api output
+	 *
+	 * Note: the methods which call this do not actually seem to use the return value
 	 *
 	 * @param $year year to get index for
 	 * @return programmes index
@@ -448,13 +455,13 @@ abstract class Programme extends Revisionable {
 			$science_without_borders_field,
 			$clearing_exemption_field,
 			$by_research_field,
-			$parent_course_field,
-			$group_courses_field,
 			static::get_banner_image_field(),
 		);
-		// If UG, add ucas field
+		// If UG programmes get ucas, parent course and group courses fields
 		if ($type == 'ug') {
 			$fields[] = $ucas_code_field;
+			$fields[] = $parent_course_field;
+			$fields[] = $group_courses_field;
 		}
 		// if pg add additional locations field and study abroad
 		if ($type == 'pg') {
@@ -481,8 +488,7 @@ abstract class Programme extends Revisionable {
 			->where_in('id', $live_revisions_ids)
 			->get($fields);
 		// Build index array
-		foreach($programmes as $programme)
-		{
+		foreach ($programmes as $programme) {
 			$additional_locations = Campus::replace_ids_with_values($programme->$additional_locations_field, false, true);
 			$additional_locations = implode(', ', $additional_locations);
 			$additional_locations = preg_replace("/, ([^,]+)$/", " and $1", $additional_locations);
@@ -491,17 +497,13 @@ abstract class Programme extends Revisionable {
 			$attributes = $programme->attributes;
 			$relationships = $programme->relationships;
 
-			if($type == 'pg')
-			{
+			if($type == 'pg') {
 				$awards = PG_Award::replace_ids_with_values($programme->$award_field, false, true);
 				$awards = implode(', ', $awards);
-
-			}
-			else
-			{
+			} else {
 				$awards = isset($relationships["award"]) ? $relationships["award"]->attributes["name"] : '';
 			}
-
+			
 			$index_data[$attributes['instance_id']] = array(
 				'id' 		=> 		$attributes['instance_id'],
 				'name' 		=> 		$attributes[$title_field],
@@ -529,14 +531,10 @@ abstract class Programme extends Revisionable {
 				'science_without_borders' => isset($attributes[$science_without_borders_field]) ? $attributes[$science_without_borders_field] : '',
 				'attendance_mode' => isset($attributes[$attendance_mode_field]) ? $attributes[$attendance_mode_field] : '',
 				'clearing_exemption' => isset($attributes[$clearing_exemption_field]) ? $attributes[$clearing_exemption_field] : '',
-				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',
-
-				// course groupings and parent course
-				'parent_course' => isset($attributes[$parent_course_field]) ? Programme::replace_ids_with_values($attributes[$parent_course_field], false, true) : '',
-				'group_courses' => isset($attributes[$group_courses_field]) ? Programme::replace_ids_with_values($attributes[$group_courses_field], false, true) : '',
-
+				'by_research' => isset($attributes[$by_research_field]) ? $attributes[$by_research_field] : '',	
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 			);
+			
 			$statuses = '(';
 			if($index_data[$attributes['instance_id']]['subject_to_approval'] == 'true'){
 				$statuses .= "subject to approval";
@@ -553,16 +551,38 @@ abstract class Programme extends Revisionable {
 
 		}
 
+		// add parent and group course files to the index
+		foreach ($programmes as $programme) {
+			$instance_id 	= $programme->attributes["instance_id"];
+			// include parent course if one exists
+			$parent_course = empty($programme->attributes[$parent_course_field]) ? null : static::replace_ids_with_values($programme->attributes[$parent_course_field], $year, false, true);
+			if ($parent_course) {
+				// remove any deep nested included courses
+				$parent_course['group_courses'] = null;
+				$parent_course['parent_course'] = null;
+			}
+			$index_data[$instance_id]['parent_course'] = $parent_course;
 
+			// include group courses if they exist
+			$group_courses = empty($programme->attributes[$group_courses_field]) ? null : static::replace_ids_with_values($programme->attributes[$group_courses_field], $year, false);
+			if ($group_courses) {
+				// remove any deep nested included courses
+				for ($i=0; $i < count($group_courses); $i++) {
+					$group_courses[$i]['group_courses'] = null;
+					$group_courses[$i]['parent_course'] = null;
+				}
+			}
+			$index_data[$instance_id]['group_courses'] = $group_courses;
+		}
 		// Store index data in to cache
 		Cache::put($cache_key_index, $index_data, 2628000);
+
 
 		// Map relaated subjects.
 		$subject_relations = array();
 
 		// For each programme in output
-		foreach($programmes as $programme){
-
+		foreach ($programmes as $programme) {
 			$subject_area_1 = isset($programme->attributes[$subject_area_1_field]) ? $programme->attributes[$subject_area_1_field] : '';
 			$subject_area_2 = isset($programme->attributes[$subject_area_2_field]) ? $programme->attributes[$subject_area_2_field] : '';
 			$instance_id 	= $programme->attributes["instance_id"];
@@ -580,7 +600,13 @@ abstract class Programme extends Revisionable {
 		// Store subject mapping data in to cache
 		Cache::put($cache_key_subject, $subject_relations, 2628000);
 
-		// return
+		/*
+		- here be dragons -
+
+		this return value does not actually seem
+		to be used - the calling functions seem to rely on
+		this function putting the output in the cache
+		*/
 		return $index_data;
 	}
 
