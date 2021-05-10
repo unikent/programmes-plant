@@ -23,7 +23,6 @@ class ModuleData_Task
 
 		// if no id is specified, just do everything
 		if (empty($parameters['id'])) {
-
 			try {
 				Cache::purge('api-index-ug');
 			} catch (\Throwable $th) {
@@ -47,7 +46,7 @@ class ModuleData_Task
 					Cache::purge('api-index-' . $parameters['type']);
 				} catch (\Throwable $th) {
 					// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
-				}			
+				}
 				// we are only interested in a single programme so filter that out of the index of all programmes
 				$index =  \API::get_index($parameters['programme_session'], $parameters['type']);
 				$filtered_index = array();
@@ -74,7 +73,7 @@ class ModuleData_Task
 			$n++;
 			if ($parameters['counter'] > 0 && $n > $parameters['counter']) {
 				break;
-			}		
+			}
 			echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
 			ob_flush();
 			flush();
@@ -205,7 +204,7 @@ class ModuleData_Task
 		return "
 -s - programme session. Defaults to 2014.
 -t - seconds per web service call. Defaults to 5 (one request every 5 seconds).
--c - programmes to process. Defaults to 1. 0 indicates all.
+-c - number of programmes to process. Defaults to 0. (all programmes)
 -x - test mode.
 -i<id> - only process the single programme with id <id>. Requires specifying level with -u or -p.
 -u - (with -i, otherwise ignored) the programme is an undergraduate programme
