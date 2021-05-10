@@ -47,8 +47,14 @@ class ModuleData_Task
 					Cache::purge('api-index-' . $parameters['type']);
 				} catch (\Throwable $th) {
 					// do nothing but pruge will throw an exception if the directory it is trying to purge does not exists
+				}			
+				// we are only interested in a single programme so filter that out of the index of all programmes
+				$index =  \API::get_index($parameters['programme_session'], $parameters['type']);
+				$filtered_index = array();
+				if (isset($index[$parameters['id']])) {
+					$filtered_index[] = $index[$parameters['id']];
 				}
-				$this->load_modules($parameters, \API::get_index($parameters['programme_session'], $parameters['type']));
+				$this->load_modules($parameters, $filtered_index, $parameters['type']);
 			} else {
 				echo "ERROR - cannot specify a programme id without also specifying type (-p or -u)\n";
 				echo $parameters['help'];
@@ -68,51 +74,49 @@ class ModuleData_Task
 			$n++;
 			if ($parameters['counter'] > 0 && $n > $parameters['counter']) {
 				break;
+			}		
+			echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+			ob_flush();
+			flush();
+			$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
+			// Get deliveries
+			$deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
+			if (sizeof($deliveries) === 0) {
+				continue;
 			}
-			if (empty($parameters['id']) || $parameters['id'] == $programme['id']) {
-				echo "Programme: " . $parameters['type'] . '-' . $programme['id'] . "\n";
+			// Kent
+			$institution = '0122';
+			// get campus
+			$campus_id = $programme['campus_id'];
+			$module_session = $this->parse_module_session($programme['module_session'], $parameters);
+			echo "Module session: {$module_session}\n";
+			if (empty($module_session)) {
+				continue;
+			}
+
+			$module_cache =array();
+			// cache modules for each delivery
+			foreach ($deliveries as $delivery) {
+				$cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
+
+				if (array_key_exists($cache_key, $module_cache)) {
+					continue;
+				} else {
+					$programme_modules_new = $this->load_module_data($parameters['type'], $programme['id'], $campus_id, $module_session);
+					if ($programme_modules_new!==null) {
+						$module_cache[$cache_key] = $programme_modules_new;
+					}
+				}
+
+				$n_stages = ($programme_modules_new) ? count($programme_modules_new) : 0;
+				echo "\nStages count:" . $n_stages . "\n\n";
+
+				if (! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) {
+					Cache::put($cache_key, $programme_modules_new, 2628000);
+				}
+				sleep($parameters['sleeptime']);
 				ob_flush();
 				flush();
-				$deliveryClass=  strtoupper($parameters['type']) . '_Delivery';
-				// Get deliveries
-				$deliveries =  $deliveryClass::get_programme_deliveries($programme['id'], $parameters['programme_session']);
-				if (sizeof($deliveries) === 0) {
-					continue;
-				}
-				// Kent
-				$institution = '0122';
-				// get campus
-				$campus_id = $programme['campus_id'];
-				$module_session = $this->parse_module_session($programme['module_session'], $parameters);
-				echo "Module session: {$module_session}\n";
-				if (empty($module_session)) {
-					continue;
-				}
-
-				$module_cache =array();
-				// cache modules for each delivery
-				foreach ($deliveries as $delivery) {
-					$cache_key = 'programme-modules.' . $parameters['type'] . '-' . $parameters['programme_session'] . '-' . base64_encode($delivery['pos_code']) . '-' . $programme['id'];
-
-					if (array_key_exists($cache_key, $module_cache)) {
-						continue;
-					} else {
-						$programme_modules_new = $this->load_module_data($parameters['type'], $programme['id'], $campus_id, $module_session);
-						if ($programme_modules_new!==null) {
-							$module_cache[$cache_key] = $programme_modules_new;
-						}
-					}
-
-					$n_stages = ($programme_modules_new) ? count($programme_modules_new) : 0;
-					echo "\nStages count:" . $n_stages . "\n\n";
-
-					if (! $parameters['test_mode'] && $programme_modules_new!==null && $programme_modules_new!==false) {
-						Cache::put($cache_key, $programme_modules_new, 2628000);
-					}
-					sleep($parameters['sleeptime']);
-					ob_flush();
-					flush();
-				}
 			}
 		}
 	}
@@ -157,7 +161,7 @@ class ModuleData_Task
 		$parameters = array();
 		$parameters['programme_session'] = '2014';
 		$parameters['sleeptime'] = 5;
-		$parameters['counter'] = 1;
+		$parameters['counter'] = 0;
 		$parameters['test_mode'] = false;
 
 		foreach ($arguments as $argument) {
