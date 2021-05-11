@@ -119,24 +119,28 @@ class ProgrammeSettings_Controller extends Revisionable_Controller {
 	 */
 	public function post_edit($year, $type)
 	{
-			$model = $this->model;
-			$subject = $model::where('year', '=', $year)->first();
+		$model = $this->model;
+		$subject = $model::where('year', '=', $year)->first();
 
-			$subject->year = Input::get('year');
+		$subject->year = Input::get('year');
+		//Save varible fields
+		$f = $this->get_fields();
 
-			//Save varible fields
-			$f = $this->get_fields();
-			foreach ($f as $c) {
-				$col = $c->colname;
+		foreach ($f as $c) {
+			$col = $c->colname;
+
+			// some users get a limited set of fields in the edit form
+			// therefore only update values where they exist in the form
+			if (Input::get($col)) {
 				$subject->$col = Input::get($col);
 			}
+		}
+		
+		$subject->save();
 
-			$subject->save();
+		Messages::add('success','Programme settings updated.');
 
-			Messages::add('success','Programme settings updated.');
-
-			return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit');
-
+		return Redirect::to($year.'/'. $type.'/'. $this->views.'/edit');
 	}
 
 	private function get_fields()
