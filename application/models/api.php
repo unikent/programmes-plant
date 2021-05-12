@@ -190,6 +190,7 @@ class API {
 
 		$p = $model::find($id);
 		$revision = $p->get_revision($revision_id);
+		$years = $model::get_years($p->instance_id);
 
 		// If this revision exists
 		if($revision !== false){
@@ -202,6 +203,25 @@ class API {
 			}
 			// Generate programme
 			$final = static::combine_programme($revision->to_array(), $programme_settings, $globals);
+			//add current year
+			$level = URLParams::get_type();
+			$final['current_year'] = Setting::get_setting("{$level}_current_year");
+
+			// combine statuses
+			$statuses = '(';
+			if($final['subject_to_approval'] == 'true'){
+				$statuses .= "subject to approval";
+			}
+			if($final['programme_withdrawn'] == 'true'){
+				$statuses .= $statuses == '(' ? "withdrawn" : ", withdrawn";
+			}
+			if ($final['programme_suspended'] == 'true') {
+				$statuses .= $statuses == '(' ? "suspended" : ", suspended";
+			}
+			$statuses = $statuses == '(' ? '' : $statuses . ')';
+			$final['programmme_status_text'] = $statuses;
+			$final['years'] = $years;
+
 			// Log revision identity
 			$final['revision_id'] = $revision->get_identifier();
 
