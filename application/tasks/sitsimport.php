@@ -6,11 +6,14 @@ use Kent\Log;
  * This task file is used to load an XML feed provided from SITS
  * and import the data into the Programmes Plant
  *
- * Data imported is IPO, POS code, MCR code, ARI code, description,
+ * Data imported is IPO, POS code, MCR code, ARI code, CRS code, description,
  * award and attendance type (full-time or part-time)
  *
  * The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS
  * when they click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+ *
+ * The CRS code is used as the ID for Discover Uni widgets and replaces the previously
+ * manually produced KISCOUREID
  */
 class SITSImport_Task
 {
@@ -22,6 +25,13 @@ class SITSImport_Task
 
 	public function run($args = array())
 	{
+		// login as initial user so changes to programs can be saved since these
+		// are Auth'd in the model
+		Auth::login(1);
+		if (!Auth::user()) {
+			Log::error('Initial User not found. Quiting.');
+			die();
+		}
 
 		$parameters = $this->parse_arguments($args);
 	  // display help if needed
@@ -76,7 +86,14 @@ class SITSImport_Task
 			if (empty($programme) || !is_object($programme)) {
 				continue;
 			}
-
+			
+			// if this is a course with a KIS course then
+			// update that with crs code if found
+			$kiscoursefield = $programme::get_kiscourseid_field();
+			if ($kiscoursefield && isset($course->crs)) {
+				$programme->$kiscoursefield = (string)$course->crs;
+				$programme->save();
+			}
 
 			URLParams::$type = $courseLevel;
 			$delivery = $this->createDelivery($course, $programme, $year, $courseLevel);
