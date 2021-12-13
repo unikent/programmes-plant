@@ -87,14 +87,8 @@ class SITSImport_Task
 				continue;
 			}
 			
-			// if this is a course with a KIS course then
-			// update that with crs code if found
-			$kiscoursefield = $programme::get_kiscourseid_field();
-			if ($kiscoursefield && isset($course->crs)) {
-				$programme->$kiscoursefield = (string)$course->crs;
-				$programme->save();
-			}
-
+			$this->updateKISCourseID($course, $programme);
+			
 			URLParams::$type = $courseLevel;
 			$delivery = $this->createDelivery($course, $programme, $year, $courseLevel);
 		}
@@ -102,7 +96,45 @@ class SITSImport_Task
 	  // clear output cache
 		API::purge_output_cache();
 	}
+	
+	/**
+	 * updateKISCourseID
+	 *
+	 * create a new revision of $programme with the
+	 * crs code in $course if needed
+	 *
+	 * @param  object $course
+	 * @param  object $programme
+	 * @return void
+	 */
+	public function updateKISCourseID($course, $programme)
+	{
+		$kiscoursefield = $programme::get_kiscourseid_field();
 
+		if (!$kiscoursefield) {
+			// don't update KISCOURSEID if programme does not have one
+			return;
+		}
+
+		if (!isset($course->crs)) {
+			// don't update KISCOURSEID if we do not have a CRS Code
+			return;
+		}
+
+		if ($programme->current_revision != $programme->live_revision) {
+			// don't update course if an edit is currently in progress
+			return;
+		}
+
+		if ($programme->$kiscoursefield == (string)$course->crs) {
+			// avoid updating ID if we don't need to
+			return;
+		}
+		
+		$programme->$kiscoursefield = (string)$course->crs;
+		$programme->save();
+		$programme->make_revision_live($programme->current_revision);
+	}
   /**
    * Remove all PG deliveries
    */
