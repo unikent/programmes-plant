@@ -39,7 +39,9 @@ class LDAPConnect
     public function __construct($address, $port = 389)
     {
         $this->ldap_server_address = $address;
-        $this->ldap_connection = ldap_connect($address, $port);
+        // use connect string rather than deprecated address and port params to work
+        // around issue with using non-default port
+        $this->ldap_connection = ldap_connect("$address:$port");
     }
 
     /**

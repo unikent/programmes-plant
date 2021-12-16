@@ -469,6 +469,11 @@ abstract class Programme extends Revisionable {
 			$fields[] = $attendance_mode_field;
 		}
 
+		// fields can be added in production therefore it is possible that this code
+		// expects something not in the current database when making calls to  get_????_field.
+		// Filter out the blanks from $fields out to prevent an error when generating the list of $programmes
+		$fields = array_filter($fields);
+
 		// Find all programmes that have a live revision set (live_revision != 0)
 		$programmes_with_live_revisions = static::where('year','=', $year)->where('live_revision', '!=', 0)->where('hidden', '!=', 1)->get('live_revision');
 

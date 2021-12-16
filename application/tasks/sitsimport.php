@@ -6,11 +6,14 @@ use Kent\Log;
  * This task file is used to load an XML feed provided from SITS
  * and import the data into the Programmes Plant
  *
- * Data imported is IPO, POS code, MCR code, ARI code, description,
+ * Data imported is IPO, POS code, MCR code, ARI code, CRS code, description,
  * award and attendance type (full-time or part-time)
  *
  * The IPO, MCR, and ARI codes are used to direct users to the appropriate course in SITS
  * when they click the 'apply', 'enquire', or 'order prospectus' links on a course page.
+ *
+ * The CRS code is used as the ID for Discover Uni widgets and replaces the previously
+ * manually produced KISCOUREID
  */
 class SITSImport_Task
 {
@@ -22,6 +25,13 @@ class SITSImport_Task
 
 	public function run($args = array())
 	{
+		// login as initial user so changes to programs can be saved since these
+		// are Auth'd in the model
+		Auth::login(1);
+		if (!Auth::user()) {
+			Log::error('Initial User not found. Quiting.');
+			die();
+		}
 
 		$parameters = $this->parse_arguments($args);
 	  // display help if needed
@@ -76,8 +86,9 @@ class SITSImport_Task
 			if (empty($programme) || !is_object($programme)) {
 				continue;
 			}
-
-
+			
+			$this->updateKISCourseID($course, $programme);
+			
 			URLParams::$type = $courseLevel;
 			$delivery = $this->createDelivery($course, $programme, $year, $courseLevel);
 		}
@@ -85,7 +96,45 @@ class SITSImport_Task
 	  // clear output cache
 		API::purge_output_cache();
 	}
+	
+	/**
+	 * updateKISCourseID
+	 *
+	 * create a new revision of $programme with the
+	 * crs code in $course if needed
+	 *
+	 * @param  object $course
+	 * @param  object $programme
+	 * @return void
+	 */
+	public function updateKISCourseID($course, $programme)
+	{
+		$kiscoursefield = $programme::get_kiscourseid_field();
 
+		if (!$kiscoursefield) {
+			// don't update KISCOURSEID if programme does not have one
+			return;
+		}
+
+		if (!isset($course->crs)) {
+			// don't update KISCOURSEID if we do not have a CRS Code
+			return;
+		}
+
+		if ($programme->current_revision != $programme->live_revision) {
+			// don't update course if an edit is currently in progress
+			return;
+		}
+
+		if ($programme->$kiscoursefield == (string)$course->crs) {
+			// avoid updating ID if we don't need to
+			return;
+		}
+		
+		$programme->$kiscoursefield = (string)$course->crs;
+		$programme->save();
+		$programme->make_revision_live($programme->current_revision);
+	}
   /**
    * Remove all PG deliveries
    */
