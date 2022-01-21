@@ -244,7 +244,7 @@ class SITSImport_Task
 
 	public function trimPOSCode($pos)
 	{
-		return preg_replace("/\d+$/", "", $pos);
+		return preg_replace("/\d+X?$/", "", $pos);
 	}
 
   /**
