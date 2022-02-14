@@ -1,5 +1,7 @@
 <?php
 
+require_once path('base') . 'vendor/autoload.php';
+
 use Kent\Log;
 
 /**
@@ -66,17 +68,27 @@ class SITSDBImport_Task
 		Log::$logfile = path('storage') . '/logs/sits_db_import.log';
 		Log::purge();
 
-		var_dump($this->load_sitsimport_data('pg', $this->processYears['pg']));die;
-		exit();
+		$data = $this->load_sitsimport_data('pg', $this->processYears['pg']);
+		// if we have no data, exit
+		if (!$data) {
+			exit;
+		}
 
-	  // Load XML file
-		$xml = $this->loadXML($parameters['path']);
-	  // If XML file is good, purge old caches before starting import
+		$courseGroupings = [];
+		foreach ($data as $delivery) {
+			$courseGroupings[$delivery->pp_page_id][] = $delivery;
+		}
+
+		// If XML file is good, purge old caches before starting import
 		$this->purgeOldPGData($this->processYears['pg']);
 		$this->purgeOldUGData($this->processYears['ug']);
-
-		foreach ($xml as $course) {
-		  //make sure it has a programme ID in the progsplant
+		
+		foreach ($courseGroupings as $id => $deliveries) {
+			echo $id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
+				return $delivery->sds_pos_code;
+			}, $deliveries)) . PHP_EOL;
+			continue;
+			//make sure it has a programme ID in the progsplant
 			if (!$this->checkCourseIsValid($course)) {
 				continue;
 			}
@@ -415,9 +427,8 @@ class SITSDBImport_Task
 		
 		// load data
 		echo "Requesting: " . $webservice_request . ' - ';
-		error_reporting(E_ALL);
+		
 		$this->curl = new \Curl($webservice_request);
-		die("done");
 		
 		// don't verify ssl
 		$this->curl->ssl(false);
@@ -426,7 +437,7 @@ class SITSDBImport_Task
 		$this->curl->http_method = 'get';
 		
 		// set a timeout
-		$timeout = 5;
+		$timeout = 30;
 		$this->curl->option(CURLOPT_TIMEOUT, $timeout);
 		
 		// proxy if required
@@ -435,7 +446,14 @@ class SITSDBImport_Task
 			$this->curl->proxy($this->proxy_server, $this->proxy_port);
 		}
 		$response = $this->curl->execute();
-		echo($response); 
+
+		if (!$response) {
+			$errorsMessage = 'Error getting delivery data from API:' . $webservice_request;
+			echo $errorsMessage;
+			Log::error($errorsMessage);
+			return false;
+		}
+		
 		return json_decode($response);
 	}
 
