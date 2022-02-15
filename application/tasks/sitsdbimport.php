@@ -225,7 +225,7 @@ class SITSDBImport_Task
 
 		$delivery = new $deliveryClass;
 
-		$delivery->programme_id = $programme->instance_id;
+		$delivery->programme_id = $programme->id;
 
 		$award = intval($deliveryData->pp_award_id);
 		$delivery->award = empty($award) ? 0 : $award;
