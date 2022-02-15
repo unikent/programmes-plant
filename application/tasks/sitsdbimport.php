@@ -68,30 +68,27 @@ class SITSDBImport_Task
 		Log::purge();
 		
 		foreach ($this->processYears as $level => $year) {
-			$data[$level] = $this->load_sitsimport_data($level, $year);
-			// code...
-		}
-		// if we have no data, exit
-		if (!$data) {
-			exit;
-		}
+			$data = $this->load_sitsimport_data($level, $year);
+			// if we have no data, exit
+			if (!$data) {
+				continue;
+			}
 
-		foreach ($data as $level => $deliveries) {
-			// code...
 			$courseGroupings = [];
 			foreach ($data as $delivery) {
-					//only add delivery if it is new or has an MCR that is lower than the previous one
-					if (
-						isset($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]) &&
-						intval($delivery->sits_apply_link_code2) > intval($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]->sits_apply_link_code2)
-					) {
-						continue;
-					}
+				//only add delivery if it is new or has an MCR that is lower than the previous one
+				if (
+					isset($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]) &&
+					intval($delivery->sits_apply_link_code2) > intval($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]->sits_apply_link_code2)
+				) {
+					continue;
+				}
 
-					$courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1] = $delivery;
+				$courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1] = $delivery;
 			}
-		
-			$this->purgeOldData($level, $this->processYears[$level]);
+			
+			$this->purgeOldData($level, $year);
+
 			
 			foreach ($courseGroupings as $programme_id => $deliveries) {
 
@@ -101,7 +98,6 @@ class SITSDBImport_Task
 				 	break;
 				 }
 				
-			  //get rid of 'UG'/'PG' that SITS concat to our progsplant ID
 				$programme = $this->getProgramme($firstDelivery->pp_page_id, $level);
 
 				if (empty($programme) || !is_object($programme)) {
@@ -123,7 +119,7 @@ class SITSDBImport_Task
 				
 				URLParams::$type = $level;
 				foreach ($deliveries as $mcr => $deliveryData) {
-					$delivery = $this->createDelivery($programme, $deliveryData);
+					$delivery = $this->createDelivery($level, $programme, $deliveryData);
 				}
 			}
 		}
@@ -227,12 +223,12 @@ class SITSDBImport_Task
    * We add a number of fields from the XML to the database in
    * this function.
    */
-	public function createDelivery($programme, $deliveryData)
+	public function createDelivery($level, $programme, $deliveryData)
 	{
 		$deliveryClass = "PG_Delivery";
 		$award_class = "PG_Award"; //TODO: remove if not needed
 
-		if ($course->level === 'ug') {
+		if ($level === 'ug') {
 			$deliveryClass = "UG_Delivery";
 			$award_class = "UG_Award"; //TODO: remove if not needed
 		}
