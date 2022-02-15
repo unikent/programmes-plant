@@ -91,35 +91,23 @@ class SITSDBImport_Task
 		$this->purgeOldPGData($this->processYears['pg']);
 		$this->purgeOldUGData($this->processYears['ug']);
 		
-		foreach ($courseGroupings as $id => $deliveries) {
+		foreach ($courseGroupings as $programme_id => $deliveries) {
 
-			$course = new stdClass();
-
-			$course->deliveries = $deliveries;
 			$firstDelivery = null;
-			foreach ($deliveries as $key => $delivery) {
+			foreach ($deliveries as $mcr => $delivery) {
 			 	$firstDelivery = $delivery;
 			 	break;
 			 }
 			
 		  //get rid of 'UG'/'PG' that SITS concat to our progsplant ID
-			// $course->pos = $firstDelivery->sds_pos_code;
-			$course->level = strtolower(substr($firstDelivery->sits_study_level, 0, 2)); // or pp_award_level?
-			$course->year = $this->processYears[$course->level];
-			// $course->mcr = $firstDelivery->sits_apply_link_code1;
-			// $course->crs = $firstDelivery->pp_discover_uni_id;
-			// $course->ari_code = $firstDelivery->sits_enquiry_link_code;
-			// $course->description = $firstDelivery->sits_course_title_full;
-			// $course->attendanceType = $firstDelivery->sits_attend_mode;
-			$course->programme   = $this->getProgramme($course, $firstDelivery->pp_page_id);
+			$level = strtolower(substr($firstDelivery->sits_study_level, 0, 2)); // or pp_award_level?
+			$programme = $this->getProgramme($firstDelivery->pp_page_id, $level);
 
-			if (empty($course->programme) || !is_object($course->programme)) {
+			if (empty($programme) || !is_object($programme)) {
 				continue;
 			}
 
-			$this->updateKISCourseID($course);
-			
-			echo $course->programme->instance_id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
+			echo $programme->instance_id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
 				return $delivery->sits_academic_year 
 						. " " . $delivery->sits_study_level 
 						. " " . $delivery->sds_pos_code 
@@ -129,9 +117,13 @@ class SITSDBImport_Task
 						. " " . $delivery->pp_discover_uni_id;
 			}, $deliveries)) . PHP_EOL;
 			continue;
+
+			$this->updateKISCourseID($programme, $firstDelivery->pp_discover_uni_id);
 			
-			URLParams::$type = $course->level;
-			$delivery = $this->createDelivery($course);
+			URLParams::$type = $level;
+			foreach ($deliveries as $mcr => $deliveryData) {
+				$delivery = $this->createDelivery($programme, $deliveryData);
+			}
 		}
 	
 	  // clear output cache
@@ -148,9 +140,8 @@ class SITSDBImport_Task
 	 * @param  object $programme
 	 * @return void
 	 */
-	public function updateKISCourseID($course)
+	public function updateKISCourseID($programme, $crs)
 	{
-		$programme = $course->programme;
 		$kiscoursefield = $programme::get_kiscourseid_field();
 
 		if (!$kiscoursefield) {
@@ -158,24 +149,24 @@ class SITSDBImport_Task
 			return;
 		}
 
-		if (!isset($course->crs)) {
+		if (!isset($crs)) {
 			// don't update KISCOURSEID if we do not have a CRS Code
 			return;
 		}
 
-		if ($course->programme->current_revision != $course->programme->live_revision) {
+		if ($programme->current_revision != $programme->live_revision) {
 			// don't update course if an edit is currently in progress
 			return;
 		}
 
-		if ($course->programme->$kiscoursefield == (string)$course->crs) {
+		if ($programme->$kiscoursefield == (string)$crs) {
 			// avoid updating ID if we don't need to
 			return;
 		}
 		
-		$course->programme->$kiscoursefield = (string)$course->crs;
-		$course->programme->save();
-		$course->programme->make_revision_live($course->programme->current_revision);
+		$programme->$kiscoursefield = (string)$crs;
+		$programme->save();
+		$programme->make_revision_live($programme->current_revision);
 	}
   /**
    * Remove all PG deliveries
@@ -293,18 +284,18 @@ class SITSDBImport_Task
 		return 'pg';
 	}
 
-	public function getProgramme($course, $programme_id)
+	public function getProgramme($id, $level)
 	{
-		$model = $course->level === "ug" ? "UG_Programme" : "PG_Programme";
+		$model = $level === "ug" ? "UG_Programme" : "PG_Programme";
 		
 		return $model::where(
 			"instance_id",
 			"=",
-			$programme_id
+			$id
 		)->where(
 			"year",
 			"=",
-			$this->processYears[$course->level]
+			$this->processYears[$level]
 		)->first();
 	}
 
@@ -313,55 +304,35 @@ class SITSDBImport_Task
    * We add a number of fields from the XML to the database in
    * this function.
    */
-	public function createDelivery($course)
+	public function createDelivery($programme, $deliveryData)
 	{
-		$delivery_class = "PG_Delivery";
-		$award_class = "PG_Award";
+		$deliveryClass = "PG_Delivery";
+		$award_class = "PG_Award"; //TODO: remove if not needed
 
 		if ($course->level === 'ug') {
-			$delivery_class = "UG_Delivery";
-			$award_class = "UG_Award";
+			$deliveryClass = "UG_Delivery";
+			$award_class = "UG_Award"; //TODO: remove if not needed
 		}
 
-		$delivery = new $delivery_class;
+		$delivery = new $deliveryClass;
 
-		$delivery->programme_id = $course->programme->instance_id;
+		$delivery->programme_id = $programme->instance_id;
 
-		$award = intval($course->award);
+		$award = intval($deliveryData->pp_award_id);
 		$delivery->award = empty($award) ? 0 : $award;
 
-		$delivery->pos_code = (string)$course->pos;
-		$delivery->mcr = (string)$course->mcr;
-		$delivery->ari_code = (string)$course->ari_code;
-		$delivery->description = (string)$course->description;
-		$delivery->attendance_pattern = strtolower($course->attendanceType);
+		$delivery->pos_code = (string)$deliveryData->sds_pos_code ;
+		$delivery->mcr = (string)$deliveryData->sits_apply_link_code1;
+		$delivery->ari_code = (string)$deliveryData->sits_enquiry_link_code;
+		$delivery->description = (string)$deliveryData->sits_course_title_full;
+		$delivery->attendance_pattern = strtolower($deliveryData->sits_attend_mode);
 
-		$delivery->current_ipo = $this->extractCurrentIPO($course, $course->year);
+		$delivery->current_ipo = $deliveryData->sits_apply_link_code2;
 		$delivery->previous_ipo='';
 
 		$delivery->save();
 
 		return $delivery;
-	}
-
-  /**
-   * Get the IPOs that are inUse in SITS
-   * We use this function to get the sequence number for the relevant academicYear
-   */
-	public function extractCurrentIPO($course, $year)
-	{
-
-		if ($course->inUse == 'N') {
-			return "";
-		}
-
-		foreach ($course->ipo as $ipo) {
-			if (intval($ipo->academicYear) - 1 === intval($year) && $ipo->inUse == 'Y') {
-				return (string)$ipo->sequence;
-			}
-		}
-
-		return "";
 	}
 
   /**
