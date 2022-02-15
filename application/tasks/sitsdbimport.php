@@ -42,7 +42,6 @@ class SITSDBImport_Task
 	public $processYears = array();
 	public $seenProgrammes = array();
 	public $ipos = array();
-	public $path = '/www/live/shared/shared/data/SITSCourseData/SITSCourseData.xml';
 
 	public function run($args = array())
 	{
@@ -186,102 +185,12 @@ class SITSDBImport_Task
 		DB::table('ug_programme_deliveries')->where_in('programme_id', $to_del)->delete();
 	}
 
-	public function loadXML($path)
-	{
-
-		libxml_use_internal_errors(true);
-		
-		if (filemtime($path) < (time()-(24 * 60 * 60))) {
-			Log::error('XML file has not been modified for more than 24 hours.');
-		}
-
-		$courses = simplexml_load_file($path);
-
-		if ($courses === false) {
-			Log::error('XML file does not exist or is invalid.');
-			foreach (libxml_get_errors() as $error) {
-				Log::error($error->message);
-			}
-			exit;
-		}
-
-		return $courses;
-	}
-
   /**
    * Get the live Programmes Plant Year for each level
    */
 	public function getCurrentYear($level)
 	{
 		return Setting::get_setting($level . "_current_year");
-	}
-
-	/**
-	 * checkCourseIsUndergraduateAndAppliedToDirectly
-	 *
-	 * checks to see if a given course is an undergraduate course which accepts direct (SITS) applications
-	 * Notes:
-	 * - ug courses have an MCR starting with 'U' for undergraduate
-	 * - direct application courses have an MCR ending with 'D' for direct
-	 *
-	 * @param mixed $course
-	 * @return bool
-	 */
-	public function checkCourseIsUndergraduateAndAppliedToDirectly($course)
-	{
-		$mcr = (string)$course->mcr;
-		
-		// invalid mcr
-		if (0 == strlen($mcr)) {
-			return false;
-		}
-
-		// is ug and can be applied to directly
-		if (('U' === $mcr[0]) && ('D' === $mcr[strlen($mcr)-1])) {
-			return true;
-		}
-		
-		return false;
-	}
-
-	/**
-	 * checkCourseIsInUse
-	 * is this course open for direct applications via sits
-	 *
-	 * @param mixed $course
-	 * @return bool
-	 */
-	public function checkCourseIsInUse($course)
-	{
-		if ($course->inUse != 'Y') {
-			return false;
-		}
-		return true;
-	}
-
-	public function checkIPOIsValid($ipo)
-	{
-		if ($ipo->inUse != 'Y') {
-			return false;
-		}
-		return true;
-	}
-
-	public function trimPOSCode($pos)
-	{
-		return preg_replace("/\d+$/", "", $pos);
-	}
-
-  /**
-   * Use the concatenated XML progID element from SITS
-   * to determine whether we update UG or PG
-   */
-	public function getCourseLevel($course)
-	{
-		if (stripos($course->progID, 'ug') !== false) {
-			return 'ug';
-		}
-		return 'pg';
 	}
 
 	public function getProgramme($id, $level)
@@ -347,7 +256,6 @@ class SITSDBImport_Task
 	  // set defaults for the parameters in case they're not set
 		$parameters = array();
 		$parameters['year'] = array('pg'=>'current','ug'=>'current');
-		$parameters['path'] = $this->path;
 		
 		
 		foreach ($arguments as $argument) {
@@ -360,10 +268,6 @@ class SITSDBImport_Task
 				// programme session
 				case '-u':
 					$parameters['year']['ug'] = str_replace('-u', '', $argument) != '' ? str_replace('-u', '', $argument) : 'current';
-					break;
-				// XML file path
-				case '-f':
-					$parameters['path'] = str_replace('-f', '', $argument) != '' ? str_replace('-f', '', $argument) : $parameters['path'];
 					break;
 				default:
 					$parameters['help'] = $this->help_argument();
@@ -443,7 +347,6 @@ class SITSDBImport_Task
 		return <<< TXT
 -p - postgraduate year. Defaults to current.
 -u - undergraduate year. Defaults to current.
--f - path to XML feed from SITS feed. Defaults to $this->path
 
 
 TXT;
