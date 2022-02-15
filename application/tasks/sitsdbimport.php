@@ -99,21 +99,21 @@ class SITSDBImport_Task
 				 }
 				
 				$programme = $this->getProgramme($firstDelivery->pp_page_id, $level);
-
+				
 				if (empty($programme) || !is_object($programme)) {
 					continue;
 				}
 
-				echo $programme->instance_id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
-					return $delivery->sits_academic_year 
-							. " " . $delivery->sits_study_level 
-							. " " . $delivery->sds_pos_code 
-							. " " . $delivery->sits_apply_link_code1 
-							. " " . $delivery->sits_apply_link_code2 
-							. " " . $delivery->pp_award_id 
-							. " " . $delivery->pp_discover_uni_id;
-				}, $deliveries)) . PHP_EOL;
-				continue;
+				// echo $programme->instance_id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
+				// 	return $delivery->sits_academic_year 
+				// 			. " " . $delivery->sits_study_level 
+				// 			. " " . $delivery->sds_pos_code 
+				// 			. " " . $delivery->sits_apply_link_code1 
+				// 			. " " . $delivery->sits_apply_link_code2 
+				// 			. " " . $delivery->pp_award_id 
+				// 			. " " . $delivery->pp_discover_uni_id;
+				// }, $deliveries)) . PHP_EOL;
+				// continue;
 
 				$this->updateKISCourseID($programme, $firstDelivery->pp_discover_uni_id);
 				
