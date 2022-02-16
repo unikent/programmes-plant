@@ -5,7 +5,7 @@ require_once path('base') . 'vendor/autoload.php';
 use Kent\Log;
 
 /**
- * This task file is used to load delivery data from an api.kent endpoint which fetches, 
+ * This task file is used to load delivery data from an api.kent endpoint which fetches,
  * deliveries from SITS, and import the data into Programmes Plant
  *
  * Data imported is IPO, POS code, MCR code, ARI code, CRS code, description,
@@ -79,8 +79,7 @@ class SITSDBImport_Task
 			$courseGroupings = [];
 			foreach ($data as $delivery) {
 				//only add delivery if it is new or has an MCR that is lower than the previous one
-				if (
-					isset($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]) &&
+				if (isset($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]) &&
 					intval($delivery->sits_apply_link_code2) > intval($courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1]->sits_apply_link_code2)
 				) {
 					continue;
@@ -93,13 +92,11 @@ class SITSDBImport_Task
 			$this->purgeOldData($level, $year);
 
 			foreach ($courseGroupings as $programme_id => $deliveries) {
-
-
 				$firstDelivery = null;
 				foreach ($deliveries as $mcr => $delivery) {
-				 	$firstDelivery = $delivery;
-				 	break;
-				 }
+					$firstDelivery = $delivery;
+					break;
+				}
 				
 				$programme = $this->getProgramme($programme_id, $level);
 
@@ -113,7 +110,7 @@ class SITSDBImport_Task
 				foreach ($deliveries as $mcr => $deliveryData) {
 					$delivery = $this->createDelivery($level, $programme, $deliveryData);
 
-					echo "Added: " . $delivery->programme_id 
+					echo "Added: " . $delivery->programme_id
 						. " | " . $delivery->pos_code
 						. " | " . $delivery->mcr
 						. " | " . $delivery->current_ipo . PHP_EOL;
@@ -181,7 +178,6 @@ class SITSDBImport_Task
 				DB::table('ug_programme_deliveries')->where_in('programme_id', $to_del)->delete();
 			}
 		}
-
 	}
 
   /**
@@ -189,7 +185,6 @@ class SITSDBImport_Task
    */
 	public function purgeOldUGData($year)
 	{
-		
 	}
 
   /**
@@ -315,8 +310,7 @@ class SITSDBImport_Task
 		$this->curl->option(CURLOPT_TIMEOUT, $timeout);
 		
 		// proxy if required
-		if ($this->proxy)
-		{
+		if ($this->proxy) {
 			$this->curl->proxy($this->proxy_server, $this->proxy_port);
 		}
 		$response = $this->curl->execute();
@@ -333,11 +327,11 @@ class SITSDBImport_Task
 
 	/**
 	* Set a HTTP proxy for the request.
-	* 
+	*
 	* @param string $proxy_server The URL of the proxy server.
 	* @param int $port The port of the proxy server.
 	*/
-	public function set_proxy($proxy_server, $proxy_port = 3128) 
+	public function set_proxy($proxy_server, $proxy_port = 3128)
 	{
 		$this->proxy = true;
 		$this->proxy_server = $proxy_server;
