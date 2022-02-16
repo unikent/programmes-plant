@@ -183,9 +183,12 @@ class SITSDBImport_Task
 		}
 	}
 
-  /**
-   * Get the live Programmes Plant Year for each level
-   */
+	/**
+	 * Get the live Programmes Plant Year for each level
+	 *
+	 * @param  string $level (ur or pg)
+	 * @return string the programmes plant year of application
+	 */
 	public function getCurrentYear($level)
 	{
 		return Setting::get_setting($level . "_current_year");
@@ -206,11 +209,15 @@ class SITSDBImport_Task
 		)->first();
 	}
 
-  /**
-   * Create deliveries for Postgraduate courses
-   * We add a number of fields from the XML to the database in
-   * this function.
-   */
+	/**
+	 * Create deliveries for a programme
+	 *
+	 * @param  string $level
+	 * @param  string $programme
+	 * @param  object $deliveryData
+	 *
+	 * @return object delivery
+	 */
 	public function createDelivery($level, $programme, $deliveryData)
 	{
 		$deliveryClass = "PG_Delivery";
@@ -244,6 +251,7 @@ class SITSDBImport_Task
    * parse_arguments - parses command line options
    *
    * @param array $arguments
+   *
    * @return array $parameters
    */
 	public function parse_arguments($arguments = array())
