@@ -5,8 +5,8 @@ require_once path('base') . 'vendor/autoload.php';
 use Kent\Log;
 
 /**
- * This task file is used to load an XML feed provided from SITS
- * and import the data into the Programmes Plant
+ * This task file is used to load delivery data from an api.kent endpoint which fetches, 
+ * deliveries from SITS, and import the data into Programmes Plant
  *
  * Data imported is IPO, POS code, MCR code, ARI code, CRS code, description,
  * award and attendance type (full-time or part-time)
@@ -41,7 +41,6 @@ class SITSDBImport_Task
 
 	public $processYears = array();
 	public $seenProgrammes = array();
-	public $ipos = array();
 
 	public function run($args = array())
 	{
@@ -54,12 +53,14 @@ class SITSDBImport_Task
 		}
 
 		$parameters = $this->parse_arguments($args);
-	  // display help if needed
+
+		// display help if needed
 		if (isset($parameters['help'])) {
 			echo $parameters['help'];
 			exit;
 		}
 
+		// get values for ug year and pg year
 		foreach ($parameters['year'] as $type => $year) {
 			$this->processYears[$type] = ($year=='current')?$this->getCurrentYear($type):$year;
 		}
@@ -74,6 +75,7 @@ class SITSDBImport_Task
 				continue;
 			}
 
+			// group deliveries by programme and mcr code
 			$courseGroupings = [];
 			foreach ($data as $delivery) {
 				//only add delivery if it is new or has an MCR that is lower than the previous one
@@ -87,10 +89,11 @@ class SITSDBImport_Task
 				$courseGroupings[$delivery->pp_page_id][$delivery->sits_apply_link_code1] = $delivery;
 			}
 			
+			// remove old deliveries for this level and yesr
 			$this->purgeOldData($level, $year);
 
-			
 			foreach ($courseGroupings as $programme_id => $deliveries) {
+
 
 				$firstDelivery = null;
 				foreach ($deliveries as $mcr => $delivery) {
@@ -98,28 +101,22 @@ class SITSDBImport_Task
 				 	break;
 				 }
 				
-				$programme = $this->getProgramme($firstDelivery->pp_page_id, $level);
-				
+				$programme = $this->getProgramme($programme_id, $level);
+
 				if (empty($programme) || !is_object($programme)) {
 					continue;
 				}
-
-				// echo $programme->instance_id . " =>". PHP_EOL . implode(PHP_EOL, array_map(function($delivery){
-				// 	return $delivery->sits_academic_year 
-				// 			. " " . $delivery->sits_study_level 
-				// 			. " " . $delivery->sds_pos_code 
-				// 			. " " . $delivery->sits_apply_link_code1 
-				// 			. " " . $delivery->sits_apply_link_code2 
-				// 			. " " . $delivery->pp_award_id 
-				// 			. " " . $delivery->pp_discover_uni_id;
-				// }, $deliveries)) . PHP_EOL;
-				// continue;
 
 				$this->updateKISCourseID($programme, $firstDelivery->pp_discover_uni_id);
 				
 				URLParams::$type = $level;
 				foreach ($deliveries as $mcr => $deliveryData) {
 					$delivery = $this->createDelivery($level, $programme, $deliveryData);
+
+					echo "Added: " . $delivery->programme_id 
+						. " | " . $delivery->pos_code
+						. " | " . $delivery->mcr
+						. " | " . $delivery->current_ipo . PHP_EOL;
 				}
 			}
 		}
@@ -286,12 +283,12 @@ class SITSDBImport_Task
 		return $parameters;
 	}
 
-		/**
-	 * fetch the modules structure for a given programe
+	/**
+	 * fetch the deliveries for a given level/year
 	 * @param string $level - ug or pg
 	 * @param int $year - programmes plant id
 	 *
-	 * @return stdClass module stages for the programme
+	 * @return stdClass delivery data
 	 */
 	public function load_sitsimport_data($level, $year)
 	{
@@ -303,7 +300,7 @@ class SITSDBImport_Task
 		$webservice_request = Config::get('sitsimport.api_base') . "/v1/programme-deliveries/${year}/${level}";
 		
 		// load data
-		echo "Requesting: " . $webservice_request . ' - ';
+		echo "Requesting: " . $webservice_request . ' - ' . PHP_EOL;
 		
 		$this->curl = new \Curl($webservice_request);
 		
