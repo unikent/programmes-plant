@@ -218,11 +218,9 @@ class SITSDBImport_Task
 	public function createDelivery($level, $programme, $deliveryData)
 	{
 		$deliveryClass = "PG_Delivery";
-		$award_class = "PG_Award"; //TODO: remove if not needed
 
 		if ($level === 'ug') {
 			$deliveryClass = "UG_Delivery";
-			$award_class = "UG_Award"; //TODO: remove if not needed
 		}
 
 		$delivery = new $deliveryClass;
@@ -283,7 +281,7 @@ class SITSDBImport_Task
 	 * @param string $level - ug or pg
 	 * @param int $year - programmes plant id
 	 *
-	 * @return stdClass delivery data
+	 * @return array|false delivery data
 	 */
 	public function load_sitsimport_data($level, $year)
 	{
