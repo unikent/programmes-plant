@@ -237,7 +237,7 @@ class SITSDBImport_Task
 		$delivery->mcr = (string)$deliveryData->sits_apply_link_code1;
 		$delivery->ari_code = (string)$deliveryData->sits_enquiry_link_code;
 		$delivery->description = (string)$deliveryData->sits_course_title_full;
-		$delivery->attendance_pattern = $this->format_attendance_mode($deliveryData->sits_attend_mode);
+		$delivery->attendance_pattern = $this->format_attendance_mode(strtolower($deliveryData->sits_attend_mode));
 
 		$delivery->current_ipo = $deliveryData->sits_apply_link_code2;
 		$delivery->previous_ipo='';
