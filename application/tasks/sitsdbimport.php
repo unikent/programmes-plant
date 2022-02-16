@@ -180,13 +180,6 @@ class SITSDBImport_Task
 	}
 
   /**
-   * Remove all UG deliveries
-   */
-	public function purgeOldUGData($year)
-	{
-	}
-
-  /**
    * Get the live Programmes Plant Year for each level
    */
 	public function getCurrentYear($level)
