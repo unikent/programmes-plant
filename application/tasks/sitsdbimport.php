@@ -159,9 +159,13 @@ class SITSDBImport_Task
 		$programme->save();
 		$programme->make_revision_live($programme->current_revision);
 	}
-  /**
-   * Remove all PG deliveries
-   */
+   /**
+	 * Remove existing deliveries for a given academic year and study level
+	 *
+	 * @param  string $level (ug or pg)
+	 * @param  string $year (academic year)
+	 * @return void
+	 */
 	public function purgeOldData($level, $year)
 	{
 		if ($level === 'pg') {
