@@ -40,7 +40,6 @@ class SITSDBImport_Task
 	public $proxy_port = '';
 
 	public $processYears = array();
-	public $seenProgrammes = array();
 
 	public function run($args = array())
 	{
