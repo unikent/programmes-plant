@@ -309,9 +309,13 @@ class SITSImport_Task
 		$delivery->ari_code = (string)$course->ari_code;
 		$delivery->description = (string)$course->description;
 		$delivery->attendance_pattern = strtolower($course->attendanceType);
-
 		$delivery->current_ipo = $this->extractCurrentIPO($course, $year);
 		$delivery->previous_ipo='';
+
+		// add CRS to PG deliveries
+		if ($level !== 'ug') {
+			$delivery->crs = (string)$course->crs;
+		}
 
 		$delivery->save();
 
