@@ -1,3 +1,4 @@
+<?php echo View::make('admin.inc.partials.retirement_banner')->render(); ?>
 <h1><?php echo View::make('admin.inc.partials.type_marker')->render(); ?>Programmes</h1>
 <p style="margin-top:20px; margin-bottom:20px"><?php echo  __('programmes.' . URI::segment(2) . '_introduction', array('year' => URI::segment(1))) ?></p>
 
