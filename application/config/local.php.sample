@@ -1,0 +1,29 @@
+<?php
+
+return array(
+
+	/*
+	|--------------------------------------------------------------------------
+	| UG Banner Heading
+	|--------------------------------------------------------------------------
+	|
+	| This text will be used at the heading for the UG course retirement 
+	| banner
+	|
+	*/
+
+	'ug_banner_heading' => 'Danger',
+
+	/*
+	|--------------------------------------------------------------------------
+	| UG Banner HTML
+	|--------------------------------------------------------------------------
+	|
+	| This text will be displayed across all UG sections to indicate that those courses
+	| are controller in Nova rather than programmes plant.
+	|
+	*/
+
+	'ug_banner_html' => 'To edit UG courses please go to the <a href="https://webtools.kent.ac.uk/nova">new Programmes Plant</a>',
+
+);
