@@ -237,7 +237,7 @@ class SITSDBImport_Task
 		$delivery->mcr = (string)$deliveryData->sits_apply_link_code1;
 		$delivery->ari_code = (string)$deliveryData->sits_enquiry_link_code;
 		$delivery->description = (string)$deliveryData->sits_course_title_full;
-		$delivery->attendance_pattern = strtolower($deliveryData->sits_attend_mode);
+		$delivery->attendance_pattern = $this->format_attendance_mode(strtolower($deliveryData->sits_attend_mode));
 
 		$delivery->current_ipo = $deliveryData->sits_apply_link_code2;
 		$delivery->previous_ipo='';
@@ -338,6 +338,30 @@ class SITSDBImport_Task
 		$this->proxy = true;
 		$this->proxy_server = $proxy_server;
 		$this->proxy_port = $proxy_port;
+	}
+	
+	/**
+	 * formats a short sits attendace_mode ($attendance) into a more human friendly version
+	 * if $attendance is unrecoginized then just return it as is.
+	 *
+	 * @param  string $attendance short attendance mode, either 'ft' or 'pt'
+	 * @return string long winded attendance mode, so 'full-time' for 'ft'
+	 */
+	public function format_attendance_mode($attendance = 'ft')
+	{
+		switch ($attendance) {
+			case 'ft':
+				return 'full-time';
+				break;
+			
+			case 'pt':
+				return 'part-time';
+				break;
+
+			default:
+				return $attendance;
+				break;
+		}
 	}
 
 	/**
