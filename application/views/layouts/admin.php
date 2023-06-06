@@ -15,6 +15,7 @@
         </div><!-- /Sidebar -->
         <div class="span9 crud">
           <!-- does this need to be crud all the time? -->
+          <?php echo View::make('admin.inc.partials.retirement_banner')->render(); ?>
           <?php if(isset($content)): ?>
             <?php echo $content ?>
           <?php endif; ?>
