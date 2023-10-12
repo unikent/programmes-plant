@@ -427,6 +427,7 @@ abstract class Programme extends Revisionable {
 		$by_research_field = static::get_by_research_field();
 		$parent_course_field = static::get_parent_course_field();
 		$group_courses_field = static::get_group_courses_field();
+		$start_field = static::get_start_field();
 
 		$index_data = array();
 
@@ -455,6 +456,7 @@ abstract class Programme extends Revisionable {
 			$science_without_borders_field,
 			$clearing_exemption_field,
 			$by_research_field,
+			$start_field,
 			static::get_banner_image_field(),
 		);
 		// If UG programmes get ucas, parent course and group courses fields
@@ -540,6 +542,7 @@ abstract class Programme extends Revisionable {
 				'banner_image' => $programme->banner_image ? $programme->banner_image->to_array() : array(),
 				'parent_course_id' => isset($attributes[$parent_course_field]) ? $attributes[$parent_course_field] : '',
 				'group_courses_ids' => isset($attributes[$group_courses_field]) ? $attributes[$group_courses_field] : '',
+				'start' => isset($attributes[$start_field]) ? $attributes[$start_field] : '',
 			);
 			
 			$statuses = '(';
