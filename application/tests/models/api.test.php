@@ -588,20 +588,16 @@ class TestAPI extends ModelTestCase
 	public function testarray_to_xml(){
 		$record = array(
 			'column_1' => 'column_1',
-			'column_2~*' => 'column_2',
-			'2' => 'item'
+			'column_2~*' => 'column_2', // test key removes special characters
+			'2' => 'item'				// test numeric keys get renamed as 'item'
 		);
 
 		$xml = API::array_to_xml($record);
-
 		$xml_object = new SimpleXMLElement($xml);
 
 		foreach ($record as $key => $value) {
 			$result = $xml_object->xpath("/response/{$value}");
-			while(list( , $node) = each($result)) {
-				$this->assertEquals($node, $value);
-				break;
-			}
+			$this->assertEquals((string) $result[0], $value);
 		}
 	}
 
