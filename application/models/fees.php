@@ -84,7 +84,11 @@ class Fees {
 	 * generate_fee_map - Create fee mapping data & shove it in a cache
 	 * 
 	 * @param $year
-	 * @return Fee Data array
+	 * @return array | bool
+	 *					- array of fee data,
+	 *					- empty array if no fee data found
+	 *                  - true if fees unchanged
+	 * 					- false if fees config path is not configured
 	 */
 	public static function generate_fee_map($year, $cache_exists = true){
 
@@ -92,22 +96,22 @@ class Fees {
 		if($path == '') return false;
 
 
-        if ($year ==='preview'){
-            $path = explode('/',$path);
+		if ($year ==='preview'){
+			$path = explode('/',$path);
 
-            array_pop($path);
+			array_pop($path);
 
-            $path = implode('/',$path) . '/preview-fees';
+			$path = implode('/',$path) . '/preview-fees';
 
-            // If no cache, open up feedbands and mapping csv files for preview
-            $fees = Fees::load_csv_from_webservice("{$path}/preview-feebands.csv");
-            $courses = Fees::load_csv_from_webservice("{$path}/preview-mapping.csv");
-        }else {
-            // If no cache, open up feedbands and mapping csv files for given year
-            $fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
-            $courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
+			// If no cache, open up feedbands and mapping csv files for preview
+			$fees = Fees::load_csv_from_webservice("{$path}/preview-feebands.csv");
+			$courses = Fees::load_csv_from_webservice("{$path}/preview-mapping.csv");
+		}else {
+			// If no cache, open up feedbands and mapping csv files for given year
+			$fees = Fees::load_csv_from_webservice("{$path}/{$year}-feebands.csv");
+			$courses = Fees::load_csv_from_webservice("{$path}/{$year}-mapping.csv");
 			
-        }
+		}
 
 		// Ensure data was found
 		if(!$fees || !$courses || empty($fees) || empty($courses)) return array();
@@ -151,14 +155,14 @@ class Fees {
 
 		// Flush output caches, so new data is reflected
 		try
-        {
+		{
 			API::purge_fees_cache($year);
-            API::purge_output_cache();
-        }
-        catch(Exception $e)
-        {
+			API::purge_output_cache();
+		}
+		catch(Exception $e)
+		{
 
-        }
+		}
 
 		// return data
 		return $mapping;
