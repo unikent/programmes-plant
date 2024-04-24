@@ -16,7 +16,7 @@ jobs:
       with:
         submodules: true
 
-    - name: Setup PHP 5.4 with composer
+    - name: Setup PHP 7.2 with composer
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.2'
