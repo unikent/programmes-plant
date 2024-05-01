@@ -313,10 +313,10 @@ class TestSimpleData extends ModelTestCase {
 	{
 		$this->populate_two_years();
 
-		$this->assertEquals(count(Thing::where('year', '=', '2014')), count(Thing::all_as_list(2014)));
+		$this->assertEquals(count(Thing::where('year', '=', '2014')->get()), count(Thing::all_as_list(2014)));
 		$this->assertCount(1, Thing::all_as_list(2014));
 
-		$this->assertEquals(count(Thing::where('year', '=', '2015')), count(Thing::all_as_list(2015)));
+		$this->assertEquals(count(Thing::where('year', '=', '2015')->get()), count(Thing::all_as_list(2015)));
 		$this->assertCount(1, Thing::all_as_list(2015));
 	}
 

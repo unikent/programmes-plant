@@ -288,7 +288,7 @@ abstract class Programme extends Revisionable {
 		}
 
 		// Return false if there is no live revision
-		if(sizeof($revision) === 0 || $revision === null){
+		if($revision === null){
 			return false;
 		}
 
