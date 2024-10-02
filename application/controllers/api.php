@@ -1476,6 +1476,10 @@ class API_Controller extends Base_Controller {
 		$csv = API::array_to_csv($headings). "\r\n";
 		// csv body
 		foreach($output as $data){
+            // Log::info(print_r($data,true));
+            if (is_object($data)) {
+                $data = json_decode(json_encode($data), true);
+            }
 			$csv .= API::array_to_csv($data) . "\r\n";;
 		}
 
