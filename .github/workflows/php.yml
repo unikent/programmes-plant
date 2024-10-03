@@ -16,12 +16,12 @@ jobs:
       with:
         submodules: true
 
-    - name: Setup PHP 5.4 with composer
+    - name: Setup PHP 7.2 with composer
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '5.4'
+        php-version: '7.2'
         coverage: none
-        tools: composer, phpunit:v3.7
+        tools: composer, phpunit:v5.7
 
     - name: Validate composer.json and composer.lock
       run: composer validate

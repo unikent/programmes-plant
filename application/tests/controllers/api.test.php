@@ -222,13 +222,12 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live($input['id']);
 
         $response = $this->get('api@index', array($input['year'], 'undergraduate'));
-        $returned_data = json_decode($response->render());
+        $returned_data = json_decode($response->render(), true);
         
-        $returned_data = $returned_data->$input['id'];
+        $returned_programme = $returned_data[$input['id']];
 
-        
-        $this->assertEquals($input['id'], $returned_data->id);
-        $this->assertEquals($input['programme_title_1'], $returned_data->name);
+        $this->assertEquals($input['id'], $returned_programme['id']);
+        $this->assertEquals($input['programme_title_1'], $returned_programme['name']);
     }
     
     public function testget_indexReturnsJSONWithSuspendedWithdrawnData()
@@ -248,12 +247,12 @@ class TestAPI_Controller extends ControllerTestCase
         $course = $this->make_programme_live($input['id']);
 
         $response = $this->get('api@index', array($input['year'], 'undergraduate'));
-        $returned_data = json_decode($response->render());
+        $returned_data = json_decode($response->render(), true);
         
-        $returned_data = $returned_data->$input['id'];
+        $returned_programme = $returned_data[$input['id']];
         
-        $this->assertEquals($input['id'], $returned_data->id);
-        $this->assertEquals($input['programme_title_1'], $returned_data->name);
+        $this->assertEquals($input['id'], $returned_programme['id']);
+        $this->assertEquals($input['programme_title_1'], $returned_programme['name']);
     }
 
     public function testget_programmeReturns204WithNoCache()

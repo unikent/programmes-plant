@@ -232,9 +232,9 @@ class TestRevisionable extends ModelTestCase {
 		$this->populate('RevisionableThing', array('name' => 'Widget 2015', 'year' => 2015, 'id' => 2));
 
 		$this->assertCount(1, RevisionableThing::all_as_list(2014));
-		$this->assertEquals(count(RevisionableThing::where('year', '=', '2014')), count(RevisionableThing::all_as_list(2014)));
+		$this->assertEquals(count(RevisionableThing::where('year', '=', '2014')->get()), count(RevisionableThing::all_as_list(2014)));
 
-		$this->assertEquals(count(RevisionableThing::where('year', '=', '2015')), count(RevisionableThing::all_as_list(2015)));
+		$this->assertEquals(count(RevisionableThing::where('year', '=', '2015')->get()), count(RevisionableThing::all_as_list(2015)));
 		$this->assertCount(1, RevisionableThing::all_as_list(2015));
 	}
 

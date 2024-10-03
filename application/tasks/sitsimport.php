@@ -266,7 +266,7 @@ class SITSImport_Task
 		}
 
 		$model = $level === "ug" ? "UG_Programme" : "PG_Programme";
-		$courseID = substr($course->progID, 0, count($course->progID) - 3);
+		$courseID = substr($course->progID, 0, strlen((string) $course->progID) - 3);
 
 		return $model::where(
 			"instance_id",

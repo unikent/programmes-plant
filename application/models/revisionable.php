@@ -506,7 +506,7 @@ abstract class Revisionable extends SimpleData {
 		} 
 
 		// Return false if there is no live revision
-		if(sizeof($revision) === 0 || $revision === null){
+		if($revision === null){
 			return false;
 		} 
 
