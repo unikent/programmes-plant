@@ -1476,7 +1476,7 @@ class API_Controller extends Base_Controller {
 		$csv = API::array_to_csv($headings). "\r\n";
 		// csv body
 		foreach($output as $data){
-            // Log::info(print_r($data,true));
+            // sometimes the row data is actually an object @see https://trello.com/c/LgTBohUL/2355-programmes-plant-cannot-download-pg-csv
             if (is_object($data)) {
                 $data = json_decode(json_encode($data), true);
             }
