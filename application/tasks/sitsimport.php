@@ -162,7 +162,9 @@ class SITSImport_Task
 			Log::error('XML file has not been modified for more than 24 hours.');
 		}
 
-		$courses = simplexml_load_file($path);
+		$courses = file_get_contents($path);
+		$courses = preg_replace( '/[\x{200B}-\x{200D}]/u', '', $courses );
+		$courses = simplexml_load_string($courses);
 
 		if ($courses === false) {
 			Log::error('XML file does not exist or is invalid.');
